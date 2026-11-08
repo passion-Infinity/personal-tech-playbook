@@ -1,0 +1,318 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens: light by default, overridden under .dark (set before first paint in index.html). */
+@theme {
+  --color-bg: #f8fafc;
+  --color-sidebar: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-line: #e2e8f0;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-accent: #0284c7;
+  --color-accent-ink: #0369a1;
+  --color-accent-soft: #e0f2fe;
+  --color-code-bg: #f1f5f9;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@layer base {
+  .dark {
+    --color-bg: #0b1220;
+    --color-sidebar: #0e1626;
+    --color-surface: #111a2c;
+    --color-line: #1e2a40;
+    --color-ink: #e2e8f0;
+    --color-muted: #8b9ab3;
+    --color-accent: #38bdf8;
+    --color-accent-ink: #7dd3fc;
+    --color-accent-soft: rgb(56 189 248 / 0.12);
+    --color-code-bg: #0a1020;
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .icon-btn {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-accent-soft hover:text-ink;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-3.5 py-2 text-sm font-medium text-white transition hover:brightness-110 dark:text-slate-950;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink transition hover:border-accent/60;
+  }
+  .nav-item {
+    @apply flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-ink/80 transition-colors hover:bg-accent-soft hover:text-ink;
+  }
+  .nav-item .count {
+    @apply ml-auto rounded-md bg-line/70 px-1.5 py-0.5 text-xs tabular-nums text-muted;
+  }
+  .nav-active {
+    @apply bg-accent-soft font-medium text-accent-ink;
+  }
+  .tab {
+    @apply flex h-16 flex-col items-center justify-center gap-1 text-[0.7rem] text-muted;
+  }
+  .tab-active {
+    @apply text-accent-ink;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent-ink;
+  }
+  .chip {
+    @apply inline-flex max-w-full items-center gap-1 truncate rounded-md border border-line px-2 py-0.5 text-xs text-muted transition-colors;
+  }
+  .chip-filter {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink/80 transition-colors hover:border-accent/60;
+  }
+  .chip-active {
+    @apply border-accent bg-accent-soft text-accent-ink;
+  }
+  .kbd {
+    @apply inline-flex min-w-5 items-center justify-center rounded border border-line bg-bg px-1 font-mono text-[0.7rem] text-muted;
+  }
+}
+
+/* ---------- Markdown reader ---------- */
+.markdown {
+  --tw-prose-body: var(--color-ink);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-links: var(--color-accent-ink);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-code: var(--color-ink);
+  --tw-prose-bullets: var(--color-muted);
+  --tw-prose-counters: var(--color-muted);
+  --tw-prose-th-borders: var(--color-line);
+  --tw-prose-td-borders: var(--color-line);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-quotes: var(--color-ink);
+  --tw-prose-quote-borders: var(--color-accent);
+  --tw-prose-invert-body: var(--color-ink);
+  --tw-prose-invert-headings: var(--color-ink);
+  --tw-prose-invert-links: var(--color-accent-ink);
+  --tw-prose-invert-bold: var(--color-ink);
+  --tw-prose-invert-code: var(--color-ink);
+  --tw-prose-invert-bullets: var(--color-muted);
+  --tw-prose-invert-counters: var(--color-muted);
+  --tw-prose-invert-th-borders: var(--color-line);
+  --tw-prose-invert-td-borders: var(--color-line);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.markdown h2 {
+  scroll-margin-top: 5rem;
+  margin-top: 2.25em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--color-line);
+}
+.markdown h3 {
+  scroll-margin-top: 5rem;
+}
+.markdown h2:first-child {
+  margin-top: 0;
+}
+.markdown .anchor {
+  float: left;
+  margin-left: -1.1em;
+  padding-right: 0.3em;
+  color: var(--color-muted);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.markdown h2:hover .anchor,
+.markdown h3:hover .anchor {
+  opacity: 1;
+}
+.markdown :not(pre) > code {
+  background: var(--color-accent-soft);
+  border-radius: 0.3rem;
+  padding: 0.12em 0.35em;
+  font-size: 0.86em;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.markdown :not(pre) > code::before,
+.markdown :not(pre) > code::after {
+  content: none;
+}
+.markdown .code-block {
+  margin: 1.4em 0;
+  border: 1px solid var(--color-line);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--color-code-bg);
+}
+.markdown .code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.5rem 0.3rem 0.9rem;
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+}
+.markdown .copy-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 0.4rem;
+  padding: 0.2rem 0.5rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+}
+.markdown .copy-code:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
+}
+.markdown .code-block pre {
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.9rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--color-ink);
+}
+.markdown .table-wrap {
+  overflow-x: auto;
+  margin: 1.25em 0;
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+}
+.markdown table {
+  margin: 0;
+  font-size: 0.875rem;
+}
+.markdown thead {
+  background: var(--color-code-bg);
+}
+.markdown th,
+.markdown td {
+  padding: 0.45rem 0.75rem !important;
+}
+.markdown .mermaid-wrap {
+  margin: 1.5em 0;
+  padding: 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+  overflow-x: auto;
+  text-align: center;
+}
+.markdown pre.mermaid {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  white-space: pre;
+}
+.markdown pre.mermaid[data-processed] {
+  white-space: normal;
+}
+.markdown pre.mermaid svg {
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- highlight.js tokens (light / dark) ---------- */
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-literal {
+  color: #d73a49;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #22863a;
+}
+.hljs-number,
+.hljs-symbol,
+.hljs-variable,
+.hljs-template-variable {
+  color: #005cc5;
+}
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: #6f42c1;
+}
+.hljs-type,
+.hljs-title.class_,
+.hljs-attr,
+.hljs-attribute,
+.hljs-meta {
+  color: #e36209;
+}
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #6b7a93;
+}
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-built_in,
+.dark .hljs-literal {
+  color: #ff7b72;
+}
+.dark .hljs-string,
+.dark .hljs-regexp,
+.dark .hljs-addition {
+  color: #a5d6ff;
+}
+.dark .hljs-number,
+.dark .hljs-symbol,
+.dark .hljs-variable,
+.dark .hljs-template-variable {
+  color: #79c0ff;
+}
+.dark .hljs-title,
+.dark .hljs-title.function_,
+.dark .hljs-section {
+  color: #d2a8ff;
+}
+.dark .hljs-type,
+.dark .hljs-title.class_,
+.dark .hljs-attr,
+.dark .hljs-attribute,
+.dark .hljs-meta {
+  color: #ffa657;
+}

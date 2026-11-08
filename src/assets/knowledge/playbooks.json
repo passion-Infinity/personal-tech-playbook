@@ -1,0 +1,29 @@
+[
+  {
+    "id": "outbox-pattern",
+    "title": "Transactional Outbox Pattern",
+    "summary": "Đảm bảo tính nhất quán Dual-Write giữa Database và Message Broker qua local transaction.",
+    "topicId": "system-design",
+    "keywordIds": ["transactional-outbox", "dual-write-problem", "cdc", "idempotent-consumer"],
+    "filePath": "assets/knowledge/playbooks/system-design/outbox-pattern.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "circuit-breaker",
+    "title": "Circuit Breaker Pattern",
+    "summary": "Fail-fast khi dependency lỗi để chặn Cascading Failure và cho hệ thống thời gian hồi phục.",
+    "topicId": "system-design",
+    "keywordIds": ["circuit-breaker", "half-open-state", "bulkhead", "cascading-failure"],
+    "filePath": "assets/knowledge/playbooks/system-design/circuit-breaker.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "redis-cache-stampede",
+    "title": "Redis Cache Stampede",
+    "summary": "Ngăn hàng nghìn request cùng miss một hot key và dội thẳng vào Database khi cache hết hạn.",
+    "topicId": "caching",
+    "keywordIds": ["cache-stampede", "probabilistic-early-expiration", "distributed-lock", "request-coalescing", "ttl-jitter"],
+    "filePath": "assets/knowledge/playbooks/caching/redis-cache-stampede.md",
+    "updatedAt": "2026-11-08"
+  }
+]

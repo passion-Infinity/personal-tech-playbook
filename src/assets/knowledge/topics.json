@@ -1,0 +1,12 @@
+[
+  {
+    "id": "system-design",
+    "name": "System Design",
+    "description": "Distributed systems, scalability, resilience, and architectural patterns."
+  },
+  {
+    "id": "caching",
+    "name": "Caching",
+    "description": "Cache strategies, Redis, invalidation, hot keys, and cache failure modes."
+  }
+]

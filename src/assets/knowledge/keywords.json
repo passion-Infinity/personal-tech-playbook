@@ -1,0 +1,93 @@
+[
+  {
+    "id": "transactional-outbox",
+    "term": "Transactional Outbox Pattern",
+    "meaning": "Mẫu thiết kế lưu event vào DB cùng local transaction trước khi đẩy lên Message Broker",
+    "definition": "Giải quyết bài toán Dual-Write giữa Database và Message Broker mà không cần Two-Phase Commit (2PC).",
+    "topicId": "system-design"
+  },
+  {
+    "id": "dual-write-problem",
+    "term": "Dual-Write Problem",
+    "meaning": "Bài toán ghi đồng thời vào hai hệ thống không chung transaction",
+    "definition": "Ghi vào Database rồi publish lên Broker (hoặc ngược lại) có thể thành công một nửa khi crash, gây mất hoặc lệch dữ liệu.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "cdc",
+    "term": "Change Data Capture (CDC)",
+    "meaning": "Bắt thay đổi dữ liệu trực tiếp từ transaction log của Database",
+    "definition": "Đọc WAL/binlog (ví dụ Debezium) để phát event cho mỗi thay đổi, không cần polling bảng.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "idempotent-consumer",
+    "term": "Idempotent Consumer",
+    "meaning": "Consumer xử lý trùng message nhiều lần vẫn cho cùng một kết quả",
+    "definition": "Bắt buộc khi delivery là at-least-once; thường dùng bảng processed_message_id hoặc upsert theo business key.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "circuit-breaker",
+    "term": "Circuit Breaker Pattern",
+    "meaning": "Cầu dao ngắt gọi sang dependency đang lỗi để tránh lỗi lan truyền",
+    "definition": "Theo dõi tỉ lệ lỗi/timeout; vượt ngưỡng thì fail-fast trong một khoảng thời gian thay vì tiếp tục gọi dependency đang chết.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "half-open-state",
+    "term": "Half-Open State",
+    "meaning": "Trạng thái thử nghiệm cho một số request đi qua sau thời gian ngắt",
+    "definition": "Sau wait duration, breaker cho phép N trial request; thành công thì CLOSED, lỗi thì quay lại OPEN.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "bulkhead",
+    "term": "Bulkhead Pattern",
+    "meaning": "Cô lập tài nguyên (thread pool, connection) theo từng dependency",
+    "definition": "Giới hạn concurrency cho mỗi dependency để một dependency chậm không chiếm hết tài nguyên của cả service.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "cascading-failure",
+    "term": "Cascading Failure",
+    "meaning": "Lỗi dây chuyền lan từ một service sang toàn hệ thống",
+    "definition": "Dependency chậm làm caller giữ thread/connection, caller cạn tài nguyên và tiếp tục kéo sập các upstream.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "cache-stampede",
+    "term": "Cache Stampede",
+    "meaning": "Hàng loạt request cùng miss cache và đồng loạt dội vào Database",
+    "definition": "Còn gọi là Thundering Herd / Dog-piling: một hot key hết hạn khiến hàng nghìn request cùng recompute giá trị.",
+    "topicId": "caching"
+  },
+  {
+    "id": "probabilistic-early-expiration",
+    "term": "Probabilistic Early Expiration (XFetch)",
+    "meaning": "Làm mới cache sớm một cách ngẫu nhiên trước khi TTL hết hạn",
+    "definition": "Mỗi request tự quyết định recompute với xác suất tăng dần khi gần hết TTL, phân tán thời điểm refresh.",
+    "topicId": "caching"
+  },
+  {
+    "id": "distributed-lock",
+    "term": "Distributed Lock (SET NX PX)",
+    "meaning": "Khoá phân tán để chỉ một tiến trình được recompute cache",
+    "definition": "Dùng Redis SET key value NX PX ttl; chỉ holder của lock rebuild cache, các request khác chờ hoặc trả stale data.",
+    "topicId": "caching"
+  },
+  {
+    "id": "request-coalescing",
+    "term": "Request Coalescing (Single Flight)",
+    "meaning": "Gộp các request trùng key thành một lần gọi backend",
+    "definition": "Trong một process, request đầu tiên thực thi, các request cùng key đợi và dùng chung kết quả.",
+    "topicId": "caching"
+  },
+  {
+    "id": "ttl-jitter",
+    "term": "TTL Jitter",
+    "meaning": "Cộng thêm độ lệch ngẫu nhiên vào TTL",
+    "definition": "Tránh nhiều key được set cùng lúc rồi hết hạn cùng lúc (mass expiration).",
+    "topicId": "caching"
+  }
+]
