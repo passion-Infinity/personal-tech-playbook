@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers (static assets only, free). Deploy command: npx wrangler deploy
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "personal-tech-playbook",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist/playbook/browser",
+    "not_found_handling": "single-page-application"
+  }
+}

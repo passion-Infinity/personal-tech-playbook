@@ -109,6 +109,17 @@ You can also edit these files by hand — follow the rules in [`CLAUDE.md`](CLAU
 `npm run build` writes the static site to **`dist/playbook/browser`** (it includes `src/assets`
 and `public`, e.g. `_redirects`, the manifest and icons).
 
+### Cloudflare Workers (static assets)
+
+Use this if you created the project under **Workers & Pages → Create → Worker → Import a repository**.
+
+1. Worker → Settings → Build: Build command `npm run build`, Deploy command `npx wrangler deploy`,
+   root directory `/`.
+2. `wrangler.jsonc` serves `dist/playbook/browser` as static assets with
+   `not_found_handling: "single-page-application"` (deep links work). `public/.assetsignore`
+   excludes the Pages-only `_redirects` file.
+3. Every push to `main` rebuilds and deploys to `https://personal-tech-playbook.<subdomain>.workers.dev`.
+
 ### Cloudflare Pages
 
 1. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git → select this repo.
@@ -149,5 +160,5 @@ src/app/core/                 # knowledge, search, markdown, theme, PWA services
 src/app/pages/                # playbook list, reader, keywords directory
 src/app/shared/               # icons, keyword card, search palette, PWA prompts
 src/assets/knowledge/         # ← the knowledge base
-vercel.json, .github/workflows/deploy.yml
+wrangler.jsonc, vercel.json, .github/workflows/deploy.yml
 ```
