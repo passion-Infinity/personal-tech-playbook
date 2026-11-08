@@ -89,5 +89,285 @@
     "meaning": "Cộng thêm độ lệch ngẫu nhiên vào TTL",
     "definition": "Tránh nhiều key được set cùng lúc rồi hết hạn cùng lúc (mass expiration).",
     "topicId": "caching"
+  },
+  {
+    "id": "iam-policy-evaluation",
+    "term": "IAM Policy Evaluation Logic",
+    "meaning": "Cách AWS quyết định Allow/Deny khi có nhiều policy",
+    "definition": "Mặc định implicit deny; explicit Deny ở bất kỳ policy nào (identity, resource, SCP, boundary) luôn thắng mọi Allow.",
+    "topicId": "aws"
+  },
+  {
+    "id": "least-privilege",
+    "term": "Principle of Least Privilege",
+    "meaning": "Chỉ cấp quyền tối thiểu đủ để làm việc",
+    "definition": "Bắt đầu từ quyền nhỏ nhất rồi mở rộng khi cần; dùng IAM Access Analyzer để sinh policy từ hoạt động thực tế.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-managed-vs-customer-managed-policy",
+    "term": "AWS Managed vs Customer Managed Policy",
+    "meaning": "Policy do AWS quản lý so với policy tự viết",
+    "definition": "AWS managed do AWS tạo và cập nhật, tiện nhưng thường rộng; customer managed do bạn viết, tái sử dụng và có versioning.",
+    "topicId": "aws"
+  },
+  {
+    "id": "iam-role-sts",
+    "term": "IAM Role (AssumeRole / STS)",
+    "meaning": "Danh tính tạm thời cấp credentials ngắn hạn",
+    "definition": "Role được assume qua STS để lấy credentials tạm thời cho EC2, Lambda, cross-account và federation, thay cho access key dài hạn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "iam-identity-center",
+    "term": "IAM Identity Center (Identity Federation)",
+    "meaning": "Đăng nhập AWS bằng IdP như Google, AD công ty",
+    "definition": "Liên kết IdP qua SAML 2.0/OIDC để người dùng đăng nhập SSO vào nhiều account mà không cần IAM user riêng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "root-user-mfa",
+    "term": "Root User MFA",
+    "meaning": "Bật xác thực đa yếu tố cho tài khoản root",
+    "definition": "Root có toàn quyền và không bị giới hạn bởi IAM policy: bật MFA, xoá access key, chỉ dùng cho tác vụ bắt buộc.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-bucket-policy",
+    "term": "S3 Bucket Policy",
+    "meaning": "Resource-based policy áp cho cả bucket",
+    "definition": "JSON policy gắn vào bucket để cho phép/từ chối theo principal, IP, VPC endpoint, HTTPS hoặc header mã hoá.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-object-ownership-acl",
+    "term": "S3 Object Ownership (ACL disabled)",
+    "meaning": "Cơ chế tắt ACL, bucket owner sở hữu mọi object",
+    "definition": "Bucket mới mặc định Bucket owner enforced: ACL bị vô hiệu, quyền chỉ quản lý qua policy; ACL là cơ chế cũ ở mức bucket/object.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-block-public-access",
+    "term": "S3 Block Public Access",
+    "meaning": "Cầu dao chặn mọi cấu hình làm bucket public",
+    "definition": "Bật mặc định ở bucket mới, ghi đè mọi bucket policy/ACL cấp quyền public; có thể đặt ở mức account.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-server-side-encryption",
+    "term": "SSE-S3 vs SSE-KMS vs SSE-C",
+    "meaning": "Ba kiểu mã hoá phía server của S3",
+    "definition": "SSE-S3 do S3 quản lý key (mặc định); SSE-KMS dùng key KMS có audit và phân quyền; SSE-C khách hàng gửi key mỗi request.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-securetransport",
+    "term": "aws:SecureTransport",
+    "meaning": "Điều kiện policy để ép buộc dùng HTTPS",
+    "definition": "Bucket policy deny mọi request có aws:SecureTransport = false để đảm bảo encryption in transit.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-versioning",
+    "term": "S3 Versioning",
+    "meaning": "Lưu mọi phiên bản của object trong bucket",
+    "definition": "Ba trạng thái Unversioned/Enabled/Suspended; đã bật thì chỉ Suspend được, không tắt hẳn; mỗi lần ghi tạo versionId mới.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-delete-marker",
+    "term": "S3 Delete Marker",
+    "meaning": "Dấu \"xoá mềm\" khi bucket có versioning",
+    "definition": "DELETE không kèm versionId chỉ chèn delete marker; xoá marker này để khôi phục object.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-mfa-delete",
+    "term": "S3 MFA Delete",
+    "meaning": "Bắt buộc MFA khi xoá vĩnh viễn version",
+    "definition": "Yêu cầu MFA của root để xoá vĩnh viễn object version hoặc thay đổi trạng thái versioning.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-replication",
+    "term": "S3 Cross-Region / Same-Region Replication",
+    "meaning": "Sao chép bất đồng bộ object sang bucket khác",
+    "definition": "CRR/SRR yêu cầu bật versioning ở cả hai bucket và IAM role; chỉ replicate object mới sau khi tạo rule.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-batch-replication",
+    "term": "S3 Batch Replication",
+    "meaning": "Replicate các object đã tồn tại trước khi tạo rule",
+    "definition": "Dùng S3 Batch Operations để sao chép object có sẵn hoặc object replicate lỗi trước đó.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-storage-classes",
+    "term": "S3 Storage Classes",
+    "meaning": "Các lớp lưu trữ đánh đổi giá lưu và giá truy xuất",
+    "definition": "Standard, Intelligent-Tiering, Standard-IA, One Zone-IA, Glacier Instant/Flexible/Deep Archive khác nhau ở giá, latency, retrieval fee, số AZ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-intelligent-tiering",
+    "term": "S3 Intelligent-Tiering",
+    "meaning": "Tự động chuyển tầng theo mức truy cập",
+    "definition": "Không có retrieval fee nhưng tính phí monitoring theo object; phù hợp dữ liệu có pattern truy cập không đoán được.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-glacier-retrieval-options",
+    "term": "S3 Glacier Retrieval Options",
+    "meaning": "Các tốc độ restore dữ liệu từ Glacier",
+    "definition": "Flexible: Expedited 1–5 phút, Standard 3–5 giờ, Bulk 5–12 giờ; Deep Archive: Standard ≤ 12 giờ, Bulk ≤ 48 giờ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-lifecycle-configuration",
+    "term": "S3 Lifecycle Configuration",
+    "meaning": "Quy tắc tự động chuyển lớp hoặc xoá object theo tuổi",
+    "definition": "Gồm Transition actions (đổi storage class) và Expiration actions (xoá object, noncurrent version, multipart dở dang).",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-minimum-storage-duration",
+    "term": "S3 Minimum Storage Duration",
+    "meaning": "Thời gian lưu tối thiểu bị tính phí",
+    "definition": "IA 30 ngày, Glacier Instant/Flexible 90 ngày, Deep Archive 180 ngày; xoá hoặc chuyển sớm vẫn bị tính đủ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-prefix-request-rate",
+    "term": "S3 Request Rate per Prefix",
+    "meaning": "Giới hạn request theo prefix của S3",
+    "definition": "Mỗi prefix tối thiểu 3,500 PUT/COPY/POST/DELETE và 5,500 GET/HEAD mỗi giây; tăng throughput bằng nhiều prefix.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-multipart-upload",
+    "term": "S3 Multipart Upload",
+    "meaning": "Upload object lớn thành nhiều phần song song",
+    "definition": "Khuyến nghị cho file > 100 MB, bắt buộc > 5 GB; part 5 MB–5 GB, tối đa 10,000 part, object tối đa 5 TB.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-byte-range-fetch",
+    "term": "S3 Byte-Range Fetch",
+    "meaning": "Tải song song nhiều đoạn của một object",
+    "definition": "GET với header Range để tăng tốc download hoặc chỉ đọc một phần object.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-transfer-acceleration",
+    "term": "S3 Transfer Acceleration",
+    "meaning": "Tăng tốc upload qua edge location của CloudFront",
+    "definition": "Client upload tới edge gần nhất rồi đi backbone AWS về bucket; tính thêm phí.",
+    "topicId": "aws"
+  },
+  {
+    "id": "kms-request-quota",
+    "term": "KMS Request Quota",
+    "meaning": "Giới hạn số request KMS mỗi giây theo region",
+    "definition": "SSE-KMS gọi KMS cho mỗi upload/download nên có thể bị throttling; giảm bằng S3 Bucket Key.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ec2-on-demand",
+    "term": "EC2 On-Demand",
+    "meaning": "Trả theo giây/giờ, không cam kết",
+    "definition": "Linux/Windows tính theo giây (tối thiểu 60 giây); linh hoạt nhất nhưng đắt nhất trong các lựa chọn shared tenancy.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ec2-reserved-instances",
+    "term": "EC2 Reserved Instances",
+    "meaning": "Cam kết 1 hoặc 3 năm để được giảm giá",
+    "definition": "Giảm tới 72%; Standard RI giảm nhiều hơn, Convertible RI đổi được instance family; trả All/Partial/No Upfront.",
+    "topicId": "aws"
+  },
+  {
+    "id": "savings-plans",
+    "term": "Savings Plans",
+    "meaning": "Cam kết chi tiêu $/giờ trong 1–3 năm",
+    "definition": "Giảm tới 72%, linh hoạt hơn RI; Compute Savings Plans áp dụng cả EC2, Fargate, Lambda.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ec2-spot-instances",
+    "term": "EC2 Spot Instances",
+    "meaning": "Dùng capacity dư với giá giảm tới 90%",
+    "definition": "AWS có thể thu hồi với cảnh báo 2 phút; hợp cho workload stateless, chịu được gián đoạn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ec2-dedicated-host",
+    "term": "EC2 Dedicated Host",
+    "meaning": "Thuê nguyên một server vật lý",
+    "definition": "Nhìn thấy socket/core để dùng license BYOL theo core và đáp ứng compliance; chi phí cao nhất.",
+    "topicId": "aws"
+  },
+  {
+    "id": "security-group",
+    "term": "Security Group",
+    "meaning": "Firewall ảo stateful gắn vào ENI của instance",
+    "definition": "Chỉ có rule Allow; inbound mặc định chặn hết, outbound mặc định cho phép hết; response tự được cho qua.",
+    "topicId": "aws"
+  },
+  {
+    "id": "security-group-vs-nacl",
+    "term": "Security Group vs Network ACL",
+    "meaning": "So sánh firewall cấp instance và cấp subnet",
+    "definition": "SG stateful, chỉ Allow, cấp instance; NACL stateless, có Allow/Deny, cấp subnet, đánh giá rule theo số thứ tự.",
+    "topicId": "aws"
+  },
+  {
+    "id": "elastic-network-interface",
+    "term": "Elastic Network Interface (ENI)",
+    "meaning": "Card mạng ảo của EC2",
+    "definition": "Có private IP, MAC, Security Group riêng; gắn thêm để tách mạng management/log hoặc chuyển sang instance khác khi failover.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ena-enhanced-networking",
+    "term": "ENA Enhanced Networking",
+    "meaning": "Mạng tốc độ cao dùng SR-IOV cho EC2",
+    "definition": "Elastic Network Adapter cho băng thông tới 100 Gbps, PPS cao, latency thấp, không tốn thêm phí.",
+    "topicId": "aws"
+  },
+  {
+    "id": "elastic-fabric-adapter",
+    "term": "Elastic Fabric Adapter (EFA)",
+    "meaning": "Card mạng cho HPC và machine learning",
+    "definition": "ENA cộng OS-bypass (libfabric/MPI) cho giao tiếp liên node latency cực thấp.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cluster-placement-group",
+    "term": "Cluster Placement Group",
+    "meaning": "Gom instance sát nhau trong một AZ",
+    "definition": "Latency thấp, throughput cao cho HPC; đổi lại rủi ro lỗi phần cứng tập trung.",
+    "topicId": "aws"
+  },
+  {
+    "id": "spread-placement-group",
+    "term": "Spread Placement Group",
+    "meaning": "Mỗi instance trên một rack riêng",
+    "definition": "Cách ly lỗi tối đa, giới hạn 7 instance đang chạy mỗi AZ mỗi group, có thể trải nhiều AZ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "partition-placement-group",
+    "term": "Partition Placement Group",
+    "meaning": "Chia instance thành các nhóm rack độc lập",
+    "definition": "Tối đa 7 partition mỗi AZ; partition khác nhau không chung phần cứng, hợp cho HDFS, HBase, Cassandra, Kafka.",
+    "topicId": "aws"
+  },
+  {
+    "id": "modify-instance-placement",
+    "term": "modify-instance-placement",
+    "meaning": "Lệnh CLI chuyển instance sang placement group khác",
+    "definition": "Instance phải ở trạng thái stopped; chỉ làm được qua AWS CLI/SDK, không qua console.",
+    "topicId": "aws"
   }
 ]

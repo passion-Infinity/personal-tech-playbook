@@ -4,7 +4,12 @@
     "title": "Transactional Outbox Pattern",
     "summary": "Đảm bảo tính nhất quán Dual-Write giữa Database và Message Broker qua local transaction.",
     "topicId": "system-design",
-    "keywordIds": ["transactional-outbox", "dual-write-problem", "cdc", "idempotent-consumer"],
+    "keywordIds": [
+      "transactional-outbox",
+      "dual-write-problem",
+      "cdc",
+      "idempotent-consumer"
+    ],
     "filePath": "assets/knowledge/playbooks/system-design/outbox-pattern.md",
     "updatedAt": "2026-11-08"
   },
@@ -13,7 +18,12 @@
     "title": "Circuit Breaker Pattern",
     "summary": "Fail-fast khi dependency lỗi để chặn Cascading Failure và cho hệ thống thời gian hồi phục.",
     "topicId": "system-design",
-    "keywordIds": ["circuit-breaker", "half-open-state", "bulkhead", "cascading-failure"],
+    "keywordIds": [
+      "circuit-breaker",
+      "half-open-state",
+      "bulkhead",
+      "cascading-failure"
+    ],
     "filePath": "assets/knowledge/playbooks/system-design/circuit-breaker.md",
     "updatedAt": "2026-11-08"
   },
@@ -22,8 +32,135 @@
     "title": "Redis Cache Stampede",
     "summary": "Ngăn hàng nghìn request cùng miss một hot key và dội thẳng vào Database khi cache hết hạn.",
     "topicId": "caching",
-    "keywordIds": ["cache-stampede", "probabilistic-early-expiration", "distributed-lock", "request-coalescing", "ttl-jitter"],
+    "keywordIds": [
+      "cache-stampede",
+      "probabilistic-early-expiration",
+      "distributed-lock",
+      "request-coalescing",
+      "ttl-jitter"
+    ],
     "filePath": "assets/knowledge/playbooks/caching/redis-cache-stampede.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "iam-fundamentals",
+    "title": "AWS IAM Fundamentals",
+    "summary": "Kiểm soát ai được làm gì trên tài nguyên AWS bằng user, group, role và policy theo nguyên tắc least privilege.",
+    "topicId": "aws",
+    "keywordIds": [
+      "iam-policy-evaluation",
+      "least-privilege",
+      "aws-managed-vs-customer-managed-policy",
+      "iam-role-sts",
+      "iam-identity-center",
+      "root-user-mfa"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/iam-fundamentals.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "s3-security-encryption",
+    "title": "S3 Security & Encryption",
+    "summary": "Khoá chặt bucket bằng Block Public Access, Bucket Policy và mã hoá dữ liệu khi truyền lẫn khi lưu với SSE-S3, SSE-KMS hoặc SSE-C.",
+    "topicId": "aws",
+    "keywordIds": [
+      "s3-bucket-policy",
+      "s3-object-ownership-acl",
+      "s3-block-public-access",
+      "s3-server-side-encryption",
+      "aws-securetransport",
+      "kms-request-quota"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/s3-security-encryption.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "s3-versioning-replication",
+    "title": "S3 Versioning & Replication",
+    "summary": "Khôi phục object bị ghi đè hoặc xoá nhầm bằng Versioning và sao lưu sang bucket/region khác bằng Replication.",
+    "topicId": "aws",
+    "keywordIds": [
+      "s3-versioning",
+      "s3-delete-marker",
+      "s3-mfa-delete",
+      "s3-replication",
+      "s3-batch-replication"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/s3-versioning-replication.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "s3-storage-classes-lifecycle",
+    "title": "S3 Storage Classes & Lifecycle",
+    "summary": "Chọn đúng storage class và tự động chuyển lớp/xoá object bằng Lifecycle để tối ưu chi phí lưu trữ.",
+    "topicId": "aws",
+    "keywordIds": [
+      "s3-storage-classes",
+      "s3-intelligent-tiering",
+      "s3-glacier-retrieval-options",
+      "s3-lifecycle-configuration",
+      "s3-minimum-storage-duration"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/s3-storage-classes-lifecycle.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "s3-performance",
+    "title": "S3 Performance Optimization",
+    "summary": "Tăng throughput S3 bằng cách rải prefix, multipart upload, byte-range fetch và Transfer Acceleration.",
+    "topicId": "aws",
+    "keywordIds": [
+      "s3-prefix-request-rate",
+      "s3-multipart-upload",
+      "s3-byte-range-fetch",
+      "s3-transfer-acceleration",
+      "kms-request-quota"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/s3-performance.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "ec2-pricing-models",
+    "title": "EC2 Pricing Models",
+    "summary": "Giảm 50–90% chi phí compute bằng cách kết hợp On-Demand, Savings Plans/Reserved, Spot và Dedicated Host theo đặc điểm workload.",
+    "topicId": "aws",
+    "keywordIds": [
+      "ec2-on-demand",
+      "ec2-reserved-instances",
+      "savings-plans",
+      "ec2-spot-instances",
+      "ec2-dedicated-host"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/ec2-pricing-models.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "ec2-security-groups-networking",
+    "title": "EC2 Security Groups & Networking",
+    "summary": "Mở đúng port bằng Security Group stateful và chọn ENI, ENA hay EFA theo nhu cầu tách mạng, băng thông và HPC.",
+    "topicId": "aws",
+    "keywordIds": [
+      "security-group",
+      "security-group-vs-nacl",
+      "elastic-network-interface",
+      "ena-enhanced-networking",
+      "elastic-fabric-adapter"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/ec2-security-groups-networking.md",
+    "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "ec2-placement-groups",
+    "title": "EC2 Placement Groups",
+    "summary": "Đặt instance theo Cluster, Spread hoặc Partition để tối ưu network performance hoặc cách ly lỗi phần cứng.",
+    "topicId": "aws",
+    "keywordIds": [
+      "cluster-placement-group",
+      "spread-placement-group",
+      "partition-placement-group",
+      "modify-instance-placement"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/ec2-placement-groups.md",
     "updatedAt": "2026-11-08"
   }
 ]

@@ -8,5 +8,10 @@
     "id": "caching",
     "name": "Caching",
     "description": "Cache strategies, Redis, invalidation, hot keys, and cache failure modes."
+  },
+  {
+    "id": "aws",
+    "name": "AWS Cloud",
+    "description": "AWS services and architecture for the Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 and beyond."
   }
 ]
