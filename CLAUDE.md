@@ -109,5 +109,6 @@ Whenever adding or updating knowledge:
 - `npm start` → dev server (service worker disabled); `npm run build` → `dist/playbook/browser`.
 - `ngsw-config.json` prefetches `/assets/knowledge/**`, so new playbooks are cached offline
   automatically and installed clients see a "New knowledge update available — Reload" toast.
-- Deployment: Cloudflare Pages (`public/_redirects`), Vercel (`vercel.json`), GitHub Pages
+- Deployment: Cloudflare Workers (`wrangler.jsonc`, SPA fallback built in — never add
+  `public/_redirects`, Workers rejects it), Cloudflare Pages, Vercel (`vercel.json`), GitHub Pages
   (`.github/workflows/deploy.yml`).

@@ -107,7 +107,7 @@ You can also edit these files by hand — follow the rules in [`CLAUDE.md`](CLAU
 ## Deploy for free
 
 `npm run build` writes the static site to **`dist/playbook/browser`** (it includes `src/assets`
-and `public`, e.g. `_redirects`, the manifest and icons).
+and `public`, e.g. the manifest and icons).
 
 ### Cloudflare Workers (static assets)
 
@@ -116,8 +116,8 @@ Use this if you created the project under **Workers & Pages → Create → Worke
 1. Worker → Settings → Build: Build command `npm run build`, Deploy command `npx wrangler deploy`,
    root directory `/`.
 2. `wrangler.jsonc` serves `dist/playbook/browser` as static assets with
-   `not_found_handling: "single-page-application"` (deep links work). `public/.assetsignore`
-   excludes the Pages-only `_redirects` file.
+   `not_found_handling: "single-page-application"` (deep links work).
+   Do not add a `_redirects` file: Workers rejects `/* /index.html 200` as an infinite loop.
 3. Every push to `main` rebuilds and deploys to `https://personal-tech-playbook.<subdomain>.workers.dev`.
 
 ### Cloudflare Pages
@@ -125,7 +125,8 @@ Use this if you created the project under **Workers & Pages → Create → Worke
 1. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git → select this repo.
 2. Framework preset: *None*. Build command: `npm run build`. Output directory:
    `dist/playbook/browser`. Environment variable `NODE_VERSION=22`.
-3. Deploy. `public/_redirects` (`/* /index.html 200`) handles SPA deep links.
+3. Deploy. With no top-level `404.html`, Pages serves `index.html` for unknown paths, so SPA
+   deep links work without a `_redirects` file.
 
 ### Vercel
 
@@ -155,7 +156,7 @@ After the first load the whole library (all JSON + Markdown) is cached for offli
 .claude/commands/distill.md   # /distill slash command
 CLAUDE.md                     # permanent rules for Claude Code
 ngsw-config.json              # service worker: prefetch app + /assets/knowledge/**
-public/                       # manifest, icons, _redirects
+public/                       # manifest, icons
 src/app/core/                 # knowledge, search, markdown, theme, PWA services
 src/app/pages/                # playbook list, reader, keywords directory
 src/app/shared/               # icons, keyword card, search palette, PWA prompts
