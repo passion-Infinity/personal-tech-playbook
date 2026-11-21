@@ -11,18 +11,23 @@ import { KeywordCard } from '../shared/keyword-card';
   imports: [KeywordCard, Icon, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header class="mb-6">
-      <p class="text-xs font-semibold uppercase tracking-wider text-accent-ink">Search Hooks</p>
-      <h1 class="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-        Keywords Directory
+    <header class="fade-up mb-6">
+      <p class="eyebrow flex items-center gap-2">
+        <app-icon name="hash" [size]="14" /> Search Hooks
+      </p>
+      <h1 class="mt-2 text-3xl font-bold sm:text-4xl">
+        Keywords <span class="text-gradient">Directory</span>
       </h1>
       <p class="mt-2 max-w-2xl text-muted">
         Exact English terms with Vietnamese meanings — copy one and deep-dive on Google, docs or
         papers.
       </p>
+      <a routerLink="/flashcards" class="btn-secondary mt-4">
+        <app-icon name="cards" [size]="16" /> Ôn bằng flashcards
+      </a>
     </header>
 
-    <div class="sticky top-14 z-10 -mx-4 mb-4 bg-bg/90 px-4 py-3 backdrop-blur lg:top-0">
+    <div class="glass-strong sticky top-16 z-10 mb-5 rounded-2xl p-3 lg:top-4">
       <label class="relative block">
         <span class="sr-only">Filter keywords</span>
         <app-icon
@@ -31,7 +36,7 @@ import { KeywordCard } from '../shared/keyword-card';
         />
         <input
           type="search"
-          class="h-11 w-full rounded-xl border border-line bg-surface pl-10 pr-3 text-ink outline-none placeholder:text-muted focus:border-accent"
+          class="h-11 w-full glass rounded-xl pl-10 pr-3 text-ink outline-none placeholder:text-muted focus:border-violet-400"
           placeholder="Filter by term, nghĩa tiếng Việt, definition…"
           [value]="query()"
           (input)="setQuery($event)"

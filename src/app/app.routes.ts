@@ -16,6 +16,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/keyword-directory').then((m) => m.KeywordDirectory),
   },
   {
+    path: 'flashcards',
+    title: 'Flashcards · Playbook',
+    loadComponent: () => import('./pages/flashcards').then((m) => m.Flashcards),
+  },
+  {
     path: '**',
     title: 'Not found · Playbook',
     loadComponent: () => import('./pages/not-found').then((m) => m.NotFound),

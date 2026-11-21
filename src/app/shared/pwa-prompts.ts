@@ -10,7 +10,7 @@ import { Icon } from './icon';
   template: `
     @if (pwa.updateAvailable()) {
       <div
-        class="fixed inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-md items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 shadow-xl lg:bottom-6 lg:left-auto lg:right-6"
+        class="fixed inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-md items-center gap-3 glass-strong rounded-2xl px-4 py-3 shadow-xl lg:bottom-6 lg:left-auto lg:right-6"
         role="status"
       >
         <app-icon name="refresh" class="text-accent-ink" />
@@ -28,7 +28,7 @@ import { Icon } from './icon';
         (click)="pwa.showIosGuide.set(false)"
       >
         <div
-          class="w-full max-w-sm rounded-2xl border border-line bg-surface p-5 shadow-2xl"
+          class="w-full max-w-sm glass-strong rounded-3xl p-6 shadow-2xl"
           role="dialog"
           aria-modal="true"
           aria-labelledby="install-title"

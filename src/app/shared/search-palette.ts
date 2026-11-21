@@ -21,11 +21,11 @@ import { Icon } from './icon';
   template: `
     @if (ui.paletteOpen()) {
       <div
-        class="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-3 pt-[8vh] backdrop-blur-sm sm:p-6 sm:pt-[12vh]"
+        class="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-3 pt-[8vh] backdrop-blur-md sm:p-6 sm:pt-[12vh]"
         (click)="ui.closePalette()"
       >
         <div
-          class="flex max-h-[75vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
+          class="flex max-h-[75vh] w-full max-w-2xl flex-col overflow-hidden glass-strong rounded-3xl shadow-2xl shadow-violet-950/40"
           role="dialog"
           aria-modal="true"
           aria-label="Search playbooks and keywords"
@@ -58,13 +58,13 @@ import { Icon } from './icon';
                 role="option"
                 [attr.aria-selected]="i === active()"
                 [id]="'opt-' + i"
-                class="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5"
-                [class.bg-accent-soft]="i === active()"
+                class="flex cursor-pointer items-start gap-3 rounded-xl px-3 py-2.5 transition-colors"
+                [class.nav-active]="i === active()"
                 (mouseenter)="active.set(i)"
                 (click)="open(r)"
               >
                 <span
-                  class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line text-muted"
+                  class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line text-muted"
                 >
                   <app-icon [name]="r.kind === 'playbook' ? 'book' : 'hash'" [size]="14" />
                 </span>

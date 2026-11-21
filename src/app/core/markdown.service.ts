@@ -30,6 +30,8 @@ export interface RenderedMarkdown {
   html: string;
   toc: TocEntry[];
   hasMermaid: boolean;
+  /** Estimated reading time in minutes (prose only, ~200 wpm). */
+  minutes: number;
 }
 
 const COPY_ICON =
@@ -122,7 +124,9 @@ export class MarkdownService {
     });
 
     const html = marked.parse(markdown, { async: false }) as string;
-    return { html, toc, hasMermaid };
+    const prose = markdown.replace(/```[\s\S]*?```/g, ' ');
+    const words = prose.split(/\s+/).filter(Boolean).length;
+    return { html, toc, hasMermaid, minutes: Math.max(1, Math.round(words / 200)) };
   }
 }
 
@@ -137,8 +141,45 @@ export async function renderMermaid(container: HTMLElement, dark: boolean): Prom
   mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'strict',
-    theme: dark ? 'dark' : 'default',
-    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+    theme: 'base',
+    fontFamily: "'Inter Variable', ui-sans-serif, system-ui, sans-serif",
+    themeVariables: dark
+      ? {
+          darkMode: true,
+          background: 'transparent',
+          primaryColor: '#1e1b4b',
+          primaryTextColor: '#e8eaf6',
+          primaryBorderColor: '#8b5cf6',
+          secondaryColor: '#083344',
+          secondaryBorderColor: '#22d3ee',
+          tertiaryColor: '#1f1534',
+          lineColor: '#22d3ee',
+          textColor: '#cbd2ea',
+          edgeLabelBackground: '#0b1024',
+          actorBkg: '#1e1b4b',
+          actorBorder: '#8b5cf6',
+          actorTextColor: '#e8eaf6',
+          signalColor: '#22d3ee',
+          signalTextColor: '#e8eaf6',
+          labelBoxBkgColor: '#1e1b4b',
+          noteBkgColor: '#312e81',
+          noteTextColor: '#e8eaf6',
+        }
+      : {
+          background: 'transparent',
+          primaryColor: '#ede9fe',
+          primaryTextColor: '#1e1b4b',
+          primaryBorderColor: '#7c3aed',
+          secondaryColor: '#cffafe',
+          secondaryBorderColor: '#0891b2',
+          tertiaryColor: '#fdf2f8',
+          lineColor: '#0891b2',
+          textColor: '#312e81',
+          edgeLabelBackground: '#ffffff',
+          actorBkg: '#ede9fe',
+          actorBorder: '#7c3aed',
+          signalColor: '#0891b2',
+        },
   });
   for (const node of nodes) {
     // Reset to source so diagrams can be re-rendered on theme change.

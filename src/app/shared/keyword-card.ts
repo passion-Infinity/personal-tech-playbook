@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ClipboardService } from '../core/clipboard.service';
+import { FlashcardStore } from '../core/flashcard.store';
 import { KnowledgeService } from '../core/knowledge.service';
 import { Keyword } from '../core/models';
 import { googleUrl } from '../core/search';
+import { topicVars } from '../core/topic-style';
 import { Icon } from './icon';
 
 @Component({
@@ -14,14 +16,19 @@ import { Icon } from './icon';
   template: `
     @let k = keyword();
     <article
-      class="flex h-full flex-col gap-2 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-accent/50"
+      class="glass glass-hover relative flex h-full flex-col gap-2 overflow-hidden rounded-2xl p-4 pl-5"
       [id]="'kw-' + k.id"
+      [style]="vars()"
     >
+      <span class="topic-gradient absolute inset-y-0 left-0 w-1"></span>
       <div class="flex items-start justify-between gap-2">
-        <h3 class="font-mono text-[0.95rem] font-semibold leading-snug text-ink break-words">
+        <h3 class="break-words font-mono text-[0.92rem] font-semibold leading-snug text-ink">
           {{ k.term }}
         </h3>
         <div class="-mr-1 -mt-1 flex shrink-0 items-center">
+          @if (known()) {
+            <span class="mr-1 text-xs text-emerald-500" title="Đã nhớ trong flashcards">✓</span>
+          }
           <button
             type="button"
             class="icon-btn"
@@ -43,17 +50,14 @@ import { Icon } from './icon';
           </a>
         </div>
       </div>
-      <p class="text-sm font-medium text-accent-ink">{{ k.meaning }}</p>
+      <p class="topic-text text-sm font-semibold">{{ k.meaning }}</p>
       @if (!compact()) {
         <p class="text-sm leading-relaxed text-muted">{{ k.definition }}</p>
       }
       @if (showPlaybooks() && playbooks().length) {
         <div class="mt-auto flex flex-wrap gap-1.5 pt-2">
           @for (p of playbooks(); track p.id) {
-            <a
-              [routerLink]="['/playbooks', p.id]"
-              class="chip hover:border-accent hover:text-accent-ink"
-            >
+            <a [routerLink]="['/playbooks', p.id]" class="chip hover:!text-ink">
               <app-icon name="book" [size]="12" />{{ p.title }}
             </a>
           }
@@ -65,10 +69,13 @@ import { Icon } from './icon';
 export class KeywordCard {
   protected readonly clipboard = inject(ClipboardService);
   private readonly kb = inject(KnowledgeService);
+  private readonly cards = inject(FlashcardStore);
   readonly keyword = input.required<Keyword>();
   readonly compact = input(false);
   readonly showPlaybooks = input(true);
 
+  protected readonly vars = computed(() => topicVars(this.keyword().topicId));
+  protected readonly known = computed(() => this.cards.isKnown(this.keyword().id));
   protected readonly copied = computed(
     () => this.clipboard.lastCopied() === 'kw:' + this.keyword().id,
   );

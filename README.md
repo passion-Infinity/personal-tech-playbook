@@ -18,8 +18,12 @@ viewer that you can host for free and install on Windows, macOS, Android and iOS
 | **Navigation** | Sidebar on desktop; top bar + slide-over drawer + bottom tab bar on mobile. Playbook / Search Hook counts, topic filters, dark/light toggle, **Install App** button. |
 | **Global search** | `Ctrl/⌘ + K` (or `/`) command palette. Client-side, diacritic-insensitive search over titles, summaries, English terms, Vietnamese meanings, definitions and topics. |
 | **Reader** | Topic badge, title, updated date, 1-sentence summary, rendered Markdown with Mermaid diagrams, highlighted code with copy buttons, compact tables, auto Table of Contents (desktop), Search Hooks with copy + Google search. |
+| **Flashcards** | Ôn Search Hooks bằng thẻ lật 3D: term tiếng Anh ở mặt trước, nghĩa + definition ở mặt sau. Lọc theo topic hoặc playbook, shuffle, "chỉ thẻ chưa nhớ", phím `←` `Space` `→`, vuốt trên mobile. Tiến độ "đã nhớ" lưu trên thiết bị (localStorage). |
 | **Keywords directory** | Searchable, topic-filterable list of every Search Hook with copy, Google shortcut and links to its playbooks. |
 | **PWA** | Installable (`display: standalone`), 100% offline, "New knowledge update available — Reload" toast, iOS "Share → Add to Home Screen" guide. |
+
+Design: **Aurora Glass** — deep-space background with animated aurora, glassmorphism cards, a colour + icon
+identity per topic, self-hosted Inter / Space Grotesk / JetBrains Mono (work offline), light & dark.
 
 Stack: Angular 22 (standalone components, signals, `HttpClient`, Router, `@angular/service-worker`),
 Tailwind CSS 4 + Typography, `marked`, `highlight.js`, `mermaid` (lazy-loaded).

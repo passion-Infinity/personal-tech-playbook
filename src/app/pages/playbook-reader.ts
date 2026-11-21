@@ -14,71 +14,106 @@ import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { ClipboardService } from '../core/clipboard.service';
+import { FlashcardStore } from '../core/flashcard.store';
 import { KnowledgeService } from '../core/knowledge.service';
 import { MarkdownService, renderMermaid } from '../core/markdown.service';
 import { Keyword, TocEntry } from '../core/models';
 import { ThemeService } from '../core/theme.service';
+import { topicStyle, topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
 import { KeywordCard } from '../shared/keyword-card';
 
 type Doc =
   | { state: 'loading' }
   | { state: 'error' }
-  | { state: 'ready'; html: SafeHtml; toc: TocEntry[]; hasMermaid: boolean };
+  | { state: 'ready'; html: SafeHtml; toc: TocEntry[]; hasMermaid: boolean; minutes: number };
 
 @Component({
   selector: 'app-playbook-reader',
   imports: [RouterLink, Icon, KeywordCard],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(window:scroll)': 'onScroll()', '(window:resize)': 'onScroll()' },
   template: `
+    <div
+      class="fixed inset-x-0 top-0 z-40 h-1 lg:left-72"
+      [style]="vars(playbook()?.topicId)"
+      aria-hidden="true"
+    >
+      <div class="progress-fill !rounded-none" [style.width.%]="progress()"></div>
+    </div>
+
     @if (!kb.loaded()) {
-      <div class="h-64 animate-pulse rounded-xl bg-surface"></div>
+      <div class="glass h-64 animate-pulse rounded-3xl"></div>
     } @else if (!playbook()) {
       <div class="py-20 text-center">
-        <h1 class="text-2xl font-bold text-ink">Playbook not found</h1>
-        <a routerLink="/" class="btn-primary mt-6 inline-flex">Back to all playbooks</a>
+        <h1 class="text-2xl font-bold">Playbook not found</h1>
+        <a routerLink="/" class="btn-primary mt-6">Back to all playbooks</a>
       </div>
     } @else {
       @let p = playbook()!;
-      <div class="xl:grid xl:grid-cols-[minmax(0,1fr)_14rem] xl:gap-10">
+      <div class="xl:grid xl:grid-cols-[minmax(0,1fr)_15rem] xl:gap-10" [style]="vars(p.topicId)">
         <article class="min-w-0">
           <a
             routerLink="/"
+            [queryParams]="{ topic: p.topicId }"
             class="mb-4 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
           >
-            <app-icon name="arrowLeft" [size]="14" /> All playbooks
+            <app-icon name="arrowLeft" [size]="14" /> {{ topic()?.name ?? 'All playbooks' }}
           </a>
-          <header class="mb-8 border-b border-line pb-6">
-            <div class="mb-3 flex flex-wrap items-center gap-3 text-sm">
-              <a routerLink="/" [queryParams]="{ topic: p.topicId }" class="badge hover:opacity-80">
-                {{ topic()?.name ?? p.topicId }}
-              </a>
-              <span class="inline-flex items-center gap-1.5 text-muted">
-                <app-icon name="calendar" [size]="14" />
-                Updated <time [attr.datetime]="p.updatedAt">{{ p.updatedAt }}</time>
-              </span>
+
+          <header class="glass fade-up relative mb-10 overflow-hidden rounded-3xl p-6 sm:p-8">
+            <div
+              class="topic-gradient pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full opacity-30 blur-3xl"
+            ></div>
+            <div
+              class="topic-gradient pointer-events-none absolute -bottom-32 -left-10 h-56 w-56 rounded-full opacity-15 blur-3xl"
+            ></div>
+            <div class="relative">
+              <div class="mb-4 flex flex-wrap items-center gap-3 text-sm">
+                <a
+                  routerLink="/"
+                  [queryParams]="{ topic: p.topicId }"
+                  class="badge hover:opacity-90"
+                >
+                  <app-icon [name]="style(p.topicId).icon" [size]="13" />
+                  {{ topic()?.name ?? p.topicId }}
+                </a>
+                <span class="inline-flex items-center gap-1.5 text-muted">
+                  <app-icon name="calendar" [size]="14" />
+                  <time [attr.datetime]="p.updatedAt">{{ p.updatedAt }}</time>
+                </span>
+                @if (minutes()) {
+                  <span class="inline-flex items-center gap-1.5 text-muted">
+                    <app-icon name="clock" [size]="14" /> {{ minutes() }} phút đọc
+                  </span>
+                }
+              </div>
+              <h1 class="text-3xl font-bold leading-tight sm:text-[2.6rem]">{{ p.title }}</h1>
+              <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink/80">{{ p.summary }}</p>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <a routerLink="/flashcards" [queryParams]="{ playbook: p.id }" class="btn-primary">
+                  <app-icon name="cards" [size]="16" /> Ôn {{ hooks().length }} hooks
+                </a>
+                <span
+                  class="glass inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted"
+                >
+                  <app-icon name="brain" [size]="16" />
+                  Đã nhớ {{ knownHooks() }}/{{ hooks().length }}
+                </span>
+              </div>
             </div>
-            <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{{ p.title }}</h1>
-            <p class="mt-3 border-l-4 border-accent pl-4 text-lg leading-relaxed text-ink/80">
-              {{ p.summary }}
-            </p>
           </header>
 
           @switch (doc().state) {
             @case ('loading') {
               <div class="space-y-3">
                 @for (i of [1, 2, 3, 4, 5]; track i) {
-                  <div
-                    class="h-4 animate-pulse rounded bg-surface"
-                    [style.width.%]="100 - i * 9"
-                  ></div>
+                  <div class="glass h-4 animate-pulse rounded" [style.width.%]="100 - i * 9"></div>
                 }
               </div>
             }
             @case ('error') {
-              <p
-                class="rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-600 dark:text-red-300"
-              >
+              <p class="glass rounded-2xl p-4 text-sm text-red-500">
                 Could not load <code>{{ p.filePath }}</code
                 >. If you are offline, open the app once online so the library can be cached.
               </p>
@@ -94,15 +129,27 @@ type Doc =
           }
 
           @if (hooks().length) {
-            <section class="mt-12 border-t border-line pt-8" aria-labelledby="hooks-title">
-              <div class="mb-4 flex items-center justify-between gap-3">
-                <h2 id="hooks-title" class="flex items-center gap-2 text-lg font-semibold text-ink">
-                  <app-icon name="hash" class="text-accent-ink" /> Search Hooks
+            <section class="mt-14" aria-labelledby="hooks-title">
+              <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h2 id="hooks-title" class="flex items-center gap-2 text-xl font-semibold">
+                  <span class="topic-tile h-8 w-8 !rounded-lg"
+                    ><app-icon name="hash" [size]="16"
+                  /></span>
+                  Search Hooks
                 </h2>
-                <button type="button" class="btn-secondary text-xs" (click)="copyAll()">
-                  <app-icon [name]="copiedAll() ? 'check' : 'copy'" [size]="14" />
-                  {{ copiedAll() ? 'Copied' : 'Copy all' }}
-                </button>
+                <div class="flex gap-2">
+                  <button type="button" class="btn-secondary !py-2 text-xs" (click)="copyAll()">
+                    <app-icon [name]="copiedAll() ? 'check' : 'copy'" [size]="14" />
+                    {{ copiedAll() ? 'Copied' : 'Copy all' }}
+                  </button>
+                  <a
+                    routerLink="/flashcards"
+                    [queryParams]="{ playbook: p.id }"
+                    class="btn-primary !py-2 text-xs"
+                  >
+                    <app-icon name="cards" [size]="14" /> Flashcards
+                  </a>
+                </div>
               </div>
               <div class="grid gap-3 sm:grid-cols-2">
                 @for (k of hooks(); track k.id) {
@@ -111,35 +158,65 @@ type Doc =
               </div>
             </section>
           }
+
+          @if (prev() || next()) {
+            <nav class="mt-12 grid gap-3 sm:grid-cols-2" aria-label="Playbook navigation">
+              @if (prev(); as pr) {
+                <a [routerLink]="['/playbooks', pr.id]" class="glass glass-hover rounded-2xl p-4">
+                  <span class="flex items-center gap-1 text-xs text-muted">
+                    <app-icon name="chevronLeft" [size]="14" /> Bài trước
+                  </span>
+                  <span class="mt-1 block font-semibold">{{ pr.title }}</span>
+                </a>
+              } @else {
+                <span class="hidden sm:block"></span>
+              }
+              @if (next(); as nx) {
+                <a
+                  [routerLink]="['/playbooks', nx.id]"
+                  class="glass glass-hover rounded-2xl p-4 text-right"
+                >
+                  <span class="flex items-center justify-end gap-1 text-xs text-muted">
+                    Bài tiếp theo <app-icon name="chevronRight" [size]="14" />
+                  </span>
+                  <span class="mt-1 block font-semibold">{{ nx.title }}</span>
+                </a>
+              }
+            </nav>
+          }
         </article>
 
         @if (toc().length) {
           <aside class="hidden xl:block">
-            <nav class="sticky top-6 text-sm" aria-label="Table of contents">
-              <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">
-                On this page
-              </p>
-              <ul class="space-y-1 border-l border-line">
+            <nav class="glass sticky top-8 rounded-2xl p-4 text-sm" aria-label="Table of contents">
+              <p class="eyebrow mb-3">On this page</p>
+              <ul class="space-y-0.5">
                 @for (t of toc(); track t.id) {
                   <li>
                     <a
                       [href]="'#' + t.id"
                       (click)="scrollTo($event, t.id)"
-                      class="-ml-px block border-l-2 py-1 transition-colors"
+                      class="block rounded-lg py-1.5 pr-2 transition-colors"
                       [class.pl-3]="t.level === 2"
                       [class.pl-6]="t.level === 3"
-                      [class.border-accent]="activeId() === t.id"
-                      [class.text-accent-ink]="activeId() === t.id"
-                      [class.border-transparent]="activeId() !== t.id"
+                      [class.nav-active]="activeId() === t.id"
                       [class.text-muted]="activeId() !== t.id"
                       >{{ t.text }}</a
                     >
                   </li>
                 }
               </ul>
+              <div class="mt-4 border-t border-line pt-3">
+                <div class="mb-1 flex justify-between text-xs text-muted">
+                  <span>Tiến độ đọc</span><span>{{ roundedProgress() }}%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" [style.width.%]="progress()"></div>
+                </div>
+              </div>
               <button
                 type="button"
-                class="mt-4 text-xs text-muted hover:text-ink"
+                class="mt-3 text-xs text-muted hover:text-ink"
                 (click)="scrollTop()"
               >
                 ↑ Back to top
@@ -156,11 +233,15 @@ export class PlaybookReader {
   private readonly md = inject(MarkdownService);
   private readonly theme = inject(ThemeService);
   private readonly clipboard = inject(ClipboardService);
+  private readonly cards = inject(FlashcardStore);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly title = inject(Title);
   private readonly route = inject(ActivatedRoute);
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
   private observer?: IntersectionObserver;
+
+  protected readonly style = topicStyle;
+  protected readonly vars = topicVars;
 
   private readonly id = toSignal(this.route.paramMap.pipe(map((p) => p.get('id') ?? '')), {
     initialValue: '',
@@ -175,6 +256,24 @@ export class PlaybookReader {
     const byId = this.kb.keywordById();
     return p ? p.keywordIds.map((id) => byId.get(id)).filter((k): k is Keyword => !!k) : [];
   });
+  protected readonly knownHooks = computed(() =>
+    this.cards.knownCount(this.hooks().map((k) => k.id)),
+  );
+
+  private readonly siblings = computed(() => {
+    const p = this.playbook();
+    return p ? this.kb.sortedPlaybooks().filter((x) => x.topicId === p.topicId) : [];
+  });
+  protected readonly prev = computed(() => {
+    const list = this.siblings();
+    const i = list.findIndex((x) => x.id === this.id());
+    return i > 0 ? list[i - 1] : undefined;
+  });
+  protected readonly next = computed(() => {
+    const list = this.siblings();
+    const i = list.findIndex((x) => x.id === this.id());
+    return i >= 0 && i < list.length - 1 ? list[i + 1] : undefined;
+  });
 
   protected readonly doc = toSignal(
     toObservable(computed(() => this.playbook()?.filePath)).pipe(
@@ -188,6 +287,7 @@ export class PlaybookReader {
               html: this.sanitizer.bypassSecurityTrustHtml(r.html),
               toc: r.toc,
               hasMermaid: r.hasMermaid,
+              minutes: r.minutes,
             };
           }),
           catchError(() => of<Doc>({ state: 'error' })),
@@ -205,7 +305,13 @@ export class PlaybookReader {
     const d = this.doc();
     return d.state === 'ready' ? d.toc : [];
   });
+  protected readonly minutes = computed(() => {
+    const d = this.doc();
+    return d.state === 'ready' ? d.minutes : 0;
+  });
   protected readonly activeId = signal<string | null>(null);
+  protected readonly progress = signal(0);
+  protected readonly roundedProgress = computed(() => Math.round(this.progress()));
   protected readonly copiedAll = computed(
     () => this.clipboard.lastCopied() === 'hooks:' + this.playbook()?.id,
   );
@@ -224,9 +330,16 @@ export class PlaybookReader {
       if (!el || d.state !== 'ready') return;
       if (d.hasMermaid) void renderMermaid(el, dark);
       this.observeHeadings(el);
+      setTimeout(() => this.onScroll());
     });
 
     inject(DestroyRef).onDestroy(() => this.observer?.disconnect());
+  }
+
+  protected onScroll(): void {
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    this.progress.set(max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0);
   }
 
   private observeHeadings(el: HTMLElement): void {
