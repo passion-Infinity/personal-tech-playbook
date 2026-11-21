@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { ClipboardService } from '../core/clipboard.service';
 import { FlashcardStore } from '../core/flashcard.store';
@@ -233,6 +233,35 @@ type Doc =
             </section>
           }
 
+          <section
+            class="glass mt-12 flex flex-wrap items-center gap-3 rounded-2xl p-4 sm:p-5"
+            aria-label="Finish lesson"
+          >
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold">
+                {{ isRead() ? 'Bạn đã đọc bài này' : 'Đã hiểu bài này?' }}
+              </p>
+              <p class="text-sm text-muted">
+                {{
+                  isRead()
+                    ? 'Ôn lại bằng câu hỏi để nhớ lâu hơn.'
+                    : 'Đánh dấu đã đọc để mở khoá bài tiếp theo và đưa câu hỏi vào Daily Drill.'
+                }}
+              </p>
+            </div>
+            @if (!isRead()) {
+              <button type="button" class="btn-secondary" (click)="toggleRead()">
+                <app-icon name="check" [size]="16" /> Đánh dấu đã đọc
+              </button>
+            }
+            @if (next(); as nx) {
+              <button type="button" class="btn-primary" (click)="finishAndNext(nx.id)">
+                {{ isRead() ? 'Bài tiếp theo' : 'Đã đọc & bài tiếp' }}
+                <app-icon name="arrowRight" [size]="16" />
+              </button>
+            }
+          </section>
+
           @if (prev() || next()) {
             <nav class="mt-12 grid gap-3 sm:grid-cols-2" aria-label="Playbook navigation">
               @if (prev(); as pr) {
@@ -311,6 +340,7 @@ export class PlaybookReader {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly title = inject(Title);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
   private observer?: IntersectionObserver;
 
@@ -485,6 +515,11 @@ export class PlaybookReader {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     this.activeId.set(id);
     history.replaceState(history.state, '', `${location.pathname}${location.search}#${id}`);
+  }
+
+  protected finishAndNext(nextId: string): void {
+    this.learning.setRead(this.id(), true);
+    void this.router.navigate(['/playbooks', nextId]).then(() => window.scrollTo({ top: 0 }));
   }
 
   protected toggleRead(): void {

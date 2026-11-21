@@ -114,7 +114,7 @@ type NodeState = 'read' | 'ready' | 'waiting';
     @if (!kb.loaded()) {
       <div class="glass h-64 animate-pulse rounded-3xl"></div>
     } @else {
-      <div class="-mx-4 overflow-x-auto px-4 pb-6 sm:mx-0 sm:px-0">
+      <div class="-mx-4 overflow-x-auto px-4 pb-6 sm:mx-0 sm:px-0 [scrollbar-gutter:auto]">
         <div
           #wrap
           class="relative flex flex-col gap-8 lg:inline-flex lg:min-w-full lg:flex-row lg:gap-16"

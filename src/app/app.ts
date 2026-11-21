@@ -122,7 +122,7 @@ import { SearchPalette } from './shared/search-palette';
         </button>
       </div>
 
-      <nav class="flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Main">
+      <nav class="scroll-soft flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Main">
         <p class="eyebrow mb-2 px-3 !text-muted">Learn</p>
         <a
           routerLink="/"
@@ -378,10 +378,17 @@ export class App {
   });
 
   constructor() {
-    // Keep the topic you are reading expanded in the sidebar.
+    // Keep the topic you are reading expanded in the sidebar, and its active lesson in view.
     effect(() => {
       const t = this.activeTopic();
+      const active = this.activePlaybookId();
       if (t) untracked(() => this.openTopics.update((s) => (s.has(t) ? s : new Set(s).add(t))));
+      if (active) {
+        setTimeout(
+          () => document.querySelector('aside .sub-active')?.scrollIntoView({ block: 'nearest' }),
+          80,
+        );
+      }
     });
   }
 

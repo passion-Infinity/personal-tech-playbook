@@ -47,7 +47,7 @@ import { Icon } from './icon';
             />
             <kbd class="kbd hidden sm:inline-flex">Esc</kbd>
           </div>
-          <ul id="palette-results" class="overflow-y-auto p-2" role="listbox">
+          <ul id="palette-results" class="scroll-soft overflow-y-auto p-2" role="listbox">
             @if (!ui.paletteQuery().trim()) {
               <li class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted">
                 Recent playbooks
