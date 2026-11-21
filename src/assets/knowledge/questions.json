@@ -4593,5 +4593,517 @@
       "Biết nhanh dịch vụ nào bị ảnh hưởng",
       "Ưu tiên vá nhanh"
     ]
+  },
+  {
+    "id": "data-structures-complexity-01",
+    "playbookId": "data-structures-complexity",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Độ phức tạp trung bình của tìm kiếm trong hash map?",
+    "options": [
+      "O(n)",
+      "O(1)",
+      "O(log n)",
+      "O(n log n)"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Trung bình O(1), xấu nhất O(n) khi va chạm nhiều."
+  },
+  {
+    "id": "data-structures-complexity-02",
+    "playbookId": "data-structures-complexity",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần lấy dữ liệu theo thứ tự khoá và truy vấn khoảng. Chọn cấu trúc nào?",
+    "options": [
+      "Hash map",
+      "Cây cân bằng (hoặc B-Tree)",
+      "Linked list",
+      "Stack"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cây cân bằng có thứ tự và hỗ trợ range query với O(log n)."
+  },
+  {
+    "id": "data-structures-complexity-03",
+    "playbookId": "data-structures-complexity",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Một vòng lặp gọi list.contains() trên list lớn mỗi vòng có độ phức tạp tổng?",
+    "options": [
+      "O(n)",
+      "O(n²)",
+      "O(log n)",
+      "O(1)"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Vòng lặp O(n) nhân thao tác O(n) thành bậc hai; nên dùng set."
+  },
+  {
+    "id": "data-structures-complexity-04",
+    "playbookId": "data-structures-complexity",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào array thắng linked list trong thực tế dù cùng độ phức tạp?",
+    "modelAnswer": "Array lưu liên tiếp trong bộ nhớ nên thân thiện với cache CPU và prefetch, truy cập theo chỉ số O(1), trong khi linked list nhảy con trỏ làm cache miss liên tục. Vì vậy với dữ liệu nhỏ và vừa array thường nhanh hơn dù lý thuyết chèn giữa của linked list tốt hơn.",
+    "keyPoints": [
+      "Locality của cache CPU",
+      "Truy cập chỉ số O(1)",
+      "Linked list nhảy con trỏ gây cache miss"
+    ]
+  },
+  {
+    "id": "memory-management-gc-01",
+    "playbookId": "memory-management-gc",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Với GC, object bị thu hồi khi nào?",
+    "options": [
+      "Khi hết hàm",
+      "Khi không còn truy cập được từ GC roots",
+      "Khi gọi free()",
+      "Sau 1 phút"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "GC dựa trên khả năng truy cập từ roots như biến stack, static, thread."
+  },
+  {
+    "id": "memory-management-gc-02",
+    "playbookId": "memory-management-gc",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Heap ứng dụng tăng dần dù có GC. Nguyên nhân khả dĩ?",
+    "options": [
+      "GC hỏng",
+      "Giữ tham chiếu không cần thiết như cache không giới hạn",
+      "Dùng quá nhiều thread",
+      "CPU thấp"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Rò rỉ logic: GC không thu hồi object vẫn còn được tham chiếu."
+  },
+  {
+    "id": "memory-management-gc-03",
+    "playbookId": "memory-management-gc",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Container Java bị OOMKilled dù -Xmx nhỏ hơn memory limit. Vì sao?",
+    "options": [
+      "Heap không tính vào limit",
+      "Tổng gồm heap, metaspace, thread stack và native vượt limit",
+      "Kubernetes lỗi",
+      "GC chạy quá ít"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Memory limit tính toàn bộ tiến trình, không chỉ heap."
+  },
+  {
+    "id": "memory-management-gc-04",
+    "playbookId": "memory-management-gc",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao generational GC hiệu quả?",
+    "modelAnswer": "Dựa trên giả thuyết hầu hết object chết trẻ, heap chia thành young và old. Young được thu gom thường xuyên với chi phí thấp vì ít object sống sót, chỉ object sống lâu mới được đưa sang old và thu gom hiếm hơn nên tổng công việc GC giảm.",
+    "keyPoints": [
+      "Hầu hết object chết trẻ",
+      "Young thu gom thường xuyên và rẻ",
+      "Old thu gom hiếm"
+    ]
+  },
+  {
+    "id": "io-models-async-event-loop-01",
+    "playbookId": "io-models-async-event-loop",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một lời gọi blocking trong event loop gây hậu quả gì?",
+    "options": [
+      "Không ảnh hưởng",
+      "Chặn mọi kết nối khác dùng cùng loop",
+      "Tăng tốc",
+      "Tự tạo thread mới"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Event loop đơn luồng nên một thao tác chặn làm cả server đứng hình."
+  },
+  {
+    "id": "io-models-async-event-loop-02",
+    "playbookId": "io-models-async-event-loop",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Async/await cải thiện nhiều nhất cho loại tải nào?",
+    "options": [
+      "CPU-bound",
+      "I/O-bound",
+      "Cả hai như nhau",
+      "Không loại nào"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Async chỉ giúp khi phần lớn thời gian là chờ I/O."
+  },
+  {
+    "id": "io-models-async-event-loop-03",
+    "playbookId": "io-models-async-event-loop",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Node.js xử lý tác vụ CPU nặng ra sao để không chặn loop?",
+    "options": [
+      "Để trong loop",
+      "Đẩy sang worker thread hoặc tiến trình riêng",
+      "Tăng timeout",
+      "Tắt event loop"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "CPU-bound cần thread pool riêng."
+  },
+  {
+    "id": "io-models-async-event-loop-04",
+    "playbookId": "io-models-async-event-loop",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích vì sao epoll giúp xử lý được hàng chục nghìn kết nối với ít thread.",
+    "modelAnswer": "Thay vì mỗi kết nối một thread chặn, epoll cho phép một thread đăng ký nhiều socket và nhờ kernel báo chỉ những socket nào đã sẵn sàng đọc hoặc ghi. Thread chỉ xử lý các socket sẵn sàng nên không phí thời gian và bộ nhớ cho các kết nối đang chờ.",
+    "keyPoints": [
+      "Một thread theo dõi nhiều socket",
+      "Kernel báo socket sẵn sàng",
+      "Không tốn thread cho kết nối đang chờ"
+    ]
+  },
+  {
+    "id": "linux-debugging-toolbox-01",
+    "playbookId": "linux-debugging-toolbox",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Load average cao nhưng CPU rảnh gợi ý điều gì?",
+    "options": [
+      "Thiếu RAM luôn luôn",
+      "Nhiều tiến trình đang chờ I/O",
+      "CPU hỏng",
+      "Mạng tốt"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Load gồm cả tiến trình ở trạng thái chờ I/O."
+  },
+  {
+    "id": "linux-debugging-toolbox-02",
+    "playbookId": "linux-debugging-toolbox",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "df -h còn trống nhưng không tạo được file mới. Kiểm tra gì?",
+    "options": [
+      "df -i để xem hết inode",
+      "free -m",
+      "ping",
+      "uptime"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Hết inode làm không tạo được file dù còn dung lượng."
+  },
+  {
+    "id": "linux-debugging-toolbox-03",
+    "playbookId": "linux-debugging-toolbox",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Muốn biết tiến trình đang chờ system call nào, dùng?",
+    "options": [
+      "top",
+      "strace -p <pid>",
+      "df",
+      "uname"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "strace thấy syscall tiến trình đang thực hiện hoặc bị treo."
+  },
+  {
+    "id": "linux-debugging-toolbox-04",
+    "playbookId": "linux-debugging-toolbox",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Mô tả quy trình chẩn đoán khi server chậm theo phương pháp USE.",
+    "modelAnswer": "Kiểm tra từng tài nguyên về Utilization, Saturation và Errors: CPU (top, vmstat), bộ nhớ (free, dmesg cho OOM), đĩa (iostat, df -i) và mạng (ss, tcpdump). Xác định tài nguyên nào bão hoà, rồi đào sâu vào tiến trình gây ra bằng strace, lsof hoặc profiler thay vì đoán hay khởi động lại ngay.",
+    "keyPoints": [
+      "USE cho từng tài nguyên",
+      "Tìm tài nguyên bão hoà",
+      "Đào sâu vào tiến trình, không restart vội"
+    ]
+  },
+  {
+    "id": "time-timezones-clocks-01",
+    "playbookId": "time-timezones-clocks",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Nên lưu thời điểm sự kiện trong DB thế nào?",
+    "options": [
+      "Giờ địa phương không kèm múi giờ",
+      "UTC (timestamptz hoặc epoch)",
+      "Chuỗi dd/mm/yyyy",
+      "Offset cố định +07:00"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "UTC là điểm tuyệt đối, chuyển múi giờ khi hiển thị."
+  },
+  {
+    "id": "time-timezones-clocks-02",
+    "playbookId": "time-timezones-clocks",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Đo thời gian chạy một hàm nên dùng đồng hồ nào?",
+    "options": [
+      "Wall clock",
+      "Monotonic clock",
+      "Đồng hồ máy khác",
+      "Không cần"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Wall clock có thể nhảy; monotonic chỉ tiến."
+  },
+  {
+    "id": "time-timezones-clocks-03",
+    "playbookId": "time-timezones-clocks",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cron chạy theo giờ địa phương vào ngày chuyển DST có thể gây gì?",
+    "options": [
+      "Không ảnh hưởng",
+      "Chạy 0 hoặc 2 lần",
+      "Chạy nhanh hơn",
+      "Mất log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giờ có thể không tồn tại hoặc xuất hiện hai lần; nên chạy theo UTC."
+  },
+  {
+    "id": "time-timezones-clocks-04",
+    "playbookId": "time-timezones-clocks",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao không nên lưu offset +07:00 thay cho tên múi giờ?",
+    "modelAnswer": "Offset chỉ là giá trị tại một thời điểm, không mã hoá luật DST hay thay đổi luật múi giờ trong tương lai của vùng, nên không thể tính đúng các thời điểm khác. Tên múi giờ IANA gắn với cơ sở dữ liệu luật nên tính được offset đúng cho từng ngày.",
+    "keyPoints": [
+      "Offset không có luật DST",
+      "Luật múi giờ có thể đổi",
+      "IANA tính offset theo từng ngày"
+    ]
+  },
+  {
+    "id": "sql-query-optimization-advanced-01",
+    "playbookId": "sql-query-optimization-advanced",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Điều kiện nào không sargable (không dùng được index trên created_at)?",
+    "options": [
+      "created_at >= ?",
+      "date(created_at) = ?",
+      "created_at BETWEEN ? AND ?",
+      "created_at < ?"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Bọc hàm quanh cột làm mất index; viết lại thành khoảng."
+  },
+  {
+    "id": "sql-query-optimization-advanced-02",
+    "playbookId": "sql-query-optimization-advanced",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "EXPLAIN cho thấy ước lượng 10 hàng nhưng thực tế 5 triệu. Nên làm gì?",
+    "options": [
+      "Bỏ qua",
+      "Cập nhật thống kê (ANALYZE) và kiểm tra tương quan cột",
+      "Thêm RAM",
+      "Đổi sang NoSQL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ước lượng sai làm planner chọn kế hoạch sai."
+  },
+  {
+    "id": "sql-query-optimization-advanced-03",
+    "playbookId": "sql-query-optimization-advanced",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "NOT IN (subquery) trả về tập rỗng bất ngờ khi subquery có NULL. Thay bằng?",
+    "options": [
+      "IN",
+      "NOT EXISTS",
+      "LIKE",
+      "UNION"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "NOT IN với NULL cho logic ba trị; NOT EXISTS an toàn."
+  },
+  {
+    "id": "sql-query-optimization-advanced-04",
+    "playbookId": "sql-query-optimization-advanced",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao OFFSET lớn chậm và keyset tốt hơn?",
+    "modelAnswer": "OFFSET N buộc DB đọc rồi bỏ N hàng nên chi phí tăng theo trang và kết quả lệch khi dữ liệu thay đổi giữa các lần gọi. Keyset dùng điều kiện trên khoá sắp xếp của hàng cuối trang trước nên tận dụng index, chi phí gần như hằng số và ổn định.",
+    "keyPoints": [
+      "OFFSET quét rồi bỏ hàng",
+      "Keyset dùng index",
+      "Kết quả ổn định"
+    ]
+  },
+  {
+    "id": "orm-data-access-pitfalls-01",
+    "playbookId": "orm-data-access-pitfalls",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Danh sách 100 đơn, mỗi đơn truy cập items lazy sinh bao nhiêu truy vấn?",
+    "options": [
+      "1",
+      "2",
+      "101",
+      "100"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "1 truy vấn danh sách + 100 truy vấn items = N+1."
+  },
+  {
+    "id": "orm-data-access-pitfalls-02",
+    "playbookId": "orm-data-access-pitfalls",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách khắc phục N+1 phổ biến?",
+    "options": [
+      "Thêm cache toàn cục",
+      "Dùng JOIN FETCH / prefetch hoặc projection",
+      "Tăng pool",
+      "Tắt lazy hoàn toàn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Nạp quan hệ có chủ đích bằng một vài truy vấn."
+  },
+  {
+    "id": "orm-data-access-pitfalls-03",
+    "playbookId": "orm-data-access-pitfalls",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Vì sao không nên bao cả lời gọi HTTP ngoài trong một transaction DB?",
+    "options": [
+      "Không có vấn đề",
+      "Giữ kết nối DB lâu, cạn pool và kéo dài khoá",
+      "Làm HTTP chậm hơn",
+      "Tự rollback"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Transaction nên ngắn, chỉ chứa thao tác DB."
+  },
+  {
+    "id": "orm-data-access-pitfalls-04",
+    "playbookId": "orm-data-access-pitfalls",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "ORM có chậm không?",
+    "modelAnswer": "ORM không chậm tự thân mà chậm do cách dùng như N+1, nạp thừa dữ liệu, transaction quá rộng hoặc xử lý hàng loạt từng dòng. Cần xem SQL được sinh ra, dùng fetch join và projection, batch khi ghi, và dùng SQL thuần cho báo cáo hoặc bulk lớn.",
+    "keyPoints": [
+      "Chậm do cách dùng",
+      "Theo dõi SQL được sinh",
+      "SQL thuần cho báo cáo/bulk"
+    ]
+  },
+  {
+    "id": "realtime-websocket-sse-01",
+    "playbookId": "realtime-websocket-sse",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần đẩy thông báo một chiều từ server, đơn giản và tự reconnect. Chọn?",
+    "options": [
+      "WebSocket",
+      "Server-Sent Events",
+      "Short polling mỗi giây",
+      "Không có"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SSE phù hợp đẩy một chiều qua HTTP thường."
+  },
+  {
+    "id": "realtime-websocket-sse-02",
+    "playbookId": "realtime-websocket-sse",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Kết nối WebSocket rảnh bị đứt sau khoảng 60 giây. Nguyên nhân thường gặp và cách xử lý?",
+    "options": [
+      "Server hỏng",
+      "Proxy/LB cắt kết nối rảnh; gửi heartbeat định kỳ",
+      "Client sai",
+      "DNS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ping/pong giữ kết nối sống qua các proxy."
+  },
+  {
+    "id": "realtime-websocket-sse-03",
+    "playbookId": "realtime-websocket-sse",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai người dùng kết nối vào hai node khác nhau. Cách gửi tin giữa họ?",
+    "options": [
+      "Không thể",
+      "Dùng pub/sub backplane (Redis, Kafka) giữa các node",
+      "Dùng cookie",
+      "Dùng DNS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Node nhận tin phát lên backplane để node chứa kết nối người nhận đẩy xuống."
+  },
+  {
+    "id": "realtime-websocket-sse-04",
+    "playbookId": "realtime-websocket-sse",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao reconnect storm nguy hiểm và cách giảm?",
+    "modelAnswer": "Khi server khởi động lại hoặc sự cố, hàng triệu client mất kết nối và kết nối lại cùng lúc làm quá tải server dù đã hồi phục. Giảm bằng exponential backoff có jitter ở client, giới hạn tốc độ chấp nhận kết nối ở server và drain từ từ khi deploy.",
+    "keyPoints": [
+      "Hàng loạt client kết nối cùng lúc",
+      "Backoff và jitter phía client",
+      "Giới hạn chấp nhận kết nối, drain khi deploy"
+    ]
   }
 ]

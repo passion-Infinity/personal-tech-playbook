@@ -2980,5 +2980,285 @@
     "meaning": "Cài đúng bản đã kiểm duyệt",
     "definition": "Lockfile ghim phiên bản; CI dùng npm ci để không kéo bản mới ngoài ý muốn.",
     "topicId": "security"
+  },
+  {
+    "id": "big-o-notation",
+    "term": "Big-O Notation (Time and Space)",
+    "meaning": "Cách chi phí tăng theo kích thước đầu vào",
+    "definition": "Mô tả bậc tăng trưởng, không phải thời gian tuyệt đối; phân biệt trung bình và xấu nhất.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "hash-table-collisions",
+    "term": "Hash Table and Collision Resolution",
+    "meaning": "Bảng băm và xử lý va chạm",
+    "definition": "Tìm kiếm trung bình O(1), xấu nhất O(n); khoá do người dùng kiểm soát có thể gây hash flooding.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "heap-priority-queue",
+    "term": "Heap and Priority Queue (Top-K)",
+    "meaning": "Lấy phần tử ưu tiên hiệu quả",
+    "definition": "Lấy min hoặc max O(1), thêm và xoá O(log n); dùng cho scheduler và top-K.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "topological-sort",
+    "term": "Topological Sort and Dependency Graphs",
+    "meaning": "Sắp xếp theo thứ tự phụ thuộc",
+    "definition": "Dùng cho build order, task dependency và đồ thị tiên quyết.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "amortized-analysis",
+    "term": "Amortized Analysis (Dynamic Array)",
+    "meaning": "Chi phí trung bình của thao tác",
+    "definition": "Thêm cuối dynamic array là O(1) trung bình dù thỉnh thoảng phải cấp phát lại.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "stack-vs-heap",
+    "term": "Stack vs Heap Memory",
+    "meaning": "Hai vùng bộ nhớ và vòng đời",
+    "definition": "Stack tự động theo lời gọi hàm, nhanh và giới hạn; heap cho object sống lâu hơn một lần gọi.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "generational-gc",
+    "term": "Generational Garbage Collection",
+    "meaning": "Thu gom theo thế hệ",
+    "definition": "Hầu hết object chết trẻ nên young generation thu gom thường xuyên và rẻ, old generation hiếm và đắt.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "stop-the-world-pauses",
+    "term": "Stop-the-World Pauses (ZGC, G1)",
+    "meaning": "Tạm dừng của GC",
+    "definition": "GC độ trễ thấp giảm thời gian dừng bằng cách làm việc đồng thời với ứng dụng.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "gc-memory-leak",
+    "term": "Memory Leaks in Garbage-Collected Languages",
+    "meaning": "Rò rỉ do giữ tham chiếu",
+    "definition": "Object còn được tham chiếu không cần thiết như cache không giới hạn hoặc listener không gỡ.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "rust-ownership",
+    "term": "Rust Ownership and Borrow Checker",
+    "meaning": "An toàn bộ nhớ không cần GC",
+    "definition": "Kiểm tra quyền sở hữu lúc biên dịch để tránh use-after-free và data race.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "blocking-vs-nonblocking-io",
+    "term": "Blocking vs Non-blocking I/O",
+    "meaning": "Hai cách thread xử lý chờ I/O",
+    "definition": "Blocking treo thread đến khi có dữ liệu; non-blocking trả về ngay để làm việc khác.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "epoll-io-multiplexing",
+    "term": "epoll, kqueue and I/O Multiplexing",
+    "meaning": "Kernel báo socket nào sẵn sàng",
+    "definition": "Một thread theo dõi hàng chục nghìn kết nối, giải quyết bài toán C10K.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "event-loop-reactor",
+    "term": "Event Loop and Reactor Pattern",
+    "meaning": "Vòng lặp sự kiện",
+    "definition": "Nền tảng của Node.js và Nginx: chờ sự kiện rồi gọi handler tương ứng.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "virtual-threads-goroutines",
+    "term": "Virtual Threads and Goroutines",
+    "meaning": "Thread nhẹ do runtime quản lý",
+    "definition": "Cho phép viết code blocking đơn giản mà vẫn mở rộng được tới hàng triệu tác vụ.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "reactive-backpressure",
+    "term": "Backpressure in Reactive Streams",
+    "meaning": "Kiểm soát tốc độ producer và consumer",
+    "definition": "Dừng hoặc giới hạn khi consumer chậm để tránh phình hàng đợi trong bộ nhớ.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "linux-perf-60-seconds",
+    "term": "Linux Performance Analysis in 60 Seconds",
+    "meaning": "Chuỗi lệnh kiểm tra nhanh",
+    "definition": "uptime, vmstat, iostat, free, top và ss cho bức tranh tổng quan trong một phút.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "strace-lsof-ss-tcpdump",
+    "term": "strace, lsof, ss, tcpdump",
+    "meaning": "Theo dõi syscall, file, socket và gói tin",
+    "definition": "Bộ công cụ xem tiến trình đang làm gì và kết nối nào đang mở.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "load-average-vs-cpu",
+    "term": "Load Average vs CPU Usage",
+    "meaning": "Vì sao load cao mà CPU rảnh",
+    "definition": "Load tính cả tiến trình chờ I/O nên load cao CPU thấp thường là nghẽn I/O.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "iostat-disk-bottleneck",
+    "term": "iostat and Disk Bottlenecks",
+    "meaning": "Chẩn đoán nghẽn I/O đĩa",
+    "definition": "Xem await và %util để biết đĩa có bão hoà không.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "ebpf-bpftrace",
+    "term": "eBPF, bcc and bpftrace",
+    "meaning": "Quan sát nhân Linux ít xâm lấn",
+    "definition": "Chạy chương trình nhỏ trong kernel để theo dõi syscall và sự kiện với overhead thấp.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "utc-vs-local-time",
+    "term": "UTC vs Local Time",
+    "meaning": "Lưu thời điểm tuyệt đối, hiển thị theo múi giờ",
+    "definition": "Lưu UTC hoặc epoch, chỉ chuyển sang múi giờ người dùng khi hiển thị.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "iana-time-zones-dst",
+    "term": "IANA Time Zones and DST",
+    "meaning": "Dùng tên múi giờ thay vì offset",
+    "definition": "Offset đổi theo DST và luật từng nước nên phải dùng tên như Asia/Ho_Chi_Minh.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "monotonic-vs-wall-clock",
+    "term": "Monotonic Clock vs Wall Clock",
+    "meaning": "Đồng hồ đo khoảng và đồng hồ treo tường",
+    "definition": "Monotonic chỉ tiến, dùng đo timeout; wall clock có thể nhảy khi NTP chỉnh.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "iso-8601-rfc-3339",
+    "term": "ISO 8601 and RFC 3339",
+    "meaning": "Định dạng thời gian chuẩn cho API",
+    "definition": "Ví dụ 2026-11-21T09:30:00Z, không mơ hồ như 03/04/2026.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "falsehoods-about-time",
+    "term": "Falsehoods About Time",
+    "meaning": "Giả định sai về thời gian",
+    "definition": "Danh sách các niềm tin sai như mỗi ngày có 24 giờ hay đồng hồ luôn tiến.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "explain-analyze-plans",
+    "term": "EXPLAIN ANALYZE Reading Query Plans",
+    "meaning": "So sánh ước lượng với thực tế",
+    "definition": "Số hàng ước lượng lệch xa thực tế thường do thống kê cũ.",
+    "topicId": "backend"
+  },
+  {
+    "id": "join-algorithms",
+    "term": "Nested Loop vs Hash Join vs Merge Join",
+    "meaning": "Ba thuật toán join",
+    "definition": "Nested loop hợp ít hàng có index; hash join cho bảng lớn điều kiện bằng; merge join khi đã sắp xếp.",
+    "topicId": "backend"
+  },
+  {
+    "id": "sargable-queries",
+    "term": "Sargable Queries",
+    "meaning": "Điều kiện cho phép dùng index",
+    "definition": "Bọc hàm quanh cột hoặc LIKE bắt đầu bằng wildcard làm mất index.",
+    "topicId": "backend"
+  },
+  {
+    "id": "keyset-vs-offset",
+    "term": "Keyset Pagination vs OFFSET",
+    "meaning": "Phân trang nhanh và ổn định",
+    "definition": "Keyset dùng điều kiện trên khoá sắp xếp; OFFSET lớn quét rồi bỏ nhiều hàng.",
+    "topicId": "backend"
+  },
+  {
+    "id": "window-functions",
+    "term": "Window Functions",
+    "meaning": "Tính toán theo nhóm không cần self-join",
+    "definition": "ROW_NUMBER, LAG, SUM OVER cho top-N mỗi nhóm và running total.",
+    "topicId": "backend"
+  },
+  {
+    "id": "n-plus-one-lazy-loading",
+    "term": "N+1 Select and Lazy Loading",
+    "meaning": "Bẫy hiệu năng phổ biến của ORM",
+    "definition": "Một truy vấn cho danh sách rồi một truy vấn mỗi phần tử khi truy cập quan hệ lazy.",
+    "topicId": "backend"
+  },
+  {
+    "id": "jpa-fetch-join",
+    "term": "JPA Fetch Join and Entity Graph",
+    "meaning": "Nạp quan hệ có chủ đích",
+    "definition": "JOIN FETCH hoặc selectinload gom nhiều truy vấn thành vài truy vấn.",
+    "topicId": "backend"
+  },
+  {
+    "id": "dto-projection",
+    "term": "DTO Projection vs Entity",
+    "meaning": "Chỉ lấy cột cần cho truy vấn đọc",
+    "definition": "Tránh nạp cả graph entity khi chỉ cần vài cột.",
+    "topicId": "backend"
+  },
+  {
+    "id": "unit-of-work-identity-map",
+    "term": "Unit of Work and Identity Map",
+    "meaning": "Cách ORM theo dõi thay đổi",
+    "definition": "ORM phát hiện entity bị sửa và flush khi commit; cùng một entity trong context là cùng một object.",
+    "topicId": "backend"
+  },
+  {
+    "id": "orm-schema-migrations",
+    "term": "Schema Migrations (Flyway, Liquibase)",
+    "meaning": "Quản lý thay đổi schema có phiên bản",
+    "definition": "Không để ORM tự cập nhật schema trên production.",
+    "topicId": "backend"
+  },
+  {
+    "id": "websocket-vs-sse",
+    "term": "WebSocket vs Server-Sent Events",
+    "meaning": "Kênh hai chiều và đẩy một chiều",
+    "definition": "SSE đơn giản qua HTTP tự reconnect; WebSocket full-duplex cho chat và cộng tác.",
+    "topicId": "backend"
+  },
+  {
+    "id": "long-vs-short-polling",
+    "term": "Long Polling vs Short Polling",
+    "meaning": "Hai cách giả thời gian thực qua HTTP",
+    "definition": "Long polling giữ request mở đến khi có dữ liệu, giảm độ trễ so với hỏi lặp.",
+    "topicId": "backend"
+  },
+  {
+    "id": "websocket-scaling-backplane",
+    "term": "WebSocket Scaling with Pub/Sub Backplane",
+    "meaning": "Scale kết nối bền qua nhiều node",
+    "definition": "Kết nối gắn với một node nên cần pub/sub hoặc registry để gửi tin tới người dùng ở node khác.",
+    "topicId": "backend"
+  },
+  {
+    "id": "websocket-heartbeat-reconnect",
+    "term": "Heartbeat and Reconnect with Backoff",
+    "meaning": "Giữ và khôi phục kết nối bền",
+    "definition": "Ping/pong định kỳ chống timeout và reconnect có jitter.",
+    "topicId": "backend"
+  },
+  {
+    "id": "reconnect-storm",
+    "term": "Reconnect Storm",
+    "meaning": "Kết nối lại ồ ạt gây quá tải",
+    "definition": "Sau sự cố nhiều client kết nối lại cùng lúc; cần jitter và giới hạn tốc độ chấp nhận.",
+    "topicId": "backend"
   }
 ]

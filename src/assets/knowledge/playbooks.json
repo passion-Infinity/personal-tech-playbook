@@ -1497,5 +1497,149 @@
     "prerequisites": [
       "owasp-web-security-essentials"
     ]
+  },
+  {
+    "id": "data-structures-complexity",
+    "title": "Data Structures & Complexity (Big-O)",
+    "summary": "Chọn đúng cấu trúc dữ liệu và đọc Big-O để biết hệ thống sẽ thế nào khi dữ liệu lớn lên.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "big-o-notation",
+      "hash-table-collisions",
+      "heap-priority-queue",
+      "topological-sort",
+      "amortized-analysis"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/data-structures-complexity.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
+  },
+  {
+    "id": "memory-management-gc",
+    "title": "Memory Management & Garbage Collection",
+    "summary": "Hiểu stack, heap và GC để chẩn đoán rò rỉ bộ nhớ, latency spike và OOM.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "stack-vs-heap",
+      "generational-gc",
+      "stop-the-world-pauses",
+      "gc-memory-leak",
+      "rust-ownership"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/memory-management-gc.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads"
+    ]
+  },
+  {
+    "id": "io-models-async-event-loop",
+    "title": "I/O Models, Async & Event Loop",
+    "summary": "Hiểu blocking, non-blocking, epoll và event loop để phục vụ hàng chục nghìn kết nối với ít thread.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "blocking-vs-nonblocking-io",
+      "epoll-io-multiplexing",
+      "event-loop-reactor",
+      "virtual-threads-goroutines",
+      "reactive-backpressure"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/io-models-async-event-loop.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads",
+      "networking-tcp-ip-dns"
+    ]
+  },
+  {
+    "id": "linux-debugging-toolbox",
+    "title": "Linux Debugging Toolbox",
+    "summary": "Chẩn đoán nhanh sự cố production bằng phương pháp USE và các công cụ top, ss, strace, tcpdump.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "linux-perf-60-seconds",
+      "strace-lsof-ss-tcpdump",
+      "load-average-vs-cpu",
+      "iostat-disk-bottleneck",
+      "ebpf-bpftrace"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/linux-debugging-toolbox.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads",
+      "networking-tcp-ip-dns"
+    ]
+  },
+  {
+    "id": "time-timezones-clocks",
+    "title": "Time, Time Zones & Clocks",
+    "summary": "Lưu thời điểm bằng UTC, hiểu DST và đồng hồ lệch để tránh bug thời gian âm thầm.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "utc-vs-local-time",
+      "iana-time-zones-dst",
+      "monotonic-vs-wall-clock",
+      "iso-8601-rfc-3339",
+      "falsehoods-about-time"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/time-timezones-clocks.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
+  },
+  {
+    "id": "sql-query-optimization-advanced",
+    "title": "SQL Query Optimization (Advanced)",
+    "summary": "Đọc kế hoạch thực thi, hiểu thuật toán join và viết truy vấn cho phép planner chọn kế hoạch tốt.",
+    "topicId": "backend",
+    "keywordIds": [
+      "explain-analyze-plans",
+      "join-algorithms",
+      "sargable-queries",
+      "keyset-vs-offset",
+      "window-functions"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/sql-query-optimization-advanced.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "db-indexing-storage-engines",
+      "db-transactions-isolation"
+    ]
+  },
+  {
+    "id": "orm-data-access-pitfalls",
+    "title": "ORM & Data Access Pitfalls",
+    "summary": "Dùng ORM mà vẫn kiểm soát SQL: tránh N+1, chọn ranh giới transaction và projection hợp lý.",
+    "topicId": "backend",
+    "keywordIds": [
+      "n-plus-one-lazy-loading",
+      "jpa-fetch-join",
+      "dto-projection",
+      "unit-of-work-identity-map",
+      "orm-schema-migrations"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/orm-data-access-pitfalls.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "sql-query-optimization-advanced"
+    ]
+  },
+  {
+    "id": "realtime-websocket-sse",
+    "title": "Realtime: WebSocket, SSE & Polling",
+    "summary": "Chọn giữa polling, SSE và WebSocket và hiểu cái giá của kết nối bền khi scale.",
+    "topicId": "backend",
+    "keywordIds": [
+      "websocket-vs-sse",
+      "long-vs-short-polling",
+      "websocket-scaling-backplane",
+      "websocket-heartbeat-reconnect",
+      "reconnect-storm"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/realtime-websocket-sse.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "http-https-tls",
+      "io-models-async-event-loop"
+    ]
   }
 ]
