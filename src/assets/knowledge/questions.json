@@ -4081,5 +4081,517 @@
       "Private Endpoint và Managed Identity",
       "Không dùng để huấn luyện mô hình nền"
     ]
+  },
+  {
+    "id": "testing-strategy-pyramid-01",
+    "playbookId": "testing-strategy-pyramid",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Test nào nên chiếm số lượng lớn nhất trong test pyramid?",
+    "options": [
+      "E2E",
+      "Unit test",
+      "Manual test",
+      "Load test"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Unit test nhanh, rẻ, định vị lỗi chính xác nên chiếm phần lớn."
+  },
+  {
+    "id": "testing-strategy-pyramid-02",
+    "playbookId": "testing-strategy-pyramid",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bộ test đạt 100% coverage nhưng vẫn lọt bug nghiêm trọng. Lý do hợp lý nhất?",
+    "options": [
+      "Coverage đo dòng code được chạy, không đo hành vi có được kiểm chứng bằng assertion",
+      "Coverage luôn sai",
+      "Do thiếu mock",
+      "Do dùng quá nhiều unit test"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Test không có assertion vẫn tăng coverage; mutation testing giúp kiểm chứng chất lượng."
+  },
+  {
+    "id": "testing-strategy-pyramid-03",
+    "playbookId": "testing-strategy-pyramid",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Nhiều microservice cần kiểm tra tích hợp mà không dựng toàn bộ hệ thống E2E. Giải pháp?",
+    "options": [
+      "Chỉ unit test",
+      "Consumer-driven contract testing",
+      "Test thủ công",
+      "Bỏ qua tích hợp"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Contract test kiểm tra hợp đồng giữa consumer và provider độc lập."
+  },
+  {
+    "id": "testing-strategy-pyramid-04",
+    "playbookId": "testing-strategy-pyramid",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao flaky test nguy hiểm và cách giảm?",
+    "modelAnswer": "Flaky test làm đội mất niềm tin vào CI nên bắt đầu bỏ qua cả test hỏng thật. Nguyên nhân thường là phụ thuộc thời gian thực, thứ tự chạy, dữ liệu dùng chung hoặc chờ bất đồng bộ. Giảm bằng cách cô lập dữ liệu, cố định đồng hồ và ngẫu nhiên, chờ theo điều kiện thay vì sleep, và cách ly hoặc sửa ngay test flaky.",
+    "keyPoints": [
+      "Mất niềm tin vào CI",
+      "Nguyên nhân: thời gian, thứ tự, dữ liệu chung, async",
+      "Cô lập, cố định đồng hồ, chờ theo điều kiện"
+    ]
+  },
+  {
+    "id": "design-patterns-solid-01",
+    "playbookId": "design-patterns-solid",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Nguyên tắc Single Responsibility nói gì?",
+    "options": [
+      "Mỗi class chỉ có một method",
+      "Một module chỉ nên có một lý do để thay đổi",
+      "Mỗi file chỉ một class",
+      "Không được kế thừa"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Trách nhiệm tách theo lý do thay đổi, không theo số lượng method."
+  },
+  {
+    "id": "design-patterns-solid-02",
+    "playbookId": "design-patterns-solid",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chuỗi if/else theo \"loại thanh toán\" lặp ở nhiều nơi. Hướng cải thiện phù hợp?",
+    "options": [
+      "Thêm comment",
+      "Strategy hoặc đa hình để mỗi loại là một cài đặt riêng",
+      "Dùng biến toàn cục",
+      "Copy code"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thêm loại mới chỉ cần thêm cài đặt mới (Open/Closed)."
+  },
+  {
+    "id": "design-patterns-solid-03",
+    "playbookId": "design-patterns-solid",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai đoạn code giống hình dạng nhưng đổi vì lý do khác nhau. Gộp chúng vào một hàm chung có rủi ro gì?",
+    "options": [
+      "Không có rủi ro",
+      "Tạo abstraction sai và coupling: thay đổi một bên buộc phải sửa bên kia",
+      "Chạy chậm hơn",
+      "Không compile được"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DRY sai chỗ gây coupling không cần thiết; chấp nhận trùng lặp nhỏ."
+  },
+  {
+    "id": "design-patterns-solid-04",
+    "playbookId": "design-patterns-solid",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Dependency Inversion và Dependency Injection khác nhau thế nào?",
+    "modelAnswer": "Dependency Inversion là nguyên tắc: module cấp cao phụ thuộc abstraction chứ không phụ thuộc chi tiết cài đặt. Dependency Injection là kỹ thuật cụ thể để thực hiện nó bằng cách truyền các phụ thuộc từ bên ngoài vào qua constructor hoặc setter, giúp dễ thay thế và dễ test.",
+    "keyPoints": [
+      "Inversion: nguyên tắc về hướng phụ thuộc",
+      "Injection: kỹ thuật truyền phụ thuộc từ ngoài",
+      "Mục tiêu: dễ thay thế và test"
+    ]
+  },
+  {
+    "id": "clean-architecture-ddd-basics-01",
+    "playbookId": "clean-architecture-ddd-basics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Theo Dependency Rule của Clean Architecture, phát biểu nào đúng?",
+    "options": [
+      "Domain import framework web",
+      "Lớp trong (domain) không biết gì về lớp ngoài như DB hay framework",
+      "Controller nằm trong domain",
+      "Repository cài đặt nằm trong domain"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Phụ thuộc chỉ hướng vào trong; cài đặt hạ tầng nằm ở ngoài."
+  },
+  {
+    "id": "clean-architecture-ddd-basics-02",
+    "playbookId": "clean-architecture-ddd-basics",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Một use case phải sửa ba aggregate trong cùng một transaction. Điều này gợi ý gì?",
+    "options": [
+      "Thiết kế tối ưu",
+      "Ranh giới aggregate có thể sai; nên dùng domain event và eventual consistency",
+      "Cần thêm index",
+      "Cần thêm cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Aggregate là ranh giới nhất quán nên một transaction chỉ nên sửa một aggregate."
+  },
+  {
+    "id": "clean-architecture-ddd-basics-03",
+    "playbookId": "clean-architecture-ddd-basics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Khi nào Clean Architecture/DDD là thừa?",
+    "options": [
+      "Nghiệp vụ phức tạp sống lâu",
+      "Ứng dụng CRUD đơn giản",
+      "Hệ thống nhiều quy tắc",
+      "Hệ thống nhiều đội"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Kiến trúc nhiều lớp có chi phí; CRUD đơn giản không đáng."
+  },
+  {
+    "id": "clean-architecture-ddd-basics-04",
+    "playbookId": "clean-architecture-ddd-basics",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Anemic domain model là gì và vì sao là vấn đề?",
+    "modelAnswer": "Là mô hình trong đó entity chỉ chứa dữ liệu với getter và setter, còn toàn bộ quy tắc nghiệp vụ nằm trong các service. Nó làm mất khả năng bảo vệ bất biến của entity, logic rải rác và trùng lặp, khó test và khó hiểu. Giải pháp là đưa quy tắc vào entity hoặc aggregate sở hữu dữ liệu đó.",
+    "keyPoints": [
+      "Entity chỉ có dữ liệu",
+      "Logic nằm hết trong service",
+      "Đưa quy tắc vào aggregate"
+    ]
+  },
+  {
+    "id": "code-review-refactoring-01",
+    "playbookId": "code-review-refactoring",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Điều gì nên review trước tiên trong một PR?",
+    "options": [
+      "Tên biến",
+      "PR có giải quyết đúng vấn đề và logic có đúng không",
+      "Định dạng code",
+      "Số dòng comment"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Đúng đắn và thiết kế trước, phong cách để linter lo."
+  },
+  {
+    "id": "code-review-refactoring-02",
+    "playbookId": "code-review-refactoring",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao không nên vừa refactor vừa thêm tính năng trong cùng một PR?",
+    "options": [
+      "Không có lý do",
+      "Khó review và khó phân biệt thay đổi hành vi với thay đổi cấu trúc",
+      "Sẽ làm chậm CI",
+      "Git không cho phép"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tách commit hoặc PR để review và rollback dễ hơn."
+  },
+  {
+    "id": "code-review-refactoring-03",
+    "playbookId": "code-review-refactoring",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Code AI sinh chạy đúng ở demo. Câu hỏi review hữu ích nhất?",
+    "options": [
+      "Code có dài không",
+      "Điều gì xảy ra khi nhiều request đồng thời hoặc dependency lỗi",
+      "Có comment không",
+      "Dùng bao nhiêu thư viện"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "AI thường đúng đường vui nhưng sai ở biên, đồng thời và xử lý lỗi."
+  },
+  {
+    "id": "code-review-refactoring-04",
+    "playbookId": "code-review-refactoring",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao PR khổng lồ làm giảm chất lượng review?",
+    "modelAnswer": "Reviewer khó giữ toàn bộ ngữ cảnh nên đọc qua loa và duyệt cho xong, bỏ sót lỗi và vấn đề thiết kế. PR lớn cũng dễ xung đột và khó rollback. Nên chia thành các PR nhỏ một mục đích kèm mô tả vì sao thay đổi.",
+    "keyPoints": [
+      "Quá tải ngữ cảnh, duyệt qua loa",
+      "Khó xung đột và rollback",
+      "PR nhỏ một mục đích"
+    ]
+  },
+  {
+    "id": "owasp-web-security-essentials-01",
+    "playbookId": "owasp-web-security-essentials",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cách phòng SQL injection hiệu quả nhất?",
+    "options": [
+      "Lọc ký tự nguy hiểm bằng blacklist",
+      "Dùng parameterized query (prepared statement)",
+      "Mã hoá URL",
+      "Giấu thông báo lỗi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tham số hoá tách dữ liệu khỏi lệnh; blacklist luôn có thể bị vượt."
+  },
+  {
+    "id": "owasp-web-security-essentials-02",
+    "playbookId": "owasp-web-security-essentials",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Kẻ tấn công khiến server gọi http://169.254.169.254/ trên cloud. Đây là lỗi nào?",
+    "options": [
+      "CSRF",
+      "SSRF nhắm tới metadata endpoint",
+      "XSS",
+      "SQL injection"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Phòng bằng allowlist đích, chặn IP nội bộ và IMDSv2."
+  },
+  {
+    "id": "owasp-web-security-essentials-03",
+    "playbookId": "owasp-web-security-essentials",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Prepared statement có chống được injection qua tên cột trong ORDER BY động không?",
+    "options": [
+      "Có, luôn luôn",
+      "Không, giá trị mới được tham số hoá; tên cột cần allowlist",
+      "Chỉ khi dùng ORM",
+      "Chỉ với MySQL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chỉ giá trị mới tham số hoá được; định danh động phải kiểm tra allowlist."
+  },
+  {
+    "id": "owasp-web-security-essentials-04",
+    "playbookId": "owasp-web-security-essentials",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích phòng thủ nhiều lớp (defense in depth) với ví dụ một API.",
+    "modelAnswer": "Không dựa vào một biện pháp duy nhất mà xếp nhiều lớp độc lập: validate đầu vào ở biên, kiểm tra quyền trên từng đối tượng, tham số hoá truy vấn, quyền DB tối thiểu, rate limiting, mã hoá, giám sát. Nếu một lớp bị vượt, các lớp khác vẫn hạn chế thiệt hại.",
+    "keyPoints": [
+      "Nhiều lớp độc lập",
+      "Validate, authz, tham số hoá, quyền tối thiểu",
+      "Một lớp hỏng không sập tất cả"
+    ]
+  },
+  {
+    "id": "cryptography-basics-01",
+    "playbookId": "cryptography-basics",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cách lưu mật khẩu đúng?",
+    "options": [
+      "SHA-256 không salt",
+      "argon2id hoặc bcrypt với salt",
+      "AES với khoá cố định",
+      "Base64"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dùng hàm băm mật khẩu chậm có chủ đích và salt riêng."
+  },
+  {
+    "id": "cryptography-basics-02",
+    "playbookId": "cryptography-basics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Base64 có phải là mã hoá không?",
+    "options": [
+      "Có, an toàn",
+      "Không, chỉ là dạng biểu diễn, ai cũng giải được",
+      "Chỉ khi dùng với HTTPS",
+      "Có nếu dùng hai lần"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Encoding không cung cấp bí mật."
+  },
+  {
+    "id": "cryptography-basics-03",
+    "playbookId": "cryptography-basics",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Dùng lại cùng nonce với cùng khoá trong AES-GCM gây hậu quả gì?",
+    "options": [
+      "Không ảnh hưởng",
+      "Có thể làm lộ plaintext và phá tính toàn vẹn",
+      "Chỉ chậm hơn",
+      "Tự đổi khoá"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tái dùng nonce là lỗi mật mã nghiêm trọng."
+  },
+  {
+    "id": "cryptography-basics-04",
+    "playbookId": "cryptography-basics",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Envelope encryption hoạt động ra sao và lợi ích gì?",
+    "modelAnswer": "Dữ liệu được mã hoá bằng data key riêng; data key lại được mã hoá bằng master key giữ trong KMS hoặc HSM và lưu cạnh dữ liệu. Giải mã cần gọi KMS để lấy lại data key. Lợi ích là xoay master key không phải mã hoá lại toàn bộ dữ liệu và hạn chế lượng dữ liệu dưới một khoá.",
+    "keyPoints": [
+      "Data key mã hoá dữ liệu",
+      "Master key trong KMS mã hoá data key",
+      "Xoay khoá không cần mã hoá lại dữ liệu"
+    ]
+  },
+  {
+    "id": "secrets-management-01",
+    "playbookId": "secrets-management",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Lỡ commit một API key lên repo. Việc đầu tiên cần làm?",
+    "options": [
+      "Xoá commit rồi coi như xong",
+      "Thu hồi (revoke) và xoay vòng key ngay",
+      "Đổi tên repo",
+      "Chờ xem có bị lạm dụng không"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Key đã nằm trong lịch sử và có thể bị bot lấy; phải thu hồi trước."
+  },
+  {
+    "id": "secrets-management-02",
+    "playbookId": "secrets-management",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ưu tiên nào tốt nhất cho secret trong pipeline CI trên cloud?",
+    "options": [
+      "Lưu access key dài hạn trong biến CI",
+      "OIDC federation để nhận role ngắn hạn",
+      "Commit vào repo riêng",
+      "Gửi qua chat"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Không có secret tĩnh để lộ."
+  },
+  {
+    "id": "secrets-management-03",
+    "playbookId": "secrets-management",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Kubernetes Secret mặc định có được mã hoá không?",
+    "options": [
+      "Có, bằng AES",
+      "Chỉ base64; cần bật encryption at rest hoặc dùng vault bên ngoài",
+      "Có, bằng RSA",
+      "Luôn luôn bằng KMS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Base64 là encoding, không phải bảo mật."
+  },
+  {
+    "id": "secrets-management-04",
+    "playbookId": "secrets-management",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao nên ưu tiên credentials ngắn hạn hơn secret tĩnh dài hạn?",
+    "modelAnswer": "Secret ngắn hạn tự hết hạn nên nếu lộ thì cửa sổ lợi dụng rất nhỏ và không cần nhớ xoay vòng. Chúng thường gắn với danh tính của workload nên có thể phân quyền và truy vết chính xác, khác với secret tĩnh dùng chung tồn tại rất lâu.",
+    "keyPoints": [
+      "Tự hết hạn, giảm bán kính ảnh hưởng",
+      "Gắn với danh tính để phân quyền và audit",
+      "Không phụ thuộc việc xoay thủ công"
+    ]
+  },
+  {
+    "id": "software-supply-chain-security-01",
+    "playbookId": "software-supply-chain-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "CI nên dùng lệnh nào để cài dependency Node.js đúng bản đã khoá?",
+    "options": [
+      "npm install",
+      "npm ci",
+      "npm update",
+      "npm audit fix"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "npm ci cài đúng theo lockfile và lỗi nếu lệch."
+  },
+  {
+    "id": "software-supply-chain-security-02",
+    "playbookId": "software-supply-chain-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dependency confusion là gì?",
+    "options": [
+      "Nhầm lẫn phiên bản",
+      "Package công khai trùng tên package nội bộ bị cài thay thế",
+      "Lỗi biên dịch",
+      "Xung đột giấy phép"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cấu hình registry ưu tiên nội bộ và dùng scope để phòng."
+  },
+  {
+    "id": "software-supply-chain-security-03",
+    "playbookId": "software-supply-chain-security",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "AI gợi ý một tên package bạn chưa từng nghe. Việc cần làm?",
+    "options": [
+      "Cài ngay",
+      "Kiểm tra package có thật, uy tín và đúng tác giả trước khi cài",
+      "Cài với quyền root",
+      "Chép vào lockfile"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Package hallucination có thể bị kẻ tấn công đăng ký đúng tên đó."
+  },
+  {
+    "id": "software-supply-chain-security-04",
+    "playbookId": "software-supply-chain-security",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "SBOM giúp gì khi có lỗ hổng mới như Log4Shell?",
+    "modelAnswer": "SBOM liệt kê chính xác các thành phần và phiên bản trong từng artifact nên có thể truy vấn nhanh dịch vụ nào đang dùng thư viện bị ảnh hưởng, thay vì rà thủ công. Nhờ đó ưu tiên vá và đánh giá phạm vi tác động nhanh hơn.",
+    "keyPoints": [
+      "Danh sách thành phần theo artifact",
+      "Biết nhanh dịch vụ nào bị ảnh hưởng",
+      "Ưu tiên vá nhanh"
+    ]
   }
 ]

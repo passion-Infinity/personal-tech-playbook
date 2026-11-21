@@ -1354,5 +1354,148 @@
     "prerequisites": [
       "etl-elt-orchestration-airflow"
     ]
+  },
+  {
+    "id": "testing-strategy-pyramid",
+    "title": "Testing Strategy & Test Pyramid",
+    "summary": "Kiểm chứng rủi ro ở tầng test rẻ nhất có thể bắt được nó: nhiều unit, vừa integration/contract, ít E2E.",
+    "topicId": "engineering-practices",
+    "keywordIds": [
+      "test-pyramid",
+      "test-doubles",
+      "contract-testing",
+      "flaky-tests",
+      "mutation-testing"
+    ],
+    "filePath": "assets/knowledge/playbooks/engineering-practices/testing-strategy-pyramid.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
+  },
+  {
+    "id": "design-patterns-solid",
+    "title": "Design Patterns & SOLID",
+    "summary": "Dùng SOLID và các pattern phổ biến như ngôn ngữ chung để giảm chi phí của thay đổi tiếp theo mà không over-engineer.",
+    "topicId": "engineering-practices",
+    "keywordIds": [
+      "solid-principles",
+      "strategy-pattern",
+      "dependency-injection-vs-inversion",
+      "composition-over-inheritance",
+      "rule-of-three-dry"
+    ],
+    "filePath": "assets/knowledge/playbooks/engineering-practices/design-patterns-solid.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
+  },
+  {
+    "id": "clean-architecture-ddd-basics",
+    "title": "Clean Architecture & DDD Basics",
+    "summary": "Đặt nghiệp vụ ở trung tâm, đảo chiều phụ thuộc và mô hình hoá bằng aggregate và bounded context để hệ thống sống lâu.",
+    "topicId": "engineering-practices",
+    "keywordIds": [
+      "hexagonal-architecture",
+      "clean-architecture-dependency-rule",
+      "ddd-aggregate",
+      "entity-vs-value-object",
+      "anemic-domain-model"
+    ],
+    "filePath": "assets/knowledge/playbooks/engineering-practices/clean-architecture-ddd-basics.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "design-patterns-solid"
+    ]
+  },
+  {
+    "id": "code-review-refactoring",
+    "title": "Code Review & Refactoring",
+    "summary": "Review nhỏ, đúng trọng tâm và refactor từng bước có test bảo vệ — kỹ năng cốt lõi để làm chủ cả code do AI sinh.",
+    "topicId": "engineering-practices",
+    "keywordIds": [
+      "code-review-practices",
+      "code-smells",
+      "boy-scout-technical-debt",
+      "review-ai-generated-code"
+    ],
+    "filePath": "assets/knowledge/playbooks/engineering-practices/code-review-refactoring.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "testing-strategy-pyramid",
+      "design-patterns-solid"
+    ]
+  },
+  {
+    "id": "owasp-web-security-essentials",
+    "title": "OWASP & Web Security Essentials",
+    "summary": "Nắm các lớp lỗi bảo mật web lặp lại (injection, XSS, CSRF, SSRF, access control) và cách phòng thủ nhiều lớp.",
+    "topicId": "security",
+    "keywordIds": [
+      "owasp-top-10",
+      "sql-injection-parameterized",
+      "xss-csp",
+      "ssrf-metadata",
+      "defense-in-depth",
+      "idor"
+    ],
+    "filePath": "assets/knowledge/playbooks/security/owasp-web-security-essentials.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "http-https-tls",
+      "api-design-rest",
+      "authn-authz-oauth-jwt"
+    ]
+  },
+  {
+    "id": "cryptography-basics",
+    "title": "Cryptography Basics for Engineers",
+    "summary": "Chọn đúng công cụ mật mã (hash, mã hoá, MAC, chữ ký) và hiểu rằng phần khó nhất là quản lý khoá.",
+    "topicId": "security",
+    "keywordIds": [
+      "password-hashing",
+      "aes-gcm-nonce",
+      "symmetric-vs-asymmetric",
+      "envelope-encryption",
+      "hmac-vs-signature"
+    ],
+    "filePath": "assets/knowledge/playbooks/security/cryptography-basics.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "http-https-tls"
+    ]
+  },
+  {
+    "id": "secrets-management",
+    "title": "Secrets Management",
+    "summary": "Loại bỏ secret tĩnh bằng danh tính và credentials ngắn hạn; lưu, xoay vòng và kiểm toán phần còn lại trong vault.",
+    "topicId": "security",
+    "keywordIds": [
+      "secrets-management-practices",
+      "vault-dynamic-secrets",
+      "oidc-ci-federation",
+      "secret-scanning",
+      "secret-zero-workload-identity"
+    ],
+    "filePath": "assets/knowledge/playbooks/security/secrets-management.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "cryptography-basics"
+    ]
+  },
+  {
+    "id": "software-supply-chain-security",
+    "title": "Software Supply Chain Security",
+    "summary": "Biết mình dùng gì, kiểm chứng nó từ đâu tới và làm cho build lặp lại được để chống tấn công qua dependency và pipeline.",
+    "topicId": "security",
+    "keywordIds": [
+      "supply-chain-slsa",
+      "sbom",
+      "dependency-confusion",
+      "artifact-signing-sigstore",
+      "lockfile-reproducible-builds"
+    ],
+    "filePath": "assets/knowledge/playbooks/security/software-supply-chain-security.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "owasp-web-security-essentials"
+    ]
   }
 ]

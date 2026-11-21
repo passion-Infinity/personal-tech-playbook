@@ -2707,5 +2707,278 @@
     "meaning": "Bảo vệ dữ liệu cá nhân và quyền xoá",
     "definition": "Che hoặc mã hoá PII, hạn chế sao chép và hỗ trợ xoá khi có yêu cầu.",
     "topicId": "data-engineering"
+  },
+  {
+    "id": "test-pyramid",
+    "term": "Test Pyramid (Unit, Integration, E2E)",
+    "meaning": "Cân đối ba tầng test",
+    "definition": "Nhiều unit test nhanh ở đáy, ít integration ở giữa, rất ít E2E ở đỉnh vì chậm và dễ vỡ.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "test-doubles",
+    "term": "Test Doubles (Mock, Stub, Fake, Spy)",
+    "meaning": "Đối tượng thay thế khi test",
+    "definition": "Stub trả dữ liệu cố định, mock kiểm tra tương tác, fake là cài đặt đơn giản chạy được, spy ghi lại lời gọi.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "contract-testing",
+    "term": "Consumer-Driven Contract Testing (Pact)",
+    "meaning": "Kiểm tra hợp đồng giữa các service",
+    "definition": "Consumer và provider thoả thuận hợp đồng API và kiểm tra độc lập, thay cho E2E nhiều service.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "flaky-tests",
+    "term": "Flaky Tests",
+    "meaning": "Test lúc qua lúc hỏng",
+    "definition": "Nguyên nhân thường là thời gian thực, thứ tự chạy, dữ liệu dùng chung hoặc bất đồng bộ.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "mutation-testing",
+    "term": "Mutation Testing and Property-Based Testing",
+    "meaning": "Đo chất lượng bộ test",
+    "definition": "Mutation testing cố ý phá code để xem test có bắt được không; property-based sinh input ngẫu nhiên kiểm tra bất biến.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "solid-principles",
+    "term": "SOLID Principles",
+    "meaning": "Năm nguyên tắc thiết kế hướng đối tượng",
+    "definition": "Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "strategy-pattern",
+    "term": "Strategy Pattern",
+    "meaning": "Đổi thuật toán lúc chạy",
+    "definition": "Đóng gói các thuật toán sau cùng một interface để thay thế mà không sửa nơi dùng.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "dependency-injection-vs-inversion",
+    "term": "Dependency Injection vs Dependency Inversion",
+    "meaning": "Phân biệt kỹ thuật và nguyên tắc",
+    "definition": "Dependency Inversion là nguyên tắc phụ thuộc vào abstraction; DI là kỹ thuật truyền phụ thuộc từ ngoài vào.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "composition-over-inheritance",
+    "term": "Composition over Inheritance",
+    "meaning": "Ghép đối tượng thay vì kế thừa sâu",
+    "definition": "Kế thừa chỉ để tái sử dụng code sinh cây phân cấp mong manh; ghép đối tượng linh hoạt hơn.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "rule-of-three-dry",
+    "term": "Rule of Three and the Wrong Abstraction",
+    "meaning": "Khi nào nên trừu tượng hoá",
+    "definition": "Chờ hai đến ba trường hợp thật; abstraction sai còn tốn kém hơn trùng lặp nhỏ.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "hexagonal-architecture",
+    "term": "Hexagonal Architecture (Ports and Adapters)",
+    "meaning": "Domain ở giữa, hạ tầng cắm vào qua port",
+    "definition": "Port là interface do domain định nghĩa, adapter là cài đặt cụ thể như JPA hay Stripe nằm ở ngoài.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "clean-architecture-dependency-rule",
+    "term": "Clean Architecture Dependency Rule",
+    "meaning": "Phụ thuộc chỉ hướng vào trong",
+    "definition": "Lớp trong không import lớp ngoài; framework và DB là chi tiết có thể thay.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "ddd-aggregate",
+    "term": "DDD Aggregate Root",
+    "meaning": "Ranh giới nhất quán của nghiệp vụ",
+    "definition": "Một root và các đối tượng liên quan; một transaction chỉ sửa một aggregate, tham chiếu aggregate khác bằng ID.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "entity-vs-value-object",
+    "term": "Entity vs Value Object",
+    "meaning": "Danh tính so với so sánh theo giá trị",
+    "definition": "Entity có danh tính; value object bất biến như Money, so sánh theo giá trị.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "anemic-domain-model",
+    "term": "Anemic Domain Model",
+    "meaning": "Domain chỉ chứa dữ liệu, logic nằm ngoài",
+    "definition": "Entity chỉ có getter/setter và logic nằm hết trong service làm mất lợi ích của DDD.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "code-review-practices",
+    "term": "Code Review Best Practices",
+    "meaning": "Cách review hiệu quả",
+    "definition": "PR nhỏ, mô tả vì sao, kiểm tra đúng đắn và bảo mật trước, để công cụ lo phong cách.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "code-smells",
+    "term": "Code Smells and Refactoring Catalog",
+    "meaning": "Dấu hiệu code cần cải thiện",
+    "definition": "Long method, god class, duplicated code, feature envy, shotgun surgery.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "boy-scout-technical-debt",
+    "term": "Boy Scout Rule and Technical Debt",
+    "meaning": "Trả nợ kỹ thuật từng bước",
+    "definition": "Để lại code sạch hơn lúc đến, ghi nhận nợ có chủ đích và xử lý theo ưu tiên.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "review-ai-generated-code",
+    "term": "Reviewing AI-Generated Code",
+    "meaning": "Kiểm tra code do AI sinh",
+    "definition": "Kiểm tra code giải đúng bài toán, không có lỗi biên hay đồng thời, không dùng API không tồn tại.",
+    "topicId": "engineering-practices"
+  },
+  {
+    "id": "owasp-top-10",
+    "term": "OWASP Top 10",
+    "meaning": "Rủi ro bảo mật ứng dụng web hàng đầu",
+    "definition": "Danh sách các lớp lỗi phổ biến nhất gồm broken access control, injection, cấu hình sai.",
+    "topicId": "security"
+  },
+  {
+    "id": "sql-injection-parameterized",
+    "term": "SQL Injection and Parameterized Queries",
+    "meaning": "Tách dữ liệu khỏi lệnh SQL",
+    "definition": "Dùng prepared statement thay vì nối chuỗi; tên bảng hoặc cột động cần allowlist.",
+    "topicId": "security"
+  },
+  {
+    "id": "xss-csp",
+    "term": "XSS, Output Encoding and CSP",
+    "meaning": "Chống chèn script vào trang",
+    "definition": "Encode đầu ra theo ngữ cảnh, dùng Content-Security-Policy và cờ HttpOnly.",
+    "topicId": "security"
+  },
+  {
+    "id": "ssrf-metadata",
+    "term": "SSRF and Cloud Metadata (IMDSv2)",
+    "meaning": "Server bị lừa gọi tài nguyên nội bộ",
+    "definition": "Chặn IP nội bộ, allowlist đích, dùng IMDSv2 để bảo vệ metadata endpoint của cloud.",
+    "topicId": "security"
+  },
+  {
+    "id": "defense-in-depth",
+    "term": "Defense in Depth and Least Privilege",
+    "meaning": "Phòng thủ nhiều lớp và quyền tối thiểu",
+    "definition": "Không dựa vào một lớp bảo vệ duy nhất; mỗi thành phần chỉ có quyền cần thiết.",
+    "topicId": "security"
+  },
+  {
+    "id": "password-hashing",
+    "term": "Password Hashing (argon2id, bcrypt)",
+    "meaning": "Lưu mật khẩu an toàn",
+    "definition": "Dùng hàm chậm có chủ đích kèm salt duy nhất; không dùng SHA-256 thuần.",
+    "topicId": "security"
+  },
+  {
+    "id": "aes-gcm-nonce",
+    "term": "AES-GCM Authenticated Encryption",
+    "meaning": "Mã hoá đối xứng kèm toàn vẹn",
+    "definition": "Vừa mã hoá vừa phát hiện sửa đổi; nonce không bao giờ được lặp với cùng khoá.",
+    "topicId": "security"
+  },
+  {
+    "id": "symmetric-vs-asymmetric",
+    "term": "Symmetric vs Asymmetric Encryption",
+    "meaning": "Hai họ mã hoá và cách kết hợp",
+    "definition": "Đối xứng nhanh dùng một khoá; bất đối xứng dùng cặp khoá để trao đổi khoá và ký; thực tế dùng hybrid như TLS.",
+    "topicId": "security"
+  },
+  {
+    "id": "envelope-encryption",
+    "term": "Envelope Encryption (KMS Data Key)",
+    "meaning": "Mã hoá dữ liệu bằng data key được bảo vệ",
+    "definition": "Data key mã hoá dữ liệu, master key trong KMS mã hoá data key nên xoay master key không cần mã hoá lại dữ liệu.",
+    "topicId": "security"
+  },
+  {
+    "id": "hmac-vs-signature",
+    "term": "HMAC vs Digital Signature",
+    "meaning": "Xác thực bằng khoá chung và khoá công khai",
+    "definition": "HMAC cần cả hai phía giữ bí mật; chữ ký số cho phép bất kỳ ai kiểm chứng bằng khoá công khai.",
+    "topicId": "security"
+  },
+  {
+    "id": "secrets-management-practices",
+    "term": "Secrets Management Best Practices",
+    "meaning": "Lưu, cấp phát, xoay vòng và audit secret",
+    "definition": "Không commit secret, lưu trong vault, cấp bằng danh tính và xoay vòng định kỳ.",
+    "topicId": "security"
+  },
+  {
+    "id": "vault-dynamic-secrets",
+    "term": "HashiCorp Vault Dynamic Secrets",
+    "meaning": "Credentials sinh theo yêu cầu có TTL",
+    "definition": "Mỗi lần dùng nhận một tài khoản riêng tự hết hạn nên bán kính ảnh hưởng khi lộ rất nhỏ.",
+    "topicId": "security"
+  },
+  {
+    "id": "oidc-ci-federation",
+    "term": "OIDC Federation for CI/CD",
+    "meaning": "CI nhận quyền tạm thời không lưu key",
+    "definition": "Pipeline đổi token OIDC lấy role cloud ngắn hạn thay vì lưu access key dài hạn.",
+    "topicId": "security"
+  },
+  {
+    "id": "secret-scanning",
+    "term": "Secret Scanning and Pre-commit Hooks",
+    "meaning": "Phát hiện secret trước khi commit",
+    "definition": "Công cụ như gitleaks và push protection chặn secret lọt vào lịch sử Git.",
+    "topicId": "security"
+  },
+  {
+    "id": "secret-zero-workload-identity",
+    "term": "Secret Zero and Workload Identity",
+    "meaning": "Dùng danh tính thay credential khởi tạo",
+    "definition": "Ứng dụng chứng minh bằng IAM role hoặc managed identity để lấy secret mà không cần secret ban đầu.",
+    "topicId": "security"
+  },
+  {
+    "id": "supply-chain-slsa",
+    "term": "Software Supply Chain Security (SLSA)",
+    "meaning": "Bảo vệ chuỗi cung ứng phần mềm",
+    "definition": "Khung mức độ tin cậy của build và nguồn gốc artifact.",
+    "topicId": "security"
+  },
+  {
+    "id": "sbom",
+    "term": "SBOM (SPDX, CycloneDX)",
+    "meaning": "Danh sách thành phần của phần mềm",
+    "definition": "Giúp biết ngay mình có bị ảnh hưởng khi một thư viện có lỗ hổng mới.",
+    "topicId": "security"
+  },
+  {
+    "id": "dependency-confusion",
+    "term": "Dependency Confusion and Typosquatting",
+    "meaning": "Tấn công qua tên package",
+    "definition": "Package công khai trùng tên package nội bộ hoặc tên gần giống đánh lừa trình cài đặt.",
+    "topicId": "security"
+  },
+  {
+    "id": "artifact-signing-sigstore",
+    "term": "Artifact Signing (Sigstore, cosign)",
+    "meaning": "Ký và kiểm chứng artifact",
+    "definition": "Kiểm chứng chữ ký và provenance trước khi triển khai.",
+    "topicId": "security"
+  },
+  {
+    "id": "lockfile-reproducible-builds",
+    "term": "Lockfiles and Reproducible Builds",
+    "meaning": "Cài đúng bản đã kiểm duyệt",
+    "definition": "Lockfile ghim phiên bản; CI dùng npm ci để không kéo bản mới ngoài ý muốn.",
+    "topicId": "security"
   }
 ]

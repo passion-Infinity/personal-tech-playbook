@@ -30,6 +30,16 @@
     "description": "OLTP/OLAP, mô hình hoá dữ liệu, batch và stream processing, Kafka và pipeline dữ liệu."
   },
   {
+    "id": "engineering-practices",
+    "name": "Thực hành kỹ thuật phần mềm",
+    "description": "Testing, thiết kế phần mềm, clean architecture/DDD, code review và refactoring — nền tảng để làm chủ chất lượng code, kể cả code do AI sinh."
+  },
+  {
+    "id": "security",
+    "name": "Bảo mật ứng dụng",
+    "description": "OWASP, mật mã học thực dụng, quản lý secret và an toàn chuỗi cung ứng phần mềm."
+  },
+  {
     "id": "aws",
     "name": "AWS Cloud",
     "description": "AWS services and architecture for the Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 and beyond."
