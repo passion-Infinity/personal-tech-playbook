@@ -108,6 +108,51 @@ export class KnowledgeService {
     return memo;
   });
 
+  /**
+   * Level counted only through prerequisites that live in the same topic. It drives each topic's own
+   * outline ("Cấp 0, 1, 2…") so a cloud topic is not pushed to level 5 by a foundations prerequisite.
+   */
+  readonly localLevels = computed(() => {
+    const byId = this.playbookById();
+    const pre = this.prereqs();
+    const memo = new Map<string, number>();
+    const visiting = new Set<string>();
+    const level = (id: string): number => {
+      const cached = memo.get(id);
+      if (cached !== undefined) return cached;
+      if (visiting.has(id)) return 0;
+      visiting.add(id);
+      const topic = byId.get(id)?.topicId;
+      let l = 0;
+      for (const p of pre.get(id) ?? [])
+        if (byId.get(p)?.topicId === topic) l = Math.max(l, level(p) + 1);
+      visiting.delete(id);
+      memo.set(id, l);
+      return l;
+    };
+    for (const p of this.playbooks()) level(p.id);
+    return memo;
+  });
+
+  /** Reading order inside each topic: by local level, then the order authored in playbooks.json. */
+  readonly orderedByTopic = computed(() => {
+    const authored = new Map(this.playbooks().map((p, i) => [p.id, i]));
+    const local = this.localLevels();
+    const map = new Map<string, Playbook[]>();
+    for (const p of this.playbooks()) map.set(p.topicId, [...(map.get(p.topicId) ?? []), p]);
+    for (const [topic, list] of map) {
+      map.set(
+        topic,
+        [...list].sort(
+          (a, b) =>
+            (local.get(a.id) ?? 0) - (local.get(b.id) ?? 0) ||
+            (authored.get(a.id) ?? 0) - (authored.get(b.id) ?? 0),
+        ),
+      );
+    }
+    return map;
+  });
+
   readonly maxLevel = computed(() => Math.max(0, ...this.levels().values()));
 
   /** Every transitive prerequisite of a playbook. */

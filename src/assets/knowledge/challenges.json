@@ -340,5 +340,291 @@
       "Sink không idempotent nên ghi trùng khi retry",
       "Lưu PII thô khắp nơi khiến không xoá được"
     ]
+  },
+  {
+    "id": "chat-app-design",
+    "title": "Thiết kế ứng dụng chat thời gian thực",
+    "topicId": "system-design",
+    "difficulty": 3,
+    "prerequisites": [
+      "message-queues-streaming-basics",
+      "db-replication-sharding",
+      "consistent-hashing",
+      "http-https-tls"
+    ],
+    "scenario": "Thiết kế ứng dụng nhắn tin (chat 1-1 và nhóm tới 500 người) cho 50 triệu người dùng, 5 triệu người online cùng lúc. Tin nhắn phải đến người nhận dưới 200 ms khi họ online, không mất tin, giữ đúng thứ tự trong một cuộc trò chuyện và đồng bộ lịch sử giữa nhiều thiết bị.",
+    "requirements": [
+      "Chọn giao thức kết nối thời gian thực và cách quản lý hàng triệu kết nối",
+      "Thiết kế luồng gửi tin (online và offline) và đảm bảo không mất tin",
+      "Đảm bảo thứ tự tin nhắn trong một cuộc trò chuyện",
+      "Mô hình lưu trữ và cách phân mảnh dữ liệu lịch sử",
+      "Xử lý trạng thái hiện diện (presence) và nhóm chat lớn"
+    ],
+    "hints": [
+      "Mỗi kết nối WebSocket gắn với một gateway; cần biết người nhận đang kết nối ở gateway nào.",
+      "Lưu tin nhắn trước rồi mới đẩy; trạng thái đã gửi/đã nhận dùng ack.",
+      "Thứ tự chỉ cần đúng trong một conversation: dùng conversation_id làm key."
+    ],
+    "rubric": [
+      {
+        "item": "WebSocket (hoặc long-lived connection) qua tầng gateway stateless-ish, ước lượng số kết nối mỗi node",
+        "points": 2
+      },
+      {
+        "item": "Luồng gửi: lưu bền trước, định tuyến tới gateway của người nhận qua registry (Redis) hoặc pub/sub; offline thì push notification và đồng bộ khi kết nối lại",
+        "points": 2
+      },
+      {
+        "item": "Ack và retry với message ID duy nhất để dedup (at-least-once + idempotent)",
+        "points": 2
+      },
+      {
+        "item": "Thứ tự bằng partition theo conversation_id và sequence number mỗi cuộc trò chuyện",
+        "points": 2
+      },
+      {
+        "item": "Lưu trữ phân mảnh theo conversation (wide-column/Cassandra-like), lịch sử đọc theo cursor",
+        "points": 1
+      },
+      {
+        "item": "Presence bằng heartbeat/TTL; nhóm lớn dùng fan-out khi đọc hoặc ghi có cân nhắc",
+        "points": 1
+      }
+    ],
+    "solution": "**Kết nối.** Client giữ **WebSocket** tới tầng **chat gateway**; mỗi node chịu vài chục nghìn kết nối. Một **session registry** (Redis) lưu `user_id → gateway`.\n\n**Gửi tin.** Client gửi tin kèm **message_id** (UUID) → gateway → **chat service** ghi tin vào kho lưu trữ (**at-least-once**) rồi phát lên **message bus** theo **key = conversation_id** để giữ thứ tự. Dịch vụ phân phối tra registry để đẩy tới gateway của người nhận; nếu họ **offline** thì lưu trạng thái chờ và gửi **push notification**, thiết bị đồng bộ khi kết nối lại bằng cursor \"tin sau sequence N\".\n\n**Tin cậy.** Người nhận **ack**; chưa ack thì retry. **message_id** giúp **dedup**, nên tổng thể là at-least-once + idempotent.\n\n**Thứ tự.** Mỗi conversation có **sequence number** tăng dần do một partition xử lý.\n\n**Lưu trữ.** Wide-column (Cassandra/Dynamo-like) **partition theo conversation_id**, sắp xếp theo sequence; đọc lịch sử bằng **cursor pagination**.\n\n**Presence & nhóm.** Presence bằng **heartbeat + TTL**. Nhóm 500 người: **fan-out khi ghi** cho nhóm nhỏ, cân nhắc **fan-out khi đọc** cho nhóm rất lớn.",
+    "pitfalls": [
+      "Đẩy tin trước khi lưu nên mất tin khi gateway sập",
+      "Dùng thời gian máy chủ làm thứ tự thay vì sequence theo conversation",
+      "Không dedup nên retry gây tin trùng",
+      "Giữ trạng thái kết nối chỉ trong bộ nhớ một node, không có registry"
+    ]
+  },
+  {
+    "id": "notification-system",
+    "title": "Hệ thống gửi thông báo (push, email, SMS)",
+    "topicId": "distributed",
+    "difficulty": 2,
+    "prerequisites": [
+      "message-queues-streaming-basics",
+      "idempotency-retries",
+      "rate-limiting-algorithms"
+    ],
+    "scenario": "Thiết kế hệ thống thông báo cho nhiều dịch vụ trong công ty: push, email, SMS. Có 10 triệu thông báo mỗi ngày, đỉnh gấp 10 lần vào chiến dịch. Người dùng có tuỳ chọn nhận thông báo, nhà cung cấp bên ngoài đôi khi lỗi hoặc chậm, và không được gửi trùng cũng như làm phiền quá mức.",
+    "requirements": [
+      "Kiến trúc nhận yêu cầu và phân phối tới từng kênh",
+      "Đảm bảo không gửi trùng và không mất thông báo quan trọng",
+      "Xử lý nhà cung cấp lỗi, chậm hoặc giới hạn tốc độ",
+      "Tôn trọng tuỳ chọn người dùng và giới hạn tần suất",
+      "Theo dõi trạng thái và quan sát hệ thống"
+    ],
+    "hints": [
+      "Tách tiếp nhận khỏi gửi bằng queue riêng mỗi kênh.",
+      "Mỗi yêu cầu cần một khoá idempotency.",
+      "Nhà cung cấp có rate limit riêng của họ."
+    ],
+    "rubric": [
+      {
+        "item": "API tiếp nhận nhanh, ghi vào queue riêng cho từng kênh (push/email/SMS) để cách ly và scale độc lập",
+        "points": 2
+      },
+      {
+        "item": "Idempotency key và dedup để không gửi trùng; DLQ cho thông báo thất bại",
+        "points": 2
+      },
+      {
+        "item": "Retry với backoff + jitter, circuit breaker và fallback sang nhà cung cấp dự phòng",
+        "points": 2
+      },
+      {
+        "item": "Rate limiting phía gửi theo giới hạn của nhà cung cấp và theo người dùng (chống spam)",
+        "points": 2
+      },
+      {
+        "item": "Tuỳ chọn người dùng, quiet hours, ưu tiên (giao dịch trước marketing) bằng queue ưu tiên",
+        "points": 1
+      },
+      {
+        "item": "Trạng thái giao, webhook trả về, metric và cảnh báo (queue depth, tỉ lệ lỗi)",
+        "points": 1
+      }
+    ],
+    "solution": "**Kiến trúc.** Service nguồn gọi **Notification API** (xác thực, validate, kèm **idempotency key**) → ghi vào **message bus** → **dispatcher** áp tuỳ chọn người dùng, template, quiet hours rồi đẩy sang **queue riêng từng kênh** (push/email/SMS) với **hàng ưu tiên** (giao dịch/OTP trước marketing).\n\n**Worker từng kênh** gọi nhà cung cấp (FCM/APNs, SES, Twilio…): **retry backoff + jitter**, **circuit breaker** và **nhà cung cấp dự phòng**; thất bại vĩnh viễn vào **DLQ**.\n\n**Không trùng.** Bảng dedup theo `(idempotency_key, channel)` với UNIQUE; consumer idempotent.\n\n**Không quá tải/ không spam.** **Rate limit** theo hạn mức của từng nhà cung cấp (token bucket) và **tần suất theo người dùng**; chiến dịch lớn đi qua queue marketing để không chặn thông báo giao dịch.\n\n**Quan sát.** Lưu trạng thái `queued/sent/delivered/failed` (webhook từ nhà cung cấp), metric **queue depth**, tỉ lệ lỗi, độ trễ, cảnh báo theo SLO.",
+    "pitfalls": [
+      "Gọi nhà cung cấp đồng bộ trong request của service nguồn",
+      "Dùng chung một queue nên chiến dịch marketing làm trễ OTP",
+      "Retry không backoff gây bão retry vào nhà cung cấp",
+      "Không dedup nên khách nhận cùng thông báo nhiều lần"
+    ]
+  },
+  {
+    "id": "rate-limiter-design",
+    "title": "Thiết kế rate limiter cho API công khai",
+    "topicId": "system-design",
+    "difficulty": 2,
+    "prerequisites": [
+      "rate-limiting-algorithms",
+      "caching-strategies",
+      "concurrency-fundamentals"
+    ],
+    "scenario": "API công khai có 3 gói khách hàng (Free 60 req/phút, Pro 600, Enterprise 6000) chạy trên 20 instance sau load balancer. Cần giới hạn theo API key, cho phép burst ngắn, chính xác tương đối, độ trễ thêm dưới 2 ms và không trở thành điểm lỗi duy nhất.",
+    "requirements": [
+      "Chọn thuật toán và giải thích đánh đổi",
+      "Thiết kế lưu trữ trạng thái phân tán và thao tác nguyên tử",
+      "Quyết định đặt limiter ở đâu",
+      "Chiến lược khi limiter hoặc Redis gặp sự cố",
+      "Giao tiếp với client (header, mã lỗi) và hành vi retry"
+    ],
+    "hints": [
+      "Token bucket cho phép burst.",
+      "Check-then-set sẽ race giữa 20 instance.",
+      "Mỗi lần gọi Redis thêm độ trễ mạng."
+    ],
+    "rubric": [
+      {
+        "item": "Chọn token bucket (hoặc sliding window counter) và nêu lý do so với fixed window",
+        "points": 2
+      },
+      {
+        "item": "Trạng thái trong Redis với thao tác nguyên tử (Lua/INCR) theo khoá API key",
+        "points": 2
+      },
+      {
+        "item": "Đặt ở gateway/edge; có thể thêm giới hạn cục bộ để giảm gọi Redis",
+        "points": 1
+      },
+      {
+        "item": "Fail-open hay fail-closed có chủ đích, Redis HA/replica, giám sát",
+        "points": 2
+      },
+      {
+        "item": "429 kèm Retry-After và header hạn mức; hướng dẫn client backoff + jitter",
+        "points": 2
+      },
+      {
+        "item": "Cấu hình hạn mức theo gói và quota dài hạn tách khỏi rate ngắn hạn",
+        "points": 1
+      }
+    ],
+    "solution": "**Thuật toán.** **Token bucket** theo `api_key`: dung lượng = burst, tốc độ nạp = hạn mức/phút. Cho burst hợp lý, bộ nhớ nhỏ, độ chính xác tốt hơn fixed window (không có burst gấp đôi ở ranh giới).\n\n**Trạng thái.** **Redis** lưu `{tokens, timestamp}` mỗi key; một **Lua script** thực hiện nạp token + trừ nguyên tử nên 20 instance không race. Dùng đồng hồ của Redis để tránh lệch giờ.\n\n**Vị trí.** Ở **API gateway/edge** để chặn sớm; có thể thêm bucket cục bộ nhỏ để giảm số lần gọi Redis cho client rất nóng.\n\n**Sự cố.** Redis chết: mặc định **fail-open** cho API công khai (giữ sẵn sàng) kèm limiter cục bộ tạm thời; dùng Redis có replica/cluster và cảnh báo. Endpoint nhạy cảm (đăng nhập) có thể **fail-closed**.\n\n**Client.** Trả **429** với `Retry-After` và header hạn mức còn lại; khuyến nghị backoff + jitter. Thêm **quota theo tháng** riêng với rate ngắn hạn.",
+    "pitfalls": [
+      "GET rồi SET không nguyên tử nên vượt hạn mức",
+      "Giới hạn theo IP nên sai với người dùng sau NAT",
+      "Redis là điểm lỗi duy nhất không có kế hoạch",
+      "Client retry ngay khi gặp 429 làm tình hình tệ hơn"
+    ]
+  },
+  {
+    "id": "news-feed-design",
+    "title": "Thiết kế news feed cho mạng xã hội",
+    "topicId": "system-design",
+    "difficulty": 3,
+    "prerequisites": [
+      "caching-strategies",
+      "db-replication-sharding",
+      "message-queues-streaming-basics",
+      "cap-consistency-models"
+    ],
+    "scenario": "Mạng xã hội có 100 triệu người dùng hằng ngày. Mỗi người theo dõi trung bình 200 người, một số người nổi tiếng có 10 triệu người theo dõi. Feed phải tải dưới 300 ms, hiển thị bài mới trong vài giây và có thể chấp nhận một chút lệch thời gian.",
+    "requirements": [
+      "So sánh fan-out on write và fan-out on read",
+      "Xử lý người dùng có hàng triệu follower",
+      "Thiết kế lưu trữ và cache cho feed",
+      "Chọn mô hình nhất quán và chấp nhận đánh đổi nào",
+      "Phân trang feed và xử lý xoá bài"
+    ],
+    "hints": [
+      "Ghi vào feed của từng follower tốn kém với người nổi tiếng.",
+      "Có thể kết hợp hai cách.",
+      "Feed là dữ liệu phái sinh, chấp nhận eventual consistency."
+    ],
+    "rubric": [
+      {
+        "item": "Phân tích fan-out on write (đọc nhanh, ghi tốn) và fan-out on read (ghi rẻ, đọc chậm)",
+        "points": 2
+      },
+      {
+        "item": "Hybrid: push cho người thường, pull cho celebrity rồi gộp khi đọc",
+        "points": 2
+      },
+      {
+        "item": "Feed cache (Redis sorted set theo user) với danh sách ID bài và lấy nội dung từ post cache/DB",
+        "points": 2
+      },
+      {
+        "item": "Eventual consistency được chấp nhận; xử lý bằng queue/worker bất đồng bộ",
+        "points": 1
+      },
+      {
+        "item": "Cursor pagination theo thời gian/ID và xử lý xoá/ẩn bài",
+        "points": 1
+      },
+      {
+        "item": "Phân mảnh dữ liệu (theo user/post), cache nóng, ước lượng dung lượng",
+        "points": 2
+      }
+    ],
+    "solution": "**Hai cách.** *Fan-out on write*: khi đăng bài, đẩy ID bài vào **feed cache của từng follower** → đọc rất nhanh nhưng ghi tốn kém (người nổi tiếng = hàng triệu lần ghi). *Fan-out on read*: lúc mở feed mới gom bài của những người mình theo dõi → ghi rẻ nhưng đọc chậm.\n\n**Hybrid.** Người thường dùng **push** (worker bất đồng bộ qua queue ghi vào feed của follower); **celebrity** dùng **pull**: bài của họ không đẩy sẵn mà được **gộp vào feed khi đọc**.\n\n**Lưu trữ.** Feed mỗi user là **danh sách ID bài** trong **Redis sorted set** (giới hạn vài trăm mục); nội dung bài lấy từ **post cache/DB** (phân mảnh theo post_id). Mạng xã hội chấp nhận **eventual consistency**: bài hiện sau vài giây.\n\n**Phân trang.** **Cursor** theo (timestamp, id). **Xoá/ẩn bài** đánh dấu ở post store và lọc khi đọc để khỏi sửa mọi feed.\n\n**Ước lượng.** 100M người × 500 ID × 8 B ≈ 400 GB cho feed cache — chia cluster theo user_id.",
+    "pitfalls": [
+      "Fan-out on write cho celebrity gây bão ghi",
+      "Lưu cả nội dung bài trong từng feed nên tốn bộ nhớ và khó sửa/xoá",
+      "Offset pagination làm lặp bài khi có bài mới",
+      "Đòi nhất quán mạnh cho feed làm tăng độ trễ mà không cần thiết"
+    ]
+  },
+  {
+    "id": "k8s-incident-debug",
+    "title": "Sự cố: sau deploy, một phần request lỗi 503",
+    "topicId": "distributed",
+    "difficulty": 2,
+    "prerequisites": [
+      "kubernetes-fundamentals",
+      "observability-tracing-metrics-logs"
+    ],
+    "scenario": "Sau khi rolling update dịch vụ orders trên Kubernetes, khoảng 10% request trả về 503 trong vài phút rồi tự hết; sau đó thỉnh thoảng Pod bị restart liên tục (CrashLoopBackOff). Dashboard cho thấy CPU trung bình thấp nhưng độ trễ p99 tăng. Bạn là on-call.",
+    "requirements": [
+      "Đặt giả thuyết theo thứ tự khả năng và cách kiểm chứng từng cái",
+      "Chỉ ra dữ liệu quan sát cần xem (metric, log, trace, kubectl)",
+      "Giải thích nguyên nhân gốc có thể gây 503 khi rolling update",
+      "Giải thích Pod restart và độ trễ cao dù CPU thấp",
+      "Đề xuất sửa ngắn hạn và phòng ngừa dài hạn"
+    ],
+    "hints": [
+      "Xem trạng thái Ready của Pod mới trong lúc rollout.",
+      "CPU limit và throttling có thể gây độ trễ dù CPU trung bình thấp.",
+      "Liveness probe có thể giết ứng dụng khởi động chậm."
+    ],
+    "rubric": [
+      {
+        "item": "Bắt đầu từ quan sát: kubectl describe/events, trạng thái Ready, log Pod, metric lỗi theo Pod",
+        "points": 2
+      },
+      {
+        "item": "Giả thuyết thiếu hoặc sai readiness probe nên traffic vào Pod chưa sẵn sàng",
+        "points": 2
+      },
+      {
+        "item": "Giả thuyết liveness probe quá gắt hoặc không có startup probe gây CrashLoopBackOff",
+        "points": 2
+      },
+      {
+        "item": "Giả thuyết CPU throttling do limit thấp và kiểm tra metric container_cpu_cfs_throttled",
+        "points": 2
+      },
+      {
+        "item": "Sửa: readiness/startup probe đúng, PDB, maxUnavailable, graceful shutdown (preStop), tăng limit",
+        "points": 1
+      },
+      {
+        "item": "Phòng ngừa: canary/rollout có kiểm tra tự động, SLO và cảnh báo burn rate",
+        "points": 1
+      }
+    ],
+    "solution": "**Quan sát trước khi đoán.** `kubectl rollout status`, `kubectl describe pod` (events, probes), `kubectl logs`, metric lỗi/độ trễ **theo Pod** và **trace** của request lỗi.\n\n**Giả thuyết 1 – readiness.** 503 chỉ trong lúc rollout cho thấy Service đưa traffic tới **Pod chưa sẵn sàng** (không có hoặc sai **readiness probe**) hoặc tới Pod đang bị tắt mà chưa kịp rút khỏi endpoints. Kiểm chứng: so thời điểm Pod `Ready` với thời điểm có 503. Sửa: readiness probe phản ánh việc ứng dụng thực sự nhận được request, `maxUnavailable: 0`, `maxSurge: 1`, **graceful shutdown** (SIGTERM + `preStop` sleep) để drain.\n\n**Giả thuyết 2 – CrashLoopBackOff.** **Liveness probe** có timeout ngắn giết ứng dụng khởi động chậm → thêm **startup probe** và nới ngưỡng. Kiểm tra `OOMKilled` do **memory limit** thấp hơn nhu cầu.\n\n**Giả thuyết 3 – độ trễ cao dù CPU thấp.** **CPU throttling** do **limit** thấp (cgroups cắt CPU theo chu kỳ) → xem metric throttled, tăng hoặc bỏ CPU limit, giữ requests đúng.\n\n**Phòng ngừa.** **PodDisruptionBudget**, rollout canary có kiểm tra tự động theo SLO và cảnh báo **burn rate**.",
+    "pitfalls": [
+      "Restart Pod hoặc scale thêm mà chưa xem Ready/probe",
+      "Chỉ nhìn CPU trung bình nên bỏ sót throttling",
+      "Liveness probe gọi dependency ngoài làm cả cụm bị giết khi dependency chậm",
+      "Không có graceful shutdown nên request đang xử lý bị cắt"
+    ]
   }
 ]

@@ -1,9 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { FlashcardStore } from './core/flashcard.store';
-import { KnowledgeService } from './core/knowledge.service';
+import { KnowledgeService, levelName } from './core/knowledge.service';
+import { Playbook } from './core/models';
 import { LearningStore } from './core/learning.store';
 import { PwaService } from './core/pwa.service';
 import { ThemeService } from './core/theme.service';
@@ -165,23 +174,70 @@ import { SearchPalette } from './shared/search-palette';
           <span class="count">{{ kb.keywords().length }}</span>
         </a>
 
-        <p class="eyebrow mb-2 mt-7 px-3 !text-muted">Topics</p>
+        <p class="eyebrow mb-2 mt-7 px-3 !text-muted">Chủ đề · lộ trình học</p>
         @for (t of kb.topics(); track t.id) {
-          <a
-            routerLink="/"
-            [queryParams]="{ topic: t.id }"
-            class="nav-item"
-            [class.nav-active]="activeTopic() === t.id"
-            [title]="t.description"
-            [style]="vars(t.id)"
-            (click)="ui.drawerOpen.set(false)"
-          >
-            <span class="topic-tile h-7 w-7 !rounded-lg">
-              <app-icon [name]="style(t.id).icon" [size]="15" />
-            </span>
-            <span class="truncate">{{ t.name }}</span>
-            <span class="count">{{ kb.playbookCountByTopic().get(t.id) ?? 0 }}</span>
-          </a>
+          <div [style]="vars(t.id)">
+            <div class="flex items-center">
+              <a
+                [routerLink]="['/topics', t.id]"
+                class="nav-item min-w-0 flex-1"
+                [class.nav-active]="topicPage() === t.id"
+                [title]="t.description"
+                (click)="ui.drawerOpen.set(false)"
+              >
+                <span class="topic-tile h-7 w-7 !rounded-lg">
+                  <app-icon [name]="style(t.id).icon" [size]="15" />
+                </span>
+                <span class="truncate">{{ t.name }}</span>
+                <span class="count"
+                  >{{ readByTopic().get(t.id) ?? 0 }}/{{
+                    kb.playbookCountByTopic().get(t.id) ?? 0
+                  }}</span
+                >
+              </a>
+              <button
+                type="button"
+                class="icon-btn -ml-1 h-8 w-8 shrink-0"
+                [attr.aria-expanded]="isOpen(t.id)"
+                [attr.aria-label]="'Danh sách bài: ' + t.name"
+                (click)="toggleTopic(t.id)"
+              >
+                <app-icon
+                  name="chevronRight"
+                  [size]="15"
+                  class="transition-transform"
+                  [class.rotate-90]="isOpen(t.id)"
+                />
+              </button>
+            </div>
+            @if (isOpen(t.id)) {
+              <ol class="mb-2 ml-6 mt-1 space-y-0.5 border-l border-line pl-2">
+                @for (it of outlines().get(t.id) ?? []; track it.p.id) {
+                  @if (it.header) {
+                    <li
+                      class="px-2 pb-0.5 pt-2 text-[0.65rem] font-semibold uppercase tracking-wider text-muted"
+                    >
+                      Cấp {{ it.level }} · {{ levelLabel(it.level) }}
+                    </li>
+                  }
+                  <li>
+                    <a
+                      [routerLink]="['/playbooks', it.p.id]"
+                      class="sub-item"
+                      [class.sub-active]="activePlaybookId() === it.p.id"
+                      (click)="ui.drawerOpen.set(false)"
+                    >
+                      <span class="num">{{ it.n }}</span>
+                      <span class="min-w-0 flex-1 truncate">{{ it.p.title }}</span>
+                      @if (learning.isRead(it.p.id)) {
+                        <app-icon name="check" [size]="13" class="text-emerald-500" />
+                      }
+                    </a>
+                  </li>
+                }
+              </ol>
+            }
+          </div>
         }
       </nav>
 
@@ -254,17 +310,80 @@ export class App {
     this.cards.knownCount(this.kb.keywords().map((k) => k.id)),
   );
 
-  protected readonly activeTopic = toSignal(
+  private readonly url = toSignal(
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      map(() => {
-        const tree = this.router.parseUrl(this.router.url);
-        const path = tree.root.children['primary']?.segments.map((s) => s.path).join('/') ?? '';
-        return path === '' ? tree.queryParamMap.get('topic') : null;
-      }),
+      map(() => this.router.url),
     ),
-    { initialValue: null },
+    { initialValue: this.router.url },
   );
+  private readonly segments = computed(
+    () =>
+      this.router.parseUrl(this.url()).root.children['primary']?.segments.map((s) => s.path) ?? [],
+  );
+  protected readonly topicPage = computed(() =>
+    this.segments()[0] === 'topics' ? (this.segments()[1] ?? null) : null,
+  );
+  protected readonly activePlaybookId = computed(() =>
+    this.segments()[0] === 'playbooks' ? (this.segments()[1] ?? null) : null,
+  );
+  /** Topic of the page being viewed (topic outline or a playbook inside it). */
+  protected readonly activeTopic = computed(
+    () =>
+      this.topicPage() ??
+      this.kb.playbookById().get(this.activePlaybookId() ?? '')?.topicId ??
+      null,
+  );
+
+  protected readonly levelLabel = levelName;
+  private readonly openTopics = signal<ReadonlySet<string>>(new Set());
+  protected isOpen(id: string): boolean {
+    return this.openTopics().has(id);
+  }
+  protected toggleTopic(id: string): void {
+    this.openTopics.update((s) => {
+      const next = new Set(s);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  }
+
+  /** Per topic: lessons in reading order, flagged where a new level begins. */
+  protected readonly outlines = computed(() => {
+    const local = this.kb.localLevels();
+    const out = new Map<
+      string,
+      Array<{ p: Playbook; n: number; level: number; header: boolean }>
+    >();
+    for (const [topic, list] of this.kb.orderedByTopic()) {
+      let prev = -1;
+      out.set(
+        topic,
+        list.map((p, i) => {
+          const level = local.get(p.id) ?? 0;
+          const header = level !== prev;
+          prev = level;
+          return { p, n: i + 1, level, header };
+        }),
+      );
+    }
+    return out;
+  });
+  protected readonly readByTopic = computed(() => {
+    const read = this.learning.read();
+    const out = new Map<string, number>();
+    for (const p of this.kb.playbooks())
+      if (read.has(p.id)) out.set(p.topicId, (out.get(p.topicId) ?? 0) + 1);
+    return out;
+  });
+
+  constructor() {
+    // Keep the topic you are reading expanded in the sidebar.
+    effect(() => {
+      const t = this.activeTopic();
+      if (t) untracked(() => this.openTopics.update((s) => (s.has(t) ? s : new Set(s).add(t))));
+    });
+  }
 
   protected onKeydown(e: KeyboardEvent): void {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {

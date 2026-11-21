@@ -111,7 +111,7 @@ const QUOTES = [
               <span class="topic-tile h-10 w-10"><app-icon name="map" [size]="18" /></span>
               <p class="mt-3 font-semibold">Nên học tiếp</p>
               <p class="mt-1 line-clamp-2 text-sm text-muted">
-                Cấp {{ kb.levels().get(n.id) }} · {{ n.title }}
+                Tầng {{ kb.levels().get(n.id) }} · {{ n.title }}
               </p>
             </a>
           }
@@ -124,8 +124,7 @@ const QUOTES = [
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           @for (t of topicCards(); track t.topic.id; let i = $index) {
             <a
-              routerLink="/"
-              [queryParams]="{ topic: t.topic.id }"
+              [routerLink]="['/topics', t.topic.id]"
               class="glass glass-hover fade-up group relative flex flex-col overflow-hidden rounded-2xl p-5"
               [style]="vars(t.topic.id)"
               [style.animation-delay.ms]="i * 60"
@@ -224,7 +223,7 @@ const QUOTES = [
                 {{ kb.topicById().get(p.topicId)?.name ?? p.topicId }}
               </span>
               <span class="flex items-center gap-2 text-muted">
-                <span class="chip">Cấp {{ kb.levels().get(p.id) ?? 0 }}</span>
+                <span class="chip">Tầng {{ kb.levels().get(p.id) ?? 0 }}</span>
                 @if (learning.isRead(p.id)) {
                   <app-icon name="check" [size]="14" class="text-emerald-500" />
                 }

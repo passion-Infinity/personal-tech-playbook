@@ -7,6 +7,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/playbook-list').then((m) => m.PlaybookList),
   },
   {
+    path: 'topics/:id',
+    title: 'Lộ trình chủ đề · Playbook',
+    loadComponent: () => import('./pages/topic').then((m) => m.TopicPage),
+  },
+  {
     path: 'playbooks/:id',
     loadComponent: () => import('./pages/playbook-reader').then((m) => m.PlaybookReader),
   },

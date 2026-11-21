@@ -37,7 +37,6 @@ flowchart LR
 - Nhớ **bật model access** theo Region; mô hình/tính năng không có sẵn ở mọi Region.
 - Chi phí tính theo **token vào + token ra**: prompt dài và ngữ cảnh RAG lớn làm hoá đơn tăng nhanh.
 - **Guardrails** chỉ bảo vệ khi bạn áp dụng chúng vào lời gọi (đầu vào và/hoặc đầu ra).
-- Bật **invocation logging** cho audit, nhưng nhớ log có thể chứa dữ liệu nhạy cảm.
 - Dữ liệu và prompt của khách hàng **không dùng để huấn luyện mô hình nền** và không chia sẻ cho nhà cung cấp mô hình.
 - Exam trap: "chatbot trả lời theo tài liệu công ty, ít vận hành" → **Bedrock Knowledge Bases**; "chặn nội dung nhạy cảm/PII" → **Guardrails**.
 

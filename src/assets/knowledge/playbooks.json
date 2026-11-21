@@ -1078,5 +1078,281 @@
       "message-queues-streaming-basics",
       "cap-consistency-models"
     ]
+  },
+  {
+    "id": "consistent-hashing",
+    "title": "Consistent Hashing",
+    "summary": "Thêm bớt node chỉ di chuyển khoảng 1/N số key nhờ vòng băm và virtual nodes thay cho hash mod N.",
+    "topicId": "system-design",
+    "keywordIds": [
+      "consistent-hashing-ring",
+      "rendezvous-hashing",
+      "jump-consistent-hash",
+      "redis-cluster-hash-slots",
+      "hash-mod-n-problem"
+    ],
+    "filePath": "assets/knowledge/playbooks/system-design/consistent-hashing.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "scalability-fundamentals"
+    ]
+  },
+  {
+    "id": "db-replication-sharding",
+    "title": "DB Replication & Sharding",
+    "summary": "Scale đọc và chịu lỗi bằng replication, scale ghi và dung lượng bằng sharding, và hiểu các dị thường đi kèm.",
+    "topicId": "system-design",
+    "keywordIds": [
+      "database-replication-modes",
+      "replication-lag-anomalies",
+      "database-sharding-strategies",
+      "hot-shard",
+      "split-brain-fencing",
+      "read-your-writes"
+    ],
+    "filePath": "assets/knowledge/playbooks/system-design/db-replication-sharding.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "cap-consistency-models",
+      "consistent-hashing"
+    ]
+  },
+  {
+    "id": "rate-limiting-algorithms",
+    "title": "Rate Limiting Algorithms",
+    "summary": "Bảo vệ hệ thống và chia công bằng hạn mức bằng token bucket, sliding window và bộ đếm phân tán nguyên tử.",
+    "topicId": "system-design",
+    "keywordIds": [
+      "rate-limiting-token-bucket",
+      "sliding-window-counter",
+      "distributed-rate-limiter-redis",
+      "http-429-retry-after",
+      "load-shedding-vs-rate-limiting",
+      "fail-open-vs-closed"
+    ],
+    "filePath": "assets/knowledge/playbooks/system-design/rate-limiting-algorithms.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "api-design-rest",
+      "caching-strategies"
+    ]
+  },
+  {
+    "id": "backend-performance-profiling",
+    "title": "Backend Performance & Profiling",
+    "summary": "Tối ưu hiệu năng theo quy trình đo, tìm điểm nghẽn, sửa đúng chỗ rồi đo lại.",
+    "topicId": "backend",
+    "keywordIds": [
+      "red-use-methods",
+      "flame-graphs-profiling",
+      "connection-pool-sizing",
+      "n-plus-one-query",
+      "coordinated-omission",
+      "thread-pool-starvation"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/backend-performance-profiling.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads",
+      "db-indexing-storage-engines",
+      "scalability-fundamentals"
+    ]
+  },
+  {
+    "id": "observability-tracing-metrics-logs",
+    "title": "Observability: Logs, Metrics & Tracing",
+    "summary": "Hiểu trạng thái hệ phân tán bằng logs, metrics, distributed tracing và đo độ tin cậy theo SLO.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "observability-three-pillars",
+      "opentelemetry",
+      "distributed-tracing-w3c",
+      "sli-slo-error-budget",
+      "tail-based-sampling",
+      "high-cardinality-metrics"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/observability-tracing-metrics-logs.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "microservices-fundamentals"
+    ]
+  },
+  {
+    "id": "raft-consensus",
+    "title": "Raft Consensus",
+    "summary": "Cho nhiều node đồng ý cùng một replicated log nhờ leader, quorum và bầu cử theo term.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "raft-consensus",
+      "raft-leader-election",
+      "replicated-state-machine",
+      "quorum-fault-tolerance",
+      "paxos-vs-raft",
+      "etcd-zookeeper-coordination"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/raft-consensus.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "cap-consistency-models"
+    ]
+  },
+  {
+    "id": "kubernetes-fundamentals",
+    "title": "Kubernetes Fundamentals",
+    "summary": "Điều phối container bằng khai báo trạng thái mong muốn, probe, tài nguyên và Service.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "k8s-architecture",
+      "k8s-pod-deployment",
+      "k8s-service-ingress",
+      "k8s-probes",
+      "k8s-requests-limits",
+      "k8s-hpa"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/kubernetes-fundamentals.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads",
+      "networking-tcp-ip-dns"
+    ]
+  },
+  {
+    "id": "service-mesh-api-gateway",
+    "title": "Service Mesh & API Gateway",
+    "summary": "Phân biệt gateway cho traffic bắc-nam với service mesh cho traffic đông-tây và cái giá của mesh.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "api-gateway-vs-service-mesh",
+      "sidecar-proxy-envoy",
+      "istio-linkerd",
+      "mtls",
+      "canary-traffic-shifting",
+      "bff-pattern"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/service-mesh-api-gateway.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "microservices-fundamentals",
+      "kubernetes-fundamentals",
+      "load-balancing-reverse-proxy"
+    ]
+  },
+  {
+    "id": "cqrs-event-sourcing",
+    "title": "CQRS & Event Sourcing",
+    "summary": "Tách mô hình ghi khỏi đọc và lưu chuỗi sự kiện làm nguồn sự thật khi thật sự cần.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "cqrs-pattern",
+      "event-sourcing",
+      "cqrs-projection-rebuild",
+      "event-upcasting",
+      "optimistic-concurrency-expected-version",
+      "crypto-shredding"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/cqrs-event-sourcing.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "event-driven-architecture",
+      "db-transactions-isolation"
+    ]
+  },
+  {
+    "id": "etl-elt-orchestration-airflow",
+    "title": "ETL/ELT & Orchestration (Airflow)",
+    "summary": "Xây pipeline idempotent, lập lịch bằng DAG và backfill an toàn theo khoảng dữ liệu.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "etl-vs-elt",
+      "airflow-dag-data-interval",
+      "idempotent-data-pipelines",
+      "dbt-models-tests",
+      "incremental-load-watermark",
+      "orchestrator-comparison"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/etl-elt-orchestration-airflow.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "oltp-olap-data-modeling",
+      "idempotency-retries"
+    ]
+  },
+  {
+    "id": "data-warehouse-lakehouse",
+    "title": "Data Warehouse, Lake & Lakehouse",
+    "summary": "Chọn kiến trúc lưu trữ phân tích và hiểu Parquet, table format, medallion và các vấn đề thường gặp.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "lake-vs-warehouse-vs-lakehouse",
+      "table-formats-iceberg-delta",
+      "parquet-predicate-pushdown",
+      "medallion-architecture",
+      "small-files-compaction",
+      "storage-compute-separation"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/data-warehouse-lakehouse.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "oltp-olap-data-modeling"
+    ]
+  },
+  {
+    "id": "stream-processing-flink",
+    "title": "Stream Processing with Flink",
+    "summary": "Tính toán stateful trên dòng sự kiện với event time, checkpoint và exactly-once trong phạm vi framework.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "flink-checkpoints-exactly-once",
+      "chandy-lamport-barriers",
+      "flink-watermarks-idle",
+      "flink-state-backend-rocksdb",
+      "two-phase-commit-sink",
+      "stream-engines-comparison"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/stream-processing-flink.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "batch-vs-stream-processing",
+      "kafka-fundamentals"
+    ]
+  },
+  {
+    "id": "change-data-capture",
+    "title": "Change Data Capture (CDC)",
+    "summary": "Đồng bộ dữ liệu theo thời gian thực bằng cách đọc transaction log của DB thay vì polling.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "cdc-log-based",
+      "debezium-kafka-connect",
+      "postgres-logical-decoding-slot",
+      "outbox-with-cdc",
+      "cdc-snapshot-streaming",
+      "tombstone-compaction"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/change-data-capture.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "kafka-fundamentals",
+      "db-transactions-isolation"
+    ]
+  },
+  {
+    "id": "data-quality-governance",
+    "title": "Data Quality & Governance",
+    "summary": "Biến dữ liệu thành sản phẩm đáng tin bằng kiểm thử, data contract, lineage và bảo vệ PII.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "data-quality-dimensions",
+      "data-testing-tools",
+      "data-contracts",
+      "data-lineage-catalog",
+      "data-observability",
+      "pii-masking-gdpr"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/data-quality-governance.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "etl-elt-orchestration-airflow"
+    ]
   }
 ]

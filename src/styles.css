@@ -256,6 +256,20 @@
     background: linear-gradient(90deg, rgb(139 92 246 / 0.22), rgb(34 211 238 / 0.08));
     box-shadow: inset 2px 0 0 #a78bfa;
   }
+  .sub-item {
+    @apply flex items-center gap-2 rounded-lg px-2 py-1.5 text-[0.82rem] leading-snug text-ink/70 transition-colors hover:bg-accent-soft hover:text-ink;
+  }
+  .sub-item .num {
+    @apply inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[0.65rem] tabular-nums text-muted;
+    background: var(--color-surface-strong);
+  }
+  .sub-active {
+    @apply bg-accent-soft font-medium text-accent-ink;
+  }
+  .sub-active .num {
+    @apply text-accent-ink;
+    background: rgb(139 92 246 / 0.25);
+  }
   .tab {
     @apply flex h-16 flex-col items-center justify-center gap-1 text-[0.68rem] font-medium text-muted transition-colors;
   }

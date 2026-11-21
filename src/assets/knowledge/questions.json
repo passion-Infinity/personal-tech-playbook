@@ -1528,5 +1528,2558 @@
       1
     ],
     "explanation": "Đẩy phép tính vào câu lệnh: UPDATE accounts SET balance = balance + ? WHERE id = ?, hoặc dùng khoá/optimistic version."
+  },
+  {
+    "id": "consistent-hashing-01",
+    "playbookId": "consistent-hashing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cụm 4 cache node dùng hash(key) mod 4. Thêm node thứ 5 (mod 5). Khoảng bao nhiêu key bị chuyển sang node khác?",
+    "options": [
+      "Khoảng 1/5",
+      "Khoảng 20%",
+      "Gần như toàn bộ (khoảng 80%)",
+      "Không key nào"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Với hash mod N, đổi N làm khoảng (N−1)/N key đổi vị trí. Consistent hashing chỉ chuyển khoảng 1/N."
+  },
+  {
+    "id": "consistent-hashing-02",
+    "playbookId": "consistent-hashing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao nên dùng virtual nodes trong consistent hashing?",
+    "options": [
+      "Để tăng độ dài khoá",
+      "Để phân bố key đều hơn và gán nhiều tải hơn cho node mạnh",
+      "Để loại bỏ cần replication",
+      "Để mã hoá dữ liệu"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mỗi node vật lý chiếm nhiều điểm trên vòng nên giảm lệch tải và cho phép trọng số theo năng lực."
+  },
+  {
+    "id": "consistent-hashing-03",
+    "playbookId": "consistent-hashing",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Consistent hashing KHÔNG giải quyết được vấn đề nào sau đây?",
+    "options": [
+      "Di chuyển nhiều key khi thêm node",
+      "Một hot key làm quá tải đúng một node",
+      "Phân bố key lên nhiều node",
+      "Xoá node khỏi cụm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Một key quá nóng vẫn nằm ở một node; cần cache cục bộ hoặc nhân bản key."
+  },
+  {
+    "id": "consistent-hashing-04",
+    "playbookId": "consistent-hashing",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích consistent hashing và vì sao nó tốt hơn hash mod N khi cluster thay đổi.",
+    "modelAnswer": "Node và key được băm lên cùng một vòng; mỗi key thuộc node đầu tiên theo chiều kim đồng hồ. Thêm hoặc bớt node chỉ ảnh hưởng key nằm giữa node đó và node đứng trước, tức khoảng 1/N số key, trong khi hash mod N làm gần như mọi key đổi node và làm cache nguội hàng loạt. Virtual nodes giúp phân bố đều.",
+    "keyPoints": [
+      "Vòng băm, đi theo chiều kim đồng hồ",
+      "Chỉ khoảng 1/N key di chuyển",
+      "Virtual nodes cân bằng tải"
+    ]
+  },
+  {
+    "id": "db-replication-sharding-01",
+    "playbookId": "db-replication-sharding",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Người dùng cập nhật hồ sơ rồi tải lại trang nhưng vẫn thấy dữ liệu cũ vì đọc từ replica. Cách khắc phục hợp lý?",
+    "options": [
+      "Tăng số replica",
+      "Đọc từ leader (hoặc replica đã theo kịp) ngay sau khi ghi",
+      "Chuyển toàn bộ sang sharding",
+      "Tắt replication"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Đây là vi phạm read-your-writes do replication lag. Đọc từ leader sau ghi hoặc dùng token vị trí log."
+  },
+  {
+    "id": "db-replication-sharding-02",
+    "playbookId": "db-replication-sharding",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Chọn shard key nào tệ nhất cho bảng events ghi liên tục theo thời gian khi dùng range sharding?",
+    "options": [
+      "user_id đã băm",
+      "Timestamp tăng dần",
+      "Tổ hợp tenant_id + id",
+      "Hash của event_id"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Timestamp đơn điệu tăng dồn mọi ghi mới vào shard cuối (hot shard)."
+  },
+  {
+    "id": "db-replication-sharding-03",
+    "playbookId": "db-replication-sharding",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Thêm nhiều read replica sẽ cải thiện điều gì?",
+    "options": [
+      "Throughput ghi",
+      "Throughput đọc và khả năng chịu lỗi",
+      "Dung lượng lưu trữ tối đa",
+      "Mọi truy vấn xuyên shard"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mọi ghi vẫn đi qua leader nên replica chỉ scale đọc và chịu lỗi. Scale ghi và dung lượng cần sharding."
+  },
+  {
+    "id": "db-replication-sharding-04",
+    "playbookId": "db-replication-sharding",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Phân biệt replication và sharding, và nêu một rủi ro điển hình của mỗi loại.",
+    "modelAnswer": "Replication nhân bản cùng dữ liệu qua nhiều node để chịu lỗi và scale đọc; rủi ro là replication lag làm đọc dữ liệu cũ và split brain khi failover. Sharding chia dữ liệu thành các mảnh ở nhiều node để scale ghi và dung lượng; rủi ro là hot shard và các truy vấn hoặc transaction xuyên shard rất đắt.",
+    "keyPoints": [
+      "Replication: cùng dữ liệu, chịu lỗi/scale đọc",
+      "Sharding: chia dữ liệu, scale ghi/dung lượng",
+      "Rủi ro: lag/split brain và hot shard/cross-shard"
+    ]
+  },
+  {
+    "id": "rate-limiting-algorithms-01",
+    "playbookId": "rate-limiting-algorithms",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Fixed window counter có vấn đề đặc trưng nào?",
+    "options": [
+      "Tốn nhiều bộ nhớ nhất",
+      "Có thể cho phép burst gấp đôi hạn mức ở ranh giới hai cửa sổ",
+      "Không đếm được request",
+      "Không dùng được với Redis"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Một client có thể gửi đủ hạn mức cuối cửa sổ này và đủ hạn mức đầu cửa sổ kế tiếp."
+  },
+  {
+    "id": "rate-limiting-algorithms-02",
+    "playbookId": "rate-limiting-algorithms",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Muốn cho phép burst ngắn nhưng giữ tốc độ trung bình, nên chọn thuật toán nào?",
+    "options": [
+      "Fixed window",
+      "Token bucket",
+      "Không giới hạn",
+      "Random drop"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Token bucket cho phép burst tới dung lượng xô rồi nạp token theo tốc độ cố định."
+  },
+  {
+    "id": "rate-limiting-algorithms-03",
+    "playbookId": "rate-limiting-algorithms",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Rate limiter dùng Redis bị lỗi kết nối. Hành vi nào cần được quyết định có chủ đích?",
+    "options": [
+      "Chỉ cần ghi log",
+      "Fail-open (cho qua) hay fail-closed (chặn) tuỳ mức rủi ro",
+      "Tắt Redis",
+      "Tăng hạn mức gấp đôi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Limiter là điểm lỗi tiềm tàng; chọn ưu tiên sẵn sàng hay bảo vệ phải có chủ đích."
+  },
+  {
+    "id": "rate-limiting-algorithms-04",
+    "playbookId": "rate-limiting-algorithms",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Vì sao bộ đếm rate limit phân tán phải nguyên tử, và làm sao đạt được trên Redis?",
+    "modelAnswer": "Nếu đọc bộ đếm rồi mới ghi, hai request đồng thời cùng thấy còn hạn mức và cùng được qua, làm vượt giới hạn. Phải thực hiện kiểm tra và cập nhật trong một thao tác nguyên tử, ví dụ INCR kèm EXPIRE hoặc một Lua script chạy nguyên khối trong Redis.",
+    "keyPoints": [
+      "Check-then-set không nguyên tử gây vượt hạn mức",
+      "INCR+EXPIRE hoặc Lua script",
+      "Dùng thời gian của Redis, không dùng đồng hồ client"
+    ]
+  },
+  {
+    "id": "rate-limiting-algorithms-05",
+    "playbookId": "rate-limiting-algorithms",
+    "type": "bug",
+    "difficulty": 3,
+    "question": "Rate limiter này do AI viết cho API chạy nhiều instance. Vấn đề chính là gì?",
+    "code": {
+      "language": "python",
+      "text": "def allow(user_id, limit=100):\n    key = f\"rl:{user_id}\"\n    count = int(redis.get(key) or 0)      # đọc\n    if count >= limit:\n        return False\n    redis.set(key, count + 1, ex=60)      # ghi\n    return True"
+    },
+    "options": [
+      "Dùng Redis thay vì bộ nhớ cục bộ",
+      "Đọc rồi ghi không nguyên tử nên nhiều request đồng thời cùng qua được và vượt hạn mức; và mỗi lần set còn làm mới TTL",
+      "Hạn mức 100 quá thấp",
+      "Nên dùng ex=1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Hai request cùng đọc count = 99 rồi cùng ghi 100. Dùng INCR (nguyên tử) rồi EXPIRE khi key mới tạo, hoặc Lua script; set lại ex=60 mỗi lần còn kéo dài cửa sổ vô hạn."
+  },
+  {
+    "id": "backend-performance-profiling-01",
+    "playbookId": "backend-performance-profiling",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Vì sao nên theo dõi p99 thay vì chỉ độ trễ trung bình?",
+    "options": [
+      "p99 luôn nhỏ hơn trung bình",
+      "Trung bình che giấu đuôi chậm mà người dùng thực sự cảm nhận",
+      "p99 rẻ hơn để tính",
+      "Trung bình không đo được"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Một số ít request rất chậm kéo trải nghiệm xuống nhưng gần như không làm đổi trung bình."
+  },
+  {
+    "id": "backend-performance-profiling-02",
+    "playbookId": "backend-performance-profiling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Endpoint chậm, CPU máy chủ thấp, nhiều request đang chờ lấy kết nối DB. Nghi ngờ đầu tiên?",
+    "options": [
+      "GC của frontend",
+      "Connection pool bị cạn (pool nhỏ hoặc truy vấn giữ kết nối quá lâu)",
+      "Thiếu CDN",
+      "Dùng HTTP/2"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Saturation ở pool kết nối khiến request xếp hàng dù CPU rảnh; kiểm tra thời gian giữ kết nối và kích thước pool."
+  },
+  {
+    "id": "backend-performance-profiling-03",
+    "playbookId": "backend-performance-profiling",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Công cụ load test gửi request tiếp theo chỉ sau khi nhận phản hồi trước đó. Hệ quả?",
+    "options": [
+      "Đo chính xác hơn",
+      "Coordinated omission: độ trễ đuôi bị đánh giá thấp khi hệ thống bị nghẽn",
+      "Không ảnh hưởng",
+      "Luôn tăng throughput"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Khi hệ thống chậm, công cụ tự giảm tải và \"bỏ sót\" các request đáng lẽ đã chờ lâu."
+  },
+  {
+    "id": "backend-performance-profiling-04",
+    "playbookId": "backend-performance-profiling",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi API chậm, bạn tiếp cận theo quy trình nào?",
+    "modelAnswer": "Đo trước: xác định chỉ số RED/USE và p99, dùng tracing để biết thời gian nằm ở DB, dịch vụ ngoài, CPU hay chờ (pool, lock, GC). Sau đó sửa đúng điểm nghẽn lớn nhất như index hoặc N+1, batching, cache, rồi đo lại để chắc nó thật sự cải thiện và điểm nghẽn không dịch chuyển.",
+    "keyPoints": [
+      "Đo và trace trước khi sửa",
+      "Sửa điểm nghẽn lớn nhất",
+      "Đo lại sau khi sửa"
+    ]
+  },
+  {
+    "id": "backend-performance-profiling-05",
+    "playbookId": "backend-performance-profiling",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "Hàm AI viết cho một endpoint chạy tốt khi test nhưng sập production sau vài giờ. Chọn vấn đề đúng.",
+    "code": {
+      "language": "python",
+      "text": "def get_user(uid):\n    conn = pool.acquire()\n    row = conn.execute(\"SELECT * FROM users WHERE id = %s\", uid).fetchone()\n    if row is None:\n        raise NotFound(uid)       # thoát sớm\n    pool.release(conn)\n    return row"
+    },
+    "options": [
+      "Dùng SELECT * quá chậm",
+      "Rò rỉ kết nối: nhánh NotFound không release nên pool cạn dần và mọi request treo",
+      "Nên dùng GET thay POST",
+      "Thiếu cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mỗi lần không tìm thấy user, kết nối không được trả lại pool. Dùng try/finally hoặc context manager để luôn release."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-01",
+    "playbookId": "observability-tracing-metrics-logs",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao gắn user_id vào label của metric là nguy hiểm?",
+    "options": [
+      "Vì user_id nhạy cảm bảo mật",
+      "High cardinality làm số chuỗi thời gian bùng nổ và đội chi phí/bộ nhớ",
+      "Vì metric không hỗ trợ chuỗi",
+      "Vì Prometheus không chạy được"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mỗi giá trị label tạo một chuỗi thời gian mới; ID chi tiết nên nằm trong log hoặc trace."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-02",
+    "playbookId": "observability-tracing-metrics-logs",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Trace bị cắt đứt ở bước xử lý qua message queue. Nguyên nhân thường gặp?",
+    "options": [
+      "Queue không hỗ trợ JSON",
+      "Không truyền trace context (traceparent) trong header của message",
+      "Quá nhiều consumer",
+      "Dùng HTTP/2"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ranh giới bất đồng bộ cần truyền context tường minh vào message."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-03",
+    "playbookId": "observability-tracing-metrics-logs",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Head-based sampling 1% có rủi ro gì so với tail-based?",
+    "options": [
+      "Không có rủi ro",
+      "Có thể bỏ sót đúng những trace lỗi hoặc chậm hiếm gặp vì quyết định trước khi biết kết quả",
+      "Tốn nhiều bộ nhớ hơn",
+      "Không thể bật trong production"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tail-based quyết định sau khi trace hoàn tất nên giữ được trace lỗi và chậm."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-04",
+    "playbookId": "observability-tracing-metrics-logs",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Logs, metrics và traces khác nhau thế nào và dùng phối hợp ra sao khi điều tra sự cố?",
+    "modelAnswer": "Metrics là số liệu tổng hợp nhẹ, cho biết có vấn đề (tỉ lệ lỗi, độ trễ tăng). Traces theo một request qua nhiều service để chỉ ra service nào chậm. Logs chi tiết giải thích vì sao ở service đó. Phối hợp: cảnh báo từ metrics, mở trace của request chậm, rồi đọc log theo trace ID.",
+    "keyPoints": [
+      "Metrics: có vấn đề",
+      "Traces: ở đâu",
+      "Logs: vì sao, nối bằng trace ID"
+    ]
+  },
+  {
+    "id": "raft-consensus-01",
+    "playbookId": "raft-consensus",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cluster Raft 5 node chịu được tối đa bao nhiêu node hỏng mà vẫn commit được?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần đa số (3/5) nên chịu tối đa 2 node hỏng (2f+1 với f = 2)."
+  },
+  {
+    "id": "raft-consensus-02",
+    "playbookId": "raft-consensus",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao cụm 4 node không bền hơn cụm 3 node?",
+    "options": [
+      "Vì 4 node không thể bầu leader",
+      "Quorum của 4 node là 3 nên vẫn chỉ chịu được 1 node hỏng nhưng tốn thêm tài nguyên",
+      "Vì 4 chia hết cho 2",
+      "Vì Raft cấm số chẵn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dùng số node lẻ để tối ưu chi phí cho cùng khả năng chịu lỗi."
+  },
+  {
+    "id": "raft-consensus-03",
+    "playbookId": "raft-consensus",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cluster 3 node bị partition thành nhóm 2 node và nhóm 1 node. Điều gì xảy ra?",
+    "options": [
+      "Cả hai nhóm đều ghi được",
+      "Chỉ nhóm 2 node có quorum nên bầu leader và commit; nhóm 1 node không ghi được",
+      "Không nhóm nào ghi được",
+      "Nhóm 1 node tự thành leader"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Raft chọn Consistency: phía thiểu số không có quorum nên không commit."
+  },
+  {
+    "id": "raft-consensus-04",
+    "playbookId": "raft-consensus",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Giải thích bầu leader và commit trong Raft.",
+    "modelAnswer": "Follower không nhận heartbeat trong election timeout ngẫu nhiên thì tăng term, thành candidate và xin phiếu; đủ đa số phiếu thì thành leader. Leader nhận ghi, append vào log và gửi cho follower; khi đa số đã lưu thì entry được commit và áp dụng. Node chỉ bỏ phiếu cho candidate có log ít nhất mới như mình nên leader luôn có mọi entry đã commit.",
+    "keyPoints": [
+      "Election timeout ngẫu nhiên, term, đa số phiếu",
+      "Commit khi đa số đã lưu",
+      "Bỏ phiếu theo độ mới của log"
+    ]
+  },
+  {
+    "id": "kubernetes-fundamentals-01",
+    "playbookId": "kubernetes-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Rolling update khiến người dùng thấy lỗi vì traffic đổ vào Pod chưa sẵn sàng. Thiếu cấu hình nào?",
+    "options": [
+      "Liveness probe",
+      "Readiness probe",
+      "Thêm namespace",
+      "Tăng limits CPU"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Readiness probe quyết định Pod có được nhận traffic hay chưa."
+  },
+  {
+    "id": "kubernetes-fundamentals-02",
+    "playbookId": "kubernetes-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Service trong Kubernetes khác Ingress ở điểm nào?",
+    "options": [
+      "Không khác nhau",
+      "Service cân bằng tải L4 ổn định nội bộ; Ingress định tuyến HTTP L7 từ ngoài vào",
+      "Ingress chỉ dùng cho database",
+      "Service chỉ hoạt động bên ngoài"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ingress thường đứng trước nhiều Service để định tuyến theo host hoặc path."
+  },
+  {
+    "id": "kubernetes-fundamentals-03",
+    "playbookId": "kubernetes-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Pod bị OOMKilled dù ứng dụng không rò rỉ bộ nhớ. Nguyên nhân khả dĩ?",
+    "options": [
+      "CPU limit quá cao",
+      "Memory limit thấp hơn tổng nhu cầu thực (heap, non-heap, stack, native)",
+      "Thiếu Ingress",
+      "Dùng quá nhiều replica"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Vượt memory limit bị kernel giết; cần chừa dư địa cho phần ngoài heap."
+  },
+  {
+    "id": "kubernetes-fundamentals-04",
+    "playbookId": "kubernetes-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích mô hình khai báo và vòng reconciliation của Kubernetes.",
+    "modelAnswer": "Bạn khai báo trạng thái mong muốn (ví dụ 3 replica của một Deployment) và lưu vào API server/etcd. Các controller liên tục so sánh trạng thái thực với mong muốn rồi hành động để khớp, như tạo lại Pod bị chết hay scale. Nhờ vậy hệ thống tự phục hồi và triển khai lặp lại được.",
+    "keyPoints": [
+      "Khai báo desired state",
+      "Controller so sánh và sửa liên tục",
+      "Tự phục hồi và lặp lại được"
+    ]
+  },
+  {
+    "id": "service-mesh-api-gateway-01",
+    "playbookId": "service-mesh-api-gateway",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Traffic giữa client bên ngoài và hệ thống thường được xử lý bởi thành phần nào?",
+    "options": [
+      "Service mesh",
+      "API gateway",
+      "Sidecar của DB",
+      "DNS nội bộ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Gateway lo north-south; mesh lo east-west giữa các service."
+  },
+  {
+    "id": "service-mesh-api-gateway-02",
+    "playbookId": "service-mesh-api-gateway",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Mesh retry 3 lần, ứng dụng retry 3 lần, gateway retry 3 lần. Rủi ro lớn nhất là gì?",
+    "options": [
+      "Không có rủi ro",
+      "Retry nhân lên (đến 27 lần) gây bão retry làm quá tải dependency",
+      "Mất mTLS",
+      "Tăng bảo mật"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chọn một tầng retry và đặt giới hạn tổng."
+  },
+  {
+    "id": "service-mesh-api-gateway-03",
+    "playbookId": "service-mesh-api-gateway",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Khi nào service mesh chưa đáng đưa vào?",
+    "options": [
+      "Hàng trăm service cần mTLS và canary",
+      "Hệ thống vài service và đội chưa đủ năng lực vận hành",
+      "Cần zero-trust",
+      "Cần observability đồng nhất"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mesh thêm hop, tài nguyên sidecar và độ phức tạp; ít service thường chỉ cần thư viện và gateway."
+  },
+  {
+    "id": "service-mesh-api-gateway-04",
+    "playbookId": "service-mesh-api-gateway",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "API gateway và service mesh khác nhau thế nào và có dùng chung được không?",
+    "modelAnswer": "API gateway xử lý traffic bắc-nam từ client bên ngoài vào: xác thực, rate limit, định tuyến. Service mesh xử lý traffic đông-tây giữa các service bên trong bằng sidecar: mTLS, retry, timeout, traffic shifting, telemetry mà không sửa code. Hai thành phần giải quyết bài toán khác nhau nên thường dùng cùng nhau.",
+    "keyPoints": [
+      "Gateway: bắc-nam",
+      "Mesh: đông-tây, sidecar",
+      "Thường dùng cùng nhau"
+    ]
+  },
+  {
+    "id": "cqrs-event-sourcing-01",
+    "playbookId": "cqrs-event-sourcing",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Phát biểu nào đúng?",
+    "options": [
+      "CQRS bắt buộc phải dùng event sourcing",
+      "CQRS và event sourcing độc lập, có thể dùng riêng",
+      "Event sourcing chỉ lưu trạng thái hiện tại",
+      "CQRS luôn nhất quán tức thì"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Có thể dùng CQRS với DB thông thường; event sourcing là lựa chọn riêng."
+  },
+  {
+    "id": "cqrs-event-sourcing-02",
+    "playbookId": "cqrs-event-sourcing",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Vì sao khó xoá dữ liệu cá nhân trong hệ event sourcing?",
+    "options": [
+      "Vì event store không hỗ trợ xoá bảng",
+      "Vì event bất biến; cần cách như crypto-shredding hoặc không đưa PII vào event",
+      "Vì read model luôn bị khoá",
+      "Vì có snapshot"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mã hoá PII bằng khoá riêng rồi xoá khoá khi có yêu cầu xoá."
+  },
+  {
+    "id": "cqrs-event-sourcing-03",
+    "playbookId": "cqrs-event-sourcing",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai request cùng ghi vào một aggregate. Cách xử lý đồng thời điển hình trong event sourcing?",
+    "options": [
+      "Khoá toàn bảng",
+      "Optimistic concurrency với expected version: ghi trùng version thì bị từ chối",
+      "Bỏ qua request thứ hai",
+      "Dùng cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Khoá chính (aggregate_id, version) làm cổng nguyên tử."
+  },
+  {
+    "id": "cqrs-event-sourcing-04",
+    "playbookId": "cqrs-event-sourcing",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Khi nào KHÔNG nên dùng event sourcing?",
+    "modelAnswer": "Khi hệ thống chỉ là CRUD đơn giản, không cần audit đầy đủ hay truy vấn theo thời điểm, hoặc đội chưa sẵn sàng với độ phức tạp: tiến hoá schema event, dựng lại projection, eventual consistency của read model và xoá dữ liệu cá nhân. Chỉ áp dụng cho aggregate thật sự cần lịch sử đầy đủ.",
+    "keyPoints": [
+      "CRUD đơn giản không cần",
+      "Độ phức tạp: schema evolution, projection, eventual consistency",
+      "Chỉ áp dụng cho aggregate cần nó"
+    ]
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-01",
+    "playbookId": "etl-elt-orchestration-airflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Task Airflow dùng datetime.now() để quyết định khoảng dữ liệu cần xử lý. Hậu quả khi backfill?",
+    "options": [
+      "Không ảnh hưởng",
+      "Kết quả sai vì không gắn với khoảng dữ liệu của lần chạy (logical date)",
+      "Chạy nhanh hơn",
+      "Tự động idempotent"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dùng data interval hoặc ds để backfill cho từng ngày một cách đúng."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-02",
+    "playbookId": "etl-elt-orchestration-airflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách làm task nạp dữ liệu idempotent?",
+    "options": [
+      "INSERT thẳng mỗi lần chạy",
+      "Ghi đè partition của ngày hoặc MERGE theo khoá",
+      "Chỉ chạy một lần",
+      "Tăng retry"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Retry hoặc backfill sẽ cho cùng kết quả thay vì nhân đôi dữ liệu."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-03",
+    "playbookId": "etl-elt-orchestration-airflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truyền cả bảng dữ liệu lớn giữa các task bằng XCom gây vấn đề gì?",
+    "options": [
+      "Không có vấn đề",
+      "Làm quá tải metadata DB; chỉ nên truyền tham chiếu nhỏ như đường dẫn hay ID",
+      "Làm task chạy nhanh hơn",
+      "Tự mã hoá"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "XCom dành cho dữ liệu nhỏ; dữ liệu lớn nên nằm ở storage/warehouse."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-04",
+    "playbookId": "etl-elt-orchestration-airflow",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "ETL và ELT khác nhau thế nào và vì sao ELT được ưa chuộng?",
+    "modelAnswer": "ETL biến đổi dữ liệu trước khi nạp vào đích; ELT nạp dữ liệu thô vào warehouse rồi biến đổi bằng SQL ngay trong đó. ELT giữ được dữ liệu gốc để tái xử lý, tận dụng sức mạnh tính toán của warehouse hiện đại và dùng công cụ như dbt để quản lý biến đổi. ETL vẫn hợp khi phải che dữ liệu nhạy cảm trước khi nạp.",
+    "keyPoints": [
+      "ETL biến đổi trước khi nạp",
+      "ELT nạp thô rồi biến đổi trong warehouse",
+      "ELT giữ dữ liệu gốc và tận dụng compute"
+    ]
+  },
+  {
+    "id": "data-warehouse-lakehouse-01",
+    "playbookId": "data-warehouse-lakehouse",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Parquet khác Apache Iceberg/Delta Lake thế nào?",
+    "options": [
+      "Giống hệt nhau",
+      "Parquet là định dạng file cột; Iceberg/Delta là lớp bảng với metadata thêm ACID, schema evolution, time travel",
+      "Iceberg là định dạng nén",
+      "Delta chỉ cho CSV"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Table format quản lý tập hợp file Parquet như một bảng có transaction."
+  },
+  {
+    "id": "data-warehouse-lakehouse-02",
+    "playbookId": "data-warehouse-lakehouse",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phân vùng bảng theo user_id (hàng triệu giá trị) gây vấn đề gì?",
+    "options": [
+      "Truy vấn nhanh hơn",
+      "Over-partitioning tạo vô số thư mục và file nhỏ làm truy vấn và metadata chậm",
+      "Dữ liệu bị mã hoá",
+      "Không ảnh hưởng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Phân vùng nên theo cột cardinality thấp như ngày."
+  },
+  {
+    "id": "data-warehouse-lakehouse-03",
+    "playbookId": "data-warehouse-lakehouse",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Trong medallion architecture, tầng Silver dùng để làm gì?",
+    "options": [
+      "Lưu dữ liệu thô bất biến",
+      "Làm sạch, chuẩn hoá và khử trùng dữ liệu",
+      "Chỉ chứa dashboard",
+      "Lưu log hệ thống"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Bronze thô, Silver sạch, Gold phục vụ báo cáo hoặc ML."
+  },
+  {
+    "id": "data-warehouse-lakehouse-04",
+    "playbookId": "data-warehouse-lakehouse",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "So sánh data lake, data warehouse và lakehouse.",
+    "modelAnswer": "Data lake lưu file thô trên object storage, rẻ và linh hoạt nhưng dễ thành data swamp. Data warehouse lưu có cấu trúc, cột, truy vấn SQL nhanh và được quản lý nhưng đắt hơn. Lakehouse giữ dữ liệu ở định dạng mở trên object storage và thêm lớp table format như Iceberg hay Delta để có ACID, schema và time travel, kết hợp ưu điểm của cả hai.",
+    "keyPoints": [
+      "Lake: rẻ, linh hoạt, dễ lộn xộn",
+      "Warehouse: nhanh, quản lý sẵn, đắt",
+      "Lakehouse: lake + table format ACID"
+    ]
+  },
+  {
+    "id": "stream-processing-flink-01",
+    "playbookId": "stream-processing-flink",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Flink \"exactly-once\" nghĩa chính xác là gì?",
+    "options": [
+      "Mỗi sự kiện chỉ được xử lý đúng một lần về mặt vật lý",
+      "Hiệu ứng lên state (và sink hỗ trợ) như xử lý một lần dù có phục hồi và phát lại",
+      "Không bao giờ có checkpoint",
+      "Không cần sink idempotent"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Sự kiện có thể được xử lý lại nội bộ sau lỗi nhưng kết quả quan sát được như một lần."
+  },
+  {
+    "id": "stream-processing-flink-02",
+    "playbookId": "stream-processing-flink",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cửa sổ không bao giờ đóng vì một partition Kafka không có dữ liệu. Giải pháp?",
+    "options": [
+      "Tăng parallelism",
+      "Cấu hình idleness cho nguồn để watermark vẫn tiến",
+      "Xoá checkpoint",
+      "Dùng processing time cho mọi thứ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Partition idle làm watermark kẹt ở giá trị cũ."
+  },
+  {
+    "id": "stream-processing-flink-03",
+    "playbookId": "stream-processing-flink",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao cần đặt uid cho các toán tử Flink?",
+    "options": [
+      "Để tăng tốc độ",
+      "Để khôi phục đúng state từ savepoint sau khi đổi code",
+      "Để mã hoá state",
+      "Để giảm checkpoint"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Không có uid ổn định, Flink không map được state cũ vào toán tử mới."
+  },
+  {
+    "id": "stream-processing-flink-04",
+    "playbookId": "stream-processing-flink",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Checkpoint của Flink hoạt động thế nào để phục hồi sau lỗi?",
+    "modelAnswer": "Flink định kỳ chèn barrier vào dòng dữ liệu để chụp snapshot nhất quán của state mọi toán tử cùng offset của nguồn rồi lưu bền. Khi có lỗi, job quay về checkpoint gần nhất, khôi phục state và đọc lại từ offset đã lưu, nên không mất dữ liệu. Kết hợp sink transaction hoặc idempotent để hiệu ứng ra ngoài chỉ xảy ra một lần.",
+    "keyPoints": [
+      "Barrier chụp snapshot nhất quán",
+      "Khôi phục state và offset",
+      "Cần sink transaction/idempotent"
+    ]
+  },
+  {
+    "id": "change-data-capture-01",
+    "playbookId": "change-data-capture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao CDC log-based tốt hơn polling cột updated_at?",
+    "options": [
+      "Dễ cài hơn",
+      "Bắt được cả delete và không bỏ lỡ thay đổi giữa hai lần poll, ít tải lên DB",
+      "Không cần DB",
+      "Luôn nhanh hơn 10 lần"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Log chứa mọi thay đổi theo thứ tự commit kể cả xoá."
+  },
+  {
+    "id": "change-data-capture-02",
+    "playbookId": "change-data-capture",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Connector Debezium chết nhiều ngày với PostgreSQL replication slot. Rủi ro lớn nhất?",
+    "options": [
+      "Mất bảng",
+      "WAL tích tụ làm đầy đĩa của DB vì slot giữ log chưa được tiêu thụ",
+      "DB tự khoá",
+      "Mất mật khẩu"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần giám sát lag của slot và có cảnh báo."
+  },
+  {
+    "id": "change-data-capture-03",
+    "playbookId": "change-data-capture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Consumer của CDC cần xử lý ra sao khi nhận trùng event?",
+    "options": [
+      "Bỏ qua mọi lỗi",
+      "Dùng sink idempotent (upsert theo khoá)",
+      "Xoá toàn bộ bảng",
+      "Tắt CDC"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giao nhận at-least-once nên cần idempotent."
+  },
+  {
+    "id": "change-data-capture-04",
+    "playbookId": "change-data-capture",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "CDC log-based hoạt động thế nào, và vì sao cần bước snapshot ban đầu?",
+    "modelAnswer": "CDC đọc transaction log của DB (WAL hoặc binlog) và phát mỗi thay đổi thành event có before, after và vị trí log. Snapshot ban đầu đọc trạng thái hiện tại của bảng để consumer có dữ liệu nền, rồi chuyển sang streaming từ đúng vị trí log đã snapshot nên không mất hay trùng thay đổi nào.",
+    "keyPoints": [
+      "Đọc WAL/binlog, phát event before/after",
+      "Snapshot cho trạng thái nền",
+      "Chuyển sang streaming từ đúng vị trí log"
+    ]
+  },
+  {
+    "id": "data-quality-governance-01",
+    "playbookId": "data-quality-governance",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Kiểm thử chất lượng dữ liệu nên đặt ở đâu hiệu quả nhất?",
+    "options": [
+      "Chỉ ở dashboard cuối cùng",
+      "Càng gần nguồn càng tốt",
+      "Không cần",
+      "Chỉ khi có khiếu nại"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lỗi phát hiện sớm không lan ra mọi consumer hạ nguồn."
+  },
+  {
+    "id": "data-quality-governance-02",
+    "playbookId": "data-quality-governance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Data contract giữa producer và consumer dùng để làm gì?",
+    "options": [
+      "Mã hoá dữ liệu",
+      "Thoả thuận schema, ngữ nghĩa và SLA để thay đổi phá vỡ bị phát hiện sớm",
+      "Tăng tốc truy vấn",
+      "Xoá dữ liệu cũ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thay đổi schema âm thầm là nguyên nhân phổ biến làm vỡ pipeline."
+  },
+  {
+    "id": "data-quality-governance-03",
+    "playbookId": "data-quality-governance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Pipeline chạy thành công nhưng số liệu doanh thu cao bất thường. Bạn kiểm tra gì đầu tiên?",
+    "options": [
+      "Chỉ màu dashboard",
+      "Freshness, volume, trùng lặp, schema và đối chiếu tổng với nguồn",
+      "Khởi động lại máy chủ",
+      "Xoá cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thành công kỹ thuật không đồng nghĩa với đúng nghiệp vụ."
+  },
+  {
+    "id": "data-quality-governance-04",
+    "playbookId": "data-quality-governance",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Data quality gồm những chiều nào và làm sao tự động kiểm tra?",
+    "modelAnswer": "Các chiều gồm completeness, accuracy, consistency, timeliness, uniqueness và validity. Tự động kiểm tra bằng test schema, not_null, unique, accepted_values, referential integrity, freshness, volume anomaly và phân bố bằng dbt tests, Great Expectations hoặc Soda, kèm quarantine bản ghi lỗi và cảnh báo cho owner.",
+    "keyPoints": [
+      "Sáu chiều chất lượng",
+      "Tests tự động trong pipeline",
+      "Quarantine và cảnh báo owner"
+    ]
+  },
+  {
+    "id": "stream-processing-flink-05",
+    "playbookId": "stream-processing-flink",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Trong ba engine, thư viện nhúng gắn chặt với Kafka và đơn giản nhất là?",
+    "options": [
+      "Flink",
+      "Kafka Streams",
+      "Spark Structured Streaming",
+      "Airflow"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Kafka Streams là thư viện chạy trong ứng dụng; Flink là cluster riêng cho state lớn; Spark theo micro-batch."
+  },
+  {
+    "id": "iam-fundamentals-01",
+    "playbookId": "iam-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ứng dụng chạy trên EC2 cần đọc S3. Cách đúng nhất để cấp quyền?",
+    "options": [
+      "Lưu access key trong code",
+      "Gán IAM Role (instance profile) cho EC2",
+      "Dùng root user",
+      "Mở bucket public"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Role cấp credentials tạm thời tự động xoay vòng, không cần lưu secret dài hạn."
+  },
+  {
+    "id": "iam-fundamentals-02",
+    "playbookId": "iam-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một policy có Allow s3:* nhưng một policy khác có explicit Deny s3:DeleteObject. Kết quả khi xoá object?",
+    "options": [
+      "Cho phép vì Allow rộng hơn",
+      "Từ chối vì explicit Deny luôn thắng",
+      "Tuỳ thứ tự policy",
+      "Chỉ từ chối với root"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Explicit Deny luôn thắng mọi Allow."
+  },
+  {
+    "id": "iam-fundamentals-03",
+    "playbookId": "iam-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích nguyên tắc least privilege và cách áp dụng trong IAM.",
+    "modelAnswer": "Chỉ cấp đúng quyền tối thiểu cần thiết cho đúng tài nguyên và đúng thời gian. Áp dụng bằng cách gán quyền cho group hoặc role, dùng policy có Resource và Condition cụ thể, tránh quyền rộng như *, dùng IAM Access Analyzer để thu hẹp, và bật MFA, không dùng root.",
+    "keyPoints": [
+      "Quyền tối thiểu cho đúng tài nguyên",
+      "Group/role, Resource và Condition cụ thể",
+      "Access Analyzer, MFA, tránh root"
+    ]
+  },
+  {
+    "id": "s3-security-encryption-01",
+    "playbookId": "s3-security-encryption",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần audit ai đã dùng khoá để giải mã object trong S3. Chọn kiểu mã hoá nào?",
+    "options": [
+      "SSE-S3",
+      "SSE-KMS",
+      "Không mã hoá",
+      "SSE-C"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "KMS ghi lại việc dùng khoá qua CloudTrail và cho phân quyền theo khoá."
+  },
+  {
+    "id": "s3-security-encryption-02",
+    "playbookId": "s3-security-encryption",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Mặc định của bucket mới về truy cập công khai?",
+    "options": [
+      "Public",
+      "Private và Block Public Access được bật",
+      "Chỉ đọc công khai",
+      "Tuỳ region"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Bucket mới mặc định private và ACL bị tắt."
+  },
+  {
+    "id": "s3-security-encryption-03",
+    "playbookId": "s3-security-encryption",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "So sánh SSE-S3, SSE-KMS và SSE-C.",
+    "modelAnswer": "SSE-S3 do S3 quản lý khoá, mặc định, không tốn thêm phí. SSE-KMS dùng khoá trong KMS, có audit, phân quyền và xoay vòng nhưng có phí và quota KMS. SSE-C khách hàng gửi khoá trong mỗi request, S3 không lưu khoá nên mất khoá là mất dữ liệu.",
+    "keyPoints": [
+      "SSE-S3: mặc định",
+      "SSE-KMS: audit, kiểm soát khoá",
+      "SSE-C: khách hàng giữ khoá"
+    ]
+  },
+  {
+    "id": "s3-versioning-replication-01",
+    "playbookId": "s3-versioning-replication",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bật S3 Replication nhưng object đã có trước đó không được sao chép. Giải pháp?",
+    "options": [
+      "Tắt versioning",
+      "Dùng S3 Batch Replication cho object có sẵn",
+      "Xoá bucket",
+      "Đổi region"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Rule replication chỉ áp dụng cho object mới sau khi tạo."
+  },
+  {
+    "id": "s3-versioning-replication-02",
+    "playbookId": "s3-versioning-replication",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xoá một object trong bucket có versioning (không chỉ định versionId) sẽ?",
+    "options": [
+      "Xoá vĩnh viễn mọi version",
+      "Chèn delete marker, các version cũ vẫn còn",
+      "Báo lỗi",
+      "Tắt versioning"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Xoá delete marker để khôi phục object."
+  },
+  {
+    "id": "s3-versioning-replication-03",
+    "playbookId": "s3-versioning-replication",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao replication không thay thế backup?",
+    "modelAnswer": "Replication sao chép cả thao tác ghi đè và xoá nhầm sang bản sao nên lỗi cũng bị nhân bản. Cần kết hợp versioning, Object Lock và backup có thời điểm để khôi phục khi dữ liệu bị hỏng hoặc xoá nhầm.",
+    "keyPoints": [
+      "Lỗi cũng được nhân bản",
+      "Versioning/Object Lock bảo vệ khỏi xoá nhầm",
+      "Backup điểm thời gian vẫn cần"
+    ]
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-01",
+    "playbookId": "s3-storage-classes-lifecycle",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dữ liệu có pattern truy cập không đoán được, không muốn phí truy xuất. Chọn class nào?",
+    "options": [
+      "Glacier Deep Archive",
+      "S3 Intelligent-Tiering",
+      "One Zone-IA",
+      "Standard-IA"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Intelligent-Tiering tự chuyển tầng, không phí truy xuất nhưng có phí monitoring theo object."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-02",
+    "playbookId": "s3-storage-classes-lifecycle",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Chuyển hàng triệu file 10 KB sang Standard-IA thường dẫn tới?",
+    "options": [
+      "Giảm chi phí chắc chắn",
+      "Có thể tăng chi phí vì tính tối thiểu 128 KB mỗi object",
+      "Mất dữ liệu",
+      "Tăng bảo mật"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Các class IA tính kích thước tối thiểu nên file nhỏ không hợp."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-03",
+    "playbookId": "s3-storage-classes-lifecycle",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Lifecycle rule dùng để làm gì và cần lưu ý gì?",
+    "modelAnswer": "Tự động chuyển object sang class rẻ hơn theo tuổi và xoá object, version cũ hay multipart upload dở dang. Cần lưu ý thời gian lưu tối thiểu của từng class, chiều chuyển chỉ xuống tầng lạnh hơn và thêm rule dọn multipart upload.",
+    "keyPoints": [
+      "Transition và Expiration theo tuổi",
+      "Thời gian lưu tối thiểu (30/90/180 ngày)",
+      "Dọn multipart upload"
+    ]
+  },
+  {
+    "id": "s3-performance-01",
+    "playbookId": "s3-performance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Upload file 10 GB thường bị lỗi giữa chừng. Giải pháp?",
+    "options": [
+      "Tăng timeout",
+      "Multipart Upload (bắt buộc cho file > 5 GB)",
+      "Chia thành nhiều bucket",
+      "Nén bằng zip"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Multipart cho phép upload song song và retry từng phần."
+  },
+  {
+    "id": "s3-performance-02",
+    "playbookId": "s3-performance",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "S3 hỗ trợ tối thiểu bao nhiêu request GET mỗi giây cho mỗi prefix?",
+    "options": [
+      "500",
+      "5,500",
+      "55,000",
+      "Không giới hạn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tối thiểu 5,500 GET/HEAD và 3,500 PUT/COPY/POST/DELETE mỗi prefix; tăng bằng nhiều prefix."
+  },
+  {
+    "id": "s3-performance-03",
+    "playbookId": "s3-performance",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Làm cách nào tăng throughput S3?",
+    "modelAnswer": "Song song hoá: rải object qua nhiều prefix, dùng multipart upload và byte-range fetch, thêm Transfer Acceleration khi client ở xa. Với SSE-KMS cần chú ý quota request của KMS và có thể bật S3 Bucket Key.",
+    "keyPoints": [
+      "Nhiều prefix",
+      "Multipart và byte-range",
+      "Transfer Acceleration và KMS quota"
+    ]
+  },
+  {
+    "id": "ec2-pricing-models-01",
+    "playbookId": "ec2-pricing-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Workload batch chịu được gián đoạn, cần chi phí thấp nhất. Chọn?",
+    "options": [
+      "On-Demand",
+      "Spot Instances",
+      "Dedicated Host",
+      "Reserved 3 năm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Spot giảm tới ~90% nhưng có thể bị thu hồi với cảnh báo 2 phút."
+  },
+  {
+    "id": "ec2-pricing-models-02",
+    "playbookId": "ec2-pricing-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần license theo socket/core (BYOL) và tuân thủ. Chọn?",
+    "options": [
+      "Spot",
+      "Dedicated Host",
+      "On-Demand",
+      "Savings Plans"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dedicated Host cho nhìn thấy socket/core vật lý."
+  },
+  {
+    "id": "ec2-pricing-models-03",
+    "playbookId": "ec2-pricing-models",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Kết hợp các mô hình giá EC2 cho một ứng dụng web như thế nào?",
+    "modelAnswer": "Phần tải nền chạy ổn định 24/7 dùng Savings Plans hoặc Reserved, phần tăng đột biến dùng On-Demand, và các job chịu gián đoạn dùng Spot, thường kết hợp trong Auto Scaling Group với mixed instances policy.",
+    "keyPoints": [
+      "Baseline: Savings Plans/Reserved",
+      "Đỉnh tải: On-Demand",
+      "Job chịu gián đoạn: Spot"
+    ]
+  },
+  {
+    "id": "ec2-security-groups-networking-01",
+    "playbookId": "ec2-security-groups-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần chặn một địa chỉ IP cụ thể truy cập. Dùng gì?",
+    "options": [
+      "Security Group",
+      "Network ACL",
+      "IAM policy",
+      "Route table"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Security Group chỉ có Allow; NACL có Deny."
+  },
+  {
+    "id": "ec2-security-groups-networking-02",
+    "playbookId": "ec2-security-groups-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Security Group là stateful nghĩa là?",
+    "options": [
+      "Lưu log mọi gói tin",
+      "Phản hồi cho traffic đã được cho phép tự động được đi qua",
+      "Chỉ chặn chiều ra",
+      "Phải mở cả hai chiều"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Không cần rule chiều ngược lại cho traffic phản hồi."
+  },
+  {
+    "id": "ec2-security-groups-networking-03",
+    "playbookId": "ec2-security-groups-networking",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khác biệt giữa Security Group và Network ACL?",
+    "modelAnswer": "Security Group gắn vào ENI, stateful, chỉ có rule Allow. NACL gắn vào subnet, stateless, có cả Allow và Deny, đánh giá theo số thứ tự và phải mở cả ephemeral port chiều về.",
+    "keyPoints": [
+      "SG: ENI, stateful, chỉ Allow",
+      "NACL: subnet, stateless, có Deny",
+      "NACL cần mở ephemeral ports"
+    ]
+  },
+  {
+    "id": "ec2-placement-groups-01",
+    "playbookId": "ec2-placement-groups",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "HPC cần độ trễ thấp và băng thông cao giữa các node. Chọn placement group?",
+    "options": [
+      "Spread",
+      "Cluster",
+      "Partition",
+      "Không dùng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cluster gom instance gần nhau trong một AZ."
+  },
+  {
+    "id": "ec2-placement-groups-02",
+    "playbookId": "ec2-placement-groups",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hệ phân tán lớn như Cassandra cần cách ly lỗi theo nhóm rack. Chọn?",
+    "options": [
+      "Cluster",
+      "Partition",
+      "Spread với 100 instance",
+      "Dedicated Host"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Partition chia nhóm rack độc lập; Spread giới hạn 7 instance mỗi AZ."
+  },
+  {
+    "id": "ec2-placement-groups-03",
+    "playbookId": "ec2-placement-groups",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "So sánh Cluster, Spread và Partition placement group.",
+    "modelAnswer": "Cluster đặt sát nhau trong một AZ cho độ trễ thấp nhưng rủi ro lỗi tập trung. Spread đặt mỗi instance trên rack riêng, tối đa 7 instance mỗi AZ, cách ly tối đa. Partition chia thành các nhóm rack độc lập, phù hợp hệ phân tán lớn biết topology.",
+    "keyPoints": [
+      "Cluster: độ trễ thấp",
+      "Spread: cách ly tối đa, tối đa 7/AZ",
+      "Partition: nhóm rack cho hệ lớn"
+    ]
+  },
+  {
+    "id": "vpc-networking-01",
+    "playbookId": "vpc-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Private subnet cần truy cập S3 mà không qua Internet và chi phí thấp nhất. Dùng?",
+    "options": [
+      "NAT Gateway",
+      "Gateway VPC Endpoint cho S3",
+      "Internet Gateway",
+      "VPN"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Gateway endpoint miễn phí và chỉ hỗ trợ S3 và DynamoDB."
+  },
+  {
+    "id": "vpc-networking-02",
+    "playbookId": "vpc-networking",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "VPC A peering với B, B peering với C. A có truy cập được C không?",
+    "options": [
+      "Có, tự động",
+      "Không, VPC Peering không bắc cầu",
+      "Chỉ với DNS",
+      "Chỉ với NAT"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần peering trực tiếp hoặc dùng Transit Gateway."
+  },
+  {
+    "id": "vpc-networking-03",
+    "playbookId": "vpc-networking",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Điều gì làm một subnet trở thành public?",
+    "modelAnswer": "Route table của subnet có route 0.0.0.0/0 trỏ tới Internet Gateway và tài nguyên có địa chỉ public hoặc Elastic IP. Subnet không có route đó là private; muốn đi ra Internet cần NAT Gateway đặt trong public subnet.",
+    "keyPoints": [
+      "Route 0.0.0.0/0 tới IGW",
+      "Có public/Elastic IP",
+      "Private dùng NAT để đi ra"
+    ]
+  },
+  {
+    "id": "elb-auto-scaling-01",
+    "playbookId": "elb-auto-scaling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần định tuyến theo path URL tới các microservice khác nhau. Dùng load balancer nào?",
+    "options": [
+      "NLB",
+      "ALB",
+      "GWLB",
+      "Classic"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "ALB là Layer 7 hỗ trợ routing theo host và path."
+  },
+  {
+    "id": "elb-auto-scaling-02",
+    "playbookId": "elb-auto-scaling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Muốn Auto Scaling giữ CPU quanh 50%. Dùng policy?",
+    "options": [
+      "Scheduled",
+      "Target tracking",
+      "Manual",
+      "Lifecycle hook"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Target tracking tự điều chỉnh số instance để giữ metric ở mục tiêu."
+  },
+  {
+    "id": "elb-auto-scaling-03",
+    "playbookId": "elb-auto-scaling",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao instance trong Auto Scaling Group nên stateless?",
+    "modelAnswer": "ASG có thể thêm hoặc xoá instance bất cứ lúc nào nên state lưu trên instance sẽ mất và request không thể tuỳ ý đến instance nào. State nên nằm ở DB hoặc cache dùng chung để scale ngang và thay thế instance an toàn.",
+    "keyPoints": [
+      "Instance có thể bị thay thế",
+      "Request đến instance bất kỳ",
+      "State ở DB/cache dùng chung"
+    ]
+  },
+  {
+    "id": "rds-aurora-01",
+    "playbookId": "rds-aurora",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần chịu lỗi AZ cho RDS mà chưa cần scale đọc. Chọn?",
+    "options": [
+      "Read Replica",
+      "Multi-AZ",
+      "Snapshot thủ công",
+      "Tăng instance"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Multi-AZ dùng standby đồng bộ với failover tự động."
+  },
+  {
+    "id": "rds-aurora-02",
+    "playbookId": "rds-aurora",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "RDS instance chưa mã hoá, muốn bật mã hoá. Cách làm?",
+    "options": [
+      "Bật trực tiếp trong console",
+      "Tạo snapshot, copy snapshot với mã hoá, rồi restore",
+      "Không thể",
+      "Đổi engine"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mã hoá phải chọn lúc tạo; DB hiện có cần đi qua snapshot mã hoá."
+  },
+  {
+    "id": "rds-aurora-03",
+    "playbookId": "rds-aurora",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Multi-AZ và Read Replica khác nhau thế nào?",
+    "modelAnswer": "Multi-AZ dùng standby đồng bộ ở AZ khác để chịu lỗi với failover tự động và không phục vụ đọc. Read Replica sao chép bất đồng bộ để scale đọc, có thể cross-Region, có replica lag và có thể được promote.",
+    "keyPoints": [
+      "Multi-AZ: HA, đồng bộ, failover",
+      "Replica: scale đọc, bất đồng bộ",
+      "Replica có lag"
+    ]
+  },
+  {
+    "id": "dynamodb-01",
+    "playbookId": "dynamodb",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn nào hiệu quả nhất trong DynamoDB?",
+    "options": [
+      "Scan toàn bảng",
+      "Query theo partition key (và sort key)",
+      "JOIN nhiều bảng",
+      "LIKE trên mọi thuộc tính"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chỉ truy cập theo key mới nhanh; Scan đọc toàn bảng."
+  },
+  {
+    "id": "dynamodb-02",
+    "playbookId": "dynamodb",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hot partition thường do nguyên nhân nào?",
+    "options": [
+      "Quá nhiều GSI",
+      "Partition key có cardinality thấp hoặc phân bố lệch",
+      "Bật TTL",
+      "Dùng on-demand"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Key lệch dồn tải vào một partition dù tổng capacity còn dư."
+  },
+  {
+    "id": "dynamodb-03",
+    "playbookId": "dynamodb",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "GSI khác LSI thế nào?",
+    "modelAnswer": "GSI có partition key khác, tạo bất cứ lúc nào, có capacity riêng và chỉ đọc eventually consistent. LSI cùng partition key nhưng sort key khác, chỉ tạo khi tạo bảng, tối đa 5 và hỗ trợ strongly consistent.",
+    "keyPoints": [
+      "GSI: khác partition key, tạo sau được",
+      "LSI: cùng partition key, chỉ lúc tạo bảng",
+      "LSI giới hạn 5 và 10 GB mỗi key"
+    ]
+  },
+  {
+    "id": "route53-cloudfront-01",
+    "playbookId": "route53-cloudfront",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Trỏ domain gốc example.com vào ALB. Dùng bản ghi nào?",
+    "options": [
+      "CNAME",
+      "Alias record",
+      "MX",
+      "TXT"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "CNAME không đặt được ở zone apex; Alias dùng được và miễn phí."
+  },
+  {
+    "id": "route53-cloudfront-02",
+    "playbookId": "route53-cloudfront",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cập nhật nội dung đã cache trên CloudFront mà tránh trả phí invalidation?",
+    "options": [
+      "Xoá distribution",
+      "Đặt tên file có version (app.v2.js)",
+      "Tắt cache",
+      "Đổi region"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Versioning tên file là cách tốt hơn invalidation."
+  },
+  {
+    "id": "route53-cloudfront-03",
+    "playbookId": "route53-cloudfront",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "CloudFront và Global Accelerator khác nhau thế nào?",
+    "modelAnswer": "CloudFront là CDN cache nội dung HTTP tại edge. Global Accelerator cung cấp IP anycast tĩnh đưa traffic vào backbone AWS, hỗ trợ TCP/UDP và failover nhanh nhưng không cache.",
+    "keyPoints": [
+      "CloudFront: cache HTTP",
+      "Global Accelerator: IP anycast, không cache",
+      "GA hợp TCP/UDP và failover"
+    ]
+  },
+  {
+    "id": "sqs-sns-eventbridge-01",
+    "playbookId": "sqs-sns-eventbridge",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một sự kiện cần tới nhiều hệ thống độc lập. Pattern phù hợp?",
+    "options": [
+      "Một SQS queue duy nhất",
+      "SNS fan-out tới nhiều SQS queue",
+      "Gọi trực tiếp tuần tự",
+      "Cron job"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SNS phát tới nhiều subscriber, mỗi SQS cho độ bền."
+  },
+  {
+    "id": "sqs-sns-eventbridge-02",
+    "playbookId": "sqs-sns-eventbridge",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần thứ tự đúng và không trùng. Chọn?",
+    "options": [
+      "SQS Standard",
+      "SQS FIFO",
+      "SNS Standard",
+      "EventBridge"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "FIFO đảm bảo thứ tự theo message group và exactly-once processing."
+  },
+  {
+    "id": "sqs-sns-eventbridge-03",
+    "playbookId": "sqs-sns-eventbridge",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao cần dead-letter queue và visibility timeout hợp lý?",
+    "modelAnswer": "Visibility timeout ngắn hơn thời gian xử lý làm message bị xử lý hai lần, quá dài làm phục hồi chậm. DLQ chứa message vượt số lần thử để poison message không chặn luồng chính và để điều tra.",
+    "keyPoints": [
+      "Timeout phù hợp thời gian xử lý",
+      "DLQ cho poison message",
+      "Cảnh báo khi DLQ có dữ liệu"
+    ]
+  },
+  {
+    "id": "lambda-serverless-01",
+    "playbookId": "lambda-serverless",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lambda trong VPC cần gọi Internet. Thiếu gì?",
+    "options": [
+      "Thêm memory",
+      "NAT Gateway (hoặc endpoint)",
+      "Layer",
+      "Alias"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lambda trong VPC không có Internet mặc định."
+  },
+  {
+    "id": "lambda-serverless-02",
+    "playbookId": "lambda-serverless",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Giảm cold start cho hàm quan trọng?",
+    "options": [
+      "Tăng timeout",
+      "Provisioned concurrency",
+      "Reserved concurrency",
+      "Giảm memory"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Provisioned concurrency giữ sẵn môi trường thực thi."
+  },
+  {
+    "id": "lambda-serverless-03",
+    "playbookId": "lambda-serverless",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào Lambda không phù hợp?",
+    "modelAnswer": "Tác vụ chạy hơn 15 phút, cần kết nối bền, hoặc tải cao đều đặn cả ngày nơi EC2 hoặc Fargate có thể rẻ hơn; ngoài ra cần cân nhắc cold start và giới hạn runtime.",
+    "keyPoints": [
+      "Quá 15 phút",
+      "Tải cao đều 24/7",
+      "Cold start và giới hạn"
+    ]
+  },
+  {
+    "id": "disaster-recovery-strategies-01",
+    "playbookId": "disaster-recovery-strategies",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "RTO là gì?",
+    "options": [
+      "Lượng dữ liệu chấp nhận mất",
+      "Thời gian tối đa chấp nhận dịch vụ ngừng",
+      "Chi phí backup",
+      "Dung lượng DR"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "RPO là lượng dữ liệu mất; RTO là thời gian phục hồi."
+  },
+  {
+    "id": "disaster-recovery-strategies-02",
+    "playbookId": "disaster-recovery-strategies",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cần RTO vài phút với ngân sách vừa phải. Chọn chiến lược?",
+    "options": [
+      "Backup & Restore",
+      "Warm Standby",
+      "Multi-site Active/Active",
+      "Không DR"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Warm Standby giữ bản thu nhỏ chạy sẵn, scale khi sự cố."
+  },
+  {
+    "id": "disaster-recovery-strategies-03",
+    "playbookId": "disaster-recovery-strategies",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "So sánh 4 chiến lược DR của AWS.",
+    "modelAnswer": "Backup & Restore rẻ nhất, RTO tính bằng giờ. Pilot Light giữ phần lõi như database replica, RTO hàng chục phút. Warm Standby chạy bản thu nhỏ đầy đủ, RTO vài phút. Active/Active chạy nhiều Region đồng thời, RTO gần bằng 0 nhưng đắt nhất.",
+    "keyPoints": [
+      "Chi phí tăng khi RTO giảm",
+      "Pilot Light: lõi chạy sẵn",
+      "Active/Active gần 0 RTO"
+    ]
+  },
+  {
+    "id": "azure-core-architecture-01",
+    "playbookId": "azure-core-architecture",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Thứ bậc đúng của quản trị Azure từ cao xuống thấp?",
+    "options": [
+      "Resource → Resource Group → Subscription",
+      "Management Group → Subscription → Resource Group → Resource",
+      "Subscription → Management Group",
+      "Tenant → Resource Group → Subscription"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chính sách và quyền kế thừa xuống dưới."
+  },
+  {
+    "id": "azure-core-architecture-02",
+    "playbookId": "azure-core-architecture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ranh giới thanh toán và quota trong Azure là?",
+    "options": [
+      "Resource Group",
+      "Subscription",
+      "Region",
+      "VNet"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Subscription là ranh giới billing và giới hạn."
+  },
+  {
+    "id": "azure-core-architecture-03",
+    "playbookId": "azure-core-architecture",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Availability Zone khác Region pair thế nào?",
+    "modelAnswer": "Availability Zone là các vị trí vật lý độc lập về điện, làm mát, mạng trong cùng một Region để chịu lỗi data center. Region pair ghép hai Region cùng geography cách xa nhau cho DR và cập nhật tuần tự.",
+    "keyPoints": [
+      "AZ: trong một Region",
+      "Region pair: giữa hai Region",
+      "AZ lỗi data center, pair lỗi Region"
+    ]
+  },
+  {
+    "id": "entra-id-rbac-01",
+    "playbookId": "entra-id-rbac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Người dùng chỉ được xem tài nguyên, không sửa. Role nào?",
+    "options": [
+      "Owner",
+      "Contributor",
+      "Reader",
+      "User Access Administrator"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Reader chỉ xem; Contributor không cấp quyền; Owner toàn quyền."
+  },
+  {
+    "id": "entra-id-rbac-02",
+    "playbookId": "entra-id-rbac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ứng dụng trên Azure truy cập Key Vault mà không lưu mật khẩu. Dùng?",
+    "options": [
+      "Connection string trong code",
+      "Managed identity",
+      "Account key",
+      "Public access"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Managed identity do Azure quản lý, không cần secret."
+  },
+  {
+    "id": "entra-id-rbac-03",
+    "playbookId": "entra-id-rbac",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Azure RBAC khác Entra roles và Azure Policy thế nào?",
+    "modelAnswer": "Azure RBAC phân quyền người dùng trên tài nguyên Azure theo scope. Entra roles quản lý danh tính và tenant như Global Administrator. Azure Policy quy định tài nguyên được phép có cấu hình thế nào, không cấp quyền cho ai.",
+    "keyPoints": [
+      "RBAC: quyền trên tài nguyên",
+      "Entra roles: danh tính/tenant",
+      "Policy: cấu hình tài nguyên"
+    ]
+  },
+  {
+    "id": "azure-virtual-machines-01",
+    "playbookId": "azure-virtual-machines",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "SLA cao nhất cho VM đạt được bằng?",
+    "options": [
+      "Một VM Premium SSD",
+      "Availability Set",
+      "Availability Zones",
+      "Spot"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Triển khai qua nhiều zone cho SLA khoảng 99.99%."
+  },
+  {
+    "id": "azure-virtual-machines-02",
+    "playbookId": "azure-virtual-machines",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "VM đang ở trạng thái Stopped (chưa deallocate) vẫn?",
+    "options": [
+      "Không tính phí",
+      "Tính phí compute",
+      "Bị xoá",
+      "Chỉ tính phí đĩa"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần deallocate để ngừng tính phí compute."
+  },
+  {
+    "id": "azure-virtual-machines-03",
+    "playbookId": "azure-virtual-machines",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Chọn mô hình giá cho VM Azure thế nào?",
+    "modelAnswer": "Workload ổn định dài hạn dùng Reserved Instance hoặc Savings Plan, workload chịu gián đoạn dùng Spot, còn lại pay-as-you-go; có thể thêm Azure Hybrid Benefit để tận dụng license sẵn có.",
+    "keyPoints": [
+      "Ổn định: Reserved/Savings Plan",
+      "Chịu gián đoạn: Spot",
+      "Hybrid Benefit cho license"
+    ]
+  },
+  {
+    "id": "azure-storage-01",
+    "playbookId": "azure-storage",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chịu lỗi cả Region và vẫn đọc được từ Region phụ khi sự cố?",
+    "options": [
+      "LRS",
+      "ZRS",
+      "GRS",
+      "RA-GRS hoặc RA-GZRS"
+    ],
+    "answer": [
+      3
+    ],
+    "explanation": "Phiên bản RA- cho phép đọc từ Region thứ hai."
+  },
+  {
+    "id": "azure-storage-02",
+    "playbookId": "azure-storage",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Blob ở tier Archive muốn đọc thì?",
+    "options": [
+      "Đọc ngay",
+      "Phải rehydrate (mất hàng giờ)",
+      "Không thể đọc",
+      "Chuyển sang Hot tự động"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Archive là offline."
+  },
+  {
+    "id": "azure-storage-03",
+    "playbookId": "azure-storage",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào dùng SAS token và loại nào an toàn hơn?",
+    "modelAnswer": "SAS cấp quyền tạm thời có giới hạn cho bên ngoài. User delegation SAS ký bằng Entra ID an toàn hơn account key; nên đặt thời hạn ngắn và quyền tối thiểu, tránh chia sẻ account key.",
+    "keyPoints": [
+      "SAS: quyền tạm thời",
+      "User delegation SAS ký bằng Entra ID",
+      "Hạn ngắn, quyền tối thiểu"
+    ]
+  },
+  {
+    "id": "azure-networking-load-balancing-01",
+    "playbookId": "azure-networking-load-balancing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cân bằng tải HTTP toàn cầu có WAF và CDN?",
+    "options": [
+      "Load Balancer",
+      "Application Gateway",
+      "Azure Front Door",
+      "Traffic Manager"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Front Door là L7 toàn cầu."
+  },
+  {
+    "id": "azure-networking-load-balancing-02",
+    "playbookId": "azure-networking-load-balancing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "NSG xử lý rule theo thứ tự nào?",
+    "options": [
+      "Số priority lớn trước",
+      "Số priority nhỏ trước",
+      "Ngẫu nhiên",
+      "Theo tên"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Priority nhỏ được đánh giá trước."
+  },
+  {
+    "id": "azure-networking-load-balancing-03",
+    "playbookId": "azure-networking-load-balancing",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "ExpressRoute khác VPN Gateway thế nào?",
+    "modelAnswer": "ExpressRoute là kết nối riêng không đi qua Internet, ổn định và độ trễ thấp nhưng đắt và lead time dài. VPN Gateway mã hoá traffic qua Internet, rẻ và triển khai nhanh hơn.",
+    "keyPoints": [
+      "ExpressRoute: riêng, ổn định, đắt",
+      "VPN: qua Internet, rẻ",
+      "Chọn theo yêu cầu băng thông"
+    ]
+  },
+  {
+    "id": "azure-governance-cost-01",
+    "playbookId": "azure-governance-cost",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bắt buộc mọi tài nguyên phải có tag. Dùng?",
+    "options": [
+      "RBAC",
+      "Azure Policy",
+      "Lock",
+      "Budget"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Policy kiểm soát cấu hình tài nguyên."
+  },
+  {
+    "id": "azure-governance-cost-02",
+    "playbookId": "azure-governance-cost",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ngăn xoá nhầm database production. Dùng?",
+    "options": [
+      "Policy Audit",
+      "CanNotDelete lock",
+      "Tag",
+      "Budget"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lock chặn xoá ngay cả với Owner."
+  },
+  {
+    "id": "azure-governance-cost-03",
+    "playbookId": "azure-governance-cost",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Azure Policy khác RBAC thế nào?",
+    "modelAnswer": "RBAC kiểm soát người dùng được làm gì. Policy kiểm soát tài nguyên được phép trông thế nào, có thể Deny, Audit, Modify hoặc DeployIfNotExists; Owner vẫn bị Policy Deny chặn.",
+    "keyPoints": [
+      "RBAC: quyền người dùng",
+      "Policy: cấu hình tài nguyên",
+      "Owner vẫn bị Policy chặn"
+    ]
+  },
+  {
+    "id": "azure-compute-serverless-containers-01",
+    "playbookId": "azure-compute-serverless-containers",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chạy code khi có blob mới và trả tiền theo lần chạy?",
+    "options": [
+      "App Service",
+      "Azure Functions",
+      "AKS",
+      "VM"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Functions theo sự kiện với Consumption plan."
+  },
+  {
+    "id": "azure-compute-serverless-containers-02",
+    "playbookId": "azure-compute-serverless-containers",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Triển khai web app không downtime với staging?",
+    "options": [
+      "Deployment slots",
+      "Resource lock",
+      "Availability Set",
+      "Tag"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Swap slot staging sang production."
+  },
+  {
+    "id": "azure-compute-serverless-containers-03",
+    "playbookId": "azure-compute-serverless-containers",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Container Apps khác AKS thế nào?",
+    "modelAnswer": "Container Apps là nền tảng container serverless ẩn Kubernetes, scale theo sự kiện. AKS cho toàn quyền Kubernetes nhưng bạn quản lý node pool và vận hành nhiều hơn.",
+    "keyPoints": [
+      "Container Apps ẩn Kubernetes",
+      "AKS toàn quyền, tốn vận hành",
+      "Chọn theo mức kiểm soát cần"
+    ]
+  },
+  {
+    "id": "azure-monitor-security-01",
+    "playbookId": "azure-monitor-security",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Ngôn ngữ truy vấn của Log Analytics?",
+    "options": [
+      "SQL",
+      "KQL",
+      "GraphQL",
+      "PromQL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Kusto Query Language."
+  },
+  {
+    "id": "azure-monitor-security-02",
+    "playbookId": "azure-monitor-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Quản lý secret an toàn trong Azure?",
+    "options": [
+      "Lưu trong app settings plaintext",
+      "Azure Key Vault",
+      "Trong repo",
+      "Trong tag"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dùng Key Vault kèm managed identity."
+  },
+  {
+    "id": "azure-monitor-security-03",
+    "playbookId": "azure-monitor-security",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Metrics và logs của Azure Monitor khác nhau thế nào?",
+    "modelAnswer": "Metrics là số liệu nhẹ gần thời gian thực dùng cho dashboard và cảnh báo nhanh. Logs chi tiết hơn lưu trong Log Analytics và truy vấn bằng KQL để điều tra nguyên nhân.",
+    "keyPoints": [
+      "Metrics: nhẹ, thời gian thực",
+      "Logs: chi tiết, KQL",
+      "Alert cần action group"
+    ]
+  },
+  {
+    "id": "ai-ml-fundamentals-01",
+    "playbookId": "ai-ml-fundamentals",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Dự đoán giá nhà là bài toán gì?",
+    "options": [
+      "Classification",
+      "Regression",
+      "Clustering",
+      "Reinforcement"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giá trị liên tục là regression."
+  },
+  {
+    "id": "ai-ml-fundamentals-02",
+    "playbookId": "ai-ml-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Mô hình đạt điểm rất cao trên tập train nhưng kém trên dữ liệu mới. Hiện tượng?",
+    "options": [
+      "Underfitting",
+      "Overfitting",
+      "Data drift",
+      "Bias thấp"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Học thuộc dữ liệu train nên khái quát hoá kém."
+  },
+  {
+    "id": "ai-ml-fundamentals-03",
+    "playbookId": "ai-ml-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích data leakage và cách tránh.",
+    "modelAnswer": "Data leakage là thông tin từ tập test hoặc tương lai lọt vào quá trình huấn luyện nên điểm đánh giá cao giả tạo. Tránh bằng cách chia dữ liệu trước khi tiền xử lý thống kê và chỉ dùng đặc trưng có sẵn tại thời điểm dự đoán.",
+    "keyPoints": [
+      "Thông tin lọt vào train",
+      "Điểm số ảo",
+      "Chia dữ liệu trước khi tiền xử lý"
+    ]
+  },
+  {
+    "id": "ml-evaluation-metrics-01",
+    "playbookId": "ml-evaluation-metrics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phát hiện ung thư, bỏ sót ca bệnh rất nguy hiểm. Ưu tiên metric?",
+    "options": [
+      "Precision",
+      "Recall",
+      "Accuracy",
+      "MAE"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Recall đo tỉ lệ bắt được ca dương thật."
+  },
+  {
+    "id": "ml-evaluation-metrics-02",
+    "playbookId": "ml-evaluation-metrics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Gian lận chỉ 1% dữ liệu, mô hình luôn đoán \"không gian lận\" đạt 99% accuracy. Vấn đề?",
+    "options": [
+      "Không có",
+      "Accuracy paradox; nên dùng F1/AUC/Recall",
+      "Cần thêm layer",
+      "Cần giảm learning rate"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Accuracy đánh lừa khi dữ liệu mất cân bằng."
+  },
+  {
+    "id": "ml-evaluation-metrics-03",
+    "playbookId": "ml-evaluation-metrics",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Precision và recall khác nhau thế nào?",
+    "modelAnswer": "Precision là trong số mô hình báo dương có bao nhiêu đúng, ưu tiên khi báo nhầm tốn kém. Recall là trong số dương thật bắt được bao nhiêu, ưu tiên khi bỏ sót tốn kém. Tăng ngưỡng thường tăng precision và giảm recall.",
+    "keyPoints": [
+      "Precision: báo dương đúng bao nhiêu",
+      "Recall: bắt được bao nhiêu dương thật",
+      "Đánh đổi theo ngưỡng"
+    ]
+  },
+  {
+    "id": "generative-ai-llm-concepts-01",
+    "playbookId": "generative-ai-llm-concepts",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Muốn đầu ra ổn định, ít ngẫu nhiên. Điều chỉnh?",
+    "options": [
+      "Tăng temperature",
+      "Giảm temperature",
+      "Tăng max tokens",
+      "Thêm stop sequence"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Temperature thấp cho kết quả nhất quán."
+  },
+  {
+    "id": "generative-ai-llm-concepts-02",
+    "playbookId": "generative-ai-llm-concepts",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hallucination là gì?",
+    "options": [
+      "Mô hình chạy chậm",
+      "Mô hình tự tin bịa thông tin không có thật",
+      "Lỗi mạng",
+      "Hết token"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giảm bằng RAG, trích dẫn nguồn và kiểm chứng."
+  },
+  {
+    "id": "generative-ai-llm-concepts-03",
+    "playbookId": "generative-ai-llm-concepts",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Thứ tự thử các cách tuỳ biến LLM?",
+    "modelAnswer": "Thử prompt engineering trước, sau đó RAG cho dữ liệu riêng hoặc mới, rồi fine-tuning cho phong cách hoặc nhiệm vụ chuyên biệt ổn định, cuối cùng mới pre-training. Chi phí và độ phức tạp tăng dần.",
+    "keyPoints": [
+      "Prompt → RAG → fine-tuning",
+      "RAG cho dữ liệu mới",
+      "Fine-tune cho hành vi ổn định"
+    ]
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-01",
+    "playbookId": "rag-retrieval-augmented-generation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chatbot trả lời theo tài liệu nội bộ mới nhất, không huấn luyện lại. Dùng?",
+    "options": [
+      "Fine-tuning",
+      "RAG",
+      "Pre-training",
+      "Tăng temperature"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "RAG truy xuất đoạn liên quan rồi đưa vào prompt."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-02",
+    "playbookId": "rag-retrieval-augmented-generation",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Đổi embedding model nhưng giữ nguyên index cũ. Hệ quả?",
+    "options": [
+      "Không ảnh hưởng",
+      "Phải re-index vì vector từ hai model không cùng không gian",
+      "Nhanh hơn",
+      "Tự động chuyển đổi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Truy vấn và tài liệu phải dùng cùng embedding model."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-03",
+    "playbookId": "rag-retrieval-augmented-generation",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Mô tả pipeline RAG.",
+    "modelAnswer": "Nạp: chia tài liệu thành chunk, tạo embedding và lưu vào vector database. Truy vấn: embed câu hỏi bằng cùng model, tìm top-k chunk gần nhất, ghép vào prompt rồi để LLM sinh câu trả lời có trích dẫn.",
+    "keyPoints": [
+      "Chunk, embed, lưu vector",
+      "Truy xuất top-k",
+      "Augment prompt rồi generate"
+    ]
+  },
+  {
+    "id": "responsible-ai-01",
+    "playbookId": "responsible-ai",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phát hiện thiên kiến và giải thích dự đoán trên AWS?",
+    "options": [
+      "Bedrock Guardrails",
+      "SageMaker Clarify",
+      "Lambda",
+      "CloudTrail"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Clarify đo bias và explainability."
+  },
+  {
+    "id": "responsible-ai-02",
+    "playbookId": "responsible-ai",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Sáu nguyên tắc Responsible AI của Microsoft gồm?",
+    "options": [
+      "Chỉ Fairness",
+      "Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, Accountability",
+      "Speed, Cost, Scale",
+      "Chỉ Privacy"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Đây là sáu nguyên tắc chính thức."
+  },
+  {
+    "id": "responsible-ai-03",
+    "playbookId": "responsible-ai",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao bỏ cột nhạy cảm chưa đủ để loại bỏ thiên kiến?",
+    "modelAnswer": "Các đặc trưng khác có thể đóng vai trò proxy cho thuộc tính nhạy cảm, ví dụ mã bưu chính tương quan với chủng tộc, nên thiên kiến vẫn tồn tại. Cần đo công bằng trên kết quả và dùng công cụ như Clarify.",
+    "keyPoints": [
+      "Proxy feature",
+      "Đo công bằng trên kết quả",
+      "Dùng công cụ phát hiện bias"
+    ]
+  },
+  {
+    "id": "amazon-bedrock-01",
+    "playbookId": "amazon-bedrock",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chatbot trả lời theo tài liệu công ty, ít vận hành trên AWS?",
+    "options": [
+      "SageMaker training",
+      "Knowledge Bases for Amazon Bedrock",
+      "EC2 tự host",
+      "Lex only"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Knowledge Bases là RAG được quản lý."
+  },
+  {
+    "id": "amazon-bedrock-02",
+    "playbookId": "amazon-bedrock",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chặn nội dung nhạy cảm và che PII của LLM?",
+    "options": [
+      "IAM",
+      "Guardrails for Amazon Bedrock",
+      "VPC",
+      "KMS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Guardrails lọc chủ đề, nội dung có hại và PII."
+  },
+  {
+    "id": "amazon-bedrock-03",
+    "playbookId": "amazon-bedrock",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Bedrock khác SageMaker thế nào?",
+    "modelAnswer": "Bedrock là dịch vụ serverless để dùng foundation model có sẵn qua API cùng RAG, agent, guardrails. SageMaker là nền tảng ML end-to-end để tự huấn luyện, tinh chỉnh, triển khai và giám sát mô hình riêng.",
+    "keyPoints": [
+      "Bedrock: dùng mô hình có sẵn",
+      "SageMaker: tự huấn luyện/vận hành",
+      "Chọn theo mức tuỳ biến"
+    ]
+  },
+  {
+    "id": "amazon-sagemaker-01",
+    "playbookId": "amazon-sagemaker",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dự đoán hàng loạt không cần endpoint chạy liên tục?",
+    "options": [
+      "Real-time endpoint",
+      "Batch transform",
+      "Serverless",
+      "Asynchronous"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Batch transform chạy theo lô rồi dừng."
+  },
+  {
+    "id": "amazon-sagemaker-02",
+    "playbookId": "amazon-sagemaker",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phát hiện drift sau khi triển khai?",
+    "options": [
+      "Ground Truth",
+      "Model Monitor",
+      "Autopilot",
+      "Canvas"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Model Monitor so sánh với baseline."
+  },
+  {
+    "id": "amazon-sagemaker-03",
+    "playbookId": "amazon-sagemaker",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Feature Store giải quyết vấn đề gì?",
+    "modelAnswer": "Lưu feature dùng chung ở cả online và offline để dùng cùng một định nghĩa feature cho training và inference, tránh lệch giữa huấn luyện và dự đoán và cho phép tái sử dụng.",
+    "keyPoints": [
+      "Online và offline store",
+      "Tránh training-serving skew",
+      "Tái sử dụng feature"
+    ]
+  },
+  {
+    "id": "aws-ai-services-01",
+    "playbookId": "aws-ai-services",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Trích dữ liệu từ form và bảng trong tài liệu scan?",
+    "options": [
+      "Rekognition",
+      "Textract",
+      "Polly",
+      "Translate"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Textract hiểu cấu trúc tài liệu."
+  },
+  {
+    "id": "aws-ai-services-02",
+    "playbookId": "aws-ai-services",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Chuyển cuộc gọi thành văn bản?",
+    "options": [
+      "Polly",
+      "Transcribe",
+      "Lex",
+      "Kendra"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Transcribe là speech-to-text."
+  },
+  {
+    "id": "aws-ai-services-03",
+    "playbookId": "aws-ai-services",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào dùng AI service dựng sẵn thay vì tự huấn luyện?",
+    "modelAnswer": "Khi bài toán là tác vụ phổ biến như OCR, dịch, phân tích cảm xúc hay nhận diện đối tượng và không cần tuỳ biến sâu: nhanh, rẻ và ít công. Tuỳ biến sâu thì SageMaker, sinh nội dung thì Bedrock.",
+    "keyPoints": [
+      "Tác vụ phổ biến",
+      "Nhanh và rẻ",
+      "Tuỳ biến sâu: SageMaker"
+    ]
+  },
+  {
+    "id": "azure-ai-services-01",
+    "playbookId": "azure-ai-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Trích dữ liệu từ hoá đơn trên Azure?",
+    "options": [
+      "AI Speech",
+      "Document Intelligence",
+      "Translator",
+      "Custom Vision"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Trước đây là Form Recognizer."
+  },
+  {
+    "id": "azure-ai-services-02",
+    "playbookId": "azure-ai-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tìm kiếm tài liệu có làm giàu bằng AI (knowledge mining)?",
+    "options": [
+      "Azure AI Search",
+      "Event Grid",
+      "Logic Apps",
+      "Bastion"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "AI Search lập chỉ mục và làm giàu bằng skillset."
+  },
+  {
+    "id": "azure-ai-services-03",
+    "playbookId": "azure-ai-services",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Multi-service resource khác single-service resource thế nào?",
+    "modelAnswer": "Multi-service dùng một endpoint và key cho nhiều dịch vụ AI, tiện quản lý. Single-service có endpoint, key và chi phí riêng cho từng dịch vụ, tiện tách chi phí và quyền.",
+    "keyPoints": [
+      "Multi: một key nhiều dịch vụ",
+      "Single: tách chi phí/quyền",
+      "Chọn theo nhu cầu quản lý"
+    ]
+  },
+  {
+    "id": "azure-openai-foundry-01",
+    "playbookId": "azure-openai-foundry",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Nhận HTTP 429 từ Azure OpenAI. Nguyên nhân thường gặp?",
+    "options": [
+      "Sai key",
+      "Vượt quota TPM của deployment",
+      "Chưa bật Defender",
+      "Thiếu VNet"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Retry với backoff hoặc tăng quota."
+  },
+  {
+    "id": "azure-openai-foundry-02",
+    "playbookId": "azure-openai-foundry",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần hiệu năng ổn định, độ trễ dự đoán được cho tải cao?",
+    "options": [
+      "Standard",
+      "Provisioned (PTU)",
+      "Batch",
+      "Free"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "PTU dành riêng dung lượng."
+  },
+  {
+    "id": "azure-openai-foundry-03",
+    "playbookId": "azure-openai-foundry",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Làm sao dùng GPT với dữ liệu nội bộ mà dữ liệu không rời Azure?",
+    "modelAnswer": "Dùng Azure OpenAI kết hợp Azure AI Search (On Your Data) để RAG, bật Private Endpoint, Managed Identity và content filtering; prompt và completion không dùng để huấn luyện mô hình nền.",
+    "keyPoints": [
+      "RAG qua AI Search",
+      "Private Endpoint và Managed Identity",
+      "Không dùng để huấn luyện mô hình nền"
+    ]
   }
 ]

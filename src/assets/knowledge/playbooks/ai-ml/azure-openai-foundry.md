@@ -34,7 +34,6 @@ flowchart LR
 
 - Chạm **quota TPM** sẽ nhận **HTTP 429** → retry với exponential backoff, xin tăng quota, hoặc phân bổ qua nhiều deployment/Region.
 - **Content filter** có thể chặn nhầm; cần cấu hình và xử lý phản hồi bị lọc trong ứng dụng.
-- Mô hình bị **retire** theo lịch: theo dõi vòng đời mô hình và nâng cấp deployment đúng hạn.
 - Không nhúng **API key** vào ứng dụng client; dùng Entra ID + managed identity.
 - Exam trap: "dùng mô hình GPT với dữ liệu của công ty, không để dữ liệu rời Azure" → **Azure OpenAI + AI Search**; "chặn nội dung có hại" → **content filters / Content Safety**.
 

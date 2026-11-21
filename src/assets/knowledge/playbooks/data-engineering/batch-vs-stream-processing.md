@@ -37,7 +37,6 @@ flowchart LR
 - **State phình không kiểm soát** (key mới liên tục) làm job sập → TTL cho state.
 - **Data skew/hot key**: một partition xử lý quá nhiều → chia key (salting).
 - **Sink không idempotent** + at-least-once → ghi trùng; dùng upsert theo khoá.
-- **Backfill** của stream phức tạp hơn batch; Lambda nhân đôi mã nguồn nên dễ lệch kết quả giữa hai đường.
 - Interview trap: "Exactly-once trong stream là thật?" → chỉ **trong phạm vi framework + sink hỗ trợ transaction/idempotent**; end-to-end vẫn cần idempotency.
 
 ## 6. Search Hooks

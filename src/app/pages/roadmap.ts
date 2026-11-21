@@ -37,8 +37,8 @@ type NodeState = 'read' | 'ready' | 'waiting';
         Lộ trình học <span class="text-gradient">từ nền tảng đến chuyên sâu</span>
       </h1>
       <p class="mt-3 max-w-3xl text-muted">
-        Đọc từ <b class="text-ink">trái sang phải</b>: bài ở cấp cao hơn xây trên các bài nối vào
-        nó. Bài không phụ thuộc nhau nằm <b class="text-ink">cùng một cấp</b>. Rê chuột vào một bài
+        Đọc từ <b class="text-ink">trái sang phải</b>: bài ở tầng cao hơn xây trên các bài nối vào
+        nó. Bài không phụ thuộc nhau nằm <b class="text-ink">cùng một tầng</b>. Rê chuột vào một bài
         để thấy chuỗi tiên quyết và các bài nó mở khoá.
       </p>
       <div class="mt-5 grid max-w-xl grid-cols-3 gap-3">
@@ -49,7 +49,7 @@ type NodeState = 'read' | 'ready' | 'waiting';
           </p>
         </div>
         <div class="glass rounded-2xl p-3">
-          <p class="text-xs text-muted">Số cấp</p>
+          <p class="text-xs text-muted">Số tầng</p>
           <p class="font-display text-2xl font-bold">{{ kb.maxLevel() + 1 }}</p>
         </div>
         <div class="glass rounded-2xl p-3">
@@ -73,7 +73,7 @@ type NodeState = 'read' | 'ready' | 'waiting';
             >
               <span class="topic-gradient absolute inset-x-0 top-0 h-1"></span>
               <p class="text-xs text-muted">
-                Cấp {{ kb.levels().get(p.id) }} · {{ kb.topicById().get(p.topicId)?.name }}
+                Tầng {{ kb.levels().get(p.id) }} · {{ kb.topicById().get(p.topicId)?.name }}
               </p>
               <p class="mt-1 font-semibold leading-snug">{{ p.title }}</p>
             </a>
@@ -154,11 +154,11 @@ type NodeState = 'read' | 'ready' | 'waiting';
           </svg>
 
           @for (col of columns(); track col.level) {
-            <section class="w-full lg:w-64 lg:shrink-0" [attr.aria-label]="'Cấp ' + col.level">
+            <section class="w-full lg:w-64 lg:shrink-0" [attr.aria-label]="'Tầng ' + col.level">
               <h3 class="mb-3 flex items-baseline gap-2">
                 <span
                   class="font-display text-sm font-bold uppercase tracking-wider text-accent-ink"
-                  >Cấp {{ col.level }}</span
+                  >Tầng {{ col.level }}</span
                 >
                 <span class="text-xs text-muted">{{ name(col.level) }}</span>
               </h3>

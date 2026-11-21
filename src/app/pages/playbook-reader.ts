@@ -56,11 +56,14 @@ type Doc =
       <div class="xl:grid xl:grid-cols-[minmax(0,1fr)_15rem] xl:gap-10" [style]="vars(p.topicId)">
         <article class="min-w-0">
           <a
-            routerLink="/"
-            [queryParams]="{ topic: p.topicId }"
-            class="mb-4 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
+            [routerLink]="['/topics', p.topicId]"
+            class="mb-4 inline-flex flex-wrap items-center gap-x-1.5 text-sm text-muted hover:text-ink"
           >
             <app-icon name="arrowLeft" [size]="14" /> {{ topic()?.name ?? 'All playbooks' }}
+            <span class="opacity-50">›</span>
+            <span>Bài {{ position() }}/{{ siblings().length }}</span>
+            <span class="opacity-50">·</span>
+            <span>Cấp {{ localLevel() }} · {{ localLevelLabel() }}</span>
           </a>
 
           <header class="glass fade-up relative mb-10 overflow-hidden rounded-3xl p-6 sm:p-8">
@@ -72,11 +75,7 @@ type Doc =
             ></div>
             <div class="relative">
               <div class="mb-4 flex flex-wrap items-center gap-3 text-sm">
-                <a
-                  routerLink="/"
-                  [queryParams]="{ topic: p.topicId }"
-                  class="badge hover:opacity-90"
-                >
+                <a [routerLink]="['/topics', p.topicId]" class="badge hover:opacity-90">
                   <app-icon [name]="style(p.topicId).icon" [size]="13" />
                   {{ topic()?.name ?? p.topicId }}
                 </a>
@@ -98,8 +97,8 @@ type Doc =
                   <p
                     class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"
                   >
-                    <app-icon name="map" [size]="13" /> Cấp {{ level() }} · {{ levelLabel() }} — nên
-                    đọc trước
+                    <app-icon name="map" [size]="13" /> Tầng {{ level() }} trong lộ trình chung —
+                    nên đọc trước
                   </p>
                   @if (prereqs().length) {
                     <div class="flex flex-wrap gap-1.5">
@@ -239,7 +238,7 @@ type Doc =
               @if (prev(); as pr) {
                 <a [routerLink]="['/playbooks', pr.id]" class="glass glass-hover rounded-2xl p-4">
                   <span class="flex items-center gap-1 text-xs text-muted">
-                    <app-icon name="chevronLeft" [size]="14" /> Bài trước
+                    <app-icon name="chevronLeft" [size]="14" /> Bài trước trong lộ trình
                   </span>
                   <span class="mt-1 block font-semibold">{{ pr.title }}</span>
                 </a>
@@ -252,7 +251,7 @@ type Doc =
                   class="glass glass-hover rounded-2xl p-4 text-right"
                 >
                   <span class="flex items-center justify-end gap-1 text-xs text-muted">
-                    Bài tiếp theo <app-icon name="chevronRight" [size]="14" />
+                    Bài tiếp theo trong lộ trình <app-icon name="chevronRight" [size]="14" />
                   </span>
                   <span class="mt-1 block font-semibold">{{ nx.title }}</span>
                 </a>
@@ -358,10 +357,16 @@ export class PlaybookReader {
     this.cards.knownCount(this.hooks().map((k) => k.id)),
   );
 
-  private readonly siblings = computed(() => {
+  /** Lessons of this topic in learning order (basic to advanced). */
+  protected readonly siblings = computed(() => {
     const p = this.playbook();
-    return p ? this.kb.sortedPlaybooks().filter((x) => x.topicId === p.topicId) : [];
+    return p ? (this.kb.orderedByTopic().get(p.topicId) ?? []) : [];
   });
+  protected readonly position = computed(
+    () => this.siblings().findIndex((x) => x.id === this.id()) + 1,
+  );
+  protected readonly localLevel = computed(() => this.kb.localLevels().get(this.id()) ?? 0);
+  protected readonly localLevelLabel = computed(() => levelName(this.localLevel()));
   protected readonly prev = computed(() => {
     const list = this.siblings();
     const i = list.findIndex((x) => x.id === this.id());
