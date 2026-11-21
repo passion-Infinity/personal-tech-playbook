@@ -9,6 +9,8 @@ const KNOWN: Record<string, TopicStyle> = {
   'system-design': { from: '#8b5cf6', to: '#6366f1', icon: 'layers' },
   caching: { from: '#f59e0b', to: '#ec4899', icon: 'bolt' },
   aws: { from: '#fb923c', to: '#22d3ee', icon: 'cloud' },
+  azure: { from: '#0ea5e9', to: '#2563eb', icon: 'globe' },
+  'ai-ml': { from: '#ec4899', to: '#8b5cf6', icon: 'brain' },
 };
 
 const PALETTE: Array<[string, string]> = [

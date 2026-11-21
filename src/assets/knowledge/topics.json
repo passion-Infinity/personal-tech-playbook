@@ -13,5 +13,15 @@
     "id": "aws",
     "name": "AWS Cloud",
     "description": "AWS services and architecture for the Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 and beyond."
+  },
+  {
+    "id": "azure",
+    "name": "Microsoft Azure",
+    "description": "Azure for AZ-900 / AZ-104: architecture, identity, compute, storage, networking, governance and monitoring."
+  },
+  {
+    "id": "ai-ml",
+    "name": "AI & ML",
+    "description": "AI/ML and generative AI for AWS AI Practitioner / ML Engineer and Azure AI-900 / AI-102: concepts, RAG, Bedrock, SageMaker, Azure AI and OpenAI."
   }
 ]

@@ -369,5 +369,971 @@
     "meaning": "Lệnh CLI chuyển instance sang placement group khác",
     "definition": "Instance phải ở trạng thái stopped; chỉ làm được qua AWS CLI/SDK, không qua console.",
     "topicId": "aws"
+  },
+  {
+    "id": "vpc-subnet-routing",
+    "term": "VPC Subnet & Route Table",
+    "meaning": "Subnet public/private được quyết định bởi route table",
+    "definition": "Subnet là public khi route table có 0.0.0.0/0 trỏ tới Internet Gateway; mỗi subnet nằm trong đúng một AZ và AWS giữ 5 IP mỗi subnet.",
+    "topicId": "aws"
+  },
+  {
+    "id": "nat-gateway",
+    "term": "NAT Gateway",
+    "meaning": "Cho private subnet đi ra Internet nhưng không cho vào",
+    "definition": "Đặt trong public subnet, cần một NAT Gateway mỗi AZ để chịu lỗi; IPv6 dùng Egress-only Internet Gateway.",
+    "topicId": "aws"
+  },
+  {
+    "id": "vpc-endpoints",
+    "term": "VPC Gateway vs Interface Endpoint",
+    "meaning": "Truy cập dịch vụ AWS không qua Internet",
+    "definition": "Gateway endpoint chỉ cho S3 và DynamoDB và miễn phí; Interface endpoint (PrivateLink) dùng ENI, tính phí, hỗ trợ hầu hết dịch vụ khác.",
+    "topicId": "aws"
+  },
+  {
+    "id": "vpc-peering",
+    "term": "VPC Peering",
+    "meaning": "Kết nối riêng giữa hai VPC",
+    "definition": "Quan hệ 1-1, không bắc cầu (non-transitive) và hai VPC không được chồng lấn CIDR; có thể cross-Region và cross-account.",
+    "topicId": "aws"
+  },
+  {
+    "id": "transit-gateway",
+    "term": "AWS Transit Gateway",
+    "meaning": "Hub trung tâm nối nhiều VPC và on-premises",
+    "definition": "Mô hình hub-and-spoke có định tuyến transitive, thay cho mạng lưới Peering phức tạp.",
+    "topicId": "aws"
+  },
+  {
+    "id": "alb-nlb-gwlb",
+    "term": "ALB vs NLB vs GWLB",
+    "meaning": "Chọn load balancer theo layer 7, 4 hoặc 3",
+    "definition": "ALB (L7) định tuyến theo path/host; NLB (L4) hiệu năng cực cao có IP tĩnh; GWLB (L3) đưa appliance bên thứ ba vào luồng traffic qua GENEVE.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cross-zone-load-balancing",
+    "term": "Cross-Zone Load Balancing",
+    "meaning": "Phân phối đều traffic giữa các target ở mọi AZ",
+    "definition": "Mặc định bật ở ALB, tắt ở NLB/GWLB; bật ở NLB làm phát sinh phí traffic liên AZ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "asg-target-tracking",
+    "term": "Auto Scaling Target Tracking Policy",
+    "meaning": "Policy giữ một metric ở giá trị mục tiêu",
+    "definition": "Ví dụ giữ CPU 50% — ASG tự tăng giảm số instance; đơn giản hơn Step/Simple scaling dùng ngưỡng alarm.",
+    "topicId": "aws"
+  },
+  {
+    "id": "deregistration-delay",
+    "term": "Deregistration Delay (Connection Draining)",
+    "meaning": "Chờ request đang xử lý xong trước khi gỡ target",
+    "definition": "Mặc định 300 giây trên target group của ELB, tránh cắt ngang kết nối khi instance bị thay thế hoặc scale-in.",
+    "topicId": "aws"
+  },
+  {
+    "id": "asg-lifecycle-hooks",
+    "term": "Auto Scaling Lifecycle Hooks",
+    "meaning": "Chen hành động vào lúc instance launch hoặc terminate",
+    "definition": "Cho phép chạy script cài đặt hoặc lưu log trước khi instance vào dịch vụ hay bị huỷ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "rds-multi-az-vs-read-replica",
+    "term": "RDS Multi-AZ vs Read Replica",
+    "meaning": "Multi-AZ để chịu lỗi, Read Replica để scale đọc",
+    "definition": "Multi-AZ dùng standby đồng bộ và failover tự động; Read Replica sao chép bất đồng bộ, có thể cross-Region và promote thành DB độc lập.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aurora-storage-architecture",
+    "term": "Aurora Storage Architecture",
+    "meaning": "Volume chia sẻ 6 bản sao trên 3 AZ",
+    "definition": "Một writer và tối đa 15 reader dùng chung storage, tự tăng tới 128 TiB, failover thường dưới ~30 giây.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aurora-global-database",
+    "term": "Aurora Global Database",
+    "meaning": "Aurora nhân bản cross-Region độ trễ cực thấp",
+    "definition": "Replication khoảng 1 giây, failover cross-Region khoảng một phút; phù hợp DR với RPO rất nhỏ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "rds-proxy",
+    "term": "RDS Proxy",
+    "meaning": "Pool kết nối cho RDS/Aurora",
+    "definition": "Giảm thời gian failover, bảo vệ DB khỏi bão kết nối (đặc biệt từ Lambda) và hỗ trợ IAM auth cùng Secrets Manager.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aurora-serverless-v2",
+    "term": "Aurora Serverless v2",
+    "meaning": "Aurora tự co giãn theo đơn vị ACU",
+    "definition": "Phù hợp tải thất thường, dev/test; thay đổi dung lượng liên tục không cần ngắt kết nối.",
+    "topicId": "aws"
+  },
+  {
+    "id": "dynamodb-partition-key-design",
+    "term": "DynamoDB Partition Key Design",
+    "meaning": "Chọn partition key phân bố đều để tránh hot partition",
+    "definition": "Key có cardinality cao giúp phân tán tải; key lệch gây throttling dù tổng capacity còn dư.",
+    "topicId": "aws"
+  },
+  {
+    "id": "dynamodb-capacity-rcu-wcu",
+    "term": "DynamoDB Capacity (RCU/WCU)",
+    "meaning": "Đơn vị capacity đọc và ghi của DynamoDB",
+    "definition": "1 RCU = một lần đọc strongly consistent ≤ 4 KB/giây (eventually consistent gấp đôi); 1 WCU = một lần ghi ≤ 1 KB/giây; transaction tốn gấp đôi.",
+    "topicId": "aws"
+  },
+  {
+    "id": "dynamodb-gsi-vs-lsi",
+    "term": "DynamoDB GSI vs LSI",
+    "meaning": "Hai loại secondary index của DynamoDB",
+    "definition": "GSI đổi partition key, tạo bất cứ lúc nào, đọc eventually consistent; LSI cùng partition key, chỉ tạo khi tạo bảng, tối đa 5.",
+    "topicId": "aws"
+  },
+  {
+    "id": "dynamodb-dax",
+    "term": "DynamoDB Accelerator (DAX)",
+    "meaning": "Cache in-memory write-through cho DynamoDB",
+    "definition": "Giảm độ trễ đọc xuống mức micro-giây, chỉ phục vụ eventually consistent reads.",
+    "topicId": "aws"
+  },
+  {
+    "id": "dynamodb-global-tables",
+    "term": "DynamoDB Global Tables",
+    "meaning": "Bảng multi-Region, multi-active",
+    "definition": "Mọi replica đều ghi được, xung đột xử lý theo last-writer-wins; dùng cho DR và truy cập gần người dùng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "route53-routing-policies",
+    "term": "Route 53 Routing Policies",
+    "meaning": "Các chính sách định tuyến DNS của Route 53",
+    "definition": "Simple, Weighted, Latency, Failover, Geolocation, Geoproximity, IP-based và Multivalue answer; kết hợp health check để loại endpoint lỗi.",
+    "topicId": "aws"
+  },
+  {
+    "id": "route53-alias-vs-cname",
+    "term": "Route 53 Alias vs CNAME",
+    "meaning": "Alias dùng được ở zone apex và miễn phí",
+    "definition": "CNAME không đặt được ở domain gốc; Alias trỏ tới tài nguyên AWS như ELB, CloudFront, S3 website.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudfront-oac",
+    "term": "CloudFront Origin Access Control (OAC)",
+    "meaning": "Chỉ cho CloudFront đọc bucket S3 private",
+    "definition": "Giữ bucket S3 không công khai trong khi nội dung vẫn phân phối qua CDN; thay thế cơ chế OAI cũ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "lambda-edge-vs-cloudfront-functions",
+    "term": "Lambda@Edge vs CloudFront Functions",
+    "meaning": "Chạy code tại edge của CloudFront",
+    "definition": "CloudFront Functions nhẹ và rẻ cho thao tác header/URL; Lambda@Edge mạnh hơn, hỗ trợ nhiều runtime và truy cập mạng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "global-accelerator",
+    "term": "AWS Global Accelerator",
+    "meaning": "IP anycast tĩnh đưa traffic vào backbone AWS",
+    "definition": "Hỗ trợ TCP/UDP, failover nhanh, không cache nội dung — khác CloudFront là CDN cache HTTP.",
+    "topicId": "aws"
+  },
+  {
+    "id": "sqs-standard-vs-fifo",
+    "term": "SQS Standard vs FIFO",
+    "meaning": "Đánh đổi giữa throughput và thứ tự/exactly-once",
+    "definition": "Standard: throughput gần như vô hạn, at-least-once, thứ tự best-effort; FIFO: đúng thứ tự theo message group, exactly-once processing, throughput thấp hơn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "sqs-visibility-timeout",
+    "term": "SQS Visibility Timeout",
+    "meaning": "Thời gian message bị ẩn khi đang được xử lý",
+    "definition": "Mặc định 30 giây; xử lý xong phải xoá message, quá hạn thì message hiện lại và có thể bị xử lý trùng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "sqs-dead-letter-queue",
+    "term": "SQS Dead-Letter Queue",
+    "meaning": "Hàng đợi chứa message xử lý thất bại nhiều lần",
+    "definition": "Message vượt maxReceiveCount được chuyển sang DLQ để điều tra thay vì lặp vô hạn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "sns-sqs-fanout",
+    "term": "SNS + SQS Fan-out",
+    "meaning": "Một sự kiện được phát tới nhiều hàng đợi",
+    "definition": "SNS topic gửi bản sao tới nhiều SQS queue, mỗi consumer xử lý độc lập và có độ bền của hàng đợi.",
+    "topicId": "aws"
+  },
+  {
+    "id": "eventbridge-event-bus",
+    "term": "Amazon EventBridge Event Bus",
+    "meaning": "Bus sự kiện định tuyến theo rule",
+    "definition": "Nhận sự kiện từ dịch vụ AWS, SaaS và ứng dụng, khớp event pattern rồi chuyển tới target; có scheduler và schema registry.",
+    "topicId": "aws"
+  },
+  {
+    "id": "lambda-cold-start",
+    "term": "Lambda Cold Start",
+    "meaning": "Độ trễ khởi tạo môi trường chạy mới",
+    "definition": "Phát sinh khi Lambda tạo execution environment mới; giảm bằng provisioned concurrency hoặc SnapStart.",
+    "topicId": "aws"
+  },
+  {
+    "id": "lambda-concurrency",
+    "term": "Lambda Reserved vs Provisioned Concurrency",
+    "meaning": "Hai cơ chế kiểm soát concurrency",
+    "definition": "Reserved đảm bảo và giới hạn concurrency cho một hàm; Provisioned giữ sẵn môi trường để tránh cold start (tính phí).",
+    "topicId": "aws"
+  },
+  {
+    "id": "lambda-invocation-types",
+    "term": "Lambda Synchronous vs Asynchronous Invocation",
+    "meaning": "Kiểu gọi quyết định cách xử lý lỗi và retry",
+    "definition": "Synchronous: caller chờ và tự xử lý lỗi; Asynchronous: Lambda tự retry 2 lần và hỗ trợ DLQ/destinations.",
+    "topicId": "aws"
+  },
+  {
+    "id": "lambda-event-source-mapping",
+    "term": "Lambda Event Source Mapping",
+    "meaning": "Lambda tự poll nguồn sự kiện",
+    "definition": "Dùng cho SQS, Kinesis, DynamoDB Streams — Lambda đọc theo batch và gọi hàm của bạn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "lambda-snapstart",
+    "term": "Lambda SnapStart",
+    "meaning": "Chụp snapshot môi trường để khởi động nhanh",
+    "definition": "Giảm cold start cho các runtime được hỗ trợ bằng cách khôi phục từ snapshot sau bước khởi tạo.",
+    "topicId": "aws"
+  },
+  {
+    "id": "rto-rpo",
+    "term": "RTO vs RPO",
+    "meaning": "Thời gian phục hồi và lượng dữ liệu chấp nhận mất",
+    "definition": "RTO là thời gian tối đa dịch vụ ngừng; RPO là khoảng dữ liệu có thể mất, quyết định tần suất backup/replication.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-dr-strategies",
+    "term": "AWS DR Strategies (Pilot Light, Warm Standby)",
+    "meaning": "Bốn chiến lược DR theo chi phí và RTO",
+    "definition": "Backup & Restore, Pilot Light, Warm Standby, Multi-site Active/Active — RTO càng nhỏ thì chi phí càng cao.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-elastic-disaster-recovery",
+    "term": "AWS Elastic Disaster Recovery (DRS)",
+    "meaning": "Replicate liên tục server để phục hồi nhanh",
+    "definition": "Sao chép block-level từ máy nguồn sang AWS và khởi chạy instance khi sự cố.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-backup",
+    "term": "AWS Backup",
+    "meaning": "Dịch vụ backup tập trung nhiều dịch vụ AWS",
+    "definition": "Lập lịch, giữ và sao chép backup cross-Region/cross-account bằng một policy duy nhất.",
+    "topicId": "aws"
+  },
+  {
+    "id": "multi-az-vs-multi-region",
+    "term": "Multi-AZ vs Multi-Region",
+    "meaning": "Chịu lỗi trong Region khác với DR giữa các Region",
+    "definition": "Multi-AZ bảo vệ khi một data center lỗi; chỉ triển khai cross-Region mới sống sót khi cả Region gặp sự cố.",
+    "topicId": "aws"
+  },
+  {
+    "id": "azure-regions-availability-zones",
+    "term": "Azure Regions and Availability Zones",
+    "meaning": "Hạ tầng vật lý của Azure",
+    "definition": "Region là nhóm data center độ trễ thấp; Availability Zone là các vị trí độc lập về điện, làm mát, mạng (tối thiểu 3 zone ở Region hỗ trợ).",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-region-pairs",
+    "term": "Azure Region Pairs",
+    "meaning": "Cặp Region phục vụ DR",
+    "definition": "Mỗi Region ghép với một Region khác cùng geography; Azure cập nhật tuần tự và ưu tiên khôi phục trong cặp.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-management-hierarchy",
+    "term": "Azure Management Groups, Subscriptions, Resource Groups",
+    "meaning": "Thứ bậc quản trị của Azure",
+    "definition": "Management Group gom subscription; Subscription là ranh giới thanh toán và quota; Resource Group là container logic; chính sách và quyền kế thừa xuống dưới.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-resource-manager",
+    "term": "Azure Resource Manager (ARM) & Bicep",
+    "meaning": "Lớp quản lý và IaC khai báo của Azure",
+    "definition": "ARM xử lý mọi thao tác quản lý và triển khai template/Bicep theo kiểu khai báo.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-shared-responsibility",
+    "term": "Azure Shared Responsibility (IaaS, PaaS, SaaS)",
+    "meaning": "Phân chia trách nhiệm theo mô hình dịch vụ",
+    "definition": "Từ on-premises đến IaaS, PaaS, SaaS — càng lên cao Azure quản lý càng nhiều, nhưng dữ liệu và danh tính luôn là trách nhiệm của khách hàng.",
+    "topicId": "azure"
+  },
+  {
+    "id": "entra-id",
+    "term": "Microsoft Entra ID",
+    "meaning": "Dịch vụ quản lý danh tính (trước đây là Azure AD)",
+    "definition": "Xác thực người dùng và ứng dụng với MFA, SSO, passwordless; tenant có thể liên kết nhiều subscription.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-rbac",
+    "term": "Azure RBAC (Role Assignment & Scope)",
+    "meaning": "Phân quyền tài nguyên theo role và phạm vi",
+    "definition": "Role assignment gồm principal, role definition và scope; quyền kế thừa từ management group xuống resource; Owner, Contributor, Reader là role cơ bản.",
+    "topicId": "azure"
+  },
+  {
+    "id": "conditional-access",
+    "term": "Entra Conditional Access",
+    "meaning": "Chính sách truy cập theo điều kiện",
+    "definition": "Nếu thỏa điều kiện (vị trí, thiết bị, rủi ro) thì yêu cầu MFA hoặc chặn; cần giấy phép Entra ID P1.",
+    "topicId": "azure"
+  },
+  {
+    "id": "managed-identity",
+    "term": "Azure Managed Identity",
+    "meaning": "Danh tính do Azure quản lý, không cần secret",
+    "definition": "System-assigned gắn vòng đời tài nguyên; user-assigned dùng chung nhiều tài nguyên; thay cho lưu connection string trong code.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-pim",
+    "term": "Privileged Identity Management (PIM)",
+    "meaning": "Cấp quyền quản trị just-in-time",
+    "definition": "Quyền tạm thời có phê duyệt và hết hạn, giảm rủi ro quyền Owner vĩnh viễn; cần Entra ID P2.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-vm-sizes",
+    "term": "Azure VM Sizes and Families",
+    "meaning": "Các họ kích cỡ VM theo mục đích",
+    "definition": "General purpose (D), compute (F), memory (E), storage (L), GPU (N), HPC (H) — chọn theo tỉ lệ CPU/RAM/IO.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-availability-sets",
+    "term": "Azure Availability Sets (Fault & Update Domains)",
+    "meaning": "Chia VM chống lỗi phần cứng và bảo trì",
+    "definition": "Fault domain tách nguồn/phần cứng, update domain tách đợt bảo trì trong một data center (SLA tham khảo 99.95%).",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-vmss",
+    "term": "Azure Virtual Machine Scale Sets",
+    "meaning": "Nhóm VM giống nhau tự co giãn",
+    "definition": "Autoscale theo metric hoặc lịch, kết hợp Load Balancer hoặc Application Gateway.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-reserved-vs-savings-plan",
+    "term": "Azure Reserved Instances vs Savings Plan",
+    "meaning": "Hai hình thức cam kết 1–3 năm để giảm giá",
+    "definition": "Reserved gắn với cấu hình VM cụ thể; Savings Plan cam kết chi tiêu mỗi giờ và linh hoạt hơn.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-spot-vms",
+    "term": "Azure Spot VMs",
+    "meaning": "VM giá thấp dùng capacity dư, có thể bị thu hồi",
+    "definition": "Giảm tới ~90% nhưng bị eviction khi cần capacity; phù hợp batch, CI, workload stateless.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-hybrid-benefit",
+    "term": "Azure Hybrid Benefit",
+    "meaning": "Dùng license sẵn có để giảm chi phí",
+    "definition": "Áp dụng license Windows Server/SQL Server có Software Assurance cho tài nguyên Azure.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-storage-redundancy",
+    "term": "Azure Storage Redundancy (LRS, ZRS, GRS, GZRS)",
+    "meaning": "Các mức dự phòng dữ liệu của storage account",
+    "definition": "LRS: 3 bản sao một data center; ZRS: 3 AZ; GRS/GZRS thêm Region thứ hai; RA- cho phép đọc từ Region phụ.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-blob-access-tiers",
+    "term": "Azure Blob Access Tiers",
+    "meaning": "Hot, Cool, Cold, Archive theo tần suất truy cập",
+    "definition": "Tier lạnh rẻ khi lưu nhưng đắt khi truy cập và có thời gian lưu tối thiểu (30/90/180 ngày); Archive là offline, phải rehydrate.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-blob-lifecycle",
+    "term": "Azure Blob Lifecycle Management",
+    "meaning": "Tự động chuyển tier hoặc xoá blob",
+    "definition": "Rule theo tuổi hoặc lần truy cập cuối để tối ưu chi phí.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-storage-sas",
+    "term": "Azure Storage SAS (User Delegation)",
+    "meaning": "Quyền truy cập tạm thời có giới hạn",
+    "definition": "Shared Access Signature; user delegation SAS ký bằng Entra ID an toàn hơn account key.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-blob-data-protection",
+    "term": "Azure Blob Soft Delete, Versioning, Immutable Storage",
+    "meaning": "Bảo vệ dữ liệu khỏi xoá/ghi đè nhầm",
+    "definition": "Soft delete và versioning cho phép khôi phục; immutable storage (WORM) chặn sửa/xoá trong thời gian giữ.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-vnet-peering",
+    "term": "Azure VNet Peering",
+    "meaning": "Kết nối hai VNet qua backbone Microsoft",
+    "definition": "Hoạt động cùng hoặc khác Region, không bắc cầu; cần địa chỉ không chồng lấn.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-nsg",
+    "term": "Network Security Group (NSG)",
+    "meaning": "Firewall rule allow/deny cho subnet hoặc NIC",
+    "definition": "Rule xử lý theo priority (số nhỏ chạy trước, 100–4096); có rule mặc định cho phép trong VNet và chặn Internet vào.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-lb-comparison",
+    "term": "Azure Load Balancer vs Application Gateway vs Front Door",
+    "meaning": "Chọn load balancing theo layer và phạm vi",
+    "definition": "Load Balancer: L4 theo Region; Application Gateway: L7 theo Region có WAF; Front Door: L7 toàn cầu có CDN và WAF.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-traffic-manager",
+    "term": "Azure Traffic Manager",
+    "meaning": "Định tuyến toàn cầu ở tầng DNS",
+    "definition": "Chỉ trả về endpoint tốt nhất, không proxy traffic; failover phụ thuộc TTL DNS.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-expressroute-vs-vpn",
+    "term": "ExpressRoute vs VPN Gateway",
+    "meaning": "Đường riêng so với VPN qua Internet",
+    "definition": "ExpressRoute không đi qua Internet, ổn định và nhanh hơn nhưng đắt; VPN Gateway mã hoá traffic qua Internet.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-private-endpoint",
+    "term": "Azure Private Endpoint (Private Link)",
+    "meaning": "Truy cập dịch vụ PaaS bằng IP private trong VNet",
+    "definition": "Gắn tài nguyên PaaS vào VNet qua IP riêng, tránh đi qua Internet công cộng.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-policy",
+    "term": "Azure Policy (Effects)",
+    "meaning": "Luật về cấu hình tài nguyên được phép",
+    "definition": "Effect gồm Deny, Audit, Append, Modify, DeployIfNotExists; gom thành initiative; khác RBAC vốn quản lý quyền của người dùng.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-resource-locks",
+    "term": "Azure Resource Locks",
+    "meaning": "Chặn xoá hoặc sửa nhầm tài nguyên",
+    "definition": "CanNotDelete và ReadOnly, kế thừa xuống tài nguyên con và áp dụng cả với Owner.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-tags",
+    "term": "Azure Tags",
+    "meaning": "Cặp key-value để phân loại tài nguyên",
+    "definition": "Không tự kế thừa từ resource group; dùng Azure Policy để ép tag và phục vụ báo cáo chi phí.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-cost-management",
+    "term": "Azure Cost Management and Budgets",
+    "meaning": "Theo dõi và cảnh báo chi phí",
+    "definition": "Phân tích chi phí theo scope và tag, đặt budget và alert; Azure Advisor gợi ý tối ưu.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-pricing-vs-tco",
+    "term": "Azure Pricing Calculator vs TCO Calculator",
+    "meaning": "Ước tính chi phí và so sánh với on-premises",
+    "definition": "Pricing Calculator ước tính chi phí dịch vụ Azure; TCO Calculator so sánh tổng chi phí sở hữu với hạ tầng tại chỗ.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-app-service",
+    "term": "Azure App Service (Plans & Deployment Slots)",
+    "meaning": "PaaS chạy web app và API",
+    "definition": "App Service Plan quyết định tài nguyên và giá; deployment slot cho phép swap staging sang production không downtime.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-functions-triggers-bindings",
+    "term": "Azure Functions Triggers and Bindings",
+    "meaning": "Cách Functions kết nối sự kiện và dữ liệu",
+    "definition": "Trigger khởi chạy hàm (HTTP, Timer, Queue, Blob, Event Grid); binding đọc/ghi dữ liệu khai báo sẵn.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-functions-plans",
+    "term": "Azure Functions Consumption vs Premium Plan",
+    "meaning": "Đánh đổi giữa chi phí, cold start và VNet",
+    "definition": "Consumption trả theo lần chạy, scale về 0 nhưng có cold start; Premium tránh cold start và hỗ trợ VNet.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-container-apps-vs-aks",
+    "term": "Azure Container Apps vs AKS",
+    "meaning": "Container serverless so với Kubernetes tự quản",
+    "definition": "Container Apps ẩn Kubernetes và scale theo sự kiện (KEDA); AKS cho toàn quyền Kubernetes nhưng tốn công vận hành.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-aci",
+    "term": "Azure Container Instances (ACI)",
+    "meaning": "Chạy container đơn lẻ nhanh, không cần cluster",
+    "definition": "Trả tiền theo giây, phù hợp tác vụ ngắn hoặc batch.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-monitor-metrics-logs",
+    "term": "Azure Monitor Metrics vs Logs",
+    "meaning": "Hai loại dữ liệu quan sát của Azure Monitor",
+    "definition": "Metrics là số liệu nhẹ gần thời gian thực; Logs chi tiết hơn, lưu trong Log Analytics và truy vấn bằng KQL.",
+    "topicId": "azure"
+  },
+  {
+    "id": "log-analytics-kql",
+    "term": "Log Analytics Workspace (KQL)",
+    "meaning": "Kho log truy vấn bằng Kusto Query Language",
+    "definition": "Gom log từ tài nguyên qua diagnostic settings để phân tích và tạo alert.",
+    "topicId": "azure"
+  },
+  {
+    "id": "application-insights",
+    "term": "Application Insights",
+    "meaning": "APM cho ứng dụng trên Azure Monitor",
+    "definition": "Theo dõi request, dependency, exception và distributed tracing.",
+    "topicId": "azure"
+  },
+  {
+    "id": "defender-for-cloud",
+    "term": "Microsoft Defender for Cloud",
+    "meaning": "Đánh giá và bảo vệ tư thế bảo mật",
+    "definition": "CSPM với Secure Score và khuyến nghị, cùng CWP bảo vệ workload; hỗ trợ đa cloud.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-key-vault",
+    "term": "Azure Key Vault (Soft Delete, Purge Protection)",
+    "meaning": "Kho bí mật, khoá và chứng chỉ",
+    "definition": "Truy cập qua RBAC và managed identity; bật soft delete và purge protection để tránh mất bí mật vĩnh viễn.",
+    "topicId": "azure"
+  },
+  {
+    "id": "ml-learning-types",
+    "term": "Supervised vs Unsupervised vs Reinforcement Learning",
+    "meaning": "Ba kiểu học máy cơ bản",
+    "definition": "Supervised có nhãn (classification, regression); unsupervised không nhãn (clustering); reinforcement học từ reward của môi trường.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "overfitting-underfitting",
+    "term": "Overfitting vs Underfitting (Bias–Variance)",
+    "meaning": "Mô hình học thuộc hoặc học quá đơn giản",
+    "definition": "Overfitting giỏi trên train nhưng kém trên dữ liệu mới; giảm bằng regularization, early stopping, thêm dữ liệu.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "train-validation-test-split",
+    "term": "Train / Validation / Test Split",
+    "meaning": "Chia dữ liệu để huấn luyện và đánh giá đúng",
+    "definition": "Train để học, validation để chọn hyperparameter, test độc lập để đo chất lượng cuối cùng.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "feature-engineering",
+    "term": "Feature Engineering",
+    "meaning": "Tạo và chọn đặc trưng đầu vào cho mô hình",
+    "definition": "Biến đổi dữ liệu thô thành feature có tín hiệu, thường quyết định chất lượng mô hình.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "data-drift",
+    "term": "Data Drift / Concept Drift",
+    "meaning": "Dữ liệu hoặc quy luật thay đổi theo thời gian",
+    "definition": "Làm mô hình xuống cấp sau triển khai; cần monitor và huấn luyện lại.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "confusion-matrix-precision-recall",
+    "term": "Confusion Matrix, Precision, Recall, F1",
+    "meaning": "Các tỉ lệ rút ra từ ma trận nhầm lẫn",
+    "definition": "Precision = TP/(TP+FP), Recall = TP/(TP+FN), F1 là trung bình điều hoà; chọn theo loại lỗi tốn kém hơn.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "roc-auc",
+    "term": "ROC Curve and AUC",
+    "meaning": "Đo khả năng phân tách lớp trên mọi ngưỡng",
+    "definition": "AUC 0.5 là ngẫu nhiên, 1.0 là hoàn hảo; ít phụ thuộc ngưỡng phân loại.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "accuracy-paradox",
+    "term": "Accuracy Paradox (Imbalanced Data)",
+    "meaning": "Accuracy cao nhưng mô hình vô dụng khi dữ liệu lệch",
+    "definition": "Dự đoán luôn lớp đa số vẫn đạt accuracy cao; dùng Precision/Recall/F1/AUC thay thế.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "regression-metrics",
+    "term": "MAE vs RMSE",
+    "meaning": "Hai thước đo sai số cho regression",
+    "definition": "MAE là sai số tuyệt đối trung bình dễ hiểu; RMSE phạt nặng lỗi lớn và cùng đơn vị với target.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "rouge-bleu-bertscore",
+    "term": "ROUGE, BLEU, BERTScore",
+    "meaning": "Đánh giá chất lượng văn bản do mô hình sinh",
+    "definition": "ROUGE cho tóm tắt, BLEU cho dịch máy, BERTScore đo tương đồng ngữ nghĩa dựa embedding.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "llm-tokens-context-window",
+    "term": "LLM Tokens and Context Window",
+    "meaning": "Đơn vị xử lý và giới hạn ngữ cảnh của LLM",
+    "definition": "Token là mảnh văn bản; context window là tổng token (prompt + trả lời) mô hình xử lý một lần; chi phí tính theo token.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "llm-sampling-parameters",
+    "term": "Temperature, Top-p, Top-k",
+    "meaning": "Tham số điều chỉnh độ ngẫu nhiên của đầu ra",
+    "definition": "Temperature thấp cho kết quả ổn định, cao cho sáng tạo; top-p/top-k giới hạn tập token ứng viên khi lấy mẫu.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "prompt-engineering-techniques",
+    "term": "Prompt Engineering (Few-shot, Chain-of-Thought)",
+    "meaning": "Kỹ thuật viết prompt hiệu quả",
+    "definition": "Zero-shot, few-shot kèm ví dụ, chain-of-thought yêu cầu suy luận từng bước, system prompt đặt vai trò và luật.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "text-embeddings",
+    "term": "Text Embeddings",
+    "meaning": "Vector biểu diễn ngữ nghĩa của văn bản",
+    "definition": "Văn bản gần nghĩa có vector gần nhau; nền tảng cho tìm kiếm ngữ nghĩa và RAG.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "llm-hallucination",
+    "term": "LLM Hallucination",
+    "meaning": "Mô hình tự tin bịa thông tin",
+    "definition": "Giảm bằng RAG, yêu cầu trích dẫn nguồn, temperature thấp và kiểm chứng đầu ra quan trọng.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "prompt-injection",
+    "term": "Prompt Injection",
+    "meaning": "Tấn công chèn lệnh vào prompt",
+    "definition": "Nội dung không đáng tin có thể cướp hành vi mô hình; cần tách lệnh khỏi dữ liệu và giới hạn quyền của agent.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "rag",
+    "term": "Retrieval-Augmented Generation (RAG)",
+    "meaning": "Truy xuất tài liệu rồi đưa vào prompt cho LLM",
+    "definition": "Giải quyết kiến thức cũ, dữ liệu riêng và hallucination mà không cần huấn luyện lại mô hình.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "vector-database",
+    "term": "Vector Database",
+    "meaning": "Kho lưu embedding và tìm theo độ tương đồng",
+    "definition": "Tìm top-k vector gần nhất bằng cosine similarity; ví dụ OpenSearch, Aurora pgvector, Azure AI Search.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "rag-chunking",
+    "term": "RAG Chunking Strategies",
+    "meaning": "Cách cắt tài liệu ảnh hưởng chất lượng truy xuất",
+    "definition": "Chunk nhỏ chính xác nhưng thiếu ngữ cảnh; chunk lớn đủ ngữ cảnh nhưng nhiễu và tốn token.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "bedrock-knowledge-bases",
+    "term": "Knowledge Bases for Amazon Bedrock",
+    "meaning": "RAG được quản lý trên AWS",
+    "definition": "Tự động chunk, embed, lưu vector, truy xuất và sinh câu trả lời có trích dẫn.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-ai-search",
+    "term": "Azure AI Search",
+    "meaning": "Dịch vụ tìm kiếm full-text, vector và hybrid",
+    "definition": "Lập chỉ mục tài liệu, làm giàu bằng AI (skillset), thường dùng làm kho RAG cho Azure OpenAI.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "rag-vs-fine-tuning",
+    "term": "RAG vs Fine-tuning",
+    "meaning": "Chọn giữa cập nhật tri thức và đổi hành vi mô hình",
+    "definition": "RAG phù hợp dữ liệu riêng thay đổi thường xuyên; fine-tuning phù hợp phong cách hoặc nhiệm vụ chuyên biệt ổn định.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "ms-responsible-ai-principles",
+    "term": "Microsoft Responsible AI Principles",
+    "meaning": "Sáu nguyên tắc AI có trách nhiệm của Microsoft",
+    "definition": "Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, Accountability.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "aws-responsible-ai-dimensions",
+    "term": "AWS Responsible AI Dimensions",
+    "meaning": "Các chiều AI có trách nhiệm theo AWS",
+    "definition": "Fairness, explainability, privacy & security, safety, controllability, veracity & robustness, governance, transparency.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-clarify",
+    "term": "SageMaker Clarify",
+    "meaning": "Phát hiện thiên kiến và giải thích dự đoán",
+    "definition": "Đo bias trong dữ liệu và mô hình, đồng thời cung cấp explainability cho từng dự đoán.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "bedrock-guardrails",
+    "term": "Guardrails for Amazon Bedrock",
+    "meaning": "Lọc nội dung, chủ đề cấm và PII cho LLM",
+    "definition": "Áp dụng cho đầu vào và đầu ra: denied topics, word filters, che PII, kiểm tra grounding.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-ai-content-safety",
+    "term": "Azure AI Content Safety",
+    "meaning": "Dịch vụ kiểm duyệt nội dung có hại",
+    "definition": "Phát hiện hate, sexual, violence, self-harm trong văn bản và hình ảnh.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "amazon-a2i",
+    "term": "Amazon Augmented AI (A2I)",
+    "meaning": "Đưa con người vào vòng lặp review kết quả AI",
+    "definition": "Chuyển dự đoán độ tin cậy thấp sang người đánh giá lại.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "amazon-bedrock",
+    "term": "Amazon Bedrock Foundation Models",
+    "meaning": "Truy cập nhiều mô hình nền qua một API",
+    "definition": "Dịch vụ serverless được quản lý; dữ liệu của khách hàng không dùng để huấn luyện mô hình nền.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "bedrock-converse-api",
+    "term": "Bedrock Converse API",
+    "meaning": "API hội thoại thống nhất cho nhiều mô hình",
+    "definition": "Hỗ trợ hội thoại nhiều lượt, streaming và tool use với cùng một giao diện.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "bedrock-provisioned-throughput",
+    "term": "Bedrock Provisioned Throughput",
+    "meaning": "Mua dung lượng cam kết cho mô hình",
+    "definition": "Bắt buộc cho mô hình đã tuỳ biến; phù hợp tải cao ổn định so với on-demand.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "bedrock-agents",
+    "term": "Bedrock Agents (Action Groups)",
+    "meaning": "Agent tự lập kế hoạch và gọi hành động",
+    "definition": "LLM chia nhỏ tác vụ, gọi action group (Lambda/API) và Knowledge Bases để hoàn thành mục tiêu.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "bedrock-model-customization",
+    "term": "Bedrock Fine-tuning and Continued Pre-training",
+    "meaning": "Các cách tuỳ biến mô hình nền",
+    "definition": "Fine-tuning dùng dữ liệu có nhãn; continued pre-training dùng dữ liệu không nhãn để bổ sung tri thức miền.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-inference-options",
+    "term": "SageMaker Inference Options",
+    "meaning": "Bốn kiểu triển khai mô hình",
+    "definition": "Real-time, serverless, asynchronous và batch transform — chọn theo độ trễ, payload và mức tải.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-feature-store",
+    "term": "SageMaker Feature Store",
+    "meaning": "Kho feature dùng chung cho training và inference",
+    "definition": "Lưu feature ở cả online và offline để tránh lệch giữa huấn luyện và dự đoán.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-model-monitor",
+    "term": "SageMaker Model Monitor",
+    "meaning": "Theo dõi drift và chất lượng sau triển khai",
+    "definition": "So sánh dữ liệu thực tế với baseline từ dữ liệu huấn luyện để cảnh báo drift.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-autopilot",
+    "term": "SageMaker Autopilot (AutoML)",
+    "meaning": "Tự động thử nhiều thuật toán và siêu tham số",
+    "definition": "Cho kết quả mô hình tốt mà ít code, hỗ trợ giải thích.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-jumpstart",
+    "term": "SageMaker JumpStart",
+    "meaning": "Mô hình tiền huấn luyện và template dựng sẵn",
+    "definition": "Triển khai hoặc tinh chỉnh nhanh các mô hình phổ biến.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "sagemaker-pipelines",
+    "term": "SageMaker Pipelines (MLOps)",
+    "meaning": "Tự động hoá quy trình huấn luyện và triển khai",
+    "definition": "CI/CD cho ML cùng Model Registry quản lý phiên bản và phê duyệt.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "textract-vs-rekognition",
+    "term": "Amazon Textract vs Rekognition",
+    "meaning": "Trích cấu trúc tài liệu so với nhận diện ảnh",
+    "definition": "Textract đọc text, bảng, form trong tài liệu quét; Rekognition nhận diện đối tượng, khuôn mặt và chữ trong ảnh/video.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "amazon-comprehend",
+    "term": "Amazon Comprehend",
+    "meaning": "Dịch vụ NLP dựng sẵn của AWS",
+    "definition": "Phân tích cảm xúc, thực thể, từ khoá, ngôn ngữ và phát hiện PII trong văn bản.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "transcribe-vs-polly",
+    "term": "Amazon Transcribe vs Polly",
+    "meaning": "Giọng nói thành văn bản và ngược lại",
+    "definition": "Transcribe là speech-to-text; Polly là text-to-speech.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "amazon-lex",
+    "term": "Amazon Lex",
+    "meaning": "Xây chatbot và voice bot hội thoại",
+    "definition": "Dùng công nghệ tương tự Alexa để hiểu ý định và điền thông tin hội thoại.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "amazon-kendra",
+    "term": "Amazon Kendra",
+    "meaning": "Tìm kiếm doanh nghiệp bằng ML",
+    "definition": "Tìm theo ngữ nghĩa trên nhiều nguồn tài liệu nội bộ.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "aws-ai-ml-stack",
+    "term": "AWS AI/ML Stack Layers",
+    "meaning": "Ba tầng AI services, ML platforms và hạ tầng",
+    "definition": "AI services là API dựng sẵn; Bedrock/SageMaker để xây và tuỳ biến; tầng dưới cùng là hạ tầng GPU, Trainium và Inferentia.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-ai-multi-vs-single-service",
+    "term": "Azure AI Multi-service vs Single-service Resource",
+    "meaning": "Hai kiểu tài nguyên AI services",
+    "definition": "Multi-service dùng một endpoint và key cho nhiều dịch vụ; single-service tách endpoint, key và chi phí theo từng dịch vụ.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-document-intelligence",
+    "term": "Azure AI Document Intelligence",
+    "meaning": "Trích dữ liệu từ hoá đơn, biên lai, form",
+    "definition": "Trước đây là Form Recognizer; dùng mô hình dựng sẵn hoặc tuỳ biến để lấy text, bảng và key-value.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-ai-language",
+    "term": "Azure AI Language (NER, Sentiment, CLU)",
+    "meaning": "Các khả năng NLP của Azure",
+    "definition": "Phân tích cảm xúc, nhận dạng thực thể, tóm tắt, CLU hiểu ý định hội thoại và hỏi–đáp.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-ai-speech",
+    "term": "Azure AI Speech",
+    "meaning": "Chuyển giọng nói và văn bản hai chiều",
+    "definition": "Speech-to-text, text-to-speech và dịch giọng nói.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "ai-900-workloads",
+    "term": "AI-900 AI Workloads",
+    "meaning": "Các loại workload AI trong đề AI-900",
+    "definition": "Computer vision, NLP, document intelligence, knowledge mining và generative AI.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-openai-deployments",
+    "term": "Azure OpenAI Deployment Types",
+    "meaning": "Các loại triển khai mô hình",
+    "definition": "Standard trả theo token; Provisioned (PTU) dành riêng dung lượng, độ trễ ổn định; còn có Global, Data Zone và Batch.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-openai-quota-tpm",
+    "term": "Azure OpenAI Quota (TPM) and 429",
+    "meaning": "Hạn mức token và xử lý lỗi giới hạn tốc độ",
+    "definition": "Quota tính theo tokens-per-minute; vượt quota nhận HTTP 429, xử lý bằng retry với exponential backoff hoặc tăng quota.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-openai-on-your-data",
+    "term": "Azure OpenAI On Your Data",
+    "meaning": "RAG với tài liệu nội bộ có trích dẫn",
+    "definition": "Kết nối Azure AI Search để mô hình trả lời dựa trên dữ liệu của tổ chức.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-openai-content-filtering",
+    "term": "Azure OpenAI Content Filtering",
+    "meaning": "Bộ lọc nội dung cho prompt và phản hồi",
+    "definition": "Lọc hate, sexual, violence, self-harm; có thể cấu hình và bật thêm bảo vệ jailbreak, groundedness.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-ai-foundry-agent-service",
+    "term": "Azure AI Foundry Agent Service",
+    "meaning": "Xây dựng và quản lý agent AI trên Azure",
+    "definition": "Foundry là nền tảng gom mô hình, agent, đánh giá và an toàn; tên thương hiệu có thể thay đổi.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "azure-openai-function-calling",
+    "term": "Azure OpenAI Function Calling",
+    "meaning": "Mô hình gọi hàm hoặc công cụ bên ngoài",
+    "definition": "Mô hình trả về lời gọi hàm có cấu trúc để ứng dụng thực thi rồi đưa kết quả lại.",
+    "topicId": "ai-ml"
   }
 ]

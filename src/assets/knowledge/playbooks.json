@@ -162,5 +162,407 @@
     ],
     "filePath": "assets/knowledge/playbooks/aws/ec2-placement-groups.md",
     "updatedAt": "2026-11-08"
+  },
+  {
+    "id": "vpc-networking",
+    "title": "AWS VPC Networking",
+    "summary": "Dựng mạng cô lập trên AWS với subnet, NAT, endpoint và kết nối nhiều VPC bằng Peering hoặc Transit Gateway.",
+    "topicId": "aws",
+    "keywordIds": [
+      "vpc-subnet-routing",
+      "nat-gateway",
+      "vpc-endpoints",
+      "vpc-peering",
+      "transit-gateway",
+      "security-group-vs-nacl"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/vpc-networking.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "elb-auto-scaling",
+    "title": "ELB & EC2 Auto Scaling",
+    "summary": "Kết hợp load balancer đúng loại với Auto Scaling Group để đạt high availability và co giãn theo tải.",
+    "topicId": "aws",
+    "keywordIds": [
+      "alb-nlb-gwlb",
+      "cross-zone-load-balancing",
+      "asg-target-tracking",
+      "deregistration-delay",
+      "asg-lifecycle-hooks"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/elb-auto-scaling.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "rds-aurora",
+    "title": "RDS & Aurora High Availability",
+    "summary": "Phân biệt Multi-AZ (chịu lỗi) với Read Replica (scale đọc) và chọn Aurora khi cần hiệu năng, độ bền và Global DB.",
+    "topicId": "aws",
+    "keywordIds": [
+      "rds-multi-az-vs-read-replica",
+      "aurora-storage-architecture",
+      "aurora-global-database",
+      "rds-proxy",
+      "aurora-serverless-v2"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/rds-aurora.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "dynamodb",
+    "title": "Amazon DynamoDB Design",
+    "summary": "Thiết kế bảng DynamoDB theo access pattern với partition key tốt, capacity phù hợp, index đúng loại và DAX khi cần cache.",
+    "topicId": "aws",
+    "keywordIds": [
+      "dynamodb-partition-key-design",
+      "dynamodb-capacity-rcu-wcu",
+      "dynamodb-gsi-vs-lsi",
+      "dynamodb-dax",
+      "dynamodb-global-tables"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/dynamodb.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "route53-cloudfront",
+    "title": "Route 53 & CloudFront",
+    "summary": "Giảm latency và tăng khả dụng toàn cầu bằng DNS routing policy của Route 53 và CDN cache của CloudFront.",
+    "topicId": "aws",
+    "keywordIds": [
+      "route53-routing-policies",
+      "route53-alias-vs-cname",
+      "cloudfront-oac",
+      "lambda-edge-vs-cloudfront-functions",
+      "global-accelerator"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/route53-cloudfront.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "sqs-sns-eventbridge",
+    "title": "SQS, SNS & EventBridge",
+    "summary": "Tách producer khỏi consumer bằng hàng đợi, pub/sub và event bus để mỗi phía scale và lỗi độc lập.",
+    "topicId": "aws",
+    "keywordIds": [
+      "sqs-standard-vs-fifo",
+      "sqs-visibility-timeout",
+      "sqs-dead-letter-queue",
+      "sns-sqs-fanout",
+      "eventbridge-event-bus",
+      "idempotent-consumer"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/sqs-sns-eventbridge.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "lambda-serverless",
+    "title": "AWS Lambda Serverless",
+    "summary": "Chạy code theo sự kiện không cần quản lý server, hiểu rõ concurrency, cold start và giới hạn của Lambda.",
+    "topicId": "aws",
+    "keywordIds": [
+      "lambda-cold-start",
+      "lambda-concurrency",
+      "lambda-invocation-types",
+      "lambda-event-source-mapping",
+      "lambda-snapstart"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/lambda-serverless.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "disaster-recovery-strategies",
+    "title": "AWS Disaster Recovery Strategies",
+    "summary": "Chọn chiến lược DR từ Backup & Restore đến Active/Active dựa trên RTO, RPO và chi phí.",
+    "topicId": "aws",
+    "keywordIds": [
+      "rto-rpo",
+      "aws-dr-strategies",
+      "aws-elastic-disaster-recovery",
+      "aws-backup",
+      "multi-az-vs-multi-region"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/disaster-recovery-strategies.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-core-architecture",
+    "title": "Azure Core Architecture",
+    "summary": "Nắm hạ tầng Region/Availability Zone và thứ bậc Management Group → Subscription → Resource Group của Azure.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-regions-availability-zones",
+      "azure-region-pairs",
+      "azure-management-hierarchy",
+      "azure-resource-manager",
+      "azure-shared-responsibility"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-core-architecture.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "entra-id-rbac",
+    "title": "Entra ID & Azure RBAC",
+    "summary": "Phân biệt xác thực bằng Microsoft Entra ID với phân quyền Azure RBAC và dùng managed identity thay cho secret.",
+    "topicId": "azure",
+    "keywordIds": [
+      "entra-id",
+      "azure-rbac",
+      "conditional-access",
+      "managed-identity",
+      "azure-pim"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/entra-id-rbac.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-virtual-machines",
+    "title": "Azure Virtual Machines",
+    "summary": "Chọn size, độ sẵn sàng và mô hình giá cho VM Azure với Availability Zones, scale set và cam kết giảm giá.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-vm-sizes",
+      "azure-availability-sets",
+      "azure-vmss",
+      "azure-reserved-vs-savings-plan",
+      "azure-spot-vms",
+      "azure-hybrid-benefit"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-virtual-machines.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-storage",
+    "title": "Azure Storage",
+    "summary": "Chọn mức dự phòng và access tier cho Azure Storage, cấp quyền tạm thời bằng SAS và bảo vệ dữ liệu khỏi xoá nhầm.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-storage-redundancy",
+      "azure-blob-access-tiers",
+      "azure-blob-lifecycle",
+      "azure-storage-sas",
+      "azure-blob-data-protection"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-storage.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-networking-load-balancing",
+    "title": "Azure Networking & Load Balancing",
+    "summary": "Dựng VNet với NSG, kết nối bằng Peering/VPN/ExpressRoute và chọn đúng trong bốn dịch vụ cân bằng tải.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-vnet-peering",
+      "azure-nsg",
+      "azure-lb-comparison",
+      "azure-traffic-manager",
+      "azure-expressroute-vs-vpn",
+      "azure-private-endpoint"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-networking-load-balancing.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-governance-cost",
+    "title": "Azure Governance & Cost",
+    "summary": "Đặt luật bằng Azure Policy, bảo vệ bằng lock, phân loại bằng tag và kiểm soát chi phí với Cost Management.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-policy",
+      "azure-resource-locks",
+      "azure-tags",
+      "azure-cost-management",
+      "azure-pricing-vs-tco"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-governance-cost.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-compute-serverless-containers",
+    "title": "Azure App Service, Functions & Containers",
+    "summary": "Chọn giữa App Service, Functions, Container Apps, ACI và AKS theo mức độ bạn muốn tự vận hành.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-app-service",
+      "azure-functions-triggers-bindings",
+      "azure-functions-plans",
+      "azure-container-apps-vs-aks",
+      "azure-aci"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-compute-serverless-containers.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-monitor-security",
+    "title": "Azure Monitor, Defender & Key Vault",
+    "summary": "Quan sát hệ thống bằng Azure Monitor, đánh giá bảo mật bằng Defender for Cloud và giữ bí mật trong Key Vault.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-monitor-metrics-logs",
+      "log-analytics-kql",
+      "application-insights",
+      "defender-for-cloud",
+      "azure-key-vault"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-monitor-security.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "ai-ml-fundamentals",
+    "title": "AI & Machine Learning Fundamentals",
+    "summary": "Hiểu ML học hàm từ dữ liệu, vòng đời ML và cách nhận diện overfitting, data leakage và drift.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "ml-learning-types",
+      "overfitting-underfitting",
+      "train-validation-test-split",
+      "feature-engineering",
+      "data-drift"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/ai-ml-fundamentals.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "ml-evaluation-metrics",
+    "title": "ML Evaluation Metrics",
+    "summary": "Chọn đúng metric cho classification, regression và văn bản sinh dựa trên loại lỗi tốn kém nhất của bài toán.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "confusion-matrix-precision-recall",
+      "roc-auc",
+      "accuracy-paradox",
+      "regression-metrics",
+      "rouge-bleu-bertscore"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/ml-evaluation-metrics.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "generative-ai-llm-concepts",
+    "title": "Generative AI & LLM Concepts",
+    "summary": "Nắm token, context window, tham số sampling, embedding và cách điều khiển LLM bằng prompt trước khi cần RAG hay fine-tuning.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "llm-tokens-context-window",
+      "llm-sampling-parameters",
+      "prompt-engineering-techniques",
+      "text-embeddings",
+      "llm-hallucination",
+      "prompt-injection"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/generative-ai-llm-concepts.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "rag-retrieval-augmented-generation",
+    "title": "Retrieval-Augmented Generation (RAG)",
+    "summary": "Cho LLM trả lời dựa trên dữ liệu riêng và mới nhất bằng cách truy xuất đoạn liên quan rồi đưa vào prompt.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "rag",
+      "vector-database",
+      "rag-chunking",
+      "bedrock-knowledge-bases",
+      "azure-ai-search",
+      "rag-vs-fine-tuning"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/rag-retrieval-augmented-generation.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "responsible-ai",
+    "title": "Responsible AI",
+    "summary": "Làm AI công bằng, an toàn, minh bạch và có trách nhiệm bằng nguyên tắc, công cụ phát hiện thiên kiến và guardrails.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "ms-responsible-ai-principles",
+      "aws-responsible-ai-dimensions",
+      "sagemaker-clarify",
+      "bedrock-guardrails",
+      "azure-ai-content-safety",
+      "amazon-a2i"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/responsible-ai.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "amazon-bedrock",
+    "title": "Amazon Bedrock",
+    "summary": "Dùng nhiều foundation model qua một API serverless và xây RAG, agent, guardrails mà không tự quản hạ tầng.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "amazon-bedrock",
+      "bedrock-converse-api",
+      "bedrock-provisioned-throughput",
+      "bedrock-agents",
+      "bedrock-model-customization",
+      "bedrock-guardrails"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/amazon-bedrock.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "amazon-sagemaker",
+    "title": "Amazon SageMaker AI",
+    "summary": "Xây, huấn luyện, triển khai và giám sát mô hình ML tuỳ biến end-to-end với các tuỳ chọn inference và MLOps.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "sagemaker-inference-options",
+      "sagemaker-feature-store",
+      "sagemaker-model-monitor",
+      "sagemaker-autopilot",
+      "sagemaker-jumpstart",
+      "sagemaker-pipelines"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/amazon-sagemaker.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "aws-ai-services",
+    "title": "AWS AI Services",
+    "summary": "Giải bài toán thị giác, ngôn ngữ, giọng nói và tìm kiếm bằng API AI dựng sẵn của AWS mà không cần huấn luyện.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "textract-vs-rekognition",
+      "amazon-comprehend",
+      "transcribe-vs-polly",
+      "amazon-lex",
+      "amazon-kendra",
+      "aws-ai-ml-stack"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/aws-ai-services.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-ai-services",
+    "title": "Azure AI Services",
+    "summary": "Chọn đúng dịch vụ Azure AI dựng sẵn cho từng AI workload: vision, language, speech, tài liệu và tìm kiếm.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "azure-ai-multi-vs-single-service",
+      "azure-document-intelligence",
+      "azure-ai-language",
+      "azure-ai-speech",
+      "azure-ai-search",
+      "ai-900-workloads"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/azure-ai-services.md",
+    "updatedAt": "2026-11-21"
+  },
+  {
+    "id": "azure-openai-foundry",
+    "title": "Azure OpenAI & AI Foundry",
+    "summary": "Dùng mô hình OpenAI trong vành đai bảo mật của Azure với deployment, quota, content filter và RAG qua AI Search.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "azure-openai-deployments",
+      "azure-openai-quota-tpm",
+      "azure-openai-on-your-data",
+      "azure-openai-content-filtering",
+      "azure-ai-foundry-agent-service",
+      "azure-openai-function-calling"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/azure-openai-foundry.md",
+    "updatedAt": "2026-11-21"
   }
 ]
