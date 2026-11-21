@@ -25,7 +25,8 @@ If the raw notes are empty, stop and ask the user to run `/distill <notes>` with
 2. **Read the knowledge index.** Read `src/assets/knowledge/topics.json`,
    `src/assets/knowledge/keywords.json` and `src/assets/knowledge/playbooks.json`. For every
    playbook whose title, summary, topic or keywords overlap with the notes, also read its `.md`
-   file.
+   file and its entries in `src/assets/knowledge/questions.json`. Look at existing `prerequisites`
+   to see where the new knowledge fits in the learning tree.
 
 3. **Decide the action.**
    - `UPDATE_EXISTING` if an existing playbook already covers the same concept (or the notes are a
@@ -46,10 +47,17 @@ If the raw notes are empty, stop and ask the user to run `/distill <notes>` with
      synonyms as duplicates); update `meaning`/`definition` if the notes improve them.
    - Sync `playbooks.json`: `title`, one-sentence Vietnamese `summary`, `topicId`, 3–6
      `keywordIds`, relative `filePath` (no leading slash), and `updatedAt` = today (YYYY-MM-DD).
-   - Sync `topics.json` if a topic was added.
-   - Validate: run
-     `node -e "const fs=require('fs'),d='src/assets/knowledge/';const t=JSON.parse(fs.readFileSync(d+'topics.json')),k=JSON.parse(fs.readFileSync(d+'keywords.json')),p=JSON.parse(fs.readFileSync(d+'playbooks.json'));const T=new Set(t.map(x=>x.id)),K=new Set(k.map(x=>x.id));const e=[];for(const x of k)if(!T.has(x.topicId))e.push('keyword '+x.id+' bad topic');for(const x of p){if(!T.has(x.topicId))e.push(x.id+' bad topic');for(const i of x.keywordIds)if(!K.has(i))e.push(x.id+' missing keyword '+i);if(!fs.existsSync('src/'+x.filePath))e.push(x.id+' missing file '+x.filePath)}console.log(e.length?e.join('\n'):'INDEX OK')"`
-     and fix every reported problem.
+   - Sync `topics.json` if a topic was added (place it in the right position: array order decides
+     which tracks are recommended first).
+   - **Learning tree**: set `prerequisites` (0–3 direct dependencies, existing ids only, no cycles). If an
+     existing playbook genuinely builds on the new one, add the new id to *its* `prerequisites`.
+   - **Practice**: write/refresh questions in `questions.json` — **3 `mcq` + 1 `explain`** for a new playbook
+     (plus a `bug` question if there is a classic AI-generated pitfall); on `UPDATE_EXISTING` revise the
+     questions the change affects. Test trade-offs, failure modes and "why", with plausible distractors,
+     ids `<playbookId>-NN`, and a short explanation. Add a `challenges.json` entry only if the notes
+     describe a realistic design/debug scenario.
+   - Validate: run `npm run validate` and fix every error (it checks references, prerequisite cycles,
+     question shapes and the 6-part structure; warnings on word count and diagram size are advisory).
 
 5. **Output a concise terminal review summary** (no other commentary), exactly in this shape:
 
@@ -63,6 +71,8 @@ If the raw notes are empty, stop and ask the user to run `/distill <notes>` with
      - <each ambiguous, outdated, version-specific or potentially inaccurate claim from the raw
        notes, what you wrote instead, and what the user should verify in the Git diff>
      - (or "None — all claims are standard and verified against well-known behaviour.")
-   Index changes: <files touched in topics.json / keywords.json / playbooks.json>
+   Learning tree: Level <n> · prerequisites: <ids> · unlocks: <ids>
+   Practice added: <n> mcq, <n> explain, <n> bug (<question ids>)
+   Index changes: <files touched in topics / keywords / playbooks / questions / challenges>
    Next: review with `git diff`, then commit.
    ```

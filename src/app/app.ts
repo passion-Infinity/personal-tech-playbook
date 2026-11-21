@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter, map } from 'rxjs';
 import { FlashcardStore } from './core/flashcard.store';
 import { KnowledgeService } from './core/knowledge.service';
+import { LearningStore } from './core/learning.store';
 import { PwaService } from './core/pwa.service';
 import { ThemeService } from './core/theme.service';
 import { topicStyle, topicVars } from './core/topic-style';
@@ -126,6 +127,26 @@ import { SearchPalette } from './shared/search-palette';
           <span class="count">{{ kb.playbooks().length }}</span>
         </a>
         <a
+          routerLink="/roadmap"
+          routerLinkActive="nav-active"
+          class="nav-item"
+          (click)="ui.drawerOpen.set(false)"
+        >
+          <app-icon name="map" [size]="17" /> Roadmap
+          <span class="count">{{ learning.read().size }}/{{ kb.playbooks().length }}</span>
+        </a>
+        <a
+          routerLink="/practice"
+          routerLinkActive="nav-active"
+          class="nav-item"
+          (click)="ui.drawerOpen.set(false)"
+        >
+          <app-icon name="flame" [size]="17" /> Luyện tập
+          @if (learning.streak() > 0) {
+            <span class="count !text-orange-400">🔥 {{ learning.streak() }}</span>
+          }
+        </a>
+        <a
           routerLink="/flashcards"
           routerLinkActive="nav-active"
           class="nav-item"
@@ -199,11 +220,11 @@ import { SearchPalette } from './shared/search-palette';
       >
         <app-icon name="book" /> Playbooks
       </a>
-      <button type="button" class="tab" (click)="ui.openPalette()">
-        <app-icon name="search" /> Search
-      </button>
-      <a routerLink="/flashcards" routerLinkActive="tab-active" class="tab">
-        <app-icon name="cards" /> Flashcards
+      <a routerLink="/roadmap" routerLinkActive="tab-active" class="tab">
+        <app-icon name="map" /> Roadmap
+      </a>
+      <a routerLink="/practice" routerLinkActive="tab-active" class="tab">
+        <app-icon name="flame" /> Luyện tập
       </a>
       <button type="button" class="tab" (click)="ui.drawerOpen.set(true)">
         <app-icon name="menu" /> Menu
@@ -220,6 +241,7 @@ export class App {
   protected readonly theme = inject(ThemeService);
   protected readonly pwa = inject(PwaService);
   private readonly cards = inject(FlashcardStore);
+  protected readonly learning = inject(LearningStore);
   private readonly router = inject(Router);
 
   protected readonly style = topicStyle;

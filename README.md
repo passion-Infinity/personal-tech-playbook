@@ -18,6 +18,8 @@ viewer that you can host for free and install on Windows, macOS, Android and iOS
 | **Navigation** | Sidebar on desktop; top bar + slide-over drawer + bottom tab bar on mobile. Playbook / Search Hook counts, topic filters, dark/light toggle, **Install App** button. |
 | **Global search** | `Ctrl/⌘ + K` (or `/`) command palette. Client-side, diacritic-insensitive search over titles, summaries, English terms, Vietnamese meanings, definitions and topics. |
 | **Reader** | Topic badge, title, updated date, 1-sentence summary, rendered Markdown with Mermaid diagrams, highlighted code with copy buttons, compact tables, auto Table of Contents (desktop), Search Hooks with copy + Google search. |
+| **Roadmap (learning tree)** | Mỗi playbook khai báo `prerequisites`; app tự tính **cấp độ** (bài không phụ thuộc nhau cùng cấp) và vẽ cây từ nền tảng đến chuyên sâu. Rê chuột để thấy chuỗi tiên quyết và các bài được mở khoá, gợi ý "tiếp theo nên học", đánh dấu **đã đọc**. |
+| **Luyện tập mỗi ngày** | **Daily Drill** (câu hỏi lặp lại ngắt quãng từ các bài đã đọc), **Design Challenge** (đề thiết kế/debug thực tế, tự chấm theo rubric), **Review điều phối AI** (tìm lỗi tinh vi trong code "do AI sinh"), **Explain-back** (giải thích bằng lời của mình rồi so đáp án mẫu), streak. Tiến độ lưu trên thiết bị. |
 | **Flashcards** | Ôn Search Hooks bằng thẻ lật 3D: term tiếng Anh ở mặt trước, nghĩa + definition ở mặt sau. Lọc theo topic hoặc playbook, shuffle, "chỉ thẻ chưa nhớ", phím `←` `Space` `→`, vuốt trên mobile. Tiến độ "đã nhớ" lưu trên thiết bị (localStorage). |
 | **Keywords directory** | Searchable, topic-filterable list of every Search Hook with copy, Google shortcut and links to its playbooks. |
 | **PWA** | Installable (`display: standalone`), 100% offline, "New knowledge update available — Reload" toast, iOS "Share → Add to Home Screen" guide. |
@@ -27,6 +29,13 @@ identity per topic, self-hosted Inter / Space Grotesk / JetBrains Mono (work off
 
 Stack: Angular 22 (standalone components, signals, `HttpClient`, Router, `@angular/service-worker`),
 Tailwind CSS 4 + Typography, `marked`, `highlight.js`, `mermaid` (lazy-loaded).
+
+## Thói quen 15 phút mỗi ngày
+
+1. Mở **Roadmap** → đọc 1 bài ở mục "Tiếp theo nên học" (5–7 phút), đánh dấu *đã đọc*.
+2. Viết **Explain-back** cuối bài (3–5 câu bằng lời của mình).
+3. Làm **Daily Drill** (5–7 câu) — câu sai sẽ quay lại sớm, câu đúng giãn dần 1 → 2 → 4 → 8 → 16 ngày.
+4. 2–3 lần mỗi tuần: một **Design Challenge** và một lượt **Review điều phối AI**.
 
 ## Daily usage
 
@@ -77,6 +86,12 @@ Requires Node.js 22+.
 npm install
 ```
 
+Kiểm tra tính nhất quán của tri thức (cũng tự chạy trước `npm run build`):
+
+```bash
+npm run validate
+```
+
 ```bash
 npm start
 ```
@@ -99,9 +114,11 @@ Offline and reload.
 
 ```
 src/assets/knowledge/
-├── topics.json                       # [{ id, name, description }]
+├── topics.json                       # [{ id, name, description }]  (thứ tự = thứ tự gợi ý)
 ├── keywords.json                     # [{ id, term, meaning, definition, topicId }]
-├── playbooks.json                    # [{ id, title, summary, topicId, keywordIds, filePath, updatedAt }]
+├── playbooks.json                    # [{ ..., keywordIds, filePath, updatedAt, prerequisites }]
+├── questions.json                    # ngân hàng câu hỏi: mcq | bug | explain
+├── challenges.json                   # đề thiết kế/debug + rubric + lời giải
 └── playbooks/<topic-id>/<playbook-id>.md
 ```
 

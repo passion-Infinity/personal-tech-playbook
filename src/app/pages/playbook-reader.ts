@@ -15,12 +15,14 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, map, of, switchMap } from 'rxjs';
 import { ClipboardService } from '../core/clipboard.service';
 import { FlashcardStore } from '../core/flashcard.store';
-import { KnowledgeService } from '../core/knowledge.service';
+import { LearningStore } from '../core/learning.store';
+import { KnowledgeService, levelName } from '../core/knowledge.service';
 import { MarkdownService, renderMermaid } from '../core/markdown.service';
 import { Keyword, TocEntry } from '../core/models';
 import { ThemeService } from '../core/theme.service';
 import { topicStyle, topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
+import { ExplainBack } from '../shared/explain-back';
 import { KeywordCard } from '../shared/keyword-card';
 
 type Doc =
@@ -30,7 +32,7 @@ type Doc =
 
 @Component({
   selector: 'app-playbook-reader',
-  imports: [RouterLink, Icon, KeywordCard],
+  imports: [RouterLink, Icon, KeywordCard, ExplainBack],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(window:scroll)': 'onScroll()', '(window:resize)': 'onScroll()' },
   template: `
@@ -90,7 +92,74 @@ type Doc =
               </div>
               <h1 class="text-3xl font-bold leading-tight sm:text-[2.6rem]">{{ p.title }}</h1>
               <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink/80">{{ p.summary }}</p>
+
+              <div class="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <p
+                    class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"
+                  >
+                    <app-icon name="map" [size]="13" /> Cấp {{ level() }} · {{ levelLabel() }} — nên
+                    đọc trước
+                  </p>
+                  @if (prereqs().length) {
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (r of prereqs(); track r.id) {
+                        <a [routerLink]="['/playbooks', r.id]" class="chip hover:!text-ink">
+                          @if (learning.isRead(r.id)) {
+                            <app-icon name="check" [size]="12" class="text-emerald-500" />
+                          } @else {
+                            <app-icon name="lock" [size]="11" />
+                          }
+                          {{ r.title }}
+                        </a>
+                      }
+                    </div>
+                  } @else {
+                    <p class="text-muted">Không cần kiến thức tiên quyết — có thể đọc ngay.</p>
+                  }
+                </div>
+                @if (unlocks().length) {
+                  <div>
+                    <p
+                      class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"
+                    >
+                      <app-icon name="target" [size]="13" /> Mở khoá bài tiếp theo
+                    </p>
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (r of unlocks(); track r.id) {
+                        <a [routerLink]="['/playbooks', r.id]" class="chip hover:!text-ink">{{
+                          r.title
+                        }}</a>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+
               <div class="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  [class.!border-emerald-500]="isRead()"
+                  [attr.aria-pressed]="isRead()"
+                  (click)="toggleRead()"
+                >
+                  <app-icon
+                    [name]="isRead() ? 'check' : 'eye'"
+                    [size]="16"
+                    [class]="isRead() ? 'text-emerald-500' : ''"
+                  />
+                  {{ isRead() ? 'Đã đọc' : 'Đánh dấu đã đọc' }}
+                </button>
+                @if (questionCount()) {
+                  <a
+                    routerLink="/practice/drill"
+                    [queryParams]="{ playbook: p.id }"
+                    class="btn-primary"
+                  >
+                    <app-icon name="lightbulb" [size]="16" /> Luyện {{ questionCount() }} câu hỏi
+                  </a>
+                }
                 <a routerLink="/flashcards" [queryParams]="{ playbook: p.id }" class="btn-primary">
                   <app-icon name="cards" [size]="16" /> Ôn {{ hooks().length }} hooks
                 </a>
@@ -126,6 +195,12 @@ type Doc =
                 (click)="onContentClick($event)"
               ></div>
             }
+          }
+
+          @if (explainQuestion(); as eq) {
+            <div class="mt-14" [style]="vars(p.topicId)">
+              <app-explain-back [question]="eq" />
+            </div>
           }
 
           @if (hooks().length) {
@@ -256,6 +331,29 @@ export class PlaybookReader {
     const byId = this.kb.keywordById();
     return p ? p.keywordIds.map((id) => byId.get(id)).filter((k): k is Keyword => !!k) : [];
   });
+  protected readonly learning = inject(LearningStore);
+  protected readonly level = computed(() => this.kb.levels().get(this.id()) ?? 0);
+  protected readonly levelLabel = computed(() => levelName(this.level()));
+  protected readonly prereqs = computed(() =>
+    (this.kb.prereqs().get(this.id()) ?? [])
+      .map((i) => this.kb.playbookById().get(i))
+      .filter((x): x is NonNullable<typeof x> => !!x),
+  );
+  protected readonly unlocks = computed(() =>
+    (this.kb.dependents().get(this.id()) ?? [])
+      .map((i) => this.kb.playbookById().get(i))
+      .filter((x): x is NonNullable<typeof x> => !!x),
+  );
+  protected readonly isRead = computed(() => this.learning.read().has(this.id()));
+  protected readonly questionCount = computed(
+    () => this.kb.questionsByPlaybook().get(this.id())?.length ?? 0,
+  );
+  protected readonly explainQuestion = computed(() =>
+    this.kb
+      .questionsByPlaybook()
+      .get(this.id())
+      ?.find((q) => q.type === 'explain'),
+  );
   protected readonly knownHooks = computed(() =>
     this.cards.knownCount(this.hooks().map((k) => k.id)),
   );
@@ -382,6 +480,10 @@ export class PlaybookReader {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     this.activeId.set(id);
     history.replaceState(history.state, '', `${location.pathname}${location.search}#${id}`);
+  }
+
+  protected toggleRead(): void {
+    this.learning.setRead(this.id(), !this.isRead());
   }
 
   protected scrollTop(): void {

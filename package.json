@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "validate": "node scripts/validate-knowledge.mjs",
+    "prebuild": "npm run validate"
   },
   "private": true,
   "packageManager": "npm@10.9.9",

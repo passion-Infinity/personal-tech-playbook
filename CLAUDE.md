@@ -54,18 +54,20 @@ from `playbooks.json`). Use exactly these six `##` headings, in this order:
 
 ```
 src/assets/knowledge/
-├── topics.json        # [{ id, name, description }]
+├── topics.json        # [{ id, name, description }]   (order = display + recommendation order)
 ├── keywords.json      # [{ id, term, meaning, definition, topicId }]
-├── playbooks.json     # [{ id, title, summary, topicId, keywordIds[], filePath, updatedAt }]
+├── playbooks.json     # [{ id, title, summary, topicId, keywordIds[], filePath, updatedAt, prerequisites[] }]
+├── questions.json     # practice bank: mcq | bug | explain  (Daily Drill, Review AI, Explain-back)
+├── challenges.json    # design / debugging challenges with rubric and reference solution
 └── playbooks/<topic-id>/<playbook-id>.md
 ```
 
 Field rules:
 
 - `id` values are lowercase kebab-case, stable forever (they are URLs: `/playbooks/<id>`).
-- `topics.json`: broad areas only (`system-design`, `caching`, `databases`, `messaging`,
-  `kubernetes`…). Reuse an existing topic whenever reasonable; add a new one only for a genuinely
-  new area.
+- `topics.json`: broad areas only (`fundamentals`, `system-design`, `caching`, `backend`, `distributed`,
+  `data-engineering`, `aws`, `azure`, `ai-ml`…). Reuse an existing topic whenever reasonable; add a new
+  one only for a genuinely new area. **Array order matters**: earlier topics are recommended first.
 - `keywords.json`: `term` = exact English term as people search it; `meaning` = short Vietnamese
   meaning (≤ 1 line); `definition` = 1–2 sentence Vietnamese definition keeping English terms;
   `topicId` must exist in `topics.json`. One keyword may be shared by several playbooks.
@@ -73,34 +75,53 @@ Field rules:
   `keywordIds` = 3–6 ids that exist in `keywords.json` (normally the most important Search Hooks of
   section 6); `filePath` = `assets/knowledge/playbooks/<topicId>/<id>.md` (relative, **no leading
   slash** — required for GitHub Pages sub-path hosting); `updatedAt` = today's date `YYYY-MM-DD`.
-- Keep arrays sorted logically (playbooks/keywords grouped by topic) and JSON formatted with
-  2-space indentation, double quotes, no trailing commas.
+- **`prerequisites`** (learning tree): ids of playbooks the reader should know first — **only direct
+  dependencies**, 0–3 of them, never itself, **never a cycle**. The app derives each playbook's *level*
+  from the longest prerequisite chain (roots = level 0), so playbooks that do not depend on each other
+  land on the same level automatically. Cross-topic prerequisites are encouraged (e.g. `saga-pattern`
+  requires `db-transactions-isolation`). Ask: "could a reader follow this playbook without X?" — if not,
+  X is a prerequisite.
+- **`questions.json`** — every playbook should have **3 `mcq` + 1 `explain`** (add a `bug` when the topic has a
+  classic AI-generated pitfall). Shape: `{ id: "<playbookId>-NN", playbookId, type, difficulty 1-3, question,
+  options[], answer: [indexes], explanation }`; `bug` adds `code: { language, text }`; `explain` has
+  `modelAnswer` and `keyPoints[]` instead of options. Write questions that test **trade-offs, failure modes
+  and "why"**, not trivia: plausible distractors, exactly the correct indexes, a one-paragraph explanation.
+  Vary the position of the correct option.
+- **`challenges.json`** — realistic design/debug scenarios: `{ id, title, topicId, difficulty, prerequisites[],
+  scenario, requirements[], hints[], rubric: [{ item, points }], solution (markdown), pitfalls[] }`.
 
 ## Index Synchronization Rule (always)
 
 Whenever adding or updating knowledge:
 
 1. **ALWAYS inspect `topics.json`, `keywords.json` and `playbooks.json` first**, plus the `.md` of
-   any playbook whose title/summary/keywords overlap with the new material.
+   any playbook whose title/summary/keywords overlap with the new material, and the existing
+   `questions.json` entries for it.
 2. **Prevent duplicates**: if the concept overlaps an existing playbook, **prefer updating the
    existing playbook** (merge the new insight into the right section, keep within 600 words)
    instead of creating a near-duplicate. Reuse existing keyword ids instead of adding synonyms.
-3. **Keep all three JSON index files strictly synchronized with the `.md` files**:
+3. **Keep the knowledge files strictly synchronized with the `.md` files**:
    - every playbook in `playbooks.json` has an existing `.md` at `filePath`, and every `.md` is
      listed;
    - every `keywordIds` entry exists in `keywords.json`; every `topicId` exists in `topics.json`;
+   - **set `prerequisites`** for every new playbook (and add the new playbook as a prerequisite of
+     existing ones only when they genuinely build on it);
+   - **add practice questions** for every new playbook and refresh them when its content changes;
    - bump `updatedAt` of every playbook whose `.md` you changed;
    - do not leave orphan keywords that no playbook references unless intentionally kept as a
      standalone hook.
-4. Validate before finishing:
-   `node -e "for (const f of ['topics','keywords','playbooks']) JSON.parse(require('fs').readFileSync('src/assets/knowledge/'+f+'.json','utf8')); console.log('JSON OK')"`
-   and, for larger changes, `npm run build`.
+4. **Validate before finishing**: `npm run validate` (also runs automatically before `npm run build`).
+   It fails on broken references, prerequisite cycles, bad question shapes and a non-standard
+   playbook structure, and warns on word count (300–600) and Mermaid size (≤ 10 lines).
+   Then run `npm run build` for larger changes.
 
 ## Daily Workflow
 
 - `/distill <raw notes>` (see `.claude/commands/distill.md`) is the standard way to add knowledge.
 - Never commit or push unless the user asks; the user reviews the Git diff first.
 - Do not touch app code (`src/app/**`) or deployment configs during a distill task.
+- Learning features (Roadmap tree, Daily Drill, Design Challenge, Review-AI bug hunt, Explain-back, Flashcards,
+  streak) read these files directly and store progress only in the learner's browser (`localStorage`).
 
 ## App / Repo Notes
 

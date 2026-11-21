@@ -11,7 +11,12 @@
       "idempotent-consumer"
     ],
     "filePath": "assets/knowledge/playbooks/system-design/outbox-pattern.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "db-transactions-isolation",
+      "message-queues-streaming-basics",
+      "idempotency-retries"
+    ]
   },
   {
     "id": "circuit-breaker",
@@ -25,7 +30,12 @@
       "cascading-failure"
     ],
     "filePath": "assets/knowledge/playbooks/system-design/circuit-breaker.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "http-https-tls",
+      "scalability-fundamentals",
+      "idempotency-retries"
+    ]
   },
   {
     "id": "redis-cache-stampede",
@@ -40,7 +50,10 @@
       "ttl-jitter"
     ],
     "filePath": "assets/knowledge/playbooks/caching/redis-cache-stampede.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "caching-strategies"
+    ]
   },
   {
     "id": "iam-fundamentals",
@@ -56,7 +69,8 @@
       "root-user-mfa"
     ],
     "filePath": "assets/knowledge/playbooks/aws/iam-fundamentals.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": []
   },
   {
     "id": "s3-security-encryption",
@@ -72,7 +86,10 @@
       "kms-request-quota"
     ],
     "filePath": "assets/knowledge/playbooks/aws/s3-security-encryption.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "iam-fundamentals"
+    ]
   },
   {
     "id": "s3-versioning-replication",
@@ -87,7 +104,10 @@
       "s3-batch-replication"
     ],
     "filePath": "assets/knowledge/playbooks/aws/s3-versioning-replication.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "iam-fundamentals"
+    ]
   },
   {
     "id": "s3-storage-classes-lifecycle",
@@ -102,7 +122,10 @@
       "s3-minimum-storage-duration"
     ],
     "filePath": "assets/knowledge/playbooks/aws/s3-storage-classes-lifecycle.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "s3-versioning-replication"
+    ]
   },
   {
     "id": "s3-performance",
@@ -117,7 +140,10 @@
       "kms-request-quota"
     ],
     "filePath": "assets/knowledge/playbooks/aws/s3-performance.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "s3-security-encryption"
+    ]
   },
   {
     "id": "ec2-pricing-models",
@@ -132,7 +158,8 @@
       "ec2-dedicated-host"
     ],
     "filePath": "assets/knowledge/playbooks/aws/ec2-pricing-models.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": []
   },
   {
     "id": "ec2-security-groups-networking",
@@ -147,7 +174,11 @@
       "elastic-fabric-adapter"
     ],
     "filePath": "assets/knowledge/playbooks/aws/ec2-security-groups-networking.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "networking-tcp-ip-dns",
+      "iam-fundamentals"
+    ]
   },
   {
     "id": "ec2-placement-groups",
@@ -161,7 +192,10 @@
       "modify-instance-placement"
     ],
     "filePath": "assets/knowledge/playbooks/aws/ec2-placement-groups.md",
-    "updatedAt": "2026-11-08"
+    "updatedAt": "2026-11-08",
+    "prerequisites": [
+      "ec2-security-groups-networking"
+    ]
   },
   {
     "id": "vpc-networking",
@@ -177,7 +211,11 @@
       "security-group-vs-nacl"
     ],
     "filePath": "assets/knowledge/playbooks/aws/vpc-networking.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "ec2-security-groups-networking",
+      "networking-tcp-ip-dns"
+    ]
   },
   {
     "id": "elb-auto-scaling",
@@ -192,7 +230,11 @@
       "asg-lifecycle-hooks"
     ],
     "filePath": "assets/knowledge/playbooks/aws/elb-auto-scaling.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "vpc-networking",
+      "load-balancing-reverse-proxy"
+    ]
   },
   {
     "id": "rds-aurora",
@@ -207,7 +249,11 @@
       "aurora-serverless-v2"
     ],
     "filePath": "assets/knowledge/playbooks/aws/rds-aurora.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "vpc-networking",
+      "db-transactions-isolation"
+    ]
   },
   {
     "id": "dynamodb",
@@ -222,7 +268,11 @@
       "dynamodb-global-tables"
     ],
     "filePath": "assets/knowledge/playbooks/aws/dynamodb.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "cap-consistency-models",
+      "db-indexing-storage-engines"
+    ]
   },
   {
     "id": "route53-cloudfront",
@@ -237,7 +287,11 @@
       "global-accelerator"
     ],
     "filePath": "assets/knowledge/playbooks/aws/route53-cloudfront.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "networking-tcp-ip-dns",
+      "http-https-tls"
+    ]
   },
   {
     "id": "sqs-sns-eventbridge",
@@ -253,7 +307,11 @@
       "idempotent-consumer"
     ],
     "filePath": "assets/knowledge/playbooks/aws/sqs-sns-eventbridge.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "message-queues-streaming-basics",
+      "idempotency-retries"
+    ]
   },
   {
     "id": "lambda-serverless",
@@ -268,7 +326,11 @@
       "lambda-snapstart"
     ],
     "filePath": "assets/knowledge/playbooks/aws/lambda-serverless.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "iam-fundamentals",
+      "scalability-fundamentals"
+    ]
   },
   {
     "id": "disaster-recovery-strategies",
@@ -283,7 +345,11 @@
       "multi-az-vs-multi-region"
     ],
     "filePath": "assets/knowledge/playbooks/aws/disaster-recovery-strategies.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "rds-aurora",
+      "s3-versioning-replication"
+    ]
   },
   {
     "id": "azure-core-architecture",
@@ -298,7 +364,8 @@
       "azure-shared-responsibility"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-core-architecture.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
   },
   {
     "id": "entra-id-rbac",
@@ -313,7 +380,10 @@
       "azure-pim"
     ],
     "filePath": "assets/knowledge/playbooks/azure/entra-id-rbac.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-core-architecture"
+    ]
   },
   {
     "id": "azure-virtual-machines",
@@ -329,7 +399,10 @@
       "azure-hybrid-benefit"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-virtual-machines.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-core-architecture"
+    ]
   },
   {
     "id": "azure-storage",
@@ -344,7 +417,10 @@
       "azure-blob-data-protection"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-storage.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-core-architecture"
+    ]
   },
   {
     "id": "azure-networking-load-balancing",
@@ -360,7 +436,11 @@
       "azure-private-endpoint"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-networking-load-balancing.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-virtual-machines",
+      "networking-tcp-ip-dns"
+    ]
   },
   {
     "id": "azure-governance-cost",
@@ -375,7 +455,11 @@
       "azure-pricing-vs-tco"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-governance-cost.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-core-architecture",
+      "entra-id-rbac"
+    ]
   },
   {
     "id": "azure-compute-serverless-containers",
@@ -390,7 +474,10 @@
       "azure-aci"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-compute-serverless-containers.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-virtual-machines"
+    ]
   },
   {
     "id": "azure-monitor-security",
@@ -405,7 +492,11 @@
       "azure-key-vault"
     ],
     "filePath": "assets/knowledge/playbooks/azure/azure-monitor-security.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "azure-core-architecture",
+      "entra-id-rbac"
+    ]
   },
   {
     "id": "ai-ml-fundamentals",
@@ -420,7 +511,8 @@
       "data-drift"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/ai-ml-fundamentals.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
   },
   {
     "id": "ml-evaluation-metrics",
@@ -435,7 +527,10 @@
       "rouge-bleu-bertscore"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/ml-evaluation-metrics.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "ai-ml-fundamentals"
+    ]
   },
   {
     "id": "generative-ai-llm-concepts",
@@ -451,7 +546,10 @@
       "prompt-injection"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/generative-ai-llm-concepts.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "ai-ml-fundamentals"
+    ]
   },
   {
     "id": "rag-retrieval-augmented-generation",
@@ -467,7 +565,10 @@
       "rag-vs-fine-tuning"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/rag-retrieval-augmented-generation.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "generative-ai-llm-concepts"
+    ]
   },
   {
     "id": "responsible-ai",
@@ -483,7 +584,10 @@
       "amazon-a2i"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/responsible-ai.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "generative-ai-llm-concepts"
+    ]
   },
   {
     "id": "amazon-bedrock",
@@ -499,7 +603,11 @@
       "bedrock-guardrails"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/amazon-bedrock.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "rag-retrieval-augmented-generation",
+      "iam-fundamentals"
+    ]
   },
   {
     "id": "amazon-sagemaker",
@@ -515,7 +623,11 @@
       "sagemaker-pipelines"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/amazon-sagemaker.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "ml-evaluation-metrics",
+      "iam-fundamentals"
+    ]
   },
   {
     "id": "aws-ai-services",
@@ -531,7 +643,11 @@
       "aws-ai-ml-stack"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/aws-ai-services.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "ai-ml-fundamentals",
+      "iam-fundamentals"
+    ]
   },
   {
     "id": "azure-ai-services",
@@ -547,7 +663,11 @@
       "ai-900-workloads"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/azure-ai-services.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "ai-ml-fundamentals",
+      "azure-core-architecture"
+    ]
   },
   {
     "id": "azure-openai-foundry",
@@ -563,6 +683,400 @@
       "azure-openai-function-calling"
     ],
     "filePath": "assets/knowledge/playbooks/ai-ml/azure-openai-foundry.md",
-    "updatedAt": "2026-11-21"
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "rag-retrieval-augmented-generation",
+      "azure-ai-services"
+    ]
+  },
+  {
+    "id": "networking-tcp-ip-dns",
+    "title": "Networking: TCP/IP & DNS",
+    "summary": "Hiểu chi phí mỗi lần gọi qua mạng: DNS, TCP handshake, độ tin cậy và độ trễ.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "tcp-three-way-handshake",
+      "tcp-congestion-control",
+      "tcp-vs-udp",
+      "dns-resolution-ttl",
+      "time-wait-port-exhaustion",
+      "latency-numbers"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/networking-tcp-ip-dns.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
+  },
+  {
+    "id": "http-https-tls",
+    "title": "HTTP, HTTPS & TLS",
+    "summary": "Nắm HTTP/1.1, HTTP/2, HTTP/3 và TLS để giảm RTT, tái dùng kết nối và bảo mật đường truyền.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "http-versions",
+      "tls-13-handshake",
+      "quic-protocol",
+      "http-caching-etag",
+      "mtls",
+      "http-status-codes-4xx-5xx"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/http-https-tls.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "networking-tcp-ip-dns"
+    ]
+  },
+  {
+    "id": "os-processes-threads",
+    "title": "OS: Processes, Threads & Memory",
+    "summary": "Hiểu process, thread, bộ nhớ ảo và container để chẩn đoán vì sao server hết thread, hết RAM hay bị OOM.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "process-vs-thread",
+      "context-switch",
+      "virtual-memory-oom",
+      "linux-namespaces-cgroups",
+      "cpu-vs-io-bound-pool",
+      "ulimit-file-descriptors"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/os-processes-threads.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": []
+  },
+  {
+    "id": "concurrency-fundamentals",
+    "title": "Concurrency Fundamentals",
+    "summary": "Nhận diện race condition, deadlock và chọn giữa lock, CAS hay message passing để xử lý state dùng chung.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "race-condition",
+      "deadlock-coffman",
+      "compare-and-swap",
+      "happens-before",
+      "optimistic-vs-pessimistic-locking",
+      "actor-model"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/concurrency-fundamentals.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads"
+    ]
+  },
+  {
+    "id": "scalability-fundamentals",
+    "title": "Scalability Fundamentals",
+    "summary": "Đo và gỡ bottleneck bằng scale ngang, stateless, cache, partition và queue thay vì thêm máy mù quáng.",
+    "topicId": "fundamentals",
+    "keywordIds": [
+      "vertical-vs-horizontal-scaling",
+      "stateless-service",
+      "back-of-envelope-estimation",
+      "littles-law",
+      "tail-latency-p99",
+      "availability-nines"
+    ],
+    "filePath": "assets/knowledge/playbooks/fundamentals/scalability-fundamentals.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "networking-tcp-ip-dns"
+    ]
+  },
+  {
+    "id": "db-indexing-storage-engines",
+    "title": "DB Indexing & Storage Engines",
+    "summary": "Chọn B-Tree hay LSM-tree và thiết kế index đúng để đổi chi phí ghi lấy tốc độ đọc.",
+    "topicId": "backend",
+    "keywordIds": [
+      "btree-vs-lsm-tree",
+      "write-read-amplification",
+      "composite-index-leftmost-prefix",
+      "covering-index",
+      "explain-analyze",
+      "bloom-filter"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/db-indexing-storage-engines.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "os-processes-threads"
+    ]
+  },
+  {
+    "id": "db-transactions-isolation",
+    "title": "DB Transactions & Isolation Levels",
+    "summary": "Hiểu ACID, isolation level, MVCC và cách tránh lost update, write skew trong truy cập đồng thời.",
+    "topicId": "backend",
+    "keywordIds": [
+      "acid-transactions",
+      "isolation-levels-anomalies",
+      "mvcc-snapshot-isolation",
+      "lost-update-vs-write-skew",
+      "select-for-update-optimistic-locking",
+      "deadlock-retry"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/db-transactions-isolation.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "concurrency-fundamentals",
+      "db-indexing-storage-engines"
+    ]
+  },
+  {
+    "id": "api-design-rest",
+    "title": "API Design (REST)",
+    "summary": "Thiết kế API dễ dùng đúng, tiến hoá được và an toàn khi client retry.",
+    "topicId": "backend",
+    "keywordIds": [
+      "rest-api-best-practices",
+      "cursor-vs-offset-pagination",
+      "api-versioning-compatibility",
+      "problem-details-rfc9457",
+      "rest-vs-grpc-vs-graphql",
+      "openapi-spec"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/api-design-rest.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "http-https-tls"
+    ]
+  },
+  {
+    "id": "authn-authz-oauth-jwt",
+    "title": "AuthN, AuthZ, OAuth 2.0 & JWT",
+    "summary": "Phân biệt xác thực và phân quyền, dùng session/JWT/OAuth đúng cách và tránh các lỗi bảo mật phổ biến.",
+    "topicId": "backend",
+    "keywordIds": [
+      "oauth2-auth-code-pkce",
+      "openid-connect-id-token",
+      "jwt-validation-claims",
+      "session-cookie-csrf",
+      "rbac-vs-abac",
+      "idor"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/authn-authz-oauth-jwt.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "http-https-tls",
+      "api-design-rest"
+    ]
+  },
+  {
+    "id": "idempotency-retries",
+    "title": "Idempotency & Retries",
+    "summary": "Cho phép client retry an toàn bằng idempotency key, backoff có jitter và xử lý trùng.",
+    "topicId": "backend",
+    "keywordIds": [
+      "idempotency-key-pattern",
+      "exponential-backoff-jitter",
+      "delivery-semantics",
+      "retry-amplification",
+      "message-deduplication",
+      "idempotent-consumer"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/idempotency-retries.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "api-design-rest",
+      "db-transactions-isolation"
+    ]
+  },
+  {
+    "id": "cap-consistency-models",
+    "title": "CAP & Consistency Models",
+    "summary": "Chọn mức nhất quán theo từng use case khi dữ liệu được nhân bản qua nhiều node.",
+    "topicId": "system-design",
+    "keywordIds": [
+      "cap-theorem",
+      "pacelc-theorem",
+      "linearizability-vs-eventual",
+      "quorum-rw-n",
+      "read-your-writes",
+      "jepsen"
+    ],
+    "filePath": "assets/knowledge/playbooks/system-design/cap-consistency-models.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "scalability-fundamentals",
+      "db-transactions-isolation"
+    ]
+  },
+  {
+    "id": "load-balancing-reverse-proxy",
+    "title": "Load Balancing & Reverse Proxy",
+    "summary": "Phân phối tải và loại backend lỗi bằng L4/L7 load balancer, health check và reverse proxy.",
+    "topicId": "system-design",
+    "keywordIds": [
+      "l4-vs-l7-load-balancing",
+      "lb-algorithms",
+      "health-checks-liveness-readiness",
+      "reverse-proxy-tls-termination",
+      "sticky-sessions",
+      "geodns-anycast"
+    ],
+    "filePath": "assets/knowledge/playbooks/system-design/load-balancing-reverse-proxy.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "networking-tcp-ip-dns",
+      "http-https-tls",
+      "scalability-fundamentals"
+    ]
+  },
+  {
+    "id": "message-queues-streaming-basics",
+    "title": "Message Queues & Streaming Basics",
+    "summary": "Tách rời producer và consumer bằng queue hoặc log, hiểu ngữ nghĩa giao nhận và thứ tự.",
+    "topicId": "system-design",
+    "keywordIds": [
+      "queue-vs-log-streaming",
+      "delivery-semantics",
+      "dead-letter-queue",
+      "consumer-groups-ordering",
+      "backpressure",
+      "competing-consumers"
+    ],
+    "filePath": "assets/knowledge/playbooks/system-design/message-queues-streaming-basics.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "scalability-fundamentals",
+      "concurrency-fundamentals"
+    ]
+  },
+  {
+    "id": "caching-strategies",
+    "title": "Caching Strategies",
+    "summary": "Chọn chiến lược cache và xử lý invalidation, các sự cố cache để giảm latency mà vẫn đủ đúng.",
+    "topicId": "caching",
+    "keywordIds": [
+      "cache-strategies-patterns",
+      "cache-invalidation",
+      "lru-lfu-eviction",
+      "cache-failure-modes",
+      "cache-hit-ratio",
+      "cache-stampede"
+    ],
+    "filePath": "assets/knowledge/playbooks/caching/caching-strategies.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "scalability-fundamentals"
+    ]
+  },
+  {
+    "id": "microservices-fundamentals",
+    "title": "Microservices Fundamentals",
+    "summary": "Biết khi nào nên và không nên tách microservices, ranh giới theo nghiệp vụ và cái giá phải trả.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "microservices-vs-monolith",
+      "bounded-context-ddd",
+      "database-per-service",
+      "strangler-fig",
+      "distributed-monolith",
+      "conways-law"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/microservices-fundamentals.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "api-design-rest",
+      "scalability-fundamentals"
+    ]
+  },
+  {
+    "id": "event-driven-architecture",
+    "title": "Event-Driven Architecture",
+    "summary": "Giảm coupling bằng sự kiện, hiểu choreography, schema và rủi ro event spaghetti.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "event-driven-architecture",
+      "event-notification-vs-state-transfer",
+      "choreography-vs-orchestration",
+      "schema-registry",
+      "cloudevents",
+      "transactional-outbox"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/event-driven-architecture.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "microservices-fundamentals",
+      "message-queues-streaming-basics",
+      "idempotency-retries"
+    ]
+  },
+  {
+    "id": "saga-pattern",
+    "title": "Saga Pattern",
+    "summary": "Đạt nhất quán nghiệp vụ xuyên service bằng chuỗi local transaction và bước bù thay cho 2PC.",
+    "topicId": "distributed",
+    "keywordIds": [
+      "saga-pattern",
+      "compensating-transaction",
+      "two-phase-commit-vs-saga",
+      "saga-isolation-countermeasures",
+      "durable-execution-temporal",
+      "choreography-vs-orchestration"
+    ],
+    "filePath": "assets/knowledge/playbooks/distributed/saga-pattern.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "event-driven-architecture",
+      "db-transactions-isolation",
+      "outbox-pattern"
+    ]
+  },
+  {
+    "id": "oltp-olap-data-modeling",
+    "title": "OLTP vs OLAP & Data Modeling",
+    "summary": "Tách workload giao dịch khỏi phân tích và mô hình hoá dữ liệu bằng star schema.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "oltp-vs-olap",
+      "star-schema",
+      "scd-type-2",
+      "columnar-vs-row-storage",
+      "kimball-grain",
+      "surrogate-keys"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/oltp-olap-data-modeling.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "db-indexing-storage-engines"
+    ]
+  },
+  {
+    "id": "batch-vs-stream-processing",
+    "title": "Batch vs Stream Processing",
+    "summary": "Chọn batch hay stream theo độ mới cần có và xử lý event time, watermark, dữ liệu đến muộn.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "batch-vs-stream",
+      "event-time-vs-processing-time",
+      "watermarks-windowing",
+      "lambda-vs-kappa",
+      "micro-batch",
+      "stream-exactly-once"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/batch-vs-stream-processing.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "message-queues-streaming-basics",
+      "oltp-olap-data-modeling"
+    ]
+  },
+  {
+    "id": "kafka-fundamentals",
+    "title": "Kafka Fundamentals",
+    "summary": "Nắm partition, offset, consumer group, replication và cấu hình độ bền của Kafka.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "kafka-partitions-offsets-groups",
+      "kafka-acks-isr",
+      "kafka-idempotent-producer-transactions",
+      "kafka-log-compaction",
+      "kafka-consumer-lag-rebalance",
+      "kraft"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/kafka-fundamentals.md",
+    "updatedAt": "2026-11-21",
+    "prerequisites": [
+      "message-queues-streaming-basics",
+      "cap-consistency-models"
+    ]
   }
 ]

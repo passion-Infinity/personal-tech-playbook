@@ -1,0 +1,1532 @@
+[
+  {
+    "id": "networking-tcp-ip-dns-01",
+    "playbookId": "networking-tcp-ip-dns",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Với kết nối mới dùng TCP + TLS 1.3, cần tối thiểu bao nhiêu RTT trước khi gửi được dữ liệu ứng dụng?",
+    "options": [
+      "1 RTT",
+      "2 RTT",
+      "3 RTT",
+      "0 RTT (luôn luôn)"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "TCP handshake tốn 1 RTT và TLS 1.3 tốn thêm 1 RTT, tổng 2 RTT (TLS 1.2 là 3 RTT). Vì vậy nên tái dùng kết nối."
+  },
+  {
+    "id": "networking-tcp-ip-dns-02",
+    "playbookId": "networking-tcp-ip-dns",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một service mở rồi đóng hàng chục nghìn kết nối ngắn tới cùng một đích và bắt đầu lỗi \"cannot assign requested address\". Nguyên nhân khả dĩ nhất?",
+    "options": [
+      "DNS cache bị đầu độc",
+      "Cạn ephemeral port do các kết nối ở trạng thái TIME_WAIT",
+      "Congestion window quá nhỏ",
+      "MTU không khớp"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mỗi kết nối đóng giữ TIME_WAIT một lúc; mở dồn dập làm hết port tạm. Giải bằng connection pooling/keep-alive."
+  },
+  {
+    "id": "networking-tcp-ip-dns-03",
+    "playbookId": "networking-tcp-ip-dns",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bạn đổi IP của server nhưng bản ghi DNS có TTL 24 giờ. Điều gì xảy ra?",
+    "options": [
+      "Mọi client chuyển sang IP mới ngay lập tức",
+      "Một số client/resolver vẫn dùng IP cũ tới 24 giờ",
+      "DNS tự ép xoá cache của mọi client",
+      "TTL chỉ áp dụng cho bản ghi MX"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Resolver và client cache theo TTL. Muốn failover/đổi IP nhanh, hãy hạ TTL trước khi thay đổi."
+  },
+  {
+    "id": "networking-tcp-ip-dns-04",
+    "playbookId": "networking-tcp-ip-dns",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích vì sao request đầu tiên tới một API thường chậm hơn các request sau, và nêu 2 cách giảm.",
+    "modelAnswer": "Request đầu phải trả chi phí thiết lập: DNS lookup, TCP handshake (1 RTT) và TLS handshake (1–2 RTT) trước khi gửi dữ liệu. Các request sau tái dùng kết nối (keep-alive) và DNS đã cache nên bỏ được các bước đó. Giảm bằng connection pooling/keep-alive, HTTP/2–3, đặt service gần nhau hoặc dùng CDN, TLS session resumption.",
+    "keyPoints": [
+      "Có chi phí DNS + TCP + TLS cho kết nối mới",
+      "Request sau tái dùng kết nối và cache DNS",
+      "Giải pháp: connection pool/keep-alive, HTTP/2–3, giảm khoảng cách (CDN)"
+    ]
+  },
+  {
+    "id": "http-https-tls-01",
+    "playbookId": "http-https-tls",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "HTTP/2 giải quyết head-of-line blocking ở tầng HTTP, nhưng vẫn còn vấn đề ở tầng nào?",
+    "options": [
+      "Tầng DNS",
+      "Tầng TCP: mất một gói làm chậm mọi stream trên kết nối",
+      "Tầng ứng dụng",
+      "Tầng vật lý"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "HTTP/2 ghép nhiều stream trên một kết nối TCP nên một gói mất vẫn chặn tất cả. HTTP/3 chuyển sang QUIC (UDP) để các stream độc lập."
+  },
+  {
+    "id": "http-https-tls-02",
+    "playbookId": "http-https-tls",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Load balancer trả về 504 Gateway Timeout. Ý nghĩa đúng nhất?",
+    "options": [
+      "Client gửi request sai định dạng",
+      "Backend (upstream) không phản hồi kịp thời gian cho phép",
+      "Client chưa đăng nhập",
+      "Chứng chỉ TLS hết hạn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "502 là upstream trả phản hồi không hợp lệ/lỗi; 504 là upstream không trả lời kịp (timeout)."
+  },
+  {
+    "id": "http-https-tls-03",
+    "playbookId": "http-https-tls",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "TLS termination tại load balancer có hệ quả gì cần lưu ý?",
+    "options": [
+      "Chứng chỉ không còn cần thiết",
+      "Traffic từ LB tới backend mặc định không được mã hoá, cần re-encrypt hoặc mTLS nếu yêu cầu zero-trust",
+      "HTTP/2 không dùng được nữa",
+      "Mọi request phải dùng UDP"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "LB giải mã TLS và chuyển tiếp traffic nội bộ; nếu mạng nội bộ không tin cậy, cần mã hoá lại hoặc mTLS giữa các service."
+  },
+  {
+    "id": "http-https-tls-04",
+    "playbookId": "http-https-tls",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao nên tái dùng kết nối (keep-alive/connection pool), và HTTP/2 multiplexing giúp gì?",
+    "modelAnswer": "Mỗi kết nối mới tốn DNS, TCP và TLS handshake nên tái dùng tiết kiệm các RTT này và tránh cạn port. HTTP/1.1 chỉ xử lý tuần tự trên một kết nối nên phải mở nhiều kết nối song song, còn HTTP/2 ghép nhiều request đồng thời trên một kết nối, giảm số kết nối và độ trễ.",
+    "keyPoints": [
+      "Tiết kiệm handshake DNS/TCP/TLS",
+      "HTTP/1.1 cần nhiều kết nối song song vì xử lý tuần tự",
+      "HTTP/2 multiplexing nhiều stream trên một kết nối"
+    ]
+  },
+  {
+    "id": "os-processes-threads-01",
+    "playbookId": "os-processes-threads",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Điều nào đúng về thread cùng một process?",
+    "options": [
+      "Mỗi thread có heap riêng hoàn toàn",
+      "Các thread chia sẻ heap nhưng có stack riêng",
+      "Thread không thể chạy song song trên nhiều core",
+      "Thread luôn cô lập lỗi tốt hơn process"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thread chia sẻ không gian địa chỉ (heap, code) của process và có stack/thanh ghi riêng — nhẹ nhưng cần đồng bộ; process mới cô lập lỗi tốt."
+  },
+  {
+    "id": "os-processes-threads-02",
+    "playbookId": "os-processes-threads",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Với tác vụ thuần CPU-bound, kích thước thread pool hợp lý xấp xỉ bao nhiêu?",
+    "options": [
+      "Gấp 100 lần số core",
+      "Bằng khoảng số core",
+      "Luôn bằng 1",
+      "Bằng số request đang chờ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Quá nhiều thread cho CPU-bound chỉ thêm context switch. I/O-bound mới có thể dùng nhiều thread hơn vì phần lớn thời gian chờ."
+  },
+  {
+    "id": "os-processes-threads-03",
+    "playbookId": "os-processes-threads",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Container bị OOMKilled dù heap của ứng dụng nhỏ hơn memory limit. Giải thích hợp lý nhất?",
+    "options": [
+      "Heap không bao giờ được tính vào memory limit",
+      "Tổng bộ nhớ gồm heap, metaspace, thread stack và native memory vượt limit",
+      "cgroups không giới hạn RAM",
+      "Kernel chỉ giết container khi dùng CPU nhiều"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Memory limit tính toàn bộ tiến trình, không chỉ heap. Cần chừa dư địa cho phần non-heap."
+  },
+  {
+    "id": "os-processes-threads-04",
+    "playbookId": "os-processes-threads",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Process khác thread thế nào, và vì sao mô hình thread-per-request khó scale lên hàng chục nghìn kết nối?",
+    "modelAnswer": "Process có không gian địa chỉ riêng nên cô lập lỗi tốt nhưng tốn chi phí tạo/chuyển ngữ cảnh; thread chia sẻ heap nên nhẹ hơn nhưng cần đồng bộ. Thread-per-request tốn stack (khoảng 1 MB mỗi thread) và context switch, nên hàng chục nghìn kết nối đồng thời làm cạn bộ nhớ và giảm hiệu năng; cần I/O không chặn/event loop.",
+    "keyPoints": [
+      "Process: không gian địa chỉ riêng, cô lập; thread: chia sẻ heap",
+      "Mỗi thread tốn stack và context switch",
+      "Giải pháp: I/O không chặn, event loop, async"
+    ]
+  },
+  {
+    "id": "concurrency-fundamentals-01",
+    "playbookId": "concurrency-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách nào sửa đúng lỗi oversell trong đoạn \"đọc stock rồi nếu > 0 thì trừ 1\" khi có nhiều request đồng thời?",
+    "options": [
+      "Thêm Thread.sleep trước khi trừ",
+      "Dùng cập nhật nguyên tử có điều kiện: UPDATE ... SET stock = stock - 1 WHERE stock > 0",
+      "Đọc stock hai lần để chắc chắn",
+      "Tăng số thread của server"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Check-then-act phải nguyên tử. Để database kiểm tra điều kiện và trừ trong một câu lệnh, kết quả đúng kể cả nhiều instance."
+  },
+  {
+    "id": "concurrency-fundamentals-02",
+    "playbookId": "concurrency-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách phổ biến nhất để loại bỏ deadlock giữa nhiều lock là gì?",
+    "options": [
+      "Tăng timeout của lock",
+      "Luôn lấy các lock theo một thứ tự cố định (phá circular wait)",
+      "Thêm nhiều thread hơn",
+      "Dùng lock lớn hơn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Deadlock cần đủ bốn điều kiện Coffman; thứ tự lock toàn cục phá điều kiện circular wait."
+  },
+  {
+    "id": "concurrency-fundamentals-03",
+    "playbookId": "concurrency-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Ứng dụng chạy 4 instance, bạn dùng synchronized để bảo vệ tồn kho. Điều gì đúng?",
+    "options": [
+      "Đủ an toàn vì synchronized là toàn cục",
+      "Chỉ bảo vệ trong một process; vẫn có race giữa các instance nên cần DB atomic/lock hoặc distributed lock",
+      "synchronized tự đồng bộ qua mạng",
+      "Chỉ cần với đọc, không cần với ghi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lock trong bộ nhớ chỉ có phạm vi một process. Giữa nhiều instance, tranh chấp phải được giải ở tầng dữ liệu."
+  },
+  {
+    "id": "concurrency-fundamentals-04",
+    "playbookId": "concurrency-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Race condition là gì? Cho một ví dụ và nêu 2 cách khắc phục.",
+    "modelAnswer": "Race condition là lỗi khi kết quả phụ thuộc thứ tự thực thi của nhiều luồng trên dữ liệu dùng chung, thường là check-then-act hoặc read-modify-write không nguyên tử. Ví dụ hai request cùng thấy stock = 1 rồi cùng trừ. Khắc phục bằng thao tác nguyên tử (atomic/CAS, UPDATE có điều kiện), lock/transaction, hoặc loại bỏ shared state bằng immutable và message passing.",
+    "keyPoints": [
+      "Định nghĩa: thứ tự thực thi ảnh hưởng kết quả trên state dùng chung",
+      "Ví dụ check-then-act (oversell)",
+      "Giải pháp: atomic/CAS/UPDATE điều kiện, lock, tránh shared state"
+    ]
+  },
+  {
+    "id": "scalability-fundamentals-01",
+    "playbookId": "scalability-fundamentals",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "1 triệu request mỗi ngày tương đương khoảng bao nhiêu QPS trung bình?",
+    "options": [
+      "Khoảng 1",
+      "Khoảng 12",
+      "Khoảng 120",
+      "Khoảng 1,200"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "1,000,000 / 86,400 giây ≈ 11.6 QPS. Peak thường gấp 2–5 lần trung bình."
+  },
+  {
+    "id": "scalability-fundamentals-02",
+    "playbookId": "scalability-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Năm service gọi nối tiếp, mỗi service có availability 99.9%. Availability tổng thể xấp xỉ?",
+    "options": [
+      "99.9%",
+      "Khoảng 99.5%",
+      "Khoảng 99.99%",
+      "100%"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Xác suất nhân lên: 0.999^5 ≈ 0.995. Chuỗi gọi đồng bộ dài làm availability giảm."
+  },
+  {
+    "id": "scalability-fundamentals-03",
+    "playbookId": "scalability-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Một request gọi song song 100 service, mỗi service có p99 = 200 ms. Vì sao trải nghiệm tổng thể thường tệ hơn nhiều so với 200 ms?",
+    "options": [
+      "Mạng luôn nhân đôi thời gian",
+      "Xác suất ít nhất một service chậm trong 100 lần gọi rất cao nên p99 từng service gần như thành trường hợp thường gặp",
+      "Số lượng service không ảnh hưởng độ trễ",
+      "p99 không liên quan tới trải nghiệm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tail latency amplification: với fan-out lớn, gần như mọi request gặp ít nhất một lời gọi chậm."
+  },
+  {
+    "id": "scalability-fundamentals-04",
+    "playbookId": "scalability-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi hệ thống chậm dưới tải, bạn tiếp cận thế nào trước khi quyết định scale?",
+    "modelAnswer": "Đo trước: xác định bottleneck bằng metric (CPU, I/O, DB, độ trễ p95/p99, queue depth) và profiling, rồi gỡ đúng điểm nghẽn. Chọn đòn bẩy phù hợp: cache/replica cho đọc, sharding cho ghi, queue cho đỉnh tải, scale ngang cho service stateless; tránh thêm máy vào chỗ không phải bottleneck.",
+    "keyPoints": [
+      "Đo và tìm bottleneck trước",
+      "Chọn đòn bẩy theo loại tải",
+      "Tránh scale mù quáng/premature scaling"
+    ]
+  },
+  {
+    "id": "db-indexing-storage-engines-01",
+    "playbookId": "db-indexing-storage-engines",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bảng có index (a, b). Truy vấn nào hưởng lợi ít nhất từ index này?",
+    "options": [
+      "WHERE a = 1",
+      "WHERE a = 1 AND b = 2",
+      "WHERE b = 2 (không có điều kiện trên a)",
+      "WHERE a = 1 ORDER BY b"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Leftmost prefix: index (a, b) chủ yếu hỗ trợ truy vấn bắt đầu từ a. Lọc chỉ theo b thường không dùng được index hiệu quả."
+  },
+  {
+    "id": "db-indexing-storage-engines-02",
+    "playbookId": "db-indexing-storage-engines",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Workload ghi rất nhiều (log, time-series, key-value) thường hợp với engine nào?",
+    "options": [
+      "B-Tree cập nhật tại chỗ",
+      "LSM-tree: ghi tuần tự vào memtable/WAL rồi compaction nền",
+      "Không engine nào",
+      "Chỉ cần thêm nhiều index"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "LSM-tree biến ghi ngẫu nhiên thành ghi tuần tự nên rất hợp ghi nhiều; đổi lại đọc phức tạp hơn và có compaction."
+  },
+  {
+    "id": "db-indexing-storage-engines-03",
+    "playbookId": "db-indexing-storage-engines",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Dùng UUID v4 ngẫu nhiên làm khoá chính của bảng clustered (InnoDB). Hệ quả chính?",
+    "options": [
+      "Truy vấn luôn nhanh hơn",
+      "Phân mảnh page vì chèn vào vị trí ngẫu nhiên, ghi và cache kém hiệu quả",
+      "Không thể tạo thêm index",
+      "Dữ liệu tự động được mã hoá"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Clustered index sắp dữ liệu theo khoá chính; khoá ngẫu nhiên chèn khắp nơi. Ưu tiên ID tăng dần theo thời gian (UUIDv7, ULID, snowflake)."
+  },
+  {
+    "id": "db-indexing-storage-engines-04",
+    "playbookId": "db-indexing-storage-engines",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "So sánh B-Tree và LSM-tree, và khi nào chọn mỗi loại?",
+    "modelAnswer": "B-Tree là cây cân bằng các page cập nhật tại chỗ, đọc điểm và range scan tốt, nhưng ghi ngẫu nhiên tốn I/O. LSM-tree ghi vào memtable và WAL rồi flush thành SSTable bất biến và compaction nền, ghi tuần tự rất nhanh nhưng đọc phải kiểm tra nhiều SSTable (dùng Bloom filter) và có write amplification do compaction. Chọn B-Tree cho OLTP đọc nhiều cần transaction; LSM cho workload ghi lớn.",
+    "keyPoints": [
+      "B-Tree: in-place, tốt cho đọc/range",
+      "LSM: ghi tuần tự, compaction, Bloom filter",
+      "Chọn theo tỉ lệ đọc/ghi"
+    ]
+  },
+  {
+    "id": "db-transactions-isolation-01",
+    "playbookId": "db-transactions-isolation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai transaction cùng đọc balance = 100, một cộng 50 và một trừ 30, rồi ghi đè giá trị tính ở ứng dụng. Cách nào tránh lost update?",
+    "options": [
+      "Tăng timeout kết nối",
+      "Dùng cập nhật nguyên tử trong SQL (balance = balance + 50) hoặc optimistic lock bằng version",
+      "Đọc lại balance sau khi ghi",
+      "Dùng Read Uncommitted"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Read-modify-write ở ứng dụng dễ đè nhau. Đẩy phép tính vào câu UPDATE hoặc kiểm tra version để phát hiện xung đột."
+  },
+  {
+    "id": "db-transactions-isolation-02",
+    "playbookId": "db-transactions-isolation",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Mức isolation mặc định của PostgreSQL là gì?",
+    "options": [
+      "Read Uncommitted",
+      "Read Committed",
+      "Repeatable Read",
+      "Serializable"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "PostgreSQL mặc định Read Committed; MySQL InnoDB mặc định Repeatable Read."
+  },
+  {
+    "id": "db-transactions-isolation-03",
+    "playbookId": "db-transactions-isolation",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai bác sĩ cùng đọc \"còn 2 người trực\" rồi mỗi người tự xin nghỉ (ghi hai hàng khác nhau), kết quả không còn ai trực. Đây là dị thường nào và mức nào ngăn được?",
+    "options": [
+      "Dirty read; Read Committed",
+      "Write skew; chỉ Serializable (hoặc khoá tường minh) ngăn được",
+      "Phantom read; Read Uncommitted",
+      "Lost update; Repeatable Read luôn ngăn được"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Write skew xảy ra dưới snapshot isolation vì hai transaction ghi hàng khác nhau. Cần Serializable hoặc khoá/ràng buộc tường minh."
+  },
+  {
+    "id": "db-transactions-isolation-04",
+    "playbookId": "db-transactions-isolation",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Giải thích lost update và nêu 3 cách phòng tránh.",
+    "modelAnswer": "Lost update xảy ra khi hai transaction cùng đọc một giá trị, tính toán rồi ghi đè nhau nên một thay đổi bị mất. Phòng tránh bằng: cập nhật nguyên tử trong SQL (x = x + n), khoá bi quan (SELECT FOR UPDATE), khoá lạc quan với cột version, hoặc dùng mức Serializable và retry khi lỗi serialization.",
+    "keyPoints": [
+      "Hai read-modify-write đè nhau trên cùng hàng",
+      "Atomic update / FOR UPDATE / optimistic version",
+      "Hoặc Serializable kèm retry"
+    ]
+  },
+  {
+    "id": "api-design-rest-01",
+    "playbookId": "api-design-rest",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Method HTTP nào có ngữ nghĩa idempotent?",
+    "options": [
+      "POST",
+      "PUT",
+      "Không có method nào",
+      "Chỉ GET"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "GET, PUT, DELETE là idempotent; POST không (có thể tạo trùng). Vì vậy POST quan trọng cần idempotency key."
+  },
+  {
+    "id": "api-design-rest-02",
+    "playbookId": "api-design-rest",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao cursor (keyset) pagination thường tốt hơn offset với bảng lớn?",
+    "options": [
+      "Cursor luôn trả nhiều dữ liệu hơn",
+      "Offset phải quét và bỏ qua nhiều hàng nên chậm, và lệch trang khi dữ liệu chèn/xoá; cursor nhanh và ổn định",
+      "Offset không được hỗ trợ trong SQL",
+      "Cursor không cần sắp xếp"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "OFFSET N buộc DB đọc N hàng rồi bỏ đi. Keyset dùng điều kiện trên khoá sắp xếp nên dùng được index."
+  },
+  {
+    "id": "api-design-rest-03",
+    "playbookId": "api-design-rest",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Người dùng đã đăng nhập nhưng không có quyền xem tài nguyên. Mã trạng thái phù hợp?",
+    "options": [
+      "401 Unauthorized",
+      "403 Forbidden",
+      "404 luôn luôn",
+      "200 kèm thông báo lỗi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "401 nghĩa chưa xác thực; 403 là đã xác thực nhưng không đủ quyền."
+  },
+  {
+    "id": "api-design-rest-04",
+    "playbookId": "api-design-rest",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Ở mức thiết kế API, làm sao đảm bảo client retry POST /payments không trừ tiền hai lần?",
+    "modelAnswer": "Dùng idempotency key: client sinh khoá duy nhất cho mỗi ý định và gửi kèm mọi lần retry qua header. Server lưu khoá cùng kết quả với ràng buộc unique trong cùng transaction với việc trừ tiền; gặp lại khoá thì trả kết quả đã lưu, và từ chối nếu cùng khoá nhưng payload khác.",
+    "keyPoints": [
+      "Idempotency-Key do client sinh",
+      "Server lưu key + kết quả với unique constraint, cùng transaction",
+      "Trả lại kết quả cũ; từ chối nếu payload khác"
+    ]
+  },
+  {
+    "id": "authn-authz-oauth-jwt-01",
+    "playbookId": "authn-authz-oauth-jwt",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Payload của một JWT thông thường (JWS) có được mã hoá không?",
+    "options": [
+      "Có, luôn được mã hoá",
+      "Không, chỉ được ký; ai cũng đọc được nội dung",
+      "Chỉ mã hoá khi dùng HTTPS",
+      "Chỉ mã hoá với HS256"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "JWS chỉ đảm bảo toàn vẹn qua chữ ký. Không đặt dữ liệu nhạy cảm vào payload."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-02",
+    "playbookId": "authn-authz-oauth-jwt",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Với SPA, lưu access token ở đâu an toàn hơn trước tấn công XSS?",
+    "options": [
+      "localStorage",
+      "Cookie HttpOnly (kèm SameSite/CSRF protection)",
+      "Biến toàn cục window",
+      "Trong URL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "JavaScript không đọc được cookie HttpOnly nên XSS khó lấy token; cần chống CSRF bằng SameSite/CSRF token."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-03",
+    "playbookId": "authn-authz-oauth-jwt",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Người dùng đổi /orders/42 thành /orders/43 và xem được đơn của người khác. Lỗi này gọi là gì và sửa thế nào?",
+    "options": [
+      "XSS; escape HTML",
+      "IDOR; kiểm tra quyền sở hữu trên từng đối tượng ở server",
+      "CSRF; thêm SameSite",
+      "SQL injection; dùng prepared statement"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Insecure Direct Object Reference: thiếu kiểm tra quyền theo từng object. Authorization phải thực hiện ở server cho mỗi resource."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-04",
+    "playbookId": "authn-authz-oauth-jwt",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Access token và refresh token khác nhau thế nào, và vì sao access token nên ngắn hạn?",
+    "modelAnswer": "Access token dùng để gọi API, hạn ngắn (khoảng 5–15 phút) để giảm rủi ro khi bị lộ vì JWT khó thu hồi. Refresh token dài hạn hơn, chỉ gửi tới authorization server để lấy access token mới, được lưu an toàn, xoay vòng và có thể thu hồi phía server.",
+    "keyPoints": [
+      "Access token ngắn hạn để gọi API",
+      "Refresh token dài hạn, chỉ đổi token mới, xoay vòng/thu hồi được",
+      "Ngắn hạn vì khó thu hồi JWT stateless"
+    ]
+  },
+  {
+    "id": "idempotency-retries-01",
+    "playbookId": "idempotency-retries",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Nên retry loại lỗi nào?",
+    "options": [
+      "Mọi lỗi 4xx",
+      "Lỗi tạm thời như timeout, 503, 429 (kèm backoff)",
+      "Lỗi validation 422",
+      "Không bao giờ retry"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Retry lỗi tạm thời. Lỗi logic (4xx, validation) sẽ lặp lại y hệt nên retry chỉ vô ích."
+  },
+  {
+    "id": "idempotency-retries-02",
+    "playbookId": "idempotency-retries",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Ba tầng (client, gateway, service) mỗi tầng retry tối đa 3 lần. Trong trường hợp xấu nhất, backend nhận bao nhiêu lần gọi cho một yêu cầu?",
+    "options": [
+      "3",
+      "9",
+      "27",
+      "81"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Retry nhân lên theo tầng: 3×3×3 = 27. Nên retry ở một tầng và có giới hạn tổng."
+  },
+  {
+    "id": "idempotency-retries-03",
+    "playbookId": "idempotency-retries",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai request cùng idempotency key đến đồng thời. Cách đảm bảo chỉ một request thực thi?",
+    "options": [
+      "Kiểm tra key tồn tại rồi mới chèn",
+      "Dùng ràng buộc UNIQUE trên key làm cổng (INSERT, xung đột thì không thực thi)",
+      "Chờ ngẫu nhiên rồi thử lại",
+      "Bỏ qua nếu request thứ hai chậm hơn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Kiểm tra-rồi-chèn có race. Ràng buộc unique là phép nguyên tử do DB đảm bảo."
+  },
+  {
+    "id": "idempotency-retries-04",
+    "playbookId": "idempotency-retries",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Giải thích vì sao \"exactly-once\" thực tế = at-least-once + xử lý idempotent.",
+    "modelAnswer": "Trên mạng không biết được request hay response bị mất nên để không mất message phải gửi lại, dẫn tới có thể trùng (at-least-once). Để kết quả như xử lý đúng một lần, phía nhận phải idempotent: nhận trùng vẫn cho cùng kết quả (dedup theo id hoặc upsert). Exactly-once của broker chỉ đúng trong phạm vi nó.",
+    "keyPoints": [
+      "Không thể phân biệt mất request hay mất response",
+      "Retry gây trùng → at-least-once",
+      "Idempotent ở phía nhận cho kết quả như một lần"
+    ]
+  },
+  {
+    "id": "cap-consistency-models-01",
+    "playbookId": "cap-consistency-models",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Phát biểu nào đúng về CAP theorem?",
+    "options": [
+      "Luôn có thể chọn cả ba C, A và P",
+      "Khi có network partition, hệ thống phải chọn giữa Consistency và Availability",
+      "Chỉ áp dụng cho SQL",
+      "P là tuỳ chọn, có thể bỏ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Partition không phải lựa chọn trong mạng thực tế. CAP nói về hành vi khi partition xảy ra."
+  },
+  {
+    "id": "cap-consistency-models-02",
+    "playbookId": "cap-consistency-models",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cluster 3 bản sao (N = 3). Cấu hình quorum nào đảm bảo đọc luôn chạm bản mới nhất?",
+    "options": [
+      "W = 1, R = 1",
+      "W = 2, R = 2",
+      "W = 1, R = 2",
+      "W = 2, R = 1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần R + W > N. 2 + 2 = 4 > 3; các cấu hình còn lại có tổng ≤ 3."
+  },
+  {
+    "id": "cap-consistency-models-03",
+    "playbookId": "cap-consistency-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chọn mức nhất quán phù hợp cho số dư tài khoản và bộ đếm lượt xem.",
+    "options": [
+      "Cả hai dùng eventual",
+      "Số dư: nhất quán mạnh; lượt xem: eventual",
+      "Số dư: eventual; lượt xem: mạnh",
+      "Cả hai dùng mạnh"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chọn theo use case: tiền bạc cần đúng ngay; bộ đếm chấp nhận lệch tạm thời để ưu tiên sẵn sàng và tốc độ."
+  },
+  {
+    "id": "cap-consistency-models-04",
+    "playbookId": "cap-consistency-models",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Vì sao nói \"chọn 2 trong 3\" của CAP là cách hiểu sai?",
+    "modelAnswer": "Partition tolerance không phải thứ có thể bỏ vì mạng luôn có thể lỗi, nên không có hệ thống phân tán \"CA\" thực sự. CAP chỉ nói rằng khi partition xảy ra phải chọn Consistency (từ chối hoặc chờ) hay Availability (trả lời có thể cũ). Thêm vào đó, PACELC nhắc rằng ngay khi bình thường vẫn đánh đổi latency với consistency.",
+    "keyPoints": [
+      "P không tuỳ chọn",
+      "Chỉ chọn C hay A khi có partition",
+      "PACELC: bình thường vẫn latency vs consistency"
+    ]
+  },
+  {
+    "id": "load-balancing-reverse-proxy-01",
+    "playbookId": "load-balancing-reverse-proxy",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Dịch vụ gRPC (HTTP/2, kết nối dài) đứng sau L4 load balancer và một vài backend bị quá tải. Nguyên nhân và cách khắc phục?",
+    "options": [
+      "gRPC không thể cân bằng tải",
+      "L4 cân bằng theo kết nối nên mọi request trên kết nối dài dồn vào một backend; dùng L7 LB hoặc client-side balancing",
+      "Cần tăng TTL DNS",
+      "Cần đổi sang UDP"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cân bằng theo kết nối không phải theo request. L7 hoặc client-side load balancing phân phối từng request."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-02",
+    "playbookId": "load-balancing-reverse-proxy",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Request có thời gian xử lý rất chênh lệch. Thuật toán nào hợp lý?",
+    "options": [
+      "Round robin thuần tuý",
+      "Least connections",
+      "Luôn chọn backend đầu tiên",
+      "Random mù"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Least connections dồn thêm tải vào backend đang rảnh, tốt hơn khi độ dài request không đồng đều."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-03",
+    "playbookId": "load-balancing-reverse-proxy",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Health check gọi cả database và dịch vụ ngoài. Rủi ro lớn nhất là gì?",
+    "options": [
+      "Không có rủi ro",
+      "Khi dependency chậm, mọi backend bị đánh dấu unhealthy cùng lúc nên cả cụm bị loại khỏi LB",
+      "LB không thể cân bằng tải",
+      "Chỉ làm tốn CPU"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Health check quá sâu biến sự cố cục bộ thành sự cố toàn cụm. Tách liveness và readiness hợp lý."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-04",
+    "playbookId": "load-balancing-reverse-proxy",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "L4 và L7 load balancer khác nhau thế nào, và chọn ra sao?",
+    "modelAnswer": "L4 chuyển tiếp TCP/UDP dựa trên IP/port, rất nhanh và không hiểu giao thức ứng dụng. L7 hiểu HTTP nên định tuyến theo host, path, header, kết thúc TLS, rewrite, tích hợp WAF nhưng tốn CPU và độ trễ hơn. Chọn L7 cho web/API cần routing và observability, L4 cho TCP/UDP đòi hỏi hiệu năng cực cao hoặc giao thức tuỳ ý.",
+    "keyPoints": [
+      "L4: IP/port, nhanh",
+      "L7: hiểu HTTP, routing, TLS termination",
+      "Chọn theo nhu cầu routing và hiệu năng"
+    ]
+  },
+  {
+    "id": "message-queues-streaming-basics-01",
+    "playbookId": "message-queues-streaming-basics",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Khác biệt cốt lõi giữa queue truyền thống và event log (như Kafka)?",
+    "options": [
+      "Không có khác biệt",
+      "Queue xoá message sau khi tiêu thụ, một consumer mỗi message; log giữ lại, nhiều consumer group đọc độc lập và replay được",
+      "Log không có thứ tự",
+      "Queue luôn nhanh hơn log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Hai mô hình khác nhau về giữ dữ liệu và cách tiêu thụ."
+  },
+  {
+    "id": "message-queues-streaming-basics-02",
+    "playbookId": "message-queues-streaming-basics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Consumer ack message TRƯỚC khi xử lý rồi crash giữa chừng. Ngữ nghĩa giao nhận là gì?",
+    "options": [
+      "At-least-once",
+      "At-most-once: message có thể bị mất",
+      "Exactly-once",
+      "Không xác định"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ack trước khi xử lý nghĩa là crash sẽ mất message. Muốn at-least-once thì ack sau khi xử lý xong."
+  },
+  {
+    "id": "message-queues-streaming-basics-03",
+    "playbookId": "message-queues-streaming-basics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một poison message làm consumer crash lặp mãi. Cách xử lý chuẩn?",
+    "options": [
+      "Bỏ qua mọi lỗi",
+      "Giới hạn số lần retry rồi chuyển sang dead-letter queue kèm cảnh báo",
+      "Tăng số consumer",
+      "Xoá toàn bộ hàng đợi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DLQ cách ly message hỏng để không chặn luồng chính và cho phép điều tra."
+  },
+  {
+    "id": "message-queues-streaming-basics-04",
+    "playbookId": "message-queues-streaming-basics",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao nên thiết kế at-least-once cộng consumer idempotent thay vì dựa vào exactly-once của broker?",
+    "modelAnswer": "Giao nhận exactly-once đầu-cuối trên mạng không đạt được nếu không có hỗ trợ ở phía xử lý, và tác dụng phụ ra hệ thống ngoài vẫn có thể lặp. At-least-once không mất dữ liệu; consumer idempotent biến trùng lặp thành vô hại, đơn giản và bền hơn.",
+    "keyPoints": [
+      "Exactly-once chỉ trong phạm vi broker",
+      "At-least-once không mất dữ liệu",
+      "Idempotent consumer xử lý trùng an toàn"
+    ]
+  },
+  {
+    "id": "caching-strategies-01",
+    "playbookId": "caching-strategies",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Trong cache-aside, A đọc DB (giá trị cũ), B ghi DB rồi xoá cache, sau đó A ghi giá trị cũ vào cache. Kết quả?",
+    "options": [
+      "Cache luôn đúng",
+      "Cache chứa giá trị cũ cho tới khi hết TTL hoặc bị xoá lần nữa",
+      "DB bị lỗi",
+      "B bị rollback"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Race giữa đọc-miss và ghi/xoá. Giảm bằng TTL ngắn, xoá sau ghi hoặc versioning."
+  },
+  {
+    "id": "caching-strategies-02",
+    "playbookId": "caching-strategies",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn liên tục cho key không tồn tại làm mọi request đập vào DB. Biện pháp phù hợp?",
+    "options": [
+      "Tăng TTL cho mọi key",
+      "Cache kết quả rỗng (negative caching) với TTL ngắn hoặc dùng Bloom filter",
+      "Tắt cache",
+      "Thêm index"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Đây là cache penetration: key không tồn tại luôn miss. Negative caching hoặc Bloom filter chặn truy vấn vô ích."
+  },
+  {
+    "id": "caching-strategies-03",
+    "playbookId": "caching-strategies",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Khi dữ liệu trong DB thay đổi, thường nên làm gì với cache-aside?",
+    "options": [
+      "Cập nhật cache trước DB",
+      "Xoá (invalidate) key rồi nạp lại ở lần đọc kế tiếp",
+      "Không làm gì",
+      "Khởi động lại Redis"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Xoá key tránh ghi đè sai thứ tự giữa các tiến trình đồng thời."
+  },
+  {
+    "id": "caching-strategies-04",
+    "playbookId": "caching-strategies",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Write-through và write-behind khác cache-aside thế nào, kèm rủi ro?",
+    "modelAnswer": "Cache-aside do ứng dụng tự nạp khi miss và tự invalidate. Write-through ghi đồng thời cache và DB nên nhất quán hơn nhưng ghi chậm hơn. Write-behind ghi cache trước rồi ghi DB bất đồng bộ nên nhanh nhưng có thể mất dữ liệu nếu cache hỏng trước khi flush.",
+    "keyPoints": [
+      "Cache-aside: app điều khiển",
+      "Write-through: nhất quán, ghi chậm",
+      "Write-behind: nhanh, có thể mất dữ liệu"
+    ]
+  },
+  {
+    "id": "microservices-fundamentals-01",
+    "playbookId": "microservices-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dấu hiệu rõ nhất của \"distributed monolith\" là gì?",
+    "options": [
+      "Có nhiều service",
+      "Các service dùng chung một database hoặc phải deploy cùng nhau",
+      "Có API Gateway",
+      "Dùng gRPC"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tách service nhưng vẫn phụ thuộc chặt khiến mọi chi phí của microservices mà không có lợi ích."
+  },
+  {
+    "id": "microservices-fundamentals-02",
+    "playbookId": "microservices-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Đội 6 người, sản phẩm đang tìm hướng, ranh giới nghiệp vụ chưa rõ. Lựa chọn hợp lý?",
+    "options": [
+      "Chia ngay 30 microservices",
+      "Bắt đầu bằng modular monolith, tách dần khi có áp lực thực",
+      "Mỗi lập trình viên một service",
+      "Chỉ dùng serverless"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Microservices giải quyết vấn đề tổ chức và scale; chưa có vấn đề đó thì chi phí lớn hơn lợi ích."
+  },
+  {
+    "id": "microservices-fundamentals-03",
+    "playbookId": "microservices-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Service Order cần dữ liệu khách hàng do service Customer sở hữu. Cách đúng?",
+    "options": [
+      "Đọc thẳng DB của Customer",
+      "Gọi API của Customer hoặc nhận sự kiện và giữ bản sao cần thiết",
+      "Dùng chung một bảng",
+      "Copy code của Customer"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Database per service: dữ liệu chỉ truy cập qua API hoặc sự kiện để giữ độc lập triển khai."
+  },
+  {
+    "id": "microservices-fundamentals-04",
+    "playbookId": "microservices-fundamentals",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Khi nào KHÔNG nên dùng microservices? Nêu lý do.",
+    "modelAnswer": "Không nên khi đội nhỏ, sản phẩm chưa ổn định hoặc ranh giới nghiệp vụ chưa rõ vì sẽ phải trả chi phí gọi qua mạng, nhất quán dữ liệu, vận hành, debug mà chưa cần lợi ích deploy độc lập. Modular monolith đơn giản và rẻ hơn, có thể tách dần bằng Strangler Fig.",
+    "keyPoints": [
+      "Đội nhỏ/ranh giới chưa rõ",
+      "Chi phí mạng, nhất quán, vận hành",
+      "Modular monolith rồi tách dần"
+    ]
+  },
+  {
+    "id": "event-driven-architecture-01",
+    "playbookId": "event-driven-architecture",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Tên event nào đúng chuẩn \"sự thật đã xảy ra\"?",
+    "options": [
+      "ReserveStock",
+      "StockReserved",
+      "DoReserve",
+      "ReserveStockNow"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Event là quá khứ và bất biến; command là yêu cầu hành động."
+  },
+  {
+    "id": "event-driven-architecture-02",
+    "playbookId": "event-driven-architecture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Service ghi đơn hàng vào DB rồi publish event; crash giữa hai bước làm mất event. Giải pháp tiêu chuẩn?",
+    "options": [
+      "Publish trước khi ghi DB",
+      "Transactional outbox: ghi event vào bảng outbox cùng transaction rồi relay publish",
+      "Bỏ qua lỗi",
+      "Tăng timeout"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Outbox đảm bảo nguyên tử giữa thay đổi dữ liệu và event."
+  },
+  {
+    "id": "event-driven-architecture-03",
+    "playbookId": "event-driven-architecture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao consumer trong hệ event-driven phải idempotent?",
+    "options": [
+      "Vì broker giao nhận at-least-once nên có thể giao trùng",
+      "Vì consumer chạy chậm",
+      "Vì event luôn rất lớn",
+      "Không cần idempotent"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "At-least-once là mặc định; xử lý trùng phải vô hại."
+  },
+  {
+    "id": "event-driven-architecture-04",
+    "playbookId": "event-driven-architecture",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Choreography và orchestration khác nhau thế nào?",
+    "modelAnswer": "Choreography: mỗi service tự phản ứng với event của service khác, không có điều phối viên, linh hoạt nhưng khó theo dõi khi nhiều bước. Orchestration: một bộ điều phối ra lệnh từng bước và theo dõi trạng thái, dễ hiểu luồng nhưng tập trung logic và cần tránh thành god service.",
+    "keyPoints": [
+      "Choreography: phản ứng event, phi tập trung",
+      "Orchestration: điều phối viên",
+      "Đánh đổi giữa linh hoạt và khả năng theo dõi"
+    ]
+  },
+  {
+    "id": "saga-pattern-01",
+    "playbookId": "saga-pattern",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Saga bảo đảm thuộc tính ACID nào ở mức yếu hoặc thiếu?",
+    "options": [
+      "Atomicity",
+      "Isolation: trạng thái trung gian nhìn thấy được",
+      "Durability",
+      "Không thuộc tính nào"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Saga đạt A, C, D ở mức nghiệp vụ nhưng thiếu Isolation nên cần semantic lock và các biện pháp khác."
+  },
+  {
+    "id": "saga-pattern-02",
+    "playbookId": "saga-pattern",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Một saga có bước \"gửi email xác nhận\" khó hoàn tác. Nên đặt bước này ở đâu?",
+    "options": [
+      "Đầu chuỗi",
+      "Cuối chuỗi, sau các bước có thể bù",
+      "Ngẫu nhiên",
+      "Không cần quan tâm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Đặt bước không thể bù ở cuối (pivot) để tránh phải hoàn tác nó."
+  },
+  {
+    "id": "saga-pattern-03",
+    "playbookId": "saga-pattern",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Yêu cầu bắt buộc đối với compensating transaction?",
+    "options": [
+      "Phải chạy đúng một lần",
+      "Phải idempotent và có thể retry cho tới khi thành công",
+      "Phải giống hệt rollback của DB",
+      "Phải dùng 2PC"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Compensation chạy trong môi trường có lỗi nên phải retry an toàn."
+  },
+  {
+    "id": "saga-pattern-04",
+    "playbookId": "saga-pattern",
+    "type": "explain",
+    "difficulty": 3,
+    "question": "Giải thích saga với ví dụ đặt hàng gồm thanh toán, giữ tồn kho và giao hàng khi bước giao hàng thất bại.",
+    "modelAnswer": "Mỗi bước là local transaction: charge thanh toán, reserve tồn kho, tạo giao hàng. Nếu tạo giao hàng thất bại, chạy bước bù theo thứ tự ngược: nhả tồn kho rồi hoàn tiền. Mỗi bước và bước bù phải idempotent và retry được; trạng thái đơn như PENDING/CANCELLED giúp người dùng thấy rõ tiến trình.",
+    "keyPoints": [
+      "Chuỗi local transaction",
+      "Compensation theo thứ tự ngược",
+      "Idempotent, retry, trạng thái trung gian rõ ràng"
+    ]
+  },
+  {
+    "id": "oltp-olap-data-modeling-01",
+    "playbookId": "oltp-olap-data-modeling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một bảng fact có lẫn dòng hoá đơn và hàng hoá đơn trong cùng một bảng với grain không rõ. Hậu quả điển hình?",
+    "options": [
+      "Truy vấn luôn nhanh hơn",
+      "Tổng SUM bị nhân đôi hoặc sai do sai grain",
+      "Không thể tạo dimension",
+      "Dữ liệu tự động xoá"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Grain phải xác định rõ một hàng fact đại diện cho gì; sai grain là nguồn sai số liệu phổ biến nhất."
+  },
+  {
+    "id": "oltp-olap-data-modeling-02",
+    "playbookId": "oltp-olap-data-modeling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Mục đích chính của SCD Type 2?",
+    "options": [
+      "Ghi đè giá trị cũ",
+      "Giữ lịch sử thay đổi của dimension bằng hàng mới và valid_from/valid_to",
+      "Xoá dimension",
+      "Nén dữ liệu"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Type 2 giúp báo cáo quá khứ phản ánh đúng trạng thái tại thời điểm đó."
+  },
+  {
+    "id": "oltp-olap-data-modeling-03",
+    "playbookId": "oltp-olap-data-modeling",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Vì sao không nên chạy truy vấn phân tích nặng trực tiếp trên DB giao dịch (OLTP) chính?",
+    "options": [
+      "Vì SQL không hỗ trợ",
+      "Quét lớn tranh tài nguyên với giao dịch, làm chậm production; row store cũng kém cho aggregation",
+      "Vì dữ liệu bị mã hoá",
+      "Không có lý do"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tách workload: dùng replica hoặc warehouse riêng cho phân tích."
+  },
+  {
+    "id": "oltp-olap-data-modeling-04",
+    "playbookId": "oltp-olap-data-modeling",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Star schema là gì? Fact và dimension khác nhau thế nào?",
+    "modelAnswer": "Star schema là mô hình dimensional với một bảng fact ở trung tâm chứa các số đo (số tiền, số lượng) rất nhiều hàng, bao quanh bởi các dimension table chứa ngữ cảnh mô tả (khách hàng, sản phẩm, thời gian, vùng). Nó phi chuẩn hoá để truy vấn phân tích ít JOIN và nhanh.",
+    "keyPoints": [
+      "Fact ở giữa chứa số đo",
+      "Dimension là ngữ cảnh mô tả",
+      "Phi chuẩn hoá cho truy vấn phân tích"
+    ]
+  },
+  {
+    "id": "batch-vs-stream-processing-01",
+    "playbookId": "batch-vs-stream-processing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tính số đơn theo giờ cho báo cáo nghiệp vụ, dữ liệu có thể đến muộn. Nên dùng thời gian nào?",
+    "options": [
+      "Processing time",
+      "Event time (kèm watermark xử lý dữ liệu muộn)",
+      "Giờ của máy chủ ngẫu nhiên",
+      "Không cần thời gian"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Processing time thay đổi theo trễ và replay; event time phản ánh đúng khi sự kiện xảy ra."
+  },
+  {
+    "id": "batch-vs-stream-processing-02",
+    "playbookId": "batch-vs-stream-processing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Watermark dùng để làm gì?",
+    "options": [
+      "Nén dữ liệu",
+      "Ước lượng đã thấy đủ sự kiện đến thời điểm T để biết khi nào đóng cửa sổ",
+      "Mã hoá dữ liệu",
+      "Chia partition"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Watermark cân bằng giữa độ trễ và đầy đủ khi xử lý dữ liệu đến muộn."
+  },
+  {
+    "id": "batch-vs-stream-processing-03",
+    "playbookId": "batch-vs-stream-processing",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Nhược điểm chính của Lambda architecture?",
+    "options": [
+      "Không có batch",
+      "Phải duy trì hai đường xử lý nên nhân đôi logic và dễ lệch kết quả",
+      "Không dùng được Kafka",
+      "Không hỗ trợ real-time"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Kappa đơn giản hơn bằng cách chỉ stream và tái xử lý bằng replay."
+  },
+  {
+    "id": "batch-vs-stream-processing-04",
+    "playbookId": "batch-vs-stream-processing",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào chọn batch thay vì stream?",
+    "modelAnswer": "Khi độ mới phút-giờ là đủ (báo cáo ngày, huấn luyện ML, backfill) vì batch rẻ, đơn giản, dễ tái xử lý và kiểm thử. Stream tốn vận hành (state, checkpoint, watermark) nên chỉ đáng khi cần phản ứng trong giây như cảnh báo gian lận.",
+    "keyPoints": [
+      "Độ mới phút–giờ là đủ",
+      "Batch đơn giản, rẻ, dễ backfill",
+      "Stream tốn vận hành"
+    ]
+  },
+  {
+    "id": "kafka-fundamentals-01",
+    "playbookId": "kafka-fundamentals",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Độ song song tối đa của một consumer group đọc một topic là bao nhiêu?",
+    "options": [
+      "Số consumer bất kỳ",
+      "Số partition của topic",
+      "Số broker",
+      "Luôn bằng 1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mỗi partition chỉ gán cho một consumer trong group; consumer thừa sẽ rảnh."
+  },
+  {
+    "id": "kafka-fundamentals-02",
+    "playbookId": "kafka-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Thứ tự message được Kafka đảm bảo ở phạm vi nào?",
+    "options": [
+      "Toàn cục trên topic",
+      "Trong một partition (cùng key vào cùng partition)",
+      "Giữa các consumer group",
+      "Không được đảm bảo ở đâu cả"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Muốn thứ tự theo thực thể, dùng id thực thể làm key."
+  },
+  {
+    "id": "kafka-fundamentals-03",
+    "playbookId": "kafka-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cấu hình nào cho độ bền tốt khi mất một broker (replication factor 3)?",
+    "options": [
+      "acks=0",
+      "acks=1",
+      "acks=all với min.insync.replicas=2",
+      "acks=all với min.insync.replicas=1"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "acks=all và min.insync.replicas=2 đảm bảo ít nhất hai bản sao xác nhận trước khi coi là ghi thành công."
+  },
+  {
+    "id": "kafka-fundamentals-04",
+    "playbookId": "kafka-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích consumer group và vì sao thêm consumer vượt số partition không tăng tốc.",
+    "modelAnswer": "Consumer group là tập consumer cùng chia nhau đọc topic: mỗi partition được gán cho đúng một consumer trong group, nên độ song song tối đa bằng số partition. Consumer thừa không được gán partition và ở trạng thái rảnh; muốn tăng song song phải tăng số partition (đánh đổi ảnh hưởng ánh xạ key).",
+    "keyPoints": [
+      "Mỗi partition một consumer trong group",
+      "Song song tối đa = số partition",
+      "Tăng partition mới tăng song song"
+    ]
+  },
+  {
+    "id": "outbox-pattern-01",
+    "playbookId": "outbox-pattern",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Transactional Outbox giải quyết vấn đề nào?",
+    "options": [
+      "Tăng tốc truy vấn",
+      "Dual-write: ghi DB và publish event nguyên tử mà không cần 2PC",
+      "Mã hoá message",
+      "Tự động scale consumer"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Event được ghi cùng transaction với dữ liệu nghiệp vụ, relay publish sau đó nên không mất hoặc phát sai event."
+  },
+  {
+    "id": "outbox-pattern-02",
+    "playbookId": "outbox-pattern",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao consumer của event từ outbox phải idempotent?",
+    "options": [
+      "Relay có thể publish trùng (at-least-once) khi crash sau publish trước khi đánh dấu",
+      "Vì outbox luôn exactly-once",
+      "Vì DB không có transaction",
+      "Không cần"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Relay crash giữa publish và đánh dấu đã gửi sẽ gửi lại."
+  },
+  {
+    "id": "circuit-breaker-01",
+    "playbookId": "circuit-breaker",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Khi circuit breaker ở trạng thái OPEN, request mới được xử lý thế nào?",
+    "options": [
+      "Vẫn gọi dependency như bình thường",
+      "Bị từ chối ngay (fail-fast) hoặc chuyển sang fallback",
+      "Được xếp hàng vô hạn",
+      "Tự động retry 100 lần"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "OPEN chặn gọi dependency đang lỗi để tránh cạn tài nguyên và cho nó thời gian hồi phục."
+  },
+  {
+    "id": "circuit-breaker-02",
+    "playbookId": "circuit-breaker",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Trạng thái Half-Open dùng để làm gì?",
+    "options": [
+      "Tắt hẳn breaker",
+      "Cho một số request thử nghiệm đi qua để kiểm tra dependency đã hồi phục chưa",
+      "Tăng timeout",
+      "Ghi log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thành công thì quay về CLOSED, thất bại thì trở lại OPEN."
+  },
+  {
+    "id": "redis-cache-stampede-01",
+    "playbookId": "redis-cache-stampede",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách nào giảm cache stampede cho hot key?",
+    "options": [
+      "Tăng TTL lên vô hạn",
+      "Chỉ cho một request rebuild (lock/single-flight), làm mới sớm theo xác suất, hoặc trả stale kèm refresh nền",
+      "Tắt cache",
+      "Thêm nhiều DB replica"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mục tiêu là tránh hàng nghìn request cùng tính lại giá trị khi key hết hạn."
+  },
+  {
+    "id": "redis-cache-stampede-02",
+    "playbookId": "redis-cache-stampede",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "TTL jitter nhằm mục đích gì?",
+    "options": [
+      "Tăng độ chính xác",
+      "Phân tán thời điểm hết hạn để nhiều key không hết hạn cùng lúc",
+      "Mã hoá key",
+      "Giảm RAM"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cộng thêm độ lệch ngẫu nhiên vào TTL tránh mass expiration (cache avalanche)."
+  },
+  {
+    "id": "concurrency-fundamentals-05",
+    "playbookId": "concurrency-fundamentals",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "AI viết hàm giữ chỗ tồn kho này cho một API chạy nhiều instance. Vấn đề nghiêm trọng nhất là gì?",
+    "code": {
+      "language": "java",
+      "text": "public boolean reserve(String sku) {\n    int stock = repo.getStock(sku);        // SELECT stock FROM inventory WHERE sku = ?\n    if (stock > 0) {\n        repo.setStock(sku, stock - 1);     // UPDATE inventory SET stock = ? WHERE sku = ?\n        return true;\n    }\n    return false;\n}"
+    },
+    "options": [
+      "Thiếu từ khoá synchronized trên hàm",
+      "Check-then-act không nguyên tử: nhiều request đồng thời cùng thấy stock > 0 và ghi đè nhau gây oversell",
+      "Nên dùng long thay cho int",
+      "Không có lỗi, code đúng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Hai request cùng đọc stock = 1 rồi cùng ghi 0, bán hai lần. synchronized cũng không đủ khi chạy nhiều instance. Sửa bằng UPDATE inventory SET stock = stock - 1 WHERE sku = ? AND stock > 0 và kiểm tra số hàng bị ảnh hưởng."
+  },
+  {
+    "id": "db-indexing-storage-engines-05",
+    "playbookId": "db-indexing-storage-engines",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "Endpoint này do AI sinh ra chạy chậm khi người dùng có nhiều đơn hàng. Điều gì đang xảy ra?",
+    "code": {
+      "language": "python",
+      "text": "orders = Order.objects.filter(user_id=uid)          # 1 query\nresult = []\nfor o in orders:\n    items = OrderItem.objects.filter(order_id=o.id) # 1 query cho MỖI đơn\n    result.append({\"order\": o.id, \"items\": list(items)})"
+    },
+    "options": [
+      "Thiếu try/except",
+      "Vấn đề N+1: một query cho danh sách rồi thêm một query cho mỗi đơn; cần prefetch/JOIN và index trên order_id",
+      "Dùng list thay vì tuple",
+      "filter chậm hơn get"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "N+1 làm số query tăng tuyến tính theo số đơn. Dùng prefetch_related/JOIN để gom thành vài query và đảm bảo có index trên khoá ngoại order_id."
+  },
+  {
+    "id": "idempotency-retries-05",
+    "playbookId": "idempotency-retries",
+    "type": "bug",
+    "difficulty": 3,
+    "question": "AI thêm \"cơ chế retry\" cho lời gọi thanh toán. Chọn TẤT CẢ vấn đề đúng.",
+    "code": {
+      "language": "python",
+      "text": "for attempt in range(5):\n    try:\n        return requests.post(f\"{API}/charges\", json=payload, timeout=2)\n    except requests.Timeout:\n        continue    # thử lại ngay"
+    },
+    "options": [
+      "Retry POST tạo giao dịch mà không có Idempotency-Key nên có thể trừ tiền nhiều lần",
+      "Thử lại ngay lập tức không backoff/jitter có thể gây retry storm",
+      "Timeout 2 giây là quá dài",
+      "Nên thay requests bằng urllib"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Timeout không có nghĩa là thất bại: lần gọi đầu có thể đã thành công. Cần Idempotency-Key và exponential backoff có jitter, giới hạn tổng thời gian."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-05",
+    "playbookId": "authn-authz-oauth-jwt",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "Middleware xác thực do AI viết. Lỗ hổng chính là gì?",
+    "code": {
+      "language": "javascript",
+      "text": "app.use((req, res, next) => {\n  const payload = jwt.decode(req.headers.authorization.split(' ')[1]); // chỉ decode\n  if (payload.exp * 1000 > Date.now()) {\n    req.user = payload;\n    return next();\n  }\n  res.sendStatus(401);\n});"
+    },
+    "options": [
+      "Không verify chữ ký nên ai cũng tự tạo token giả hợp lệ",
+      "exp tính nhầm đơn vị mili-giây",
+      "Cần lưu token trong localStorage",
+      "Thiếu CORS"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "jwt.decode chỉ đọc payload, không kiểm tra chữ ký. Phải dùng jwt.verify với khoá và whitelist thuật toán, kèm kiểm tra iss và aud."
+  },
+  {
+    "id": "redis-cache-stampede-03",
+    "playbookId": "redis-cache-stampede",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "Hàm lấy sản phẩm này được cache bằng Redis. Rủi ro lớn nhất khi sản phẩm hot là gì?",
+    "code": {
+      "language": "python",
+      "text": "def get_product(pid):\n    v = redis.get(f\"p:{pid}\")\n    if v:\n        return json.loads(v)\n    row = db.query(\"SELECT * FROM products WHERE id = %s\", pid)   # truy vấn nặng\n    redis.set(f\"p:{pid}\", json.dumps(row), ex=60)\n    return row"
+    },
+    "options": [
+      "Dùng JSON thay vì pickle",
+      "Khi key nóng hết hạn, hàng nghìn request cùng miss và đập DB (stampede); thiếu lock/single-flight và TTL jitter",
+      "TTL 60 giây quá dài",
+      "redis.get quá chậm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Không có cơ chế chỉ một request rebuild. Thêm lock/single-flight, làm mới sớm theo xác suất hoặc stale-while-revalidate, và TTL jitter."
+  },
+  {
+    "id": "outbox-pattern-03",
+    "playbookId": "outbox-pattern",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "Service phát event đơn hàng như sau. Vấn đề cốt lõi là gì?",
+    "code": {
+      "language": "java",
+      "text": "@Transactional\npublic void placeOrder(Order o) {\n    orderRepo.save(o);\n    kafka.send(\"orders\", toEvent(o));   // publish bên trong transaction DB\n}"
+    },
+    "options": [
+      "Thiếu @Async",
+      "Dual-write: event có thể được publish dù transaction sau đó rollback, hoặc mất event nếu crash giữa hai bước",
+      "toEvent chậm",
+      "Kafka không hỗ trợ Java"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DB và Kafka không chung transaction. Dùng transactional outbox: ghi event vào bảng outbox cùng transaction rồi để relay publish."
+  },
+  {
+    "id": "db-transactions-isolation-05",
+    "playbookId": "db-transactions-isolation",
+    "type": "bug",
+    "difficulty": 2,
+    "question": "Hàm cộng tiền này do AI sinh ra. Điều gì sai khi có hai request đồng thời cho cùng tài khoản?",
+    "code": {
+      "language": "java",
+      "text": "BigDecimal bal = jdbc.queryForObject(\"SELECT balance FROM accounts WHERE id = ?\", BigDecimal.class, id);\nBigDecimal updated = bal.add(amount);                 // tính ở ứng dụng\njdbc.update(\"UPDATE accounts SET balance = ? WHERE id = ?\", updated, id);"
+    },
+    "options": [
+      "Dùng BigDecimal",
+      "Read-modify-write ở ứng dụng gây lost update: hai request cùng đọc giá trị cũ rồi ghi đè nhau",
+      "Thiếu index",
+      "Nên dùng double"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Đẩy phép tính vào câu lệnh: UPDATE accounts SET balance = balance + ? WHERE id = ?, hoặc dùng khoá/optimistic version."
+  }
+]

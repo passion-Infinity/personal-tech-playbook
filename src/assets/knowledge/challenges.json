@@ -1,0 +1,344 @@
+[
+  {
+    "id": "url-shortener",
+    "title": "Thiết kế dịch vụ rút gọn URL",
+    "topicId": "system-design",
+    "difficulty": 1,
+    "prerequisites": [
+      "scalability-fundamentals",
+      "caching-strategies",
+      "db-indexing-storage-engines"
+    ],
+    "scenario": "Bạn thiết kế dịch vụ rút gọn URL (như bit.ly): người dùng tạo link ngắn, ai mở link được chuyển hướng tới URL gốc. Có 100 triệu link mới mỗi tháng, tỉ lệ đọc:ghi khoảng 100:1, redirect phải p99 dưới 50 ms và link tồn tại 5 năm.",
+    "requirements": [
+      "Ước lượng QPS ghi/đọc và dung lượng lưu trữ trong 5 năm",
+      "Cách sinh mã ngắn: không trùng, khó đoán, độ dài hợp lý",
+      "Chọn nơi lưu và schema; nêu cách cache để đạt p99 < 50 ms",
+      "Chọn 301 hay 302 và hệ quả",
+      "Chống lạm dụng (spam, quét mã) và đảm bảo sẵn sàng cao"
+    ],
+    "hints": [
+      "100 triệu / (30 ngày × 86,400 giây) cho ra QPS ghi trung bình; nhân 100 cho đọc.",
+      "Mã 7 ký tự base62 cho 62^7 ≈ 3.5 nghìn tỷ khả năng.",
+      "Đọc nhiều hơn ghi rất nhiều — cache đặt ở đâu hiệu quả nhất?"
+    ],
+    "rubric": [
+      {
+        "item": "Ước lượng đúng bậc độ lớn: ghi ≈ 40/s, đọc ≈ 4k/s trung bình (peak vài lần), lưu trữ vài TB",
+        "points": 2
+      },
+      {
+        "item": "Cơ chế sinh mã không trùng (bộ đếm phân đoạn/snowflake + base62, hoặc hash có xử lý va chạm)",
+        "points": 2
+      },
+      {
+        "item": "Lưu bằng key-value/RDBMS với index trên mã; mô tả schema đơn giản",
+        "points": 1
+      },
+      {
+        "item": "Cache hot link (Redis/CDN) và nêu hit ratio kỳ vọng",
+        "points": 2
+      },
+      {
+        "item": "Phân tích 301 (cache vĩnh viễn, mất analytics) vs 302",
+        "points": 1
+      },
+      {
+        "item": "Rate limit, kiểm tra URL độc hại, nhiều instance + replica cho HA",
+        "points": 2
+      }
+    ],
+    "solution": "**Ước lượng.** 100M link/tháng ≈ **40 ghi/s**; đọc ≈ **4k/s** trung bình, peak vài lần. 5 năm ≈ 6 tỷ bản ghi × ~500 B ≈ **3 TB**.\n\n**Sinh mã.** Dùng bộ đếm toàn cục (mỗi instance xin một *khoảng ID* từ DB/ZooKeeper) rồi **mã hoá base62** → 7 ký tự đủ cho hàng nghìn tỷ link, không trùng. Nếu cần khó đoán, xáo trộn ID (ví dụ Feistel/Hashids). Hash URL gốc cũng được nhưng phải xử lý va chạm.\n\n**Lưu trữ & đọc.** Bảng `links(code PK, url, created_at, owner)`; truy cập chỉ theo `code` nên key-value hoặc RDBMS có index đều đủ. Phía trước đặt **cache** (Redis, cộng CDN cho link rất nóng): phân bố đọc lệch mạnh nên hit ratio cao.\n\n**Redirect.** 302 giúp đếm click/analytics, 301 giảm tải nhưng trình duyệt cache vĩnh viễn.\n\n**Sẵn sàng & chống lạm dụng.** Nhiều instance stateless sau LB, DB có replica, rate limit theo IP/API key, kiểm tra URL độc hại, hạn sử dụng link.",
+    "pitfalls": [
+      "Dùng hash URL rồi cắt ngắn mà không xử lý va chạm",
+      "Mã tăng dần tuần tự dễ bị quét và đoán",
+      "Không cache nên mọi redirect đập DB",
+      "Dùng 301 rồi muốn đo click nhưng trình duyệt đã cache"
+    ]
+  },
+  {
+    "id": "double-charge-retry",
+    "title": "Khách bị trừ tiền hai lần khi mạng chập chờn",
+    "topicId": "backend",
+    "difficulty": 2,
+    "prerequisites": [
+      "idempotency-retries",
+      "api-design-rest",
+      "db-transactions-isolation"
+    ],
+    "scenario": "API POST /payments gọi cổng thanh toán rồi ghi kết quả vào DB. Khi mạng chập chờn, app mobile timeout và tự retry; một số khách bị trừ tiền hai lần. Bạn cần sửa thiết kế để retry an toàn mà không làm chậm hệ thống.",
+    "requirements": [
+      "Giải thích chính xác vì sao trừ hai lần xảy ra",
+      "Thiết kế cơ chế idempotency đầu-cuối (client, API, DB, cổng thanh toán)",
+      "Xử lý hai request cùng khoá đến đồng thời",
+      "Chiến lược retry phía client",
+      "Xử lý khi không chắc giao dịch đã thành công (timeout từ cổng thanh toán)"
+    ],
+    "hints": [
+      "Timeout không có nghĩa là thất bại.",
+      "Cổng thanh toán thường hỗ trợ idempotency key riêng.",
+      "Cần một ràng buộc mà cơ sở dữ liệu đảm bảo nguyên tử."
+    ],
+    "rubric": [
+      {
+        "item": "Chỉ ra timeout ≠ thất bại: lần đầu có thể đã thành công nên retry tạo giao dịch thứ hai",
+        "points": 2
+      },
+      {
+        "item": "Client sinh Idempotency-Key cho mỗi ý định và gửi lại ở mọi retry",
+        "points": 2
+      },
+      {
+        "item": "Server lưu key → kết quả với UNIQUE constraint trong cùng transaction với ghi giao dịch",
+        "points": 2
+      },
+      {
+        "item": "Xử lý đồng thời: INSERT ... ON CONFLICT làm cổng, trạng thái IN_PROGRESS; từ chối payload khác",
+        "points": 2
+      },
+      {
+        "item": "Truyền idempotency key xuống cổng thanh toán",
+        "points": 1
+      },
+      {
+        "item": "Exponential backoff + jitter, giới hạn tổng thời gian; đối soát (reconciliation) cho trạng thái không rõ",
+        "points": 1
+      }
+    ],
+    "solution": "**Nguyên nhân.** Client timeout nhưng lần gọi đầu **có thể đã thành công** ở server/cổng thanh toán; retry tạo giao dịch thứ hai.\n\n**Thiết kế.**\n1. Client sinh **`Idempotency-Key`** (UUID) cho mỗi *ý định thanh toán* và gửi lại cùng khoá ở mọi retry.\n2. API lưu `idempotency_keys(key UNIQUE, request_hash, status, response)`. Bước đầu `INSERT ... ON CONFLICT DO NOTHING`: ai chèn được thì thực thi, ai không thì **trả kết quả đã lưu** (hoặc `409` nếu đang `IN_PROGRESS`).\n3. Ghi key và giao dịch trong **cùng một transaction** DB.\n4. Truyền key xuống **cổng thanh toán** (nó cũng idempotent) để lời gọi ra ngoài không lặp.\n5. Cùng key nhưng khác payload → `422`.\n\n**Retry & không chắc chắn.** Client dùng **exponential backoff + jitter** với deadline tổng. Nếu cổng thanh toán timeout, đặt trạng thái `UNKNOWN` và chạy **job đối soát** truy vấn trạng thái thật thay vì đoán.",
+    "pitfalls": [
+      "Kiểm tra key tồn tại rồi mới chèn (race giữa hai request đồng thời)",
+      "Chỉ retry mà không có khoá nên giao dịch trùng",
+      "Retry ngay lập tức gây retry storm",
+      "Coi timeout là thất bại rồi hoàn tiền sai"
+    ]
+  },
+  {
+    "id": "flash-sale-inventory",
+    "title": "Flash sale 10,000 sản phẩm, 50,000 request mỗi giây",
+    "topicId": "backend",
+    "difficulty": 3,
+    "prerequisites": [
+      "concurrency-fundamentals",
+      "db-transactions-isolation",
+      "message-queues-streaming-basics",
+      "caching-strategies"
+    ],
+    "scenario": "Sàn thương mại điện tử mở flash sale: 10,000 chiếc điện thoại, đỉnh 50,000 request/giây trong vài phút đầu. Không được bán quá số lượng, hệ thống không được sập, và người dùng phải nhận kết quả nhanh.",
+    "requirements": [
+      "Đảm bảo không oversell",
+      "Chịu được đỉnh tải mà không đập thẳng vào DB",
+      "Công bằng và không để bot chiếm hết",
+      "Xử lý đơn thất bại (thanh toán không hoàn tất) trả tồn kho",
+      "Nêu điểm có thể hỏng và cách giám sát"
+    ],
+    "hints": [
+      "DB một hàng nóng là điểm nghẽn vì mọi cập nhật tranh khoá.",
+      "Giữ chỗ nhanh ở tầng rẻ hơn rồi ghi bền xuống DB sau.",
+      "Tồn kho giữ chỗ phải có hạn."
+    ],
+    "rubric": [
+      {
+        "item": "Cập nhật tồn kho nguyên tử (UPDATE ... WHERE stock > 0 hoặc Redis DECR/Lua), không check-then-act",
+        "points": 2
+      },
+      {
+        "item": "Tầng giữ chỗ nhanh (Redis) làm cổng chặn phần lớn request trước DB",
+        "points": 2
+      },
+      {
+        "item": "Ghi đơn qua queue, xử lý bất đồng bộ với idempotency; kết quả báo qua polling/websocket",
+        "points": 2
+      },
+      {
+        "item": "Giữ chỗ có TTL; hết hạn chưa thanh toán thì trả tồn kho",
+        "points": 1
+      },
+      {
+        "item": "Rate limit, waiting room/hàng đợi ảo, chống bot",
+        "points": 2
+      },
+      {
+        "item": "Đối soát tồn kho, giám sát, degrade có kiểm soát",
+        "points": 1
+      }
+    ],
+    "solution": "**Nguyên tắc.** Mọi thay đổi tồn kho phải **nguyên tử**; đừng \"đọc rồi ghi\".\n\n**Luồng.**\n1. **Waiting room + rate limit** ở biên (CDN/gateway) để cắt đỉnh và chặn bot.\n2. **Giữ chỗ nhanh bằng Redis**: Lua script `DECR` nếu `stock > 0`; hết hàng thì từ chối ngay (đa số 50k req/s dừng ở đây, không chạm DB).\n3. Người giữ chỗ thành công → **đẩy đơn vào queue** (Kafka/SQS) với idempotency key; worker ghi DB bền bằng `UPDATE inventory SET stock = stock - 1 WHERE sku = ? AND stock > 0` (cổng cuối cùng chống oversell).\n4. Giữ chỗ có **TTL** (ví dụ 10 phút); chưa thanh toán thì job nhả tồn kho.\n5. Kết quả trả bất đồng bộ (polling/WebSocket).\n\n**Giảm hot row.** Chia tồn kho thành nhiều \"xô\" (bucket) để giảm tranh chấp khi cần.\n\n**Vận hành.** Đối soát Redis với DB, giám sát queue depth, bật degrade (tắt tính năng phụ).",
+    "pitfalls": [
+      "Check-then-act đọc stock rồi trừ ở ứng dụng",
+      "Mọi request đập thẳng vào một hàng DB nóng",
+      "Giữ chỗ không hết hạn khiến tồn kho \"mất tích\"",
+      "Redis và DB lệch nhau mà không có đối soát"
+    ]
+  },
+  {
+    "id": "slow-endpoint-debug",
+    "title": "Endpoint danh sách đơn hàng chậm dần theo thời gian",
+    "topicId": "backend",
+    "difficulty": 2,
+    "prerequisites": [
+      "db-indexing-storage-engines",
+      "scalability-fundamentals"
+    ],
+    "scenario": "GET /users/{id}/orders trả 20 đơn gần nhất kèm các sản phẩm. Một năm trước p99 là 80 ms, giờ là 6 giây dù lưu lượng không đổi nhiều. Bảng orders đã có 200 triệu dòng. Bạn được giao tìm nguyên nhân và sửa.",
+    "requirements": [
+      "Nêu quy trình chẩn đoán theo thứ tự (đo gì trước)",
+      "Liệt kê các nguyên nhân khả dĩ cho từng tầng",
+      "Đề xuất index cụ thể và cách kiểm chứng",
+      "Sửa vấn đề N+1 và phân trang",
+      "Kế hoạch triển khai an toàn trên bảng lớn"
+    ],
+    "hints": [
+      "Bắt đầu từ EXPLAIN ANALYZE của truy vấn chính.",
+      "Truy vấn lọc theo user_id và sắp theo created_at: thứ tự cột index quan trọng.",
+      "Đếm số query mỗi request."
+    ],
+    "rubric": [
+      {
+        "item": "Đo trước: trace/slow query log để xác định thời gian ở DB hay ứng dụng",
+        "points": 2
+      },
+      {
+        "item": "EXPLAIN ANALYZE phát hiện seq scan/sort lớn do thiếu index phù hợp",
+        "points": 2
+      },
+      {
+        "item": "Đề xuất composite index (user_id, created_at DESC) và nêu lý do thứ tự cột",
+        "points": 2
+      },
+      {
+        "item": "Loại bỏ N+1 bằng JOIN/prefetch và chỉ select cột cần",
+        "points": 1
+      },
+      {
+        "item": "Dùng keyset pagination thay vì OFFSET lớn",
+        "points": 1
+      },
+      {
+        "item": "Tạo index CONCURRENTLY, kiểm chứng trên staging, theo dõi tác động ghi",
+        "points": 2
+      }
+    ],
+    "solution": "**Chẩn đoán.** Đo trước: trace cho thấy thời gian nằm ở DB; slow query log liệt kê truy vấn nặng. Sau đó `EXPLAIN (ANALYZE, BUFFERS)`.\n\n**Nguyên nhân thường gặp.** (1) Thiếu index phù hợp → *seq scan* + *sort* trên hàng chục triệu dòng; (2) **N+1**: một query cho danh sách rồi một query mỗi đơn lấy sản phẩm; (3) `SELECT *` kéo cột lớn; (4) `OFFSET` lớn; (5) thống kê bảng cũ.\n\n**Sửa.**\n- `CREATE INDEX CONCURRENTLY idx_orders_user_created ON orders (user_id, created_at DESC);` — cột **so sánh bằng** trước, cột **sắp xếp** sau để lấy 20 dòng đầu mà không sort.\n- Gộp item bằng `JOIN`/prefetch (hoặc `WHERE order_id = ANY(...)`), chỉ chọn cột cần.\n- Dùng **keyset pagination** (`created_at < :cursor`).\n\n**Triển khai.** Tạo index `CONCURRENTLY`, thử trên staging có dữ liệu thật, theo dõi chi phí ghi và kích thước index.",
+    "pitfalls": [
+      "Thêm index đoán mò không nhìn EXPLAIN",
+      "Sai thứ tự cột trong index composite",
+      "Tạo index khoá bảng lớn trên production",
+      "Chỉ cache để che vấn đề thay vì sửa truy vấn"
+    ]
+  },
+  {
+    "id": "monolith-to-microservices-order",
+    "title": "Tách luồng đặt hàng khỏi monolith",
+    "topicId": "distributed",
+    "difficulty": 3,
+    "prerequisites": [
+      "microservices-fundamentals",
+      "event-driven-architecture",
+      "saga-pattern"
+    ],
+    "scenario": "Monolith thương mại điện tử có 40 lập trình viên, deploy mỗi hai tuần và hay xung đột. Ban lãnh đạo muốn tách luồng đặt hàng thành Order, Payment, Inventory và Notification. Bạn là người thiết kế: ranh giới, dữ liệu, luồng và kế hoạch chuyển đổi.",
+    "requirements": [
+      "Quyết định có nên tách không và tách ở đâu trước",
+      "Xác định quyền sở hữu dữ liệu từng service",
+      "Thiết kế luồng đặt hàng xuyên service và xử lý lỗi",
+      "Đảm bảo phát event tin cậy và consumer an toàn khi trùng",
+      "Kế hoạch chuyển đổi ít rủi ro và quan sát hệ thống"
+    ],
+    "hints": [
+      "Tách theo nghiệp vụ, không theo tầng kỹ thuật.",
+      "Không còn ACID xuyên service: nghĩ tới saga.",
+      "Chuyển đổi từng phần, đừng \"big bang\"."
+    ],
+    "rubric": [
+      {
+        "item": "Lý giải động cơ tổ chức/scale và cân nhắc modular monolith trước",
+        "points": 2
+      },
+      {
+        "item": "Ranh giới theo bounded context; mỗi service sở hữu DB riêng, không đọc DB chéo",
+        "points": 2
+      },
+      {
+        "item": "Luồng đặt hàng dạng saga (orchestration) với bước bù và trạng thái đơn rõ ràng",
+        "points": 2
+      },
+      {
+        "item": "Transactional outbox + consumer idempotent",
+        "points": 2
+      },
+      {
+        "item": "Strangler Fig, tách dần theo giá trị/rủi ro, chạy song song",
+        "points": 1
+      },
+      {
+        "item": "Observability: correlation ID, tracing, SLO, circuit breaker",
+        "points": 1
+      }
+    ],
+    "solution": "**Có nên tách?** 40 người deploy xung đột là vấn đề **tổ chức** mà microservices giải quyết. Vẫn nên bắt đầu bằng **modular monolith** làm rõ ranh giới trước.\n\n**Ranh giới & dữ liệu.** Theo bounded context: *Order* (vòng đời đơn), *Payment*, *Inventory*, *Notification* (phản ứng với event). Mỗi service **có DB riêng**; chia sẻ dữ liệu qua API hoặc sự kiện.\n\n**Luồng (saga orchestration).** Order tạo đơn `PENDING` → orchestrator gọi Payment (charge) → Inventory (reserve) → xác nhận `CONFIRMED`. Lỗi ở bước nào thì chạy **bước bù** ngược (nhả tồn kho, hoàn tiền) và đặt `CANCELLED`. Mọi bước **idempotent**.\n\n**Tin cậy.** Ghi event qua **transactional outbox**; consumer idempotent (dedup theo messageId). Notification chỉ **lắng nghe** `OrderConfirmed`.\n\n**Chuyển đổi.** **Strangler Fig**: đặt API gateway, chuyển từng chức năng (bắt đầu ít rủi ro như Notification), chạy song song để so sánh, rồi tắt phần cũ.\n\n**Quan sát.** Correlation ID, distributed tracing, SLO, timeout + circuit breaker giữa các service.",
+    "pitfalls": [
+      "Tách theo tầng (service DB, service UI) thay vì nghiệp vụ",
+      "Các service vẫn dùng chung DB (distributed monolith)",
+      "Chuỗi gọi đồng bộ dài làm giảm availability",
+      "Big-bang rewrite thay vì tách dần"
+    ]
+  },
+  {
+    "id": "clickstream-pipeline",
+    "title": "Pipeline clickstream: dashboard thời gian thực và báo cáo chính xác",
+    "topicId": "data-engineering",
+    "difficulty": 3,
+    "prerequisites": [
+      "kafka-fundamentals",
+      "batch-vs-stream-processing",
+      "oltp-olap-data-modeling"
+    ],
+    "scenario": "Website có 20,000 sự kiện click mỗi giây. Cần dashboard số người dùng đang hoạt động cập nhật dưới 5 giây, báo cáo doanh thu/chuyển đổi hằng ngày phải chính xác tuyệt đối, và phải xoá dữ liệu cá nhân khi người dùng yêu cầu (GDPR).",
+    "requirements": [
+      "Thiết kế luồng thu thập và truyền tải sự kiện",
+      "Tách đường real-time và đường chính xác; nêu đánh đổi",
+      "Xử lý dữ liệu đến muộn và trùng",
+      "Mô hình dữ liệu cho báo cáo hằng ngày",
+      "Đáp ứng yêu cầu xoá dữ liệu cá nhân"
+    ],
+    "hints": [
+      "Dùng event time và watermark cho cửa sổ.",
+      "Dữ liệu thô bất biến trong lake cho phép tái xử lý.",
+      "Sink phải idempotent."
+    ],
+    "rubric": [
+      {
+        "item": "Kafka là xương sống: partition theo user/session, schema registry, retention hợp lý",
+        "points": 2
+      },
+      {
+        "item": "Stream job tính cửa sổ theo event time với watermark → kho phục vụ real-time (ClickHouse/Druid/Redis)",
+        "points": 2
+      },
+      {
+        "item": "Lưu dữ liệu thô vào lake (Parquet theo ngày) làm nguồn sự thật để backfill",
+        "points": 2
+      },
+      {
+        "item": "Batch (dbt/Spark) dựng star schema trong warehouse cho báo cáo chính xác",
+        "points": 2
+      },
+      {
+        "item": "Idempotent sink/upsert và dedup theo event_id; chính sách late data",
+        "points": 1
+      },
+      {
+        "item": "Xoá dữ liệu cá nhân: pseudonymize, tombstone/viết lại partition lake",
+        "points": 1
+      }
+    ],
+    "solution": "**Thu thập.** Client → collector → **Kafka** (topic `clicks`, key = `user_id` hoặc `session_id`, đủ partition cho 20k/s, **schema registry** kiểm soát schema).\n\n**Hai đường.**\n- **Real-time (< 5 s):** Flink/Kafka Streams tính *active users* bằng **cửa sổ event time + watermark** (cho phép trễ vài giây), ghi vào kho phục vụ nhanh (ClickHouse/Druid/Redis) bằng **upsert idempotent**.\n- **Chính xác:** Kafka → connector → **data lake** (Parquet phân vùng theo ngày) là nguồn sự thật bất biến. **Batch** (Spark/dbt) khử trùng theo `event_id` và dựng **star schema** (fact_clicks/orders + dim) trong warehouse cho báo cáo.\n\n**Muộn & trùng.** Real-time chấp nhận gần đúng; batch sửa lại số liệu (đây là tinh thần Lambda/Kappa). Dedup bằng `event_id`.\n\n**GDPR.** Định danh bằng **pseudonym**; khi có yêu cầu xoá, xoá/ẩn mapping và viết lại partition liên quan trong lake, đồng thời phát tombstone cho các store phụ.",
+    "pitfalls": [
+      "Tính cửa sổ theo processing time",
+      "Chỉ có đường stream nên không sửa được số liệu khi có lỗi",
+      "Sink không idempotent nên ghi trùng khi retry",
+      "Lưu PII thô khắp nơi khiến không xoá được"
+    ]
+  }
+]

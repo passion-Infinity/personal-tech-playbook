@@ -1335,5 +1335,810 @@
     "meaning": "Mô hình gọi hàm hoặc công cụ bên ngoài",
     "definition": "Mô hình trả về lời gọi hàm có cấu trúc để ứng dụng thực thi rồi đưa kết quả lại.",
     "topicId": "ai-ml"
+  },
+  {
+    "id": "tcp-three-way-handshake",
+    "term": "TCP Three-Way Handshake",
+    "meaning": "Bắt tay ba bước SYN, SYN-ACK, ACK để tạo kết nối",
+    "definition": "Tốn 1 RTT trước khi gửi dữ liệu; là lý do nên tái dùng kết nối thay vì mở mới liên tục.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "tcp-congestion-control",
+    "term": "TCP Congestion Control (Slow Start, AIMD)",
+    "meaning": "Cơ chế TCP tránh làm nghẽn mạng",
+    "definition": "Bắt đầu bằng slow start, tăng dần cửa sổ gửi, giảm mạnh khi mất gói; khác flow control vốn bảo vệ phía nhận.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "tcp-vs-udp",
+    "term": "TCP vs UDP",
+    "meaning": "Đánh đổi giữa độ tin cậy và độ trễ",
+    "definition": "TCP đảm bảo thứ tự và đến nơi; UDP không kết nối, nhanh, nền tảng của DNS, video và QUIC.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "dns-resolution-ttl",
+    "term": "DNS Resolution and TTL",
+    "meaning": "Phân giải tên miền qua resolver và cache theo TTL",
+    "definition": "Resolver hỏi root, TLD, authoritative; kết quả được cache theo TTL nên đổi IP có độ trễ lan truyền.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "time-wait-port-exhaustion",
+    "term": "TIME_WAIT and Ephemeral Port Exhaustion",
+    "meaning": "Cạn port khi mở/đóng quá nhiều kết nối ngắn",
+    "definition": "Kết nối đóng giữ TIME_WAIT một lúc; mở dồn dập làm hết ephemeral port — giải bằng connection pooling.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "latency-numbers",
+    "term": "Latency Numbers Every Programmer Should Know",
+    "meaning": "Bảng độ trễ tham chiếu của RAM, đĩa, mạng",
+    "definition": "Giúp ước lượng nhanh: cùng data center khoảng 0.5 ms, liên lục địa khoảng 100–200 ms.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "http-versions",
+    "term": "HTTP/1.1 vs HTTP/2 vs HTTP/3",
+    "meaning": "Ba thế hệ HTTP khác nhau về multiplexing và HOL blocking",
+    "definition": "HTTP/2 ghép nhiều stream trên một kết nối TCP; HTTP/3 chạy trên QUIC (UDP) để loại bỏ head-of-line blocking ở tầng TCP.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "tls-13-handshake",
+    "term": "TLS 1.3 Handshake",
+    "meaning": "Bắt tay TLS chỉ cần 1 RTT",
+    "definition": "Thoả thuận cipher, trao đổi khoá và xác thực certificate nhanh hơn TLS 1.2 (2 RTT).",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "quic-protocol",
+    "term": "QUIC Protocol",
+    "meaning": "Giao thức trên UDP làm nền cho HTTP/3",
+    "definition": "Stream độc lập, tích hợp TLS 1.3, hỗ trợ 0/1-RTT và chuyển mạng không đứt kết nối.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "http-caching-etag",
+    "term": "HTTP Caching (ETag, Cache-Control)",
+    "meaning": "Cache và xác thực lại ở tầng HTTP",
+    "definition": "Cache-Control chỉ định thời gian giữ; ETag cùng If-None-Match cho phép server trả 304 Not Modified.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "mtls",
+    "term": "mTLS (Mutual TLS)",
+    "meaning": "Hai phía cùng xác thực bằng chứng chỉ",
+    "definition": "Dùng cho zero-trust giữa các service: cả client lẫn server đều chứng minh danh tính.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "http-status-codes-4xx-5xx",
+    "term": "HTTP Status Codes: 401 vs 403, 502 vs 504",
+    "meaning": "Phân biệt các mã lỗi hay nhầm",
+    "definition": "401 chưa xác thực, 403 không đủ quyền; 502 upstream trả lỗi, 504 upstream timeout.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "process-vs-thread",
+    "term": "Process vs Thread",
+    "meaning": "Khác biệt về không gian địa chỉ và chi phí",
+    "definition": "Process có không gian địa chỉ riêng và cô lập tốt; thread chia sẻ heap, nhẹ hơn nhưng cần đồng bộ.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "context-switch",
+    "term": "Context Switch Cost",
+    "meaning": "Chi phí chuyển ngữ cảnh giữa các thread",
+    "definition": "Lưu/khôi phục trạng thái và làm lạnh cache CPU; quá nhiều thread làm hiệu năng giảm.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "virtual-memory-oom",
+    "term": "Virtual Memory, Paging and OOM Killer",
+    "meaning": "Quản lý bộ nhớ và hậu quả khi thiếu RAM",
+    "definition": "Page table ánh xạ bộ nhớ ảo; thiếu RAM thì swap rất chậm, hết hẳn thì OOM killer giết tiến trình.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "linux-namespaces-cgroups",
+    "term": "Linux Namespaces and cgroups",
+    "meaning": "Nền tảng cô lập và giới hạn tài nguyên của container",
+    "definition": "Namespaces cô lập góc nhìn hệ thống; cgroups giới hạn CPU/RAM và có thể throttle CPU.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "cpu-vs-io-bound-pool",
+    "term": "CPU-bound vs I/O-bound Thread Pool Sizing",
+    "meaning": "Chọn kích thước thread pool theo loại tải",
+    "definition": "CPU-bound nên xấp xỉ số core; I/O-bound có thể lớn hơn nhiều vì phần lớn thời gian chờ.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "ulimit-file-descriptors",
+    "term": "ulimit and File Descriptors",
+    "meaning": "Giới hạn số file/socket mở của tiến trình",
+    "definition": "Lỗi Too many open files thường do rò rỉ kết nối hoặc giới hạn ulimit quá thấp.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "race-condition",
+    "term": "Race Condition (Check-then-Act)",
+    "meaning": "Lỗi khi kiểm tra rồi hành động không nguyên tử",
+    "definition": "Kết quả phụ thuộc thứ tự thực thi của các luồng, ví dụ hai luồng cùng thấy stock bằng 1 rồi cùng trừ.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "deadlock-coffman",
+    "term": "Deadlock and Coffman Conditions",
+    "meaning": "Bốn điều kiện gây deadlock",
+    "definition": "Mutual exclusion, hold-and-wait, no preemption và circular wait; phá một điều kiện (thường là thứ tự lock) để tránh.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "compare-and-swap",
+    "term": "Compare-and-Swap (CAS)",
+    "meaning": "Cập nhật nguyên tử không cần lock",
+    "definition": "So sánh giá trị hiện tại rồi mới ghi; thất bại thì thử lại — nền tảng của lock-free và optimistic concurrency.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "happens-before",
+    "term": "Happens-Before and Memory Visibility",
+    "meaning": "Đảm bảo luồng khác nhìn thấy dữ liệu đã ghi",
+    "definition": "Không có đồng bộ, cache CPU và reorder khiến luồng khác thấy giá trị cũ; cần volatile, lock hoặc atomic.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "optimistic-vs-pessimistic-locking",
+    "term": "Optimistic vs Pessimistic Locking",
+    "meaning": "Hai chiến lược xử lý tranh chấp",
+    "definition": "Pessimistic khoá trước khi sửa; optimistic cứ làm rồi kiểm tra xung đột (version/CAS) và retry.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "actor-model",
+    "term": "Actor Model and Message Passing",
+    "meaning": "Tránh shared state bằng truyền thông điệp",
+    "definition": "Mỗi actor sở hữu state riêng và chỉ giao tiếp qua message nên không cần lock.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "vertical-vs-horizontal-scaling",
+    "term": "Vertical vs Horizontal Scaling",
+    "meaning": "Scale up và scale out",
+    "definition": "Vertical đơn giản nhưng có trần và là SPOF; horizontal gần như vô hạn nhưng đòi hỏi service stateless.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "stateless-service",
+    "term": "Stateless Service Design",
+    "meaning": "Đẩy state ra ngoài để scale ngang",
+    "definition": "Request nào đến instance nào cũng được; state nằm ở DB hoặc cache dùng chung.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "back-of-envelope-estimation",
+    "term": "Back-of-the-Envelope Estimation",
+    "meaning": "Ước lượng nhanh QPS, dung lượng, băng thông",
+    "definition": "Ví dụ 1 triệu request mỗi ngày xấp xỉ 12 QPS; peak thường 2–5 lần trung bình.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "littles-law",
+    "term": "Little's Law",
+    "meaning": "Liên hệ giữa lượng đồng thời, tốc độ đến và thời gian xử lý",
+    "definition": "L = λ × W; dùng để tính số thread hoặc connection cần cho một mức tải.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "tail-latency-p99",
+    "term": "Tail Latency (p99)",
+    "meaning": "Độ trễ đuôi quan trọng hơn trung bình",
+    "definition": "Với fan-out nhiều service, p99 của từng service quyết định trải nghiệm tổng.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "availability-nines",
+    "term": "Availability Nines (SLA, SLO)",
+    "meaning": "Cách đọc và tính độ sẵn sàng",
+    "definition": "99.9% tương đương khoảng 8.76 giờ downtime mỗi năm; nối tiếp nhiều service thì xác suất nhân lại.",
+    "topicId": "fundamentals"
+  },
+  {
+    "id": "btree-vs-lsm-tree",
+    "term": "B-Tree vs LSM-Tree",
+    "meaning": "Hai họ storage engine và đánh đổi đọc/ghi",
+    "definition": "B-Tree cập nhật tại chỗ, tốt cho đọc và range scan; LSM ghi tuần tự rồi compaction nền, tốt cho ghi nhiều.",
+    "topicId": "backend"
+  },
+  {
+    "id": "write-read-amplification",
+    "term": "Write and Read Amplification",
+    "meaning": "Khuếch đại I/O của storage engine",
+    "definition": "Lượng I/O thực tế lớn hơn dữ liệu gốc; mỗi engine đánh đổi giữa ghi, đọc và dung lượng.",
+    "topicId": "backend"
+  },
+  {
+    "id": "composite-index-leftmost-prefix",
+    "term": "Composite Index (Leftmost Prefix)",
+    "meaning": "Quy tắc dùng index nhiều cột",
+    "definition": "Index (a, b) hỗ trợ lọc theo a hoặc a và b, nhưng không hiệu quả khi chỉ lọc theo b.",
+    "topicId": "backend"
+  },
+  {
+    "id": "covering-index",
+    "term": "Covering Index (Index-Only Scan)",
+    "meaning": "Index chứa đủ cột để khỏi đọc bảng",
+    "definition": "Truy vấn lấy dữ liệu ngay từ index, giảm I/O đáng kể.",
+    "topicId": "backend"
+  },
+  {
+    "id": "explain-analyze",
+    "term": "EXPLAIN ANALYZE (Query Plan)",
+    "meaning": "Đọc kế hoạch thực thi truy vấn",
+    "definition": "Cho biết planner có dùng index không và thời gian thực tế từng bước.",
+    "topicId": "backend"
+  },
+  {
+    "id": "bloom-filter",
+    "term": "Bloom Filter",
+    "meaning": "Cấu trúc xác suất giúp bỏ qua dữ liệu không chứa key",
+    "definition": "Cho kết quả \"chắc chắn không có\" hoặc \"có thể có\"; dùng trong LSM và để chống cache penetration.",
+    "topicId": "backend"
+  },
+  {
+    "id": "acid-transactions",
+    "term": "ACID Transactions",
+    "meaning": "Bốn đặc tính của transaction",
+    "definition": "Atomicity, Consistency, Isolation, Durability; Durability đạt được nhờ write-ahead log.",
+    "topicId": "backend"
+  },
+  {
+    "id": "isolation-levels-anomalies",
+    "term": "Isolation Levels and Anomalies",
+    "meaning": "Dirty read, non-repeatable read, phantom, write skew",
+    "definition": "Mức isolation càng cao càng ít dị thường nhưng càng nhiều chờ hoặc abort.",
+    "topicId": "backend"
+  },
+  {
+    "id": "mvcc-snapshot-isolation",
+    "term": "MVCC and Snapshot Isolation",
+    "meaning": "Đọc theo snapshot không chặn người ghi",
+    "definition": "Mỗi transaction thấy một ảnh chụp nhất quán; vẫn có thể bị write skew.",
+    "topicId": "backend"
+  },
+  {
+    "id": "lost-update-vs-write-skew",
+    "term": "Lost Update vs Write Skew",
+    "meaning": "Hai dị thường hay bị nhầm",
+    "definition": "Lost update là hai read-modify-write đè nhau trên cùng hàng; write skew là hai transaction ghi hàng khác nhau nhưng vi phạm ràng buộc chung.",
+    "topicId": "backend"
+  },
+  {
+    "id": "select-for-update-optimistic-locking",
+    "term": "SELECT FOR UPDATE and Optimistic Locking",
+    "meaning": "Hai cách xử lý tranh chấp ghi",
+    "definition": "Khoá hàng ngay khi đọc, hoặc dùng cột version và kiểm tra số hàng bị ảnh hưởng khi cập nhật.",
+    "topicId": "backend"
+  },
+  {
+    "id": "deadlock-retry",
+    "term": "Deadlock Detection and Retry",
+    "meaning": "DB giết một transaction, ứng dụng phải retry",
+    "definition": "Giảm deadlock bằng thứ tự truy cập bảng/hàng nhất quán và giữ transaction ngắn.",
+    "topicId": "backend"
+  },
+  {
+    "id": "rest-api-best-practices",
+    "term": "REST API Design Best Practices",
+    "meaning": "Quy ước đặt tên, method và status code",
+    "definition": "Resource là danh từ, method đúng ngữ nghĩa, status code chính xác và lỗi nhất quán.",
+    "topicId": "backend"
+  },
+  {
+    "id": "cursor-vs-offset-pagination",
+    "term": "Cursor vs Offset Pagination",
+    "meaning": "Phân trang ổn định cho bảng lớn",
+    "definition": "Offset chậm và lệch khi dữ liệu thay đổi; cursor/keyset nhanh và ổn định.",
+    "topicId": "backend"
+  },
+  {
+    "id": "api-versioning-compatibility",
+    "term": "API Versioning and Backward Compatibility",
+    "meaning": "Tiến hoá API mà không phá client",
+    "definition": "Ưu tiên thay đổi tương thích ngược như thêm field; có chính sách deprecation.",
+    "topicId": "backend"
+  },
+  {
+    "id": "problem-details-rfc9457",
+    "term": "Problem Details (RFC 9457)",
+    "meaning": "Chuẩn mô tả lỗi cho HTTP API",
+    "definition": "Cấu trúc lỗi thống nhất với type, title, detail để client xử lý bằng máy.",
+    "topicId": "backend"
+  },
+  {
+    "id": "rest-vs-grpc-vs-graphql",
+    "term": "REST vs gRPC vs GraphQL",
+    "meaning": "Chọn kiểu API theo nhu cầu",
+    "definition": "REST dễ cache và công khai; gRPC nhanh cho service-to-service; GraphQL linh hoạt truy vấn nhưng khó cache.",
+    "topicId": "backend"
+  },
+  {
+    "id": "openapi-spec",
+    "term": "OpenAPI Specification",
+    "meaning": "Mô tả hợp đồng API bằng tài liệu máy đọc được",
+    "definition": "Dùng để sinh tài liệu, client SDK và kiểm thử hợp đồng.",
+    "topicId": "backend"
+  },
+  {
+    "id": "oauth2-auth-code-pkce",
+    "term": "OAuth 2.0 Authorization Code with PKCE",
+    "meaning": "Luồng uỷ quyền chuẩn cho SPA và mobile",
+    "definition": "Client đổi authorization code lấy token kèm code_verifier để chống chặn code.",
+    "topicId": "backend"
+  },
+  {
+    "id": "openid-connect-id-token",
+    "term": "OpenID Connect and ID Token",
+    "meaning": "Lớp danh tính xây trên OAuth 2.0",
+    "definition": "ID token cho biết ai đã đăng nhập; access token dùng để gọi API.",
+    "topicId": "backend"
+  },
+  {
+    "id": "jwt-validation-claims",
+    "term": "JWT Validation (exp, aud, iss)",
+    "meaning": "Những gì phải kiểm tra khi nhận token",
+    "definition": "Xác minh chữ ký, whitelist thuật toán, hạn dùng, issuer và audience; payload không bí mật.",
+    "topicId": "backend"
+  },
+  {
+    "id": "session-cookie-csrf",
+    "term": "Session Cookies, HttpOnly, SameSite, CSRF",
+    "meaning": "Bảo vệ session và chống CSRF",
+    "definition": "Cookie HttpOnly chặn JavaScript đọc; SameSite và CSRF token giảm tấn công giả mạo request.",
+    "topicId": "backend"
+  },
+  {
+    "id": "rbac-vs-abac",
+    "term": "RBAC vs ABAC",
+    "meaning": "Hai mô hình phân quyền",
+    "definition": "RBAC theo vai trò; ABAC theo thuộc tính và ngữ cảnh, linh hoạt hơn nhưng phức tạp hơn.",
+    "topicId": "backend"
+  },
+  {
+    "id": "idor",
+    "term": "IDOR (Insecure Direct Object Reference)",
+    "meaning": "Lỗi thiếu kiểm tra quyền theo từng đối tượng",
+    "definition": "Đổi ID trong URL để truy cập dữ liệu người khác; cần kiểm tra quyền sở hữu trên mỗi object.",
+    "topicId": "backend"
+  },
+  {
+    "id": "idempotency-key-pattern",
+    "term": "Idempotency Key Pattern",
+    "meaning": "Khoá duy nhất để retry không lặp tác dụng phụ",
+    "definition": "Client gửi key; server lưu key cùng kết quả với ràng buộc unique và trả lại kết quả cũ khi gặp lại.",
+    "topicId": "backend"
+  },
+  {
+    "id": "exponential-backoff-jitter",
+    "term": "Exponential Backoff with Jitter",
+    "meaning": "Giãn cách retry có ngẫu nhiên",
+    "definition": "Tăng dần thời gian chờ và thêm jitter để tránh mọi client retry cùng lúc.",
+    "topicId": "backend"
+  },
+  {
+    "id": "delivery-semantics",
+    "term": "At-Least-Once vs Exactly-Once Delivery",
+    "meaning": "Ngữ nghĩa giao nhận message",
+    "definition": "Exactly-once thực tế là at-least-once cộng xử lý idempotent.",
+    "topicId": "backend"
+  },
+  {
+    "id": "retry-amplification",
+    "term": "Retry Storm and Retry Amplification",
+    "meaning": "Retry nhiều tầng làm quá tải dependency",
+    "definition": "Ba tầng mỗi tầng thử ba lần nhân lên thành 27 request; cần retry ở một tầng và có giới hạn.",
+    "topicId": "backend"
+  },
+  {
+    "id": "message-deduplication",
+    "term": "Message Deduplication",
+    "meaning": "Loại message trùng phía consumer",
+    "definition": "Lưu messageId đã xử lý cùng transaction với tác dụng phụ hoặc dùng upsert theo business key.",
+    "topicId": "backend"
+  },
+  {
+    "id": "cap-theorem",
+    "term": "CAP Theorem",
+    "meaning": "Chọn nhất quán hay sẵn sàng khi có network partition",
+    "definition": "Partition không phải tuỳ chọn; CAP chỉ nói về hành vi khi có partition và C ở đây là linearizability.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "pacelc-theorem",
+    "term": "PACELC Theorem",
+    "meaning": "Mở rộng CAP với đánh đổi độ trễ khi bình thường",
+    "definition": "Khi không có partition vẫn phải chọn giữa latency và consistency.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "linearizability-vs-eventual",
+    "term": "Linearizability vs Eventual Consistency",
+    "meaning": "Hai đầu phổ mô hình nhất quán",
+    "definition": "Linearizability như một bản sao duy nhất; eventual chỉ đảm bảo hội tụ cuối cùng.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "quorum-rw-n",
+    "term": "Quorum Reads and Writes (R+W>N)",
+    "meaning": "Điều kiện đảm bảo đọc thấy ghi mới nhất",
+    "definition": "Với N bản sao, nếu R cộng W lớn hơn N thì tập đọc luôn giao tập ghi.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "read-your-writes",
+    "term": "Read-Your-Writes Consistency",
+    "meaning": "Người dùng thấy chính dữ liệu họ vừa ghi",
+    "definition": "Đảm bảo theo phiên, thường bằng đọc từ leader hoặc sticky session sau khi ghi.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "jepsen",
+    "term": "Jepsen Consistency Analysis",
+    "meaning": "Kiểm chứng thực nghiệm tính nhất quán của DB phân tán",
+    "definition": "Các bài phân tích Jepsen cho thấy hệ thống có giữ đúng cam kết khi có lỗi hay không.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "l4-vs-l7-load-balancing",
+    "term": "L4 vs L7 Load Balancing",
+    "meaning": "Cân bằng tải ở tầng transport hay application",
+    "definition": "L4 chuyển tiếp TCP/UDP rất nhanh; L7 hiểu HTTP để định tuyến theo path, host, header.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "lb-algorithms",
+    "term": "Load Balancing Algorithms",
+    "meaning": "Các thuật toán chọn backend",
+    "definition": "Round robin, weighted, least connections, least response time và consistent hashing.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "health-checks-liveness-readiness",
+    "term": "Health Checks: Liveness vs Readiness",
+    "meaning": "Phân biệt còn sống và sẵn sàng phục vụ",
+    "definition": "Liveness báo tiến trình còn chạy; readiness báo có thể nhận tải; check quá nông hoặc quá sâu đều có rủi ro.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "reverse-proxy-tls-termination",
+    "term": "Reverse Proxy and TLS Termination",
+    "meaning": "Proxy đứng trước backend nhận kết nối thay chúng",
+    "definition": "Nginx, HAProxy, Envoy xử lý TLS, nén, cache và routing.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "sticky-sessions",
+    "term": "Sticky Sessions (Session Affinity)",
+    "meaning": "Gắn client vào một backend",
+    "definition": "Tiện cho session cục bộ nhưng cản cân bằng tải đều và scale; ưu tiên stateless.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "geodns-anycast",
+    "term": "GeoDNS and Anycast",
+    "meaning": "Đưa người dùng tới Region gần nhất",
+    "definition": "Global load balancing ở tầng DNS hoặc định tuyến anycast.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "queue-vs-log-streaming",
+    "term": "Message Queue vs Event Log (Streaming)",
+    "meaning": "Hai mô hình broker",
+    "definition": "Queue xoá message sau khi ack, một consumer mỗi message; log giữ lại, nhiều consumer group và replay được.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "dead-letter-queue",
+    "term": "Dead-Letter Queue",
+    "meaning": "Nơi chứa message xử lý thất bại nhiều lần",
+    "definition": "Tránh poison message làm consumer crash lặp mãi; cần cảnh báo khi DLQ có dữ liệu.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "consumer-groups-ordering",
+    "term": "Consumer Groups, Partitions and Ordering",
+    "meaning": "Cân bằng giữa thứ tự và song song",
+    "definition": "Thứ tự chỉ đảm bảo trong một partition; mỗi partition gán cho một consumer trong group.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "backpressure",
+    "term": "Backpressure",
+    "meaning": "Xử lý khi consumer chậm hơn producer",
+    "definition": "Giới hạn hàng đợi, scale consumer hoặc làm chậm producer để hệ thống không tràn.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "competing-consumers",
+    "term": "Competing Consumers Pattern",
+    "meaning": "Nhiều worker chia việc từ một hàng đợi",
+    "definition": "Tăng throughput bằng cách thêm worker; thứ tự toàn cục không còn được đảm bảo.",
+    "topicId": "system-design"
+  },
+  {
+    "id": "cache-strategies-patterns",
+    "term": "Cache-Aside, Write-Through, Write-Behind",
+    "meaning": "Các chiến lược đọc/ghi cache",
+    "definition": "Cache-aside do ứng dụng nạp khi miss; write-through ghi đồng thời; write-behind ghi bất đồng bộ nhanh nhưng có thể mất dữ liệu.",
+    "topicId": "caching"
+  },
+  {
+    "id": "cache-invalidation",
+    "term": "Cache Invalidation Strategies",
+    "meaning": "TTL, xoá tường minh, theo sự kiện",
+    "definition": "Thường kết hợp TTL làm lưới an toàn với xoá key khi ghi.",
+    "topicId": "caching"
+  },
+  {
+    "id": "lru-lfu-eviction",
+    "term": "LRU and LFU Eviction Policies",
+    "meaning": "Chính sách loại bỏ khi cache đầy",
+    "definition": "LRU bỏ mục ít dùng gần đây nhất; LFU bỏ mục ít được dùng nhất.",
+    "topicId": "caching"
+  },
+  {
+    "id": "cache-failure-modes",
+    "term": "Cache Penetration and Avalanche",
+    "meaning": "Hai kiểu sự cố cache cổ điển",
+    "definition": "Penetration là key không tồn tại luôn miss; avalanche là nhiều key hết hạn cùng lúc.",
+    "topicId": "caching"
+  },
+  {
+    "id": "cache-hit-ratio",
+    "term": "Cache Hit Ratio",
+    "meaning": "Thước đo hiệu quả cache",
+    "definition": "Tỉ lệ hit trên tổng truy cập; thấp cho thấy thiết kế key hoặc TTL chưa phù hợp.",
+    "topicId": "caching"
+  },
+  {
+    "id": "microservices-vs-monolith",
+    "term": "Microservices vs Monolith vs Modular Monolith",
+    "meaning": "So sánh các kiểu kiến trúc và thời điểm chuyển",
+    "definition": "Microservices đổi độ phức tạp trong code lấy độ phức tạp hệ phân tán; modular monolith là điểm khởi đầu hợp lý.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "bounded-context-ddd",
+    "term": "Bounded Context (Domain-Driven Design)",
+    "meaning": "Ranh giới nghiệp vụ để tách service",
+    "definition": "Mỗi context có mô hình và ngôn ngữ riêng; ranh giới theo nghiệp vụ thay vì tầng kỹ thuật.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "database-per-service",
+    "term": "Database per Service",
+    "meaning": "Mỗi service sở hữu dữ liệu riêng",
+    "definition": "Không đọc thẳng DB của service khác; trao đổi dữ liệu qua API hoặc sự kiện.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "strangler-fig",
+    "term": "Strangler Fig Pattern",
+    "meaning": "Thay thế dần hệ thống cũ bằng service mới",
+    "definition": "Bọc và chuyển từng chức năng sang service mới cho tới khi bỏ được hệ thống cũ.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "distributed-monolith",
+    "term": "Distributed Monolith Anti-pattern",
+    "meaning": "Tách service nhưng vẫn phụ thuộc chặt",
+    "definition": "Dùng chung DB hoặc phải deploy cùng nhau: có chi phí của microservices mà không có lợi ích.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "conways-law",
+    "term": "Conway's Law",
+    "meaning": "Kiến trúc phản chiếu cấu trúc tổ chức",
+    "definition": "Thiết kế hệ thống giống cách các đội giao tiếp; tách đội theo năng lực nghiệp vụ.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "event-driven-architecture",
+    "term": "Event-Driven Architecture",
+    "meaning": "Giao tiếp bằng sự kiện qua broker",
+    "definition": "Producer phát điều đã xảy ra, consumer tự phản ứng, giảm coupling nhưng tăng độ khó debug.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "event-notification-vs-state-transfer",
+    "term": "Event Notification vs Event-Carried State Transfer",
+    "meaning": "Hai kiểu mang dữ liệu trong event",
+    "definition": "Notification chỉ báo có thay đổi; state transfer kèm đủ dữ liệu để consumer khỏi gọi lại.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "choreography-vs-orchestration",
+    "term": "Choreography vs Orchestration",
+    "meaning": "Phối hợp tự phát hay có người điều phối",
+    "definition": "Choreography dựa trên event giữa các service; orchestration có bộ điều phối ra lệnh từng bước.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "schema-registry",
+    "term": "Schema Registry (Avro Compatibility)",
+    "meaning": "Quản lý tiến hoá schema của event",
+    "definition": "Kiểm tra tương thích ngược và xuôi để thay đổi schema không phá consumer.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "cloudevents",
+    "term": "CloudEvents Specification",
+    "meaning": "Chuẩn mô tả sự kiện liên thông giữa hệ thống",
+    "definition": "Định dạng chung cho metadata của event giữa nhiều nền tảng.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "saga-pattern",
+    "term": "Saga Pattern",
+    "meaning": "Giao dịch phân tán bằng chuỗi local transaction và bù",
+    "definition": "Đạt atomicity ở mức nghiệp vụ mà không dùng khoá toàn cục như 2PC.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "compensating-transaction",
+    "term": "Compensating Transaction",
+    "meaning": "Hoàn tác ngữ nghĩa các bước đã làm",
+    "definition": "Không phải rollback: ví dụ hoàn tiền hay gửi email đính chính; phải idempotent và retryable.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "two-phase-commit-vs-saga",
+    "term": "Two-Phase Commit (2PC) vs Saga",
+    "meaning": "Đánh đổi giữa khoá toàn cục và eventual consistency",
+    "definition": "2PC nhất quán mạnh nhưng chặn và khó scale; Saga linh hoạt nhưng thiếu isolation.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "saga-isolation-countermeasures",
+    "term": "Saga Isolation Countermeasures",
+    "meaning": "Xử lý thiếu cô lập trong saga",
+    "definition": "Semantic lock, commutative updates, pessimistic view và re-read value.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "durable-execution-temporal",
+    "term": "Durable Execution (Temporal)",
+    "meaning": "Nền tảng điều phối workflow bền vững",
+    "definition": "Lưu trạng thái workflow để tiếp tục sau lỗi, hợp cho saga nhiều bước.",
+    "topicId": "distributed"
+  },
+  {
+    "id": "oltp-vs-olap",
+    "term": "OLTP vs OLAP",
+    "meaning": "Hai loại workload và hệ quả về thiết kế",
+    "definition": "OLTP giao dịch ngắn theo hàng; OLAP quét lớn và tổng hợp theo cột.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "star-schema",
+    "term": "Star Schema (Fact and Dimension Tables)",
+    "meaning": "Mô hình dimensional cho phân tích",
+    "definition": "Fact table chứa số đo bao quanh bởi dimension table chứa ngữ cảnh.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "scd-type-2",
+    "term": "Slowly Changing Dimensions (SCD Type 2)",
+    "meaning": "Lưu lịch sử thay đổi của dimension",
+    "definition": "Thêm hàng mới kèm valid_from và valid_to để báo cáo quá khứ không bị đổi.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "columnar-vs-row-storage",
+    "term": "Columnar vs Row Storage",
+    "meaning": "Lý do column store nhanh cho phân tích",
+    "definition": "Đọc đúng cột cần, nén tốt và vectorized execution; kém với cập nhật từng hàng.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kimball-grain",
+    "term": "Kimball Dimensional Modeling (Grain)",
+    "meaning": "Bắt đầu mô hình hoá từ grain",
+    "definition": "Grain xác định một hàng fact đại diện cho cái gì; sai grain làm tổng bị nhân đôi.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "surrogate-keys",
+    "term": "Surrogate Keys",
+    "meaning": "Khoá thay thế trong dimension",
+    "definition": "Khoá nhân tạo độc lập với khoá nghiệp vụ, cần thiết cho SCD.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "batch-vs-stream",
+    "term": "Batch vs Stream Processing",
+    "meaning": "Xử lý dữ liệu hữu hạn và vô hạn",
+    "definition": "Batch cho thông lượng cao và độ trễ phút đến giờ; stream cho độ trễ thấp nhưng vận hành phức tạp hơn.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "event-time-vs-processing-time",
+    "term": "Event Time vs Processing Time",
+    "meaning": "Hai khái niệm thời gian trong stream",
+    "definition": "Event time là lúc sự kiện xảy ra; số liệu nghiệp vụ nên tính theo event time.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "watermarks-windowing",
+    "term": "Watermarks and Windowing",
+    "meaning": "Đóng cửa sổ và xử lý dữ liệu đến muộn",
+    "definition": "Watermark ước lượng đã thấy hết dữ liệu đến thời điểm T; window gồm tumbling, sliding, session.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "lambda-vs-kappa",
+    "term": "Lambda vs Kappa Architecture",
+    "meaning": "Hai kiến trúc kết hợp batch và stream",
+    "definition": "Lambda chạy song song hai đường và nhân đôi logic; Kappa chỉ stream và tái xử lý bằng replay.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "micro-batch",
+    "term": "Micro-Batch Processing (Spark Structured Streaming)",
+    "meaning": "Xử lý stream theo lô nhỏ",
+    "definition": "Điểm giữa batch và stream với độ trễ vài giây và mô hình đơn giản hơn.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "stream-exactly-once",
+    "term": "Exactly-Once in Stream Processing",
+    "meaning": "Ngữ nghĩa exactly-once và giới hạn thực tế",
+    "definition": "Chỉ đúng trong phạm vi framework và sink hỗ trợ transaction hoặc idempotent.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kafka-partitions-offsets-groups",
+    "term": "Kafka Partitions, Offsets, Consumer Groups",
+    "meaning": "Mô hình dữ liệu và cách consumer chia việc",
+    "definition": "Thứ tự chỉ trong một partition; mỗi partition thuộc một consumer trong group nên song song tối đa bằng số partition.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kafka-acks-isr",
+    "term": "Kafka acks and min.insync.replicas",
+    "meaning": "Cấu hình độ bền khi ghi",
+    "definition": "acks=all cùng min.insync.replicas và replication factor 3 để không mất dữ liệu khi một broker hỏng.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kafka-idempotent-producer-transactions",
+    "term": "Kafka Idempotent Producer and Transactions",
+    "meaning": "Chống trùng và xử lý read-process-write",
+    "definition": "Idempotent producer loại trùng khi retry; transaction cho exactly-once trong phạm vi Kafka.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kafka-log-compaction",
+    "term": "Kafka Log Compaction",
+    "meaning": "Giữ giá trị mới nhất mỗi key",
+    "definition": "Dùng cho changelog và bảng trạng thái; khác retention theo thời gian.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kafka-consumer-lag-rebalance",
+    "term": "Kafka Consumer Lag and Rebalancing",
+    "meaning": "Giám sát độ trễ và xử lý rebalance",
+    "definition": "Lag tăng nghĩa là consumer chậm; xử lý quá lâu gây rebalance liên tục.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "kraft",
+    "term": "KRaft (Kafka without ZooKeeper)",
+    "meaning": "Kiến trúc metadata mới của Kafka",
+    "definition": "Kafka tự quản lý metadata bằng Raft, bỏ phụ thuộc ZooKeeper.",
+    "topicId": "data-engineering"
   }
 ]

@@ -1,5 +1,10 @@
 [
   {
+    "id": "fundamentals",
+    "name": "Nền tảng hệ thống",
+    "description": "Mạng, HTTP/TLS, hệ điều hành, đồng thời và khả năng mở rộng — nền móng để hiểu mọi hệ thống phân tán."
+  },
+  {
     "id": "system-design",
     "name": "System Design",
     "description": "Distributed systems, scalability, resilience, and architectural patterns."
@@ -8,6 +13,21 @@
     "id": "caching",
     "name": "Caching",
     "description": "Cache strategies, Redis, invalidation, hot keys, and cache failure modes."
+  },
+  {
+    "id": "backend",
+    "name": "Backend chuyên sâu",
+    "description": "Database internals, transaction, thiết kế API, xác thực/phân quyền, idempotency và retry."
+  },
+  {
+    "id": "distributed",
+    "name": "Microservices & Hệ phân tán",
+    "description": "Microservices, event-driven, saga, nhất quán và các pattern chịu lỗi trong hệ phân tán."
+  },
+  {
+    "id": "data-engineering",
+    "name": "Data Engineering",
+    "description": "OLTP/OLAP, mô hình hoá dữ liệu, batch và stream processing, Kafka và pipeline dữ liệu."
   },
   {
     "id": "aws",

@@ -5,6 +5,8 @@ import { map } from 'rxjs';
 import { FlashcardStore } from '../core/flashcard.store';
 import { KnowledgeService } from '../core/knowledge.service';
 import { topicStyle, topicVars } from '../core/topic-style';
+import { LearningStore } from '../core/learning.store';
+import { PracticeService } from '../core/practice.service';
 import { UiService } from '../core/ui.service';
 import { Icon } from '../shared/icon';
 
@@ -40,8 +42,11 @@ const QUOTES = [
         <p class="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{{ quote() }}</p>
 
         <div class="mt-6 flex flex-wrap gap-3">
-          <a routerLink="/flashcards" class="btn-primary">
-            <app-icon name="cards" [size]="16" /> Ôn flashcards
+          <a routerLink="/practice" class="btn-primary">
+            <app-icon name="flame" [size]="16" /> Luyện hôm nay
+          </a>
+          <a routerLink="/roadmap" class="btn-secondary">
+            <app-icon name="map" [size]="16" /> Roadmap
           </a>
           <button type="button" class="btn-secondary" (click)="ui.openPalette()">
             <app-icon name="search" [size]="16" /> Tìm kiếm
@@ -69,6 +74,48 @@ const QUOTES = [
             </dd>
           </div>
         </dl>
+      </section>
+
+      <!-- Today -->
+      <section class="mb-10" aria-labelledby="today-title">
+        <h2 id="today-title" class="mb-4 text-lg font-semibold">Hôm nay</h2>
+        <div class="grid gap-4 md:grid-cols-3">
+          <a
+            routerLink="/practice/drill"
+            class="glass glass-hover rounded-2xl p-5"
+            style="--t-from:#8b5cf6;--t-to:#6366f1"
+          >
+            <span class="topic-tile h-10 w-10"><app-icon name="cards" [size]="18" /></span>
+            <p class="mt-3 font-semibold">Daily Drill</p>
+            <p class="mt-1 text-sm text-muted">
+              {{ due() }} câu đến hạn ôn · {{ fresh() }} câu mới
+            </p>
+          </a>
+          @if (challenge(); as ch) {
+            <a
+              [routerLink]="['/practice/challenge', ch.id]"
+              class="glass glass-hover rounded-2xl p-5"
+              [style]="vars(ch.topicId)"
+            >
+              <span class="topic-tile h-10 w-10"><app-icon name="target" [size]="18" /></span>
+              <p class="mt-3 font-semibold">Design Challenge</p>
+              <p class="mt-1 line-clamp-2 text-sm text-muted">{{ ch.title }}</p>
+            </a>
+          }
+          @if (nextUp()[0]; as n) {
+            <a
+              [routerLink]="['/playbooks', n.id]"
+              class="glass glass-hover rounded-2xl p-5"
+              [style]="vars(n.topicId)"
+            >
+              <span class="topic-tile h-10 w-10"><app-icon name="map" [size]="18" /></span>
+              <p class="mt-3 font-semibold">Nên học tiếp</p>
+              <p class="mt-1 line-clamp-2 text-sm text-muted">
+                Cấp {{ kb.levels().get(n.id) }} · {{ n.title }}
+              </p>
+            </a>
+          }
+        </div>
       </section>
 
       <!-- Topic cards -->
@@ -176,7 +223,12 @@ const QUOTES = [
                 <app-icon [name]="style(p.topicId).icon" [size]="12" />
                 {{ kb.topicById().get(p.topicId)?.name ?? p.topicId }}
               </span>
-              <time class="text-muted" [attr.datetime]="p.updatedAt">{{ p.updatedAt }}</time>
+              <span class="flex items-center gap-2 text-muted">
+                <span class="chip">Cấp {{ kb.levels().get(p.id) ?? 0 }}</span>
+                @if (learning.isRead(p.id)) {
+                  <app-icon name="check" [size]="14" class="text-emerald-500" />
+                }
+              </span>
             </div>
             <h3 class="text-lg font-semibold leading-snug transition group-hover:text-accent-ink">
               {{ p.title }}
@@ -216,6 +268,12 @@ export class PlaybookList {
   protected readonly kb = inject(KnowledgeService);
   protected readonly ui = inject(UiService);
   protected readonly cards = inject(FlashcardStore);
+  protected readonly learning = inject(LearningStore);
+  private readonly practice = inject(PracticeService);
+  protected readonly due = computed(() => this.practice.dueCount());
+  protected readonly fresh = computed(() => this.practice.freshCount());
+  protected readonly challenge = computed(() => this.practice.dailyChallenge());
+  protected readonly nextUp = computed(() => this.practice.nextUp(1));
   private readonly route = inject(ActivatedRoute);
   protected readonly Math = Math;
   protected readonly style = topicStyle;
