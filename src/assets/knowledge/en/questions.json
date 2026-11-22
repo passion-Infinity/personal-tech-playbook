@@ -5976,5 +5976,134 @@
       "Minimum privileges",
       "Reduce the blast radius"
     ]
+  },
+  {
+    "id": "cryptography-basics-01",
+    "question": "Storing user passwords. What is the right choice?",
+    "options": [
+      "SHA-256",
+      "argon2id or bcrypt with a salt",
+      "AES",
+      "Base64"
+    ],
+    "explanation": "Fast hashes are easy to brute-force; you need a slow salted function."
+  },
+  {
+    "id": "cryptography-basics-02",
+    "question": "You need to authenticate webhooks between two systems that trust each other. What do you use?",
+    "options": [
+      "HMAC-SHA256",
+      "RSA encryption",
+      "MD5",
+      "Base64"
+    ],
+    "explanation": "HMAC uses a shared secret key; it has no non-repudiation."
+  },
+  {
+    "id": "cryptography-basics-03",
+    "question": "Why is envelope encryption used with KMS?",
+    "options": [
+      "The master key never leaves KMS and rotation only needs to re-wrap the DEK",
+      "It is faster than RSA",
+      "No key is needed",
+      "It reduces size"
+    ],
+    "explanation": "The DEK encrypts data locally, the KEK protects the DEK."
+  },
+  {
+    "id": "cryptography-basics-04",
+    "question": "Why must a nonce never be repeated in AES-GCM?",
+    "modelAnswer": "Repeating a nonce with the same key breaks GCM's guarantees, exposing relationships between plaintexts and allowing the auth tag to be forged. A unique nonce must be used for every encryption.",
+    "keyPoints": [
+      "A unique nonce",
+      "Plaintext exposure",
+      "Tag forgery"
+    ]
+  },
+  {
+    "id": "secrets-management-01",
+    "question": "A CI pipeline needs to deploy to AWS. What is the safest way?",
+    "options": [
+      "Store a long-lived AWS access key",
+      "OIDC federation exchanged for a temporary role",
+      "Commit the key",
+      "Share the key"
+    ],
+    "explanation": "OIDC issues short-lived credentials limited by repo/branch."
+  },
+  {
+    "id": "secrets-management-02",
+    "question": "An API key was accidentally committed to Git. What is the first thing to do?",
+    "options": [
+      "Delete the file",
+      "Revoke/rotate the key immediately",
+      "Force push",
+      "Wait"
+    ],
+    "explanation": "The key is considered exposed; cleaning history is only a secondary step."
+  },
+  {
+    "id": "secrets-management-03",
+    "question": "What benefit do Vault's dynamic secrets bring?",
+    "options": [
+      "Temporary credentials, per workload, expiring on their own",
+      "No DB needed",
+      "Faster speed",
+      "No IAM needed"
+    ],
+    "explanation": "There is no long-lived secret to leak."
+  },
+  {
+    "id": "secrets-management-04",
+    "question": "What is secret zero and how is it solved?",
+    "modelAnswer": "It is the initial credential needed to fetch other secrets, creating a chicken-and-egg problem. It is solved with workload identity issued by the platform (an IAM role, IRSA, Managed Identity) so the workload proves its identity without carrying a secret.",
+    "keyPoints": [
+      "The bootstrap credential",
+      "Workload identity",
+      "No static secret stored"
+    ]
+  },
+  {
+    "id": "software-supply-chain-security-01",
+    "question": "A build pulls a public package with the same name as an internal one. What is this?",
+    "options": [
+      "Dependency confusion",
+      "Typosquatting",
+      "XSS",
+      "SSRF"
+    ],
+    "explanation": "Use scoped packages and prefer the internal registry."
+  },
+  {
+    "id": "software-supply-chain-security-02",
+    "question": "A new CVE appears and you need to know immediately which services are affected. Which tool helps?",
+    "options": [
+      "SBOM",
+      "A load test",
+      "A linter",
+      "A cache"
+    ],
+    "explanation": "An SBOM lists the components of each artifact."
+  },
+  {
+    "id": "software-supply-chain-security-03",
+    "question": "You want only signed images to run in the cluster. What is the solution?",
+    "options": [
+      "cosign + an admission controller verifying signatures",
+      "Use the latest tag",
+      "Open the registry publicly",
+      "Turn off scanning"
+    ],
+    "explanation": "Sign with Sigstore and verify at admission."
+  },
+  {
+    "id": "software-supply-chain-security-04",
+    "question": "Why is a lockfile not enough for supply chain security?",
+    "modelAnswer": "A lockfile pins versions and hashes but does not protect the build pipeline, base images referenced by tag or the output artifact. You also need base images by digest, an SBOM, signatures, provenance and isolated builds (SLSA).",
+    "keyPoints": [
+      "It does not protect the build",
+      "Digests and SBOM",
+      "Signatures and SLSA"
+    ]
   }
 ]

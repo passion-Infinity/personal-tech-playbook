@@ -2933,5 +2933,80 @@
     "id": "defense-in-depth",
     "meaning": "Layered defense and least privilege",
     "definition": "Do not rely on a single layer of protection; each component has only the permissions it needs."
+  },
+  {
+    "id": "password-hashing",
+    "meaning": "Store passwords safely",
+    "definition": "Use a deliberately slow function with a unique salt; do not use plain SHA-256."
+  },
+  {
+    "id": "aes-gcm-nonce",
+    "meaning": "Symmetric encryption with integrity",
+    "definition": "Both encrypts and detects modification; the nonce must never repeat with the same key."
+  },
+  {
+    "id": "symmetric-vs-asymmetric",
+    "meaning": "Two encryption families and how to combine them",
+    "definition": "Symmetric is fast and uses one key; asymmetric uses a key pair for key exchange and signing; in practice hybrid is used, as in TLS."
+  },
+  {
+    "id": "envelope-encryption",
+    "meaning": "Encrypt data with a protected data key",
+    "definition": "A data key encrypts the data, the master key in KMS encrypts the data key, so rotating the master key does not require re-encrypting the data."
+  },
+  {
+    "id": "hmac-vs-signature",
+    "meaning": "Authentication with a shared key versus a public key",
+    "definition": "HMAC needs both sides to keep the secret; a digital signature lets anyone verify with the public key."
+  },
+  {
+    "id": "secrets-management-practices",
+    "meaning": "Store, issue, rotate and audit secrets",
+    "definition": "Do not commit secrets, store them in a vault, issue them by identity and rotate periodically."
+  },
+  {
+    "id": "vault-dynamic-secrets",
+    "meaning": "Credentials generated on demand with a TTL",
+    "definition": "Each use gets its own account that expires on its own, so the blast radius of a leak is very small."
+  },
+  {
+    "id": "oidc-ci-federation",
+    "meaning": "CI gets temporary permissions without storing keys",
+    "definition": "The pipeline exchanges an OIDC token for a short-lived cloud role instead of storing a long-lived access key."
+  },
+  {
+    "id": "secret-scanning",
+    "meaning": "Detect secrets before commit",
+    "definition": "Tools such as gitleaks and push protection block secrets from entering Git history."
+  },
+  {
+    "id": "secret-zero-workload-identity",
+    "meaning": "Use identity instead of a bootstrap credential",
+    "definition": "An application proves itself through an IAM role or managed identity to fetch secrets without needing an initial secret."
+  },
+  {
+    "id": "supply-chain-slsa",
+    "meaning": "Protect the software supply chain",
+    "definition": "A framework of trust levels for builds and artifact provenance."
+  },
+  {
+    "id": "sbom",
+    "meaning": "A list of a software's components",
+    "definition": "Lets you know immediately whether you are affected when a library has a new vulnerability."
+  },
+  {
+    "id": "dependency-confusion",
+    "meaning": "Attacks through package names",
+    "definition": "A public package with the same name as an internal one, or a near-identical name, tricks the installer."
+  },
+  {
+    "id": "artifact-signing-sigstore",
+    "meaning": "Sign and verify artifacts",
+    "definition": "Verify the signature and provenance before deployment."
+  },
+  {
+    "id": "lockfile-reproducible-builds",
+    "meaning": "Install exactly the vetted version",
+    "definition": "A lockfile pins versions; CI uses npm ci so newer versions are not pulled unintentionally."
   }
 ]

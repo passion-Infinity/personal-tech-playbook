@@ -583,5 +583,20 @@
     "id": "owasp-web-security-essentials",
     "title": "OWASP & Web Security Essentials",
     "summary": "Grasp the recurring classes of web vulnerabilities (injection, XSS, CSRF, SSRF, access control) and layered defenses."
+  },
+  {
+    "id": "cryptography-basics",
+    "title": "Cryptography Basics for Engineers",
+    "summary": "Choose the right cryptographic tool (hash, encryption, MAC, signature) and understand that the hardest part is key management."
+  },
+  {
+    "id": "secrets-management",
+    "title": "Secrets Management",
+    "summary": "Eliminate static secrets with identity and short-lived credentials; store, rotate and audit the rest in a vault."
+  },
+  {
+    "id": "software-supply-chain-security",
+    "title": "Software Supply Chain Security",
+    "summary": "Know what you use, verify where it came from and make builds repeatable to defend against attacks through dependencies and pipelines."
   }
 ]
