@@ -1872,5 +1872,167 @@
       "A Reserved Instance without capacity reservation"
     ],
     "explanation": "A Capacity Reservation holds capacity in the AZ but gives no discount by itself, so combine it with Savings Plans. A Dedicated Host is tempting as 'surely has machines', but its purpose is hardware isolation and BYOL, not reserving capacity."
+  },
+  {
+    "id": "ec2-security-groups-networking-01",
+    "question": "Logs show a malicious IP scanning the web server's ports. You need to block just that IP right away. What do you use?",
+    "options": [
+      "Security Group",
+      "Network ACL",
+      "IAM policy",
+      "Route table"
+    ],
+    "explanation": "A NACL has Deny rules so it can block a specific IP. A Security Group is tempting because it is the familiar firewall, but it only has Allow."
+  },
+  {
+    "id": "ec2-security-groups-networking-02",
+    "question": "An admin allows inbound port 443 on the web server's SG but adds no outbound rule for responses, and requests still get answers. What does it mean that a Security Group is stateful?",
+    "options": [
+      "It logs every packet",
+      "The response to allowed traffic automatically passes",
+      "It only blocks outbound",
+      "Both directions must be opened"
+    ],
+    "explanation": "Stateful tracks connections so responses pass automatically. 'Both directions must be opened' is easy to confuse because that is the behavior of a stateless NACL."
+  },
+  {
+    "id": "ec2-security-groups-networking-03",
+    "question": "After adding a NACL rule for the subnet, users reach the web server but the page does not load, while the SG is correctly open. Explain the difference between SG and NACL and the cause.",
+    "modelAnswer": "A Security Group is attached to the ENI, stateful, with Allow only, so responses pass automatically. A NACL is attached to the subnet, stateless, with both Allow and Deny, evaluated in ascending rule number, and you must open rules for the return direction including ephemeral ports 1024–65535. The page does not load because the NACL lacks a return-direction rule, so responses are dropped.",
+    "keyPoints": [
+      "SG: stateful, Allow only, ENI level",
+      "NACL: stateless, Allow and Deny, ordered by number, subnet level",
+      "Ephemeral ports must be opened for the return direction"
+    ]
+  },
+  {
+    "id": "ec2-security-groups-networking-04",
+    "question": "Which two statements are true about a Security Group? (choose 2)",
+    "options": [
+      "Stateful",
+      "Can have Deny rules",
+      "Allow rules only",
+      "Applies at the subnet level"
+    ],
+    "explanation": "An SG is stateful and Allow-only, attached to an ENI. 'Subnet level' is a NACL characteristic, easy to mix up between the two filters."
+  },
+  {
+    "id": "ec2-security-groups-networking-05",
+    "question": "The web tier must receive traffic from an ALB and scale from 4 to 40 instances, and the DB tier may only receive from the web tier. What is the most compact and safe configuration?",
+    "options": [
+      "List each web instance's IP",
+      "A DB rule that allows the web tier's Security Group as the source",
+      "Open 0.0.0.0/0 on the DB port",
+      "Use a NACL deny"
+    ],
+    "explanation": "Referencing an SG automatically applies to new instances. Listing IPs is tempting as strict but must be edited on every scale event."
+  },
+  {
+    "id": "ec2-placement-groups-01",
+    "question": "An HPC cluster simulating weather needs the lowest node-to-node latency and high bandwidth. Which placement group do you choose?",
+    "options": [
+      "Spread",
+      "Cluster",
+      "Partition",
+      "None needed"
+    ],
+    "explanation": "A Cluster packs instances close together in one AZ. Spread is tempting because 'isolation' sounds safe, but it places instances far apart so latency is higher."
+  },
+  {
+    "id": "ec2-placement-groups-02",
+    "question": "A 120-node Cassandra cluster wants replicas not to share a rack and to know the topology to place replicas. What do you choose?",
+    "options": [
+      "Cluster",
+      "Partition",
+      "Spread with 120 instances",
+      "Dedicated Host"
+    ],
+    "explanation": "A Partition divides independent rack groups, supports hundreds of instances and exposes metadata. Spread cannot be used because of the 7-instances-per-AZ limit."
+  },
+  {
+    "id": "ec2-placement-groups-03",
+    "question": "Compare Cluster, Spread and Partition and say when to choose each.",
+    "modelAnswer": "A Cluster places instances close together in one AZ for low latency and high bandwidth (HPC) but has concentrated hardware failure risk. Spread places each instance on its own rack, at most 7 running instances per AZ, for a few extremely critical instances. A Partition splits into at most 7 partitions per AZ, each an independent group of racks holding hundreds of instances, suiting distributed systems such as Cassandra, Kafka and HDFS that know the topology.",
+    "keyPoints": [
+      "Cluster: low latency, concentrated risk",
+      "Spread: at most 7 per AZ, maximum isolation",
+      "Partition: independent rack groups for large distributed systems"
+    ]
+  },
+  {
+    "id": "ec2-placement-groups-04",
+    "question": "A team wants to move a running instance into a Cluster placement group using the console but cannot find the option. What is the cause and how do they do it?",
+    "options": [
+      "It can never be moved",
+      "Stop the instance and then use the CLI/SDK modify-instance-placement",
+      "The instance must be deleted",
+      "Just reboot"
+    ],
+    "explanation": "The instance must be stopped and can only be changed through the CLI/SDK. 'It can never be moved' is wrong even though the console does not support it."
+  },
+  {
+    "id": "ec2-placement-groups-05",
+    "question": "Three instances hosting a master node and a primary DB must not fail together because of hardware failure. Which placement do you choose?",
+    "options": [
+      "Cluster",
+      "Spread",
+      "Partition with 1 partition",
+      "Dedicated Host"
+    ],
+    "explanation": "Spread places them on separate hardware, suiting a few critical instances. Cluster is the opposite, concentrating them so the risk is higher."
+  },
+  {
+    "id": "vpc-networking-01",
+    "question": "An EC2 instance in a private subnet downloads lots of data from S3 daily and the NAT Gateway bill is very high. What is the lowest-cost way without going through the Internet?",
+    "options": [
+      "Add more NAT Gateways",
+      "A Gateway VPC Endpoint for S3",
+      "An Internet Gateway",
+      "Site-to-Site VPN"
+    ],
+    "explanation": "A Gateway endpoint is free and carries S3 traffic over the AWS network. Adding NAT is tempting as more performance but raises per-hour and per-GB charges."
+  },
+  {
+    "id": "vpc-networking-02",
+    "question": "VPC A peers with B and B peers with C. The team reports A cannot connect to C. Why and how do you fix it?",
+    "options": [
+      "Access is automatic",
+      "VPC Peering is non-transitive, you need an A–C peering or Transit Gateway",
+      "Just add DNS",
+      "Just add NAT"
+    ],
+    "explanation": "Peering is 1-to-1 and not transitive. NAT is easy to confuse because it is used for going outside, but it does not solve routing between VPCs."
+  },
+  {
+    "id": "vpc-networking-03",
+    "question": "An instance in a subnet cannot reach the Internet even though it has a public IP. Explain what makes a subnet public and how to check.",
+    "modelAnswer": "A subnet is public when its route table has a 0.0.0.0/0 route pointing to an Internet Gateway and the resources have a public IP or Elastic IP. If the route is missing or the instance has no public IP it cannot reach the Internet. A subnet without that route is private, and to reach the Internet it must go through a NAT Gateway placed in a public subnet.",
+    "keyPoints": [
+      "A 0.0.0.0/0 route to the IGW",
+      "A public IP or Elastic IP is needed",
+      "A private subnet goes out through a NAT Gateway"
+    ]
+  },
+  {
+    "id": "vpc-networking-04",
+    "question": "An instance in a private subnet needs to download patches from the Internet but must not accept connections from outside. What do you use and where do you place it?",
+    "options": [
+      "An Internet Gateway directly",
+      "A NAT Gateway in a public subnet",
+      "VPC peering",
+      "Direct Connect"
+    ],
+    "explanation": "A NAT Gateway allows outbound only. Attaching an Internet Gateway directly is tempting as simple but turns the subnet public and lets outside connections in."
+  },
+  {
+    "id": "vpc-networking-05",
+    "question": "A company wants to peer its production VPC 10.0.0.0/16 with a new partner VPC that also uses 10.0.0.0/16. What happens?",
+    "options": [
+      "Peering works normally",
+      "It cannot peer because the CIDRs overlap",
+      "Only the same Region works",
+      "Only the same account works"
+    ],
+    "explanation": "Peering requires non-overlapping CIDRs. 'Same Region/account' is easy to confuse because peering actually works cross-Region and cross-account."
   }
 ]

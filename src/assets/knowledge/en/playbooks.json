@@ -173,5 +173,20 @@
     "id": "ec2-pricing-models",
     "title": "EC2 Pricing Models",
     "summary": "Cut 50–90% of compute cost by combining On-Demand, Savings Plans/Reserved, Spot and Dedicated Host according to workload characteristics."
+  },
+  {
+    "id": "ec2-security-groups-networking",
+    "title": "EC2 Security Groups & Networking",
+    "summary": "Open the right ports with a stateful Security Group and choose ENI, ENA or EFA according to network separation, bandwidth and HPC needs."
+  },
+  {
+    "id": "ec2-placement-groups",
+    "title": "EC2 Placement Groups",
+    "summary": "Place instances in a Cluster, Spread or Partition arrangement to optimize network performance or isolate hardware failures."
+  },
+  {
+    "id": "vpc-networking",
+    "title": "AWS VPC Networking",
+    "summary": "Build an isolated network on AWS with subnets, NAT, endpoints and connect multiple VPCs with Peering or Transit Gateway."
   }
 ]

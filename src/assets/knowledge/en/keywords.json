@@ -938,5 +938,75 @@
     "id": "ec2-dedicated-host",
     "meaning": "Rent a whole physical server",
     "definition": "Exposes sockets/cores for per-core BYOL licenses and compliance; the highest cost."
+  },
+  {
+    "id": "security-group",
+    "meaning": "A stateful virtual firewall attached to an instance's ENI",
+    "definition": "Only Allow rules; inbound blocks everything by default, outbound allows everything by default; responses are passed automatically."
+  },
+  {
+    "id": "security-group-vs-nacl",
+    "meaning": "Comparing instance-level and subnet-level firewalls",
+    "definition": "An SG is stateful, Allow-only, instance-level; a NACL is stateless, has Allow/Deny, subnet-level, with rules evaluated by number."
+  },
+  {
+    "id": "elastic-network-interface",
+    "meaning": "EC2's virtual network card",
+    "definition": "Has its own private IP, MAC and Security Groups; attach extra ones to separate management/log networks or move to another instance on failover."
+  },
+  {
+    "id": "ena-enhanced-networking",
+    "meaning": "High-speed networking for EC2 using SR-IOV",
+    "definition": "The Elastic Network Adapter gives bandwidth up to 100 Gbps, high PPS and low latency at no extra cost."
+  },
+  {
+    "id": "elastic-fabric-adapter",
+    "meaning": "A network card for HPC and machine learning",
+    "definition": "ENA plus OS-bypass (libfabric/MPI) for ultra-low-latency communication between nodes."
+  },
+  {
+    "id": "cluster-placement-group",
+    "meaning": "Pack instances close together in one AZ",
+    "definition": "Low latency and high throughput for HPC; in exchange, a concentrated hardware failure risk."
+  },
+  {
+    "id": "spread-placement-group",
+    "meaning": "Each instance on its own rack",
+    "definition": "Maximum failure isolation, limited to 7 running instances per AZ per group, and can span several AZs."
+  },
+  {
+    "id": "partition-placement-group",
+    "meaning": "Divide instances into independent rack groups",
+    "definition": "At most 7 partitions per AZ; different partitions share no hardware; suits HDFS, HBase, Cassandra, Kafka."
+  },
+  {
+    "id": "modify-instance-placement",
+    "meaning": "The CLI command to move an instance to another placement group",
+    "definition": "The instance must be stopped; it can only be done through the AWS CLI/SDK, not the console."
+  },
+  {
+    "id": "vpc-subnet-routing",
+    "meaning": "Public/private subnets are decided by the route table",
+    "definition": "A subnet is public when its route table has 0.0.0.0/0 pointing to an Internet Gateway; each subnet is in exactly one AZ and AWS reserves 5 IPs per subnet."
+  },
+  {
+    "id": "nat-gateway",
+    "meaning": "Lets a private subnet go out to the Internet but not be reached",
+    "definition": "Placed in a public subnet; you need one NAT Gateway per AZ for fault tolerance; IPv6 uses an Egress-only Internet Gateway."
+  },
+  {
+    "id": "vpc-endpoints",
+    "meaning": "Access AWS services without the Internet",
+    "definition": "A Gateway endpoint is only for S3 and DynamoDB and is free; an Interface endpoint (PrivateLink) uses ENIs, is billed, and supports most other services."
+  },
+  {
+    "id": "vpc-peering",
+    "meaning": "A private connection between two VPCs",
+    "definition": "A 1-to-1 relationship, non-transitive, and the two VPCs must not have overlapping CIDRs; it can be cross-Region and cross-account."
+  },
+  {
+    "id": "transit-gateway",
+    "meaning": "A central hub connecting many VPCs and on-premises",
+    "definition": "A hub-and-spoke model with transitive routing, replacing a complex Peering mesh."
   }
 ]
