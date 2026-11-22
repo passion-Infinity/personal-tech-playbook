@@ -643,5 +643,20 @@
     "id": "ai-video-image-generation",
     "title": "AI Image & Video Generation (Diffusion)",
     "summary": "Understand diffusion, DiT and the practical workflow for creating video with AI, plus its limits and legal risks."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security",
+    "title": "LLM Evaluation, Guardrails & Security",
+    "summary": "Build evals for LLM applications and layered defenses against prompt injection."
+  },
+  {
+    "id": "llm-cost-latency-optimization",
+    "title": "LLM Cost & Latency Optimization",
+    "summary": "Cut tokens and use caching, batching and routing to reduce cost and latency while keeping quality."
+  },
+  {
+    "id": "vector-databases-embeddings",
+    "title": "Embeddings & Vector Databases",
+    "summary": "Understand embeddings, ANN (HNSW), chunking, hybrid search and reranking so RAG retrieves correctly."
   }
 ]

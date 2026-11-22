@@ -3208,5 +3208,75 @@
     "id": "temporal-consistency",
     "meaning": "Consistency between frames",
     "definition": "The main challenge of AI video."
+  },
+  {
+    "id": "llm-as-judge",
+    "meaning": "Use a model to score",
+    "definition": "Score against a rubric; it needs calibration against humans."
+  },
+  {
+    "id": "indirect-prompt-injection",
+    "meaning": "Malicious instructions inside data",
+    "definition": "Web pages, emails, documents or tool results."
+  },
+  {
+    "id": "owasp-llm-top-10",
+    "meaning": "Security risks of LLM applications",
+    "definition": "Prompt injection, data leakage, over-privileged agents."
+  },
+  {
+    "id": "rag-groundedness",
+    "meaning": "How grounded an answer is",
+    "definition": "Whether the answer is based on the retrieved documents."
+  },
+  {
+    "id": "llm-guardrails",
+    "meaning": "Input/output control",
+    "definition": "Validate schemas, moderate, filter PII."
+  },
+  {
+    "id": "time-to-first-token",
+    "meaning": "Latency to the first token",
+    "definition": "Depends on prompt length."
+  },
+  {
+    "id": "llm-batch-api",
+    "meaning": "Cheap asynchronous processing",
+    "definition": "Suited to non-urgent tasks."
+  },
+  {
+    "id": "semantic-caching",
+    "meaning": "Reuse answers to similar queries",
+    "definition": "Be careful about accuracy."
+  },
+  {
+    "id": "llm-cost-optimization",
+    "meaning": "Reduce token cost",
+    "definition": "A lean prompt, caching, routing, output limits."
+  },
+  {
+    "id": "hnsw-ann",
+    "meaning": "A graph index for finding nearby vectors",
+    "definition": "Fast but RAM-hungry, trading recall for speed."
+  },
+  {
+    "id": "hybrid-search-rrf",
+    "meaning": "Combine keyword and semantic search",
+    "definition": "Merge two lists with Reciprocal Rank Fusion."
+  },
+  {
+    "id": "reranker-cross-encoder",
+    "meaning": "Rescore the top-K",
+    "definition": "Increases accuracy after the retrieval step."
+  },
+  {
+    "id": "chunking-strategies",
+    "meaning": "How to cut documents",
+    "definition": "Size and overlap affect retrieval quality."
+  },
+  {
+    "id": "pgvector",
+    "meaning": "Vector search in PostgreSQL",
+    "definition": "Enough for moderate scale when you already have Postgres."
   }
 ]

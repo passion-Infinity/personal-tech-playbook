@@ -6659,5 +6659,178 @@
       "Model name"
     ],
     "explanation": "The two main legal risks. Resolution and model name are tempting to care about, but they are not legal risks."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-01",
+    "question": "A customer-support agent reads incoming email and has a tool that sends email out. What is the best design against prompt injection?",
+    "options": [
+      "Trust the model to refuse malicious instructions",
+      "Assume the model can be fooled and limit the tools' permissions",
+      "Write a very long system prompt",
+      "Turn off the tool"
+    ],
+    "explanation": "No measure at the prompt layer blocks it absolutely, so limit damage with least privilege and confirmation. A long prompt is tempting as a defense, but it can be overridden."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-02",
+    "question": "A RAG chatbot answers wrongly and the team only measures final-answer quality. What is a more reasonable way to measure?",
+    "options": [
+      "Only measure the answer",
+      "Measure retrieval and answer generation separately",
+      "It cannot be measured",
+      "Measure token count"
+    ],
+    "explanation": "The two components fail differently so measure them separately (retrieval recall and generation faithfulness). Token count only reflects cost."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-03",
+    "question": "A team uses a strong LLM to score two answers and sees it usually picks the longer one. Which LLM-as-judge risk is this?",
+    "options": [
+      "No risk",
+      "Bias toward long answers or its own output",
+      "Too cheap",
+      "Cannot score"
+    ],
+    "explanation": "You need a clear rubric, swapped order and calibration against human labels."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-04",
+    "question": "A company wants to move to a cheaper new model. Why must evals be rerun and what should be compared?",
+    "modelAnswer": "Each model reacts differently to the same prompt so quality may change silently. Evals detect regressions before production and let you compare quality, latency and cost between the old and new models on the same set of real cases.",
+    "keyPoints": [
+      "Models react differently",
+      "Detect regressions",
+      "Compare quality, latency, cost"
+    ]
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-05",
+    "question": "Which two are weaknesses of LLM-as-judge? (choose 2)",
+    "options": [
+      "Bias toward long answers",
+      "Bias toward its own output",
+      "It cannot score",
+      "It is always accurate"
+    ],
+    "explanation": "Two known biases. 'Always accurate' is a wrong, distracting option."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-06",
+    "question": "A team wants to switch to a cheaper model to cut cost. What is the correct first step?",
+    "options": [
+      "Deploy immediately",
+      "Run the eval set against the old model",
+      "Shorten the prompt",
+      "Turn off guardrails"
+    ],
+    "explanation": "Measure before switching. Shortening the prompt or turning off guardrails both add risk."
+  },
+  {
+    "id": "llm-cost-latency-optimization-01",
+    "question": "Users complain a chatbot answers slowly even though the prompt is short. Which component usually takes most of the latency?",
+    "options": [
+      "Input tokens",
+      "Sequential output token generation",
+      "The network",
+      "Login"
+    ],
+    "explanation": "Output is generated token by token so long answers are slower. Input is tempting as the main cause, but it mostly affects TTFT."
+  },
+  {
+    "id": "llm-cost-latency-optimization-02",
+    "question": "You need to classify 1 million old documents, do not need results immediately and want low cost. What is a reasonable approach?",
+    "options": [
+      "Call synchronously one by one",
+      "Batch API",
+      "Use the largest model",
+      "Turn off the cache"
+    ],
+    "explanation": "Batch is asynchronous at a lower price. The largest model adds unnecessary cost."
+  },
+  {
+    "id": "llm-cost-latency-optimization-03",
+    "question": "Prompt caching is on but cost does not fall. The prompt starts with a line 'Current time: ...'. Why?",
+    "options": [
+      "A dynamic part at the start makes the prefix change every time",
+      "The prompt is too short",
+      "Using JSON",
+      "Using streaming"
+    ],
+    "explanation": "The cache needs an identical prefix; move the dynamic part to the end."
+  },
+  {
+    "id": "llm-cost-latency-optimization-04",
+    "question": "List and explain ways to reduce latency for a user-facing AI chat.",
+    "modelAnswer": "Use streaming to display early and reduce perceived latency, reduce output length because sequential decoding is the main source of delay, prompt caching for repeated prefixes to reduce TTFT, choose a smaller model for easy tasks (routing) and parallelize independent calls.",
+    "keyPoints": [
+      "Streaming",
+      "Reduce output and caching",
+      "A small model and parallelism"
+    ]
+  },
+  {
+    "id": "llm-cost-latency-optimization-05",
+    "question": "Which two ways reduce cost for large non-urgent volume? (choose 2)",
+    "options": [
+      "Batch API",
+      "A smaller model with sufficient quality",
+      "Raise max_tokens",
+      "Turn off the cache"
+    ],
+    "explanation": "Batch and routing/a small model. Raising max_tokens increases cost."
+  },
+  {
+    "id": "vector-databases-embeddings-01",
+    "question": "A team switches to a new, better embedding model but keeps the old vectors in the DB. What must be done?",
+    "options": [
+      "Nothing",
+      "Re-index all vectors with the new model",
+      "Only change the model for queries",
+      "Clear the cache"
+    ],
+    "explanation": "Vectors from two models are incompatible. Changing only the query model is tempting as enough, but it makes comparisons meaningless."
+  },
+  {
+    "id": "vector-databases-embeddings-02",
+    "question": "A user searches for 'SKU-48213' but the vector results do not return the right product. What is the solution?",
+    "options": [
+      "Increase vector dimensions",
+      "Hybrid search with BM25",
+      "Reduce chunk size",
+      "Drop search"
+    ],
+    "explanation": "Keywords catch exact matches on codes/proper names; vectors are weak here."
+  },
+  {
+    "id": "vector-databases-embeddings-03",
+    "question": "A SaaS uses one shared vector index for many customers. What is the biggest risk?",
+    "options": [
+      "Slowness",
+      "Data leakage if not filtered by tenant",
+      "Disk cost",
+      "None"
+    ],
+    "explanation": "You need a mandatory metadata filter by tenant at the query layer."
+  },
+  {
+    "id": "vector-databases-embeddings-04",
+    "question": "A RAG chatbot answers wrongly although the right document is in the store. What do you check first and why?",
+    "modelAnswer": "Check retrieval first: does chunking cut away context, do the embeddings and hybrid search get the right passage into the top-K, measure recall@K on a set of queries with known answers. Only when retrieval is good do you consider the prompt and the LLM, because the LLM can only use what you give it.",
+    "keyPoints": [
+      "Measure retrieval recall",
+      "Look at chunking",
+      "Only then consider the LLM"
+    ]
+  },
+  {
+    "id": "vector-databases-embeddings-05",
+    "question": "Which two steps raise RAG retrieval quality? (choose 2)",
+    "options": [
+      "Hybrid search",
+      "A reranker",
+      "Changing the tokenizer",
+      "Arbitrarily reducing vector dimensions"
+    ],
+    "explanation": "Hybrid and reranking improve the top-K. Arbitrarily reducing dimensions can lower quality."
   }
 ]
