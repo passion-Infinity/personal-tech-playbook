@@ -1,0 +1,102 @@
+[
+  {
+    "id": "circuit-breaker",
+    "meaning": "A breaker that stops calls to a failing dependency to prevent error propagation",
+    "definition": "Tracks the error/timeout rate; once a threshold is exceeded it fails fast for a period instead of continuing to call a dying dependency."
+  },
+  {
+    "id": "half-open-state",
+    "meaning": "A probing state that lets a few requests through after the open period",
+    "definition": "After the wait duration the breaker allows N trial requests; success moves it to CLOSED, failure sends it back to OPEN."
+  },
+  {
+    "id": "bulkhead",
+    "meaning": "Isolates resources (thread pools, connections) per dependency",
+    "definition": "Limits concurrency per dependency so one slow dependency cannot consume all of the service's resources."
+  },
+  {
+    "id": "cascading-failure",
+    "meaning": "A chain reaction of failures spreading from one service to the whole system",
+    "definition": "A slow dependency makes callers hold threads/connections, callers run out of resources and keep dragging their upstreams down."
+  },
+  {
+    "id": "transactional-outbox",
+    "meaning": "A design pattern that stores the event in the DB in the local transaction before pushing it to the Message Broker",
+    "definition": "Solves the Dual-Write problem between the Database and the Message Broker without Two-Phase Commit (2PC)."
+  },
+  {
+    "id": "dual-write-problem",
+    "meaning": "The problem of writing to two systems that share no transaction",
+    "definition": "Writing to the Database and then publishing to the Broker (or vice versa) can half-succeed on a crash, causing lost or inconsistent data."
+  },
+  {
+    "id": "cdc",
+    "meaning": "Capture data changes directly from the Database transaction log",
+    "definition": "Reads the WAL/binlog (for example Debezium) to emit an event for every change, with no table polling."
+  },
+  {
+    "id": "idempotent-consumer",
+    "meaning": "A consumer that gives the same result when it processes the same message several times",
+    "definition": "Required when delivery is at-least-once; typically uses a processed_message_id table or an upsert by business key."
+  },
+  {
+    "id": "cap-theorem",
+    "meaning": "Choose consistency or availability during a network partition",
+    "definition": "Partitions are not optional; CAP only describes behavior during a partition and the C here is linearizability."
+  },
+  {
+    "id": "pacelc-theorem",
+    "meaning": "Extends CAP with the latency trade-off during normal operation",
+    "definition": "Even without a partition you must choose between latency and consistency."
+  },
+  {
+    "id": "linearizability-vs-eventual",
+    "meaning": "The two ends of the consistency model spectrum",
+    "definition": "Linearizability behaves like a single copy; eventual only guarantees eventual convergence."
+  },
+  {
+    "id": "quorum-rw-n",
+    "meaning": "The condition that guarantees reads see the latest write",
+    "definition": "With N replicas, if R plus W is greater than N the read set always intersects the write set."
+  },
+  {
+    "id": "read-your-writes",
+    "meaning": "Users see the data they just wrote",
+    "definition": "A per-session guarantee, usually achieved by reading from the leader or using sticky sessions after a write."
+  },
+  {
+    "id": "jepsen",
+    "meaning": "Empirical verification of a distributed DB's consistency",
+    "definition": "Jepsen analyses show whether a system keeps its promises under failures."
+  },
+  {
+    "id": "l4-vs-l7-load-balancing",
+    "meaning": "Load balancing at the transport or the application layer",
+    "definition": "L4 forwards TCP/UDP very quickly; L7 understands HTTP to route by path, host and headers."
+  },
+  {
+    "id": "lb-algorithms",
+    "meaning": "Algorithms for choosing a backend",
+    "definition": "Round robin, weighted, least connections, least response time and consistent hashing."
+  },
+  {
+    "id": "health-checks-liveness-readiness",
+    "meaning": "Distinguishing alive from ready to serve",
+    "definition": "Liveness reports the process is running; readiness reports it can take traffic; checks that are too shallow or too deep both carry risk."
+  },
+  {
+    "id": "reverse-proxy-tls-termination",
+    "meaning": "A proxy in front of backends that accepts connections on their behalf",
+    "definition": "Nginx, HAProxy, Envoy handle TLS, compression, caching and routing."
+  },
+  {
+    "id": "sticky-sessions",
+    "meaning": "Pin a client to one backend",
+    "definition": "Convenient for local sessions but prevents even load balancing and scaling; prefer stateless."
+  },
+  {
+    "id": "geodns-anycast",
+    "meaning": "Send users to the nearest Region",
+    "definition": "Global load balancing at the DNS layer or via anycast routing."
+  }
+]

@@ -1,0 +1,188 @@
+[
+  {
+    "id": "circuit-breaker-01",
+    "question": "Service A calls B; B starts answering after 30 seconds and A's thread pool is slowly exhausted. How does a Circuit Breaker help?",
+    "options": [
+      "It makes B faster",
+      "It opens the circuit once failures/slowness pass a threshold and fails fast so A does not hang threads",
+      "It autoscales B",
+      "It increases the timeout"
+    ],
+    "explanation": "The breaker stops threads from piling up on a failing dependency. Raising the timeout is the tempting answer because it seems to give B more time, but it exhausts threads even faster."
+  },
+  {
+    "id": "circuit-breaker-02",
+    "question": "The circuit is Open and the wait duration has elapsed. What is the Half-Open state for?",
+    "options": [
+      "Block every request",
+      "Let a few trial calls through to check whether the service has recovered",
+      "Increase the timeout",
+      "Clear the cache"
+    ],
+    "explanation": "Success returns it to Closed, failure sends it back to Open. Fully reopening at once is the tempting answer, but it would overload a dependency that is still recovering."
+  },
+  {
+    "id": "circuit-breaker-03",
+    "question": "A service uses one global Circuit Breaker for 5 different dependencies, and when one dependency fails all 5 are blocked. What is the right approach?",
+    "options": [
+      "Leave it as is",
+      "A separate breaker per dependency plus a bulkhead that isolates resources",
+      "Increase the global timeout",
+      "Remove the breaker"
+    ],
+    "explanation": "One breaker and one pool per dependency keeps a failure from spreading elsewhere. Raising the global timeout is tempting but only makes every caller wait longer."
+  },
+  {
+    "id": "outbox-pattern-01",
+    "question": "The order service wants to save an order in the DB and publish an OrderPlaced event to Kafka without ever losing an event or producing a 'ghost' one. Which pattern fits?",
+    "options": [
+      "Write to the DB, then publish to Kafka right inside the transaction",
+      "Transactional Outbox: write the event into an outbox table in the same transaction, then a relay publishes it",
+      "Publish to Kafka first, then write to the DB",
+      "Use a cron job that scans the DB"
+    ],
+    "explanation": "Outbox makes the data and the event commit/roll back together. Publishing directly inside the transaction is the tempting answer because it looks simple, but it is a dual-write that can lose events or create ghost ones."
+  },
+  {
+    "id": "outbox-pattern-02",
+    "question": "The relay publishes an event to Kafka successfully but crashes before marking it as sent; after restart it sends it again. What is the consequence and the remedy?",
+    "options": [
+      "No effect",
+      "Consumers may receive a duplicate event, so you need an idempotent consumer",
+      "Kafka deduplicates every case on its own",
+      "The event is lost"
+    ],
+    "explanation": "Outbox guarantees at-least-once, not exactly-once. 'Kafka deduplicates every case' is easily confused with the idempotent producer, but it does not stop the relay from resending."
+  },
+  {
+    "id": "outbox-pattern-03",
+    "question": "A service emits order events as follows. What is the core problem?",
+    "code": "@Transactional\npublic void placeOrder(Order o) {\n    orderRepo.save(o);\n    kafka.send(\"orders\", toEvent(o));   // publishes inside the DB transaction\n}",
+    "options": [
+      "Missing @Async",
+      "Dual-write: the event may be published even if the transaction later rolls back, or lost if a crash happens between the two steps",
+      "toEvent is slow",
+      "Kafka does not support Java"
+    ],
+    "explanation": "The DB and Kafka share no transaction, so this is a dual-write. Use a transactional outbox: write the event into an outbox table in the same transaction and let a relay publish it. The tempting distractor is 'missing @Async', but running asynchronously does not fix the atomicity between two systems."
+  },
+  {
+    "id": "outbox-pattern-04",
+    "question": "A team is weighing two ways to move events from the outbox table to Kafka. When should they pick a polling publisher and when CDC such as Debezium?",
+    "options": [
+      "Always pick CDC",
+      "Polling is simple but adds latency and DB load; CDC has low latency but adds infrastructure",
+      "Always pick polling",
+      "The two are identical"
+    ],
+    "explanation": "Choose by latency requirements and operational capacity. 'Always pick CDC' is tempting because it sounds more modern, but it adds infrastructure to operate."
+  },
+  {
+    "id": "cap-consistency-models-01",
+    "question": "A system storing account balances hits a network partition between two Regions. What should it choose during the partition?",
+    "options": [
+      "Keep accepting writes on both sides and reconcile later (AP)",
+      "Reject writes on the side without quorum to stay consistent (CP)",
+      "Shut the whole system down",
+      "Ignore the partition"
+    ],
+    "explanation": "For balances, inconsistency is expensive, so choose CP. AP is tempting because it always serves, but it allows overdrafts."
+  },
+  {
+    "id": "cap-consistency-models-02",
+    "question": "According to PACELC, what trade-off remains even when there is no network partition?",
+    "options": [
+      "Latency and Consistency",
+      "CPU and RAM",
+      "Cost and security",
+      "There is no trade-off"
+    ],
+    "explanation": "Strong consistency requires waiting for several nodes to sync, which costs latency. 'No trade-off' is a narrow reading of CAP."
+  },
+  {
+    "id": "cap-consistency-models-03",
+    "question": "With N = 3 replicas, which configuration guarantees that reads see the latest write?",
+    "options": [
+      "W = 1, R = 1",
+      "W = 2, R = 2",
+      "W = 1, R = 2",
+      "W = 3, R = 0"
+    ],
+    "explanation": "R + W > N makes the read set and write set overlap (2 + 2 > 3). W = 1, R = 2 also sums to 3, which is not greater than N, so it does not guarantee it."
+  },
+  {
+    "id": "cap-consistency-models-04",
+    "question": "A user posts but, on reloading, does not see their own new post, while friends see it a few seconds later. Explain the behavior in terms of consistency models and how to fix it.",
+    "modelAnswer": "This is a read-your-writes violation caused by reading from a replica that has not yet received the write (eventual consistency). It can be fixed by reading from the leader, or from a replica that has caught up, for some time after a write, or by pinning the user to a replica (sticky) and tracking the log position that was written.",
+    "keyPoints": [
+      "Read-your-writes is violated",
+      "The replica has not caught up",
+      "Read the leader/a sticky replica after writing"
+    ]
+  },
+  {
+    "id": "cap-consistency-models-05",
+    "question": "Which two statements about CAP are correct? (choose 2)",
+    "options": [
+      "Network partitions cannot be eliminated, so the practical choice is C or A during a partition",
+      "The 'C' in CAP is linearizability, which differs from the 'C' in ACID",
+      "You can achieve C, A and P together in every case",
+      "CAP only applies to a single machine"
+    ],
+    "explanation": "The first two statements are correct. The other two are wrong and serve as distractors."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-01",
+    "question": "You need to route /api to service A and /img to service B on the same domain, with TLS termination. What do you use?",
+    "options": [
+      "An L4 load balancer",
+      "An L7 load balancer / reverse proxy",
+      "DNS round robin",
+      "Only a firewall"
+    ],
+    "explanation": "L7 understands path/host, so it routes by content. L4 is tempting because it is fast, but it only sees IP/port."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-02",
+    "question": "Request processing times are very uneven and round robin overloads some nodes. Which algorithm is better?",
+    "options": [
+      "Pure random",
+      "Least connections or power of two choices",
+      "IP hash",
+      "Increase the timeout"
+    ],
+    "explanation": "Pick the less loaded node instead of blind rotation. IP hash is tempting as 'balancing', but it distributes by client, not by load."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-03",
+    "question": "A Pod's process has started but it has not yet connected to the DB, and the LB already sent traffic and caused errors. What is needed?",
+    "options": [
+      "Only a liveness probe",
+      "A readiness probe to remove it from the pool until it is ready",
+      "Restart constantly",
+      "Increase replicas"
+    ],
+    "explanation": "Readiness decides whether to receive traffic; liveness decides restarts. Only liveness is the tempting answer, but a live process does not mean it is ready."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-04",
+    "question": "A team uses sticky sessions because the app keeps shopping carts in each server's memory. Why should they avoid sticky sessions, and what should replace them?",
+    "modelAnswer": "Sticky sessions cause uneven load, lose sessions when a node dies and make scaling or deployments harder. State should be moved out (Redis or a DB) so backends are stateless; then the LB distributes freely and no session is lost when any node dies.",
+    "keyPoints": [
+      "Uneven load",
+      "Sessions lost when a node dies",
+      "State moved out, stateless backends"
+    ]
+  },
+  {
+    "id": "load-balancing-reverse-proxy-05",
+    "question": "Which two things are true of a reverse proxy? (choose 2)",
+    "options": [
+      "It can terminate TLS",
+      "It can compress, cache and rate limit",
+      "It only works at L3",
+      "It does not support health checks"
+    ],
+    "explanation": "A reverse proxy does application-layer work. The other two options are wrong."
+  }
+]

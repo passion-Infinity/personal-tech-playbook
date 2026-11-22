@@ -1,0 +1,22 @@
+[
+  {
+    "id": "circuit-breaker",
+    "title": "Circuit Breaker Pattern",
+    "summary": "Fail fast when a dependency is failing, to stop Cascading Failure and give the system time to recover."
+  },
+  {
+    "id": "outbox-pattern",
+    "title": "Transactional Outbox Pattern",
+    "summary": "Guarantee Dual-Write consistency between the Database and the Message Broker through a local transaction."
+  },
+  {
+    "id": "cap-consistency-models",
+    "title": "CAP & Consistency Models",
+    "summary": "Choose the consistency level per use case when data is replicated across multiple nodes."
+  },
+  {
+    "id": "load-balancing-reverse-proxy",
+    "title": "Load Balancing & Reverse Proxy",
+    "summary": "Distribute load and eject failing backends with L4/L7 load balancers, health checks and reverse proxies."
+  }
+]
