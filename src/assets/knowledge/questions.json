@@ -9031,5 +9031,1124 @@
       1
     ],
     "explanation": "APIM policy."
+  },
+  {
+    "id": "ai-model-landscape-05",
+    "playbookId": "ai-model-landscape",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về model open-weight? (chọn 2)",
+    "options": [
+      "Có thể tải trọng số để tự chạy",
+      "Giấy phép có thể giới hạn mục đích dùng",
+      "Luôn là open source theo định nghĩa OSI",
+      "Không thể fine-tune"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Open-weight cho tải trọng số nhưng giấy phép khác nhau."
+  },
+  {
+    "id": "llm-local-inference-quantization-05",
+    "playbookId": "llm-local-inference-quantization",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Model chạy được ở context ngắn nhưng OOM khi context dài. Nguyên nhân chính?",
+    "options": [
+      "Trọng số tăng theo context",
+      "KV cache tăng theo độ dài context",
+      "Tokenizer lỗi",
+      "Quantization sai"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "KV cache tỉ lệ với context và số request."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-05",
+    "playbookId": "prompt-engineering-for-engineers",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai cách giảm rủi ro đầu ra sai định dạng ở production? (chọn 2)",
+    "options": [
+      "Structured output/schema",
+      "Validate rồi retry",
+      "Chỉ viết \"hãy trả JSON\"",
+      "Tăng temperature"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Ép schema và kiểm tra lại."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-06",
+    "playbookId": "prompt-engineering-for-engineers",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Few-shot với các ví dụ gần giống nhau có thể gây?",
+    "options": [
+      "Model luôn đúng",
+      "Model bắt chước quá sát ví dụ",
+      "Giảm token",
+      "Không ảnh hưởng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ví dụ thiếu đa dạng làm lệch đầu ra."
+  },
+  {
+    "id": "context-engineering-memory-05",
+    "playbookId": "context-engineering-memory",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai cách giữ agent không lệch mục tiêu trong phiên dài? (chọn 2)",
+    "options": [
+      "Ghim chỉ dẫn quan trọng",
+      "Tóm tắt có chọn lọc và ghi chú ngoài context",
+      "Nhét toàn bộ lịch sử",
+      "Tăng temperature"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Compaction cùng bộ nhớ ngoài."
+  },
+  {
+    "id": "context-engineering-memory-06",
+    "playbookId": "context-engineering-memory",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Prompt caching không giảm chi phí vì prefix thay đổi mỗi lần. Nguyên nhân phổ biến?",
+    "options": [
+      "Dùng JSON",
+      "Đặt timestamp hoặc id ở đầu prompt",
+      "Prompt quá dài",
+      "Dùng streaming"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cache cần prefix ổn định."
+  },
+  {
+    "id": "tool-use-function-calling-mcp-05",
+    "playbookId": "tool-use-function-calling-mcp",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về MCP? (chọn 2)",
+    "options": [
+      "Là giao thức chuẩn kết nối AI với tool và dữ liệu",
+      "Server có thể phơi tools, resources, prompts",
+      "Thay thế hoàn toàn function calling",
+      "Tự đảm bảo an toàn"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "MCP là chuẩn kết nối, không tự bảo mật."
+  },
+  {
+    "id": "tool-use-function-calling-mcp-06",
+    "playbookId": "tool-use-function-calling-mcp",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Agent đọc email chứa chỉ dẫn độc và gọi tool gửi dữ liệu ra ngoài. Cách giảm rủi ro?",
+    "options": [
+      "Tin model",
+      "Quyền tool tối thiểu và xác nhận hành động nhạy cảm",
+      "Tăng context",
+      "Dùng model lớn hơn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giả định có thể bị lừa và giới hạn thiệt hại."
+  },
+  {
+    "id": "ai-agents-agentic-loop-05",
+    "playbookId": "ai-agents-agentic-loop",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai thành phần bắt buộc để agent không chạy vô hạn? (chọn 2)",
+    "options": [
+      "Giới hạn số bước",
+      "Ngân sách token hoặc thời gian",
+      "Temperature cao",
+      "Nhiều tool"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Điều kiện dừng cứng."
+  },
+  {
+    "id": "ai-agents-agentic-loop-06",
+    "playbookId": "ai-agents-agentic-loop",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Quy trình xử lý hoàn tiền có các bước cố định. Nên dùng?",
+    "options": [
+      "Agent tự do",
+      "Workflow do code điều khiển, LLM ở các bước cần hiểu ngôn ngữ",
+      "Multi-agent",
+      "Không dùng LLM"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Quy trình ổn định hợp workflow."
+  },
+  {
+    "id": "multi-agent-orchestration-05",
+    "playbookId": "multi-agent-orchestration",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai lợi ích thực sự của multi-agent? (chọn 2)",
+    "options": [
+      "Context sạch cho từng agent",
+      "Chạy song song",
+      "Luôn rẻ hơn",
+      "Không cần prompt"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Tách context và song song hoá."
+  },
+  {
+    "id": "multi-agent-orchestration-06",
+    "playbookId": "multi-agent-orchestration",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai agent cùng sửa một module gây xung đột. Giải pháp?",
+    "options": [
+      "Thêm agent thứ ba",
+      "Phân vùng tài nguyên hoặc tuần tự hoá, mỗi agent một worktree",
+      "Tăng token",
+      "Tắt log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tránh ghi chồng."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-05",
+    "playbookId": "ai-coding-assistants-workflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai thứ nên có trong file hướng dẫn dự án cho coding agent? (chọn 2)",
+    "options": [
+      "Lệnh build và test",
+      "Quy ước và ranh giới thay đổi",
+      "Mật khẩu production",
+      "Toàn bộ mã nguồn"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Hướng dẫn thực dụng, không chứa secret."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-06",
+    "playbookId": "ai-coding-assistants-workflow",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Code do AI sinh ra qua test nhưng test do chính AI viết mock toàn bộ. Rủi ro?",
+    "options": [
+      "Không có",
+      "Test giả cho cảm giác an toàn sai",
+      "Chạy chậm",
+      "Tốn token"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần review chất lượng test."
+  },
+  {
+    "id": "ai-video-image-generation-05",
+    "playbookId": "ai-video-image-generation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai rủi ro cần kiểm tra khi dùng ảnh/video AI thương mại? (chọn 2)",
+    "options": [
+      "Điều khoản sử dụng và bản quyền",
+      "Quyền hình ảnh người thật",
+      "Độ phân giải",
+      "Tên model"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Rủi ro pháp lý."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-05",
+    "playbookId": "llm-evaluation-guardrails-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điểm yếu của LLM-as-judge? (chọn 2)",
+    "options": [
+      "Thiên vị câu trả lời dài",
+      "Thiên vị đầu ra của chính nó",
+      "Không thể chấm",
+      "Luôn chính xác"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Cần rubric và hiệu chuẩn."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-06",
+    "playbookId": "llm-evaluation-guardrails-security",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Đổi sang model mới rẻ hơn. Bước đầu tiên?",
+    "options": [
+      "Triển khai ngay",
+      "Chạy bộ eval so với model cũ",
+      "Giảm prompt",
+      "Tắt guardrail"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Eval phát hiện hồi quy."
+  },
+  {
+    "id": "llm-cost-latency-optimization-05",
+    "playbookId": "llm-cost-latency-optimization",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai cách giảm chi phí khối lượng lớn không gấp? (chọn 2)",
+    "options": [
+      "Batch API",
+      "Model nhỏ hơn đủ chất lượng",
+      "Tăng max_tokens",
+      "Tắt cache"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Batch và routing."
+  },
+  {
+    "id": "vector-databases-embeddings-05",
+    "playbookId": "vector-databases-embeddings",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai bước tăng chất lượng truy xuất RAG? (chọn 2)",
+    "options": [
+      "Hybrid search",
+      "Reranker",
+      "Đổi tokenizer",
+      "Giảm chiều vector tuỳ ý"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Hybrid và rerank cải thiện top-K."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-05",
+    "playbookId": "fine-tuning-lora-distillation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần model luôn trả lời theo một định dạng và giọng điệu cố định cho tác vụ hẹp. Hướng?",
+    "options": [
+      "Fine-tune",
+      "Chỉ RAG",
+      "Tăng temperature",
+      "Context dài"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Fine-tune đổi hành vi/định dạng."
+  },
+  {
+    "id": "build-agent-end-to-end-05",
+    "playbookId": "build-agent-end-to-end",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai thứ nên log cho mỗi bước agent? (chọn 2)",
+    "options": [
+      "Tool call và kết quả",
+      "Token và độ trễ",
+      "Mật khẩu người dùng",
+      "Ảnh chụp màn hình bắt buộc"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Trace phục vụ debug và chi phí."
+  },
+  {
+    "id": "speech-voice-ai-05",
+    "playbookId": "speech-voice-ai",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai cách giảm độ trễ voice agent? (chọn 2)",
+    "options": [
+      "Streaming ở STT/LLM/TTS",
+      "VAD tốt để ngắt lượt nhanh",
+      "Chờ câu hoàn chỉnh rồi mới xử lý",
+      "Dùng model lớn nhất"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Chồng lấp các tầng."
+  },
+  {
+    "id": "ai-ml-fundamentals-04",
+    "playbookId": "ai-ml-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Mô hình đạt 99% trên train, 70% trên validation. Hiện tượng?",
+    "options": [
+      "Underfitting",
+      "Overfitting",
+      "Data leakage luôn",
+      "Tốt"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chênh lệch lớn là overfitting."
+  },
+  {
+    "id": "ml-evaluation-metrics-04",
+    "playbookId": "ml-evaluation-metrics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phát hiện gian lận, chỉ 0.5% là gian lận. Accuracy 99.5% có ý nghĩa gì?",
+    "options": [
+      "Rất tốt",
+      "Không đáng tin, dùng precision/recall/PR-AUC",
+      "Chắc chắn đúng",
+      "Dùng MSE"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mất cân bằng lớp làm accuracy gây hiểu lầm."
+  },
+  {
+    "id": "generative-ai-llm-concepts-04",
+    "playbookId": "generative-ai-llm-concepts",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về LLM? (chọn 2)",
+    "options": [
+      "Sinh token tiếp theo theo xác suất",
+      "Có thể hallucination",
+      "Luôn truy xuất sự thật",
+      "Không cần context"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Mô hình xác suất, không phải cơ sở dữ liệu."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-04",
+    "playbookId": "rag-retrieval-augmented-generation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "RAG trả sai vì truy xuất thiếu đoạn đúng. Kiểm tra trước?",
+    "options": [
+      "Đổi LLM",
+      "Chunking, embedding và recall của bước truy xuất",
+      "Tăng temperature",
+      "Giảm prompt"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lỗi thường nằm ở truy xuất."
+  },
+  {
+    "id": "responsible-ai-04",
+    "playbookId": "responsible-ai",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai biện pháp giảm bias? (chọn 2)",
+    "options": [
+      "Đánh giá theo nhóm con",
+      "Dữ liệu đại diện",
+      "Chỉ tăng độ chính xác tổng",
+      "Ẩn kết quả"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Đo công bằng theo nhóm."
+  },
+  {
+    "id": "amazon-bedrock-04",
+    "playbookId": "amazon-bedrock",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Muốn gọi nhiều foundation model qua một API managed trên AWS?",
+    "options": [
+      "SageMaker training",
+      "Amazon Bedrock",
+      "Lambda",
+      "Glue"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Bedrock cung cấp model qua API."
+  },
+  {
+    "id": "amazon-sagemaker-04",
+    "playbookId": "amazon-sagemaker",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Huấn luyện và triển khai model tuỳ biến quy mô lớn?",
+    "options": [
+      "SageMaker",
+      "Rekognition",
+      "Polly",
+      "Textract"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "SageMaker là nền tảng ML đầy đủ."
+  },
+  {
+    "id": "aws-ai-services-04",
+    "playbookId": "aws-ai-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Trích xuất văn bản và bảng từ tài liệu scan?",
+    "options": [
+      "Textract",
+      "Polly",
+      "Lex",
+      "Forecast"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Textract cho OCR có cấu trúc."
+  },
+  {
+    "id": "azure-ai-services-04",
+    "playbookId": "azure-ai-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dịch vụ nhận dạng giọng nói và chuyển văn bản trên Azure?",
+    "options": [
+      "Azure AI Speech",
+      "Key Vault",
+      "Event Hubs",
+      "Bastion"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Speech service."
+  },
+  {
+    "id": "azure-openai-foundry-04",
+    "playbookId": "azure-openai-foundry",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dữ liệu doanh nghiệp cần dùng model OpenAI với kiểm soát mạng và bảo mật của Azure?",
+    "options": [
+      "Dùng API công khai",
+      "Azure OpenAI/Foundry với Private Endpoint",
+      "Email dữ liệu",
+      "Không thể"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tích hợp mạng riêng."
+  },
+  {
+    "id": "outbox-pattern-04",
+    "playbookId": "outbox-pattern",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai lý do dùng Transactional Outbox? (chọn 2)",
+    "options": [
+      "Tránh dual-write mất đồng bộ",
+      "Phát sự kiện cùng giao dịch DB",
+      "Bỏ qua idempotency",
+      "Thay thế message broker"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Ghi sự kiện cùng transaction."
+  },
+  {
+    "id": "circuit-breaker-03",
+    "playbookId": "circuit-breaker",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Trạng thái Half-Open dùng để?",
+    "options": [
+      "Chặn mọi request",
+      "Thử một vài request để kiểm tra dịch vụ đã hồi phục",
+      "Tăng timeout",
+      "Xoá cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thử có kiểm soát."
+  },
+  {
+    "id": "cap-consistency-models-05",
+    "playbookId": "cap-consistency-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Khi mạng phân vùng, hệ CP ưu tiên?",
+    "options": [
+      "Khả dụng",
+      "Nhất quán, có thể từ chối request",
+      "Độ trễ thấp",
+      "Throughput"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "CP hy sinh availability."
+  },
+  {
+    "id": "load-balancing-reverse-proxy-05",
+    "playbookId": "load-balancing-reverse-proxy",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai lợi ích của reverse proxy? (chọn 2)",
+    "options": [
+      "Kết thúc TLS",
+      "Cân bằng tải",
+      "Thay thế database",
+      "Tự sửa bug"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Terminate TLS và phân phối tải."
+  },
+  {
+    "id": "message-queues-streaming-basics-05",
+    "playbookId": "message-queues-streaming-basics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần replay sự kiện nhiều lần cho nhiều consumer?",
+    "options": [
+      "Queue xoá khi tiêu thụ",
+      "Log streaming như Kafka",
+      "Cache",
+      "Cookie"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Log giữ lại để replay."
+  },
+  {
+    "id": "consistent-hashing-05",
+    "playbookId": "consistent-hashing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lợi ích khi thêm node với consistent hashing?",
+    "options": [
+      "Phải dời toàn bộ key",
+      "Chỉ dời một phần nhỏ key",
+      "Không ảnh hưởng",
+      "Xoá dữ liệu"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tối thiểu hoá di chuyển."
+  },
+  {
+    "id": "db-replication-sharding-05",
+    "playbookId": "db-replication-sharding",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai vấn đề khi sharding? (chọn 2)",
+    "options": [
+      "Hot shard",
+      "Truy vấn và giao dịch chéo shard phức tạp",
+      "Không thể scale",
+      "Mất index"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Chọn shard key cẩn thận."
+  },
+  {
+    "id": "rate-limiting-algorithms-06",
+    "playbookId": "rate-limiting-algorithms",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cho phép burst ngắn nhưng giữ tốc độ trung bình?",
+    "options": [
+      "Fixed window",
+      "Token bucket",
+      "Không giới hạn",
+      "Leaky bucket nghiêm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Token bucket cho burst."
+  },
+  {
+    "id": "redis-cache-stampede-04",
+    "playbookId": "redis-cache-stampede",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai cách giảm cache stampede? (chọn 2)",
+    "options": [
+      "TTL ngẫu nhiên (jitter)",
+      "Khoá nạp một request",
+      "Xoá toàn bộ cache cùng lúc",
+      "Giảm TTL về 0"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Tránh hết hạn đồng loạt."
+  },
+  {
+    "id": "caching-strategies-05",
+    "playbookId": "caching-strategies",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Write-through khác cache-aside ở?",
+    "options": [
+      "Ghi cache và DB cùng lúc khi ghi",
+      "Không dùng cache",
+      "Chỉ đọc",
+      "Không cần TTL"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cache luôn mới nhưng ghi chậm hơn."
+  },
+  {
+    "id": "db-indexing-storage-engines-06",
+    "playbookId": "db-indexing-storage-engines",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Index composite (a,b) hỗ trợ truy vấn nào hiệu quả?",
+    "options": [
+      "Chỉ lọc b",
+      "Lọc a hoặc a và b",
+      "Không truy vấn nào",
+      "Chỉ ORDER BY b"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Quy tắc leftmost prefix."
+  },
+  {
+    "id": "db-transactions-isolation-06",
+    "playbookId": "db-transactions-isolation",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai hiện tượng nào có thể xảy ra ở Read Committed? (chọn 2)",
+    "options": [
+      "Non-repeatable read",
+      "Phantom read",
+      "Dirty read",
+      "Lost commit"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Read Committed chặn dirty read nhưng không chặn hai cái kia."
+  },
+  {
+    "id": "api-design-rest-05",
+    "playbookId": "api-design-rest",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về idempotent trong HTTP? (chọn 2)",
+    "options": [
+      "PUT idempotent",
+      "DELETE idempotent",
+      "POST luôn idempotent",
+      "GET thay đổi dữ liệu"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "PUT và DELETE idempotent."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-06",
+    "playbookId": "authn-authz-oauth-jwt",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai rủi ro khi dùng JWT? (chọn 2)",
+    "options": [
+      "Khó thu hồi trước hạn",
+      "Lộ nếu lưu sai chỗ",
+      "Không thể ký",
+      "Không có hạn"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Cần TTL ngắn và lưu an toàn."
+  },
+  {
+    "id": "idempotency-retries-06",
+    "playbookId": "idempotency-retries",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai thành phần retry an toàn? (chọn 2)",
+    "options": [
+      "Exponential backoff có jitter",
+      "Idempotency key",
+      "Retry vô hạn",
+      "Retry mọi lỗi 4xx"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Backoff và khoá idempotency."
+  },
+  {
+    "id": "backend-performance-profiling-06",
+    "playbookId": "backend-performance-profiling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tìm hàm tốn CPU nhất?",
+    "options": [
+      "Flame graph profiler",
+      "Đoán",
+      "Thêm RAM",
+      "Khởi động lại"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Profile thay vì đoán."
+  },
+  {
+    "id": "microservices-fundamentals-05",
+    "playbookId": "microservices-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai dấu hiệu microservices làm sai? (chọn 2)",
+    "options": [
+      "Distributed monolith",
+      "Chia sẻ một database giữa các service",
+      "Mỗi service sở hữu dữ liệu",
+      "Triển khai độc lập"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Ghép chặt qua DB chung."
+  },
+  {
+    "id": "event-driven-architecture-05",
+    "playbookId": "event-driven-architecture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Consumer nhận sự kiện lặp. Cần?",
+    "options": [
+      "Idempotent consumer",
+      "Bỏ qua",
+      "Tăng consumer",
+      "Xoá queue"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "At-least-once."
+  },
+  {
+    "id": "saga-pattern-05",
+    "playbookId": "saga-pattern",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai kiểu saga? (chọn 2)",
+    "options": [
+      "Choreography",
+      "Orchestration",
+      "Sharding",
+      "Replication"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Hai cách phối hợp."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-05",
+    "playbookId": "observability-tracing-metrics-logs",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Những thành phần nào là ba trụ cột của observability? (chọn 3)",
+    "options": [
+      "Metrics",
+      "Logs",
+      "Traces",
+      "Marketing"
+    ],
+    "answer": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Metrics, logs và traces bổ trợ nhau khi chẩn đoán."
+  },
+  {
+    "id": "raft-consensus-05",
+    "playbookId": "raft-consensus",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Raft cần đa số node để?",
+    "options": [
+      "Bầu leader và commit log",
+      "Tăng tốc đọc",
+      "Nén dữ liệu",
+      "Backup"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Quorum."
+  },
+  {
+    "id": "kubernetes-fundamentals-05",
+    "playbookId": "kubernetes-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về Pod? (chọn 2)",
+    "options": [
+      "Đơn vị triển khai nhỏ nhất",
+      "Container trong Pod chia sẻ mạng",
+      "Một Pod luôn một node cứng vĩnh viễn",
+      "Pod bền vững mãi"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Pod là đơn vị nhỏ nhất và chia sẻ network namespace."
+  },
+  {
+    "id": "service-mesh-api-gateway-05",
+    "playbookId": "service-mesh-api-gateway",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Mutual TLS giữa service thường do?",
+    "options": [
+      "Sidecar proxy của service mesh",
+      "Browser",
+      "CDN",
+      "DNS"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Mesh tự động mTLS."
+  },
+  {
+    "id": "cqrs-event-sourcing-05",
+    "playbookId": "cqrs-event-sourcing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Event sourcing lưu gì?",
+    "options": [
+      "Trạng thái hiện tại",
+      "Chuỗi sự kiện bất biến",
+      "Chỉ log lỗi",
+      "Cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Trạng thái suy ra từ sự kiện."
+  },
+  {
+    "id": "oltp-olap-data-modeling-05",
+    "playbookId": "oltp-olap-data-modeling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Báo cáo tổng hợp trên hàng tỷ dòng nên dùng?",
+    "options": [
+      "OLTP",
+      "OLAP columnar",
+      "Cache",
+      "Queue"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Columnar tối ưu quét tổng hợp."
+  },
+  {
+    "id": "batch-vs-stream-processing-05",
+    "playbookId": "batch-vs-stream-processing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phát hiện gian lận trong vài giây?",
+    "options": [
+      "Batch hằng đêm",
+      "Stream processing",
+      "Báo cáo tuần",
+      "Export CSV"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Độ trễ thấp."
+  },
+  {
+    "id": "kafka-fundamentals-05",
+    "playbookId": "kafka-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai điều nào đúng về Kafka? (chọn 2)",
+    "options": [
+      "Thứ tự đảm bảo trong một partition",
+      "Consumer group chia partition",
+      "Thứ tự toàn cục giữa partition",
+      "Xoá message khi đọc"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Partition là đơn vị thứ tự và song song."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-05",
+    "playbookId": "etl-elt-orchestration-airflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Task Airflow nên?",
+    "options": [
+      "Idempotent để chạy lại",
+      "Có tác dụng phụ duy nhất",
+      "Không retry",
+      "Lưu state cục bộ"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Chạy lại an toàn."
+  },
+  {
+    "id": "data-warehouse-lakehouse-05",
+    "playbookId": "data-warehouse-lakehouse",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lakehouse thêm gì cho data lake?",
+    "options": [
+      "Giao dịch ACID và schema trên file mở",
+      "Không gì",
+      "Chỉ rẻ hơn",
+      "Xoá lake"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Delta/Iceberg/Hudi."
+  },
+  {
+    "id": "stream-processing-flink-06",
+    "playbookId": "stream-processing-flink",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai khái niệm quan trọng trong xử lý stream thời gian? (chọn 2)",
+    "options": [
+      "Event time",
+      "Watermark",
+      "Bubble sort",
+      "Cache aside"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Xử lý dữ liệu đến trễ."
+  },
+  {
+    "id": "change-data-capture-05",
+    "playbookId": "change-data-capture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "CDC dựa trên log có lợi thế?",
+    "options": [
+      "Ít tải lên nguồn và bắt được mọi thay đổi",
+      "Phải quét bảng",
+      "Không đảm bảo thứ tự",
+      "Chỉ insert"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Đọc transaction log."
+  },
+  {
+    "id": "data-quality-governance-05",
+    "playbookId": "data-quality-governance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai biện pháp chất lượng dữ liệu? (chọn 2)",
+    "options": [
+      "Kiểm tra schema và giá trị tại ingest",
+      "Data lineage",
+      "Bỏ qua lỗi",
+      "Xoá log"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Phát hiện sớm và truy vết."
   }
 ]
