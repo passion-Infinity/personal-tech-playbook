@@ -783,5 +783,90 @@
     "id": "crypto-shredding",
     "meaning": "Deleting personal data when events are immutable",
     "definition": "Encrypt personal data and delete the key to make the data unreadable."
+  },
+  {
+    "id": "iam-policy-evaluation",
+    "meaning": "How AWS decides Allow/Deny when there are many policies",
+    "definition": "Implicit deny by default; an explicit Deny in any policy (identity, resource, SCP, boundary) always beats every Allow."
+  },
+  {
+    "id": "least-privilege",
+    "meaning": "Grant only the minimum permissions needed to work",
+    "definition": "Start from the smallest permissions and expand as needed; use IAM Access Analyzer to generate policies from actual activity."
+  },
+  {
+    "id": "aws-managed-vs-customer-managed-policy",
+    "meaning": "Policies managed by AWS versus self-written ones",
+    "definition": "AWS managed policies are created and updated by AWS, convenient but often broad; customer managed policies are written by you, reusable and versioned."
+  },
+  {
+    "id": "iam-role-sts",
+    "meaning": "A temporary identity that issues short-lived credentials",
+    "definition": "A role is assumed through STS to obtain temporary credentials for EC2, Lambda, cross-account access and federation, replacing long-term access keys."
+  },
+  {
+    "id": "iam-identity-center",
+    "meaning": "Sign in to AWS with an IdP such as Google or a corporate AD",
+    "definition": "Connects an IdP through SAML 2.0/OIDC so users get SSO into many accounts without separate IAM users."
+  },
+  {
+    "id": "root-user-mfa",
+    "meaning": "Enable multi-factor authentication for the root account",
+    "definition": "Root has full access and is not restricted by IAM policies: enable MFA, delete access keys and use it only for mandatory tasks."
+  },
+  {
+    "id": "s3-bucket-policy",
+    "meaning": "A resource-based policy for the whole bucket",
+    "definition": "A JSON policy attached to the bucket to allow/deny by principal, IP, VPC endpoint, HTTPS or encryption header."
+  },
+  {
+    "id": "s3-object-ownership-acl",
+    "meaning": "The mechanism that disables ACLs so the bucket owner owns every object",
+    "definition": "New buckets default to Bucket owner enforced: ACLs are disabled and permissions are managed only through policies; ACLs are the legacy bucket/object-level mechanism."
+  },
+  {
+    "id": "s3-block-public-access",
+    "meaning": "A breaker that blocks any configuration that makes a bucket public",
+    "definition": "On by default for new buckets, it overrides any bucket policy/ACL that grants public access; it can also be set at the account level."
+  },
+  {
+    "id": "s3-server-side-encryption",
+    "meaning": "S3's three kinds of server-side encryption",
+    "definition": "SSE-S3 has S3 manage the key (the default); SSE-KMS uses a KMS key with auditing and permissions; SSE-C has the customer send the key with every request."
+  },
+  {
+    "id": "aws-securetransport",
+    "meaning": "A policy condition that enforces HTTPS",
+    "definition": "A bucket policy denies every request with aws:SecureTransport = false to guarantee encryption in transit."
+  },
+  {
+    "id": "kms-request-quota",
+    "meaning": "A limit on KMS requests per second per Region",
+    "definition": "SSE-KMS calls KMS for every upload/download so it can be throttled; reduce it with S3 Bucket Key."
+  },
+  {
+    "id": "s3-versioning",
+    "meaning": "Keep every version of an object in a bucket",
+    "definition": "Three states Unversioned/Enabled/Suspended; once enabled it can only be Suspended, not fully disabled; every write creates a new versionId."
+  },
+  {
+    "id": "s3-delete-marker",
+    "meaning": "A \"soft delete\" marker in a versioned bucket",
+    "definition": "A DELETE without a versionId only inserts a delete marker; remove the marker to restore the object."
+  },
+  {
+    "id": "s3-mfa-delete",
+    "meaning": "Require MFA to permanently delete versions",
+    "definition": "Requires the root user's MFA to permanently delete object versions or change the versioning state."
+  },
+  {
+    "id": "s3-replication",
+    "meaning": "Asynchronously copy objects to another bucket",
+    "definition": "CRR/SRR require versioning on both buckets and an IAM role; only new objects are replicated after the rule is created."
+  },
+  {
+    "id": "s3-batch-replication",
+    "meaning": "Replicate objects that existed before the rule was created",
+    "definition": "Uses S3 Batch Operations to copy existing objects or objects that previously failed to replicate."
   }
 ]

@@ -143,5 +143,20 @@
     "id": "cqrs-event-sourcing",
     "title": "CQRS & Event Sourcing",
     "summary": "Separate the write model from the read model and store a sequence of events as the source of truth when it is really needed."
+  },
+  {
+    "id": "iam-fundamentals",
+    "title": "AWS IAM Fundamentals",
+    "summary": "Control who can do what on AWS resources with users, groups, roles and policies following the principle of least privilege."
+  },
+  {
+    "id": "s3-security-encryption",
+    "title": "S3 Security & Encryption",
+    "summary": "Lock down a bucket with Block Public Access, a Bucket Policy and encryption in transit and at rest using SSE-S3, SSE-KMS or SSE-C."
+  },
+  {
+    "id": "s3-versioning-replication",
+    "title": "S3 Versioning & Replication",
+    "summary": "Recover overwritten or accidentally deleted objects with Versioning and copy to another bucket/Region with Replication."
   }
 ]

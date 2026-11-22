@@ -1542,5 +1542,170 @@
       "Only with NoSQL"
     ],
     "explanation": "CQRS separates the read/write models; ES is a way to store state."
+  },
+  {
+    "id": "iam-fundamentals-01",
+    "question": "An application on EC2 needs to read S3 and the team is storing an IAM user's access key in a config file on the instance. The key has just leaked in a repo. What is the best way to grant permissions?",
+    "options": [
+      "Keep the access key in code but encode it with base64",
+      "Attach an IAM Role (instance profile) with minimum permissions to the EC2 instance",
+      "Use the root user's access key",
+      "Open the bucket publicly so the application can read it"
+    ],
+    "explanation": "A role issues temporary credentials that rotate automatically, so there is no long-term secret to leak. Base64 is only cosmetic encoding and the key still leaks; using a root key is the worst option because root is not limited by IAM."
+  },
+  {
+    "id": "iam-fundamentals-02",
+    "question": "The Dev group's policy has Allow s3:* on a bucket, but the OU's SCP has an explicit Deny on s3:DeleteObject. A developer calls DeleteObject. What is the result?",
+    "options": [
+      "Allowed because Allow s3:* is broader",
+      "Denied because an explicit Deny at any layer always wins",
+      "It depends on the order in which policies are evaluated",
+      "Denied only for root"
+    ],
+    "explanation": "An explicit Deny, even from an SCP, beats every Allow. The most tempting distractor is 'the broader Allow wins', but IAM does not compare breadth; it looks for a Deny first."
+  },
+  {
+    "id": "iam-fundamentals-03",
+    "question": "A company has 40 engineers, 5 AWS accounts and people often move between teams. Explain how to apply least privilege and how permissions should be designed.",
+    "modelAnswer": "Grant only the minimum permissions for exactly the right resources and the right time: policies with specific Resource and Condition, avoiding *, and using IAM Access Analyzer to narrow them according to real activity. For many people and many accounts, use IAM Identity Center connected to the company IdP with permission sets, and attach permissions through groups/roles rather than individual users so that someone changing teams is updated in one place. Enable MFA, do not use root, and have applications use roles instead of access keys.",
+    "keyPoints": [
+      "A specific Resource and Condition, avoid *",
+      "Access Analyzer generates policies from real activity",
+      "Identity Center + groups/roles instead of separate IAM users",
+      "MFA and no root usage"
+    ]
+  },
+  {
+    "id": "iam-fundamentals-04",
+    "question": "A new developer is added to a group whose policy allows ec2:StartInstances but still gets AccessDenied right after the admin attached the policy. What is the most reasonable cause and fix?",
+    "options": [
+      "The policy has a syntax error so the user must be deleted and recreated",
+      "IAM is eventually consistent, a change takes a few seconds to take effect, so wait and retry",
+      "A group cannot have a policy attached",
+      "The instance must be restarted"
+    ],
+    "explanation": "IAM permissions replicate globally so there is a short delay. 'Delete and recreate the user' is a wrong reflex because it loses history and solves nothing."
+  },
+  {
+    "id": "iam-fundamentals-05",
+    "question": "Which two statements about how IAM evaluates permissions are correct? (choose 2)",
+    "options": [
+      "By default every request is denied if there is no Allow",
+      "An explicit Deny beats every Allow at any layer",
+      "An Allow in one policy always beats a Deny in another",
+      "The root user is not limited by anything in every case"
+    ],
+    "explanation": "Implicit deny is the default and an explicit Deny always wins. 'Root is not limited by anything' is easy to confuse, but root is still limited by Organizations SCPs in member accounts."
+  },
+  {
+    "id": "s3-security-encryption-01",
+    "question": "The compliance team requires proof of who decrypted data in a bucket and the ability to block a group from viewing objects by locking down key permissions. Which encryption type do you choose?",
+    "options": [
+      "SSE-S3",
+      "SSE-KMS",
+      "No encryption",
+      "SSE-C"
+    ],
+    "explanation": "SSE-KMS records key usage through CloudTrail and allows per-key permissions. SSE-S3 is easy to confuse because it also encrypts, but S3 manages the key itself so there is no audit or per-key permission."
+  },
+  {
+    "id": "s3-security-encryption-02",
+    "question": "An admin creates a new bucket and configures nothing. What is the most accurate default access state?",
+    "options": [
+      "Public and readable",
+      "Private, Block Public Access on, ACLs disabled",
+      "Public read-only",
+      "It depends on the Region"
+    ],
+    "explanation": "A new bucket is private by default with Block Public Access and Bucket owner enforced. 'It depends on the Region' is wrong because this behavior is consistent worldwide."
+  },
+  {
+    "id": "s3-security-encryption-03",
+    "question": "An application uploading/downloading S3 at high speed with SSE-KMS starts receiving 503 SlowDown errors. Compare SSE-S3, SSE-KMS and SSE-C and explain the cause and the fix.",
+    "modelAnswer": "SSE-S3 has S3 manage the key; it is the default, free and has no per-key audit. SSE-KMS uses a key in KMS with CloudTrail auditing, permissions and rotation, but every request calls KMS so it is subject to quotas and cost, and high traffic is easily throttled. SSE-C makes the customer send the key with every request; S3 does not store the key, so losing the key means losing the data. For the 503 errors, enable S3 Bucket Key to reduce KMS calls, raise the quota, or use SSE-S3 if auditing is not needed.",
+    "keyPoints": [
+      "SSE-S3: the default, no per-key audit",
+      "SSE-KMS: audit and permissions, but quota and cost",
+      "SSE-C: S3 does not store the key, losing it loses the data",
+      "Reduce throttling with S3 Bucket Key"
+    ]
+  },
+  {
+    "id": "s3-security-encryption-04",
+    "question": "A company requires every object to be encrypted with a company-managed KMS key, even when another team misconfigures an upload. What is the most reasonable approach?",
+    "options": [
+      "Only enable Block Public Access",
+      "Set SSE-KMS default encryption and a bucket policy that rejects PUTs not using aws:kms",
+      "Use ACLs",
+      "Enable versioning"
+    ],
+    "explanation": "Default encryption handles the default, and a deny bucket policy enforces the right key when an upload is wrong. Block Public Access is tempting but only prevents public access and is unrelated to encryption."
+  },
+  {
+    "id": "s3-security-encryption-05",
+    "question": "You need to let a partner upload a file within 15 minutes without creating an IAM user. What do you choose and whose permissions does it use?",
+    "options": [
+      "Open the bucket publicly",
+      "A presigned URL that expires after 15 minutes, carrying the signer's permissions",
+      "Share an access key",
+      "Enable CRR"
+    ],
+    "explanation": "A presigned URL carries the signer's permissions and has an expiry. Sharing an access key is tempting as convenient but grants long-term access that is hard to revoke cleanly."
+  },
+  {
+    "id": "s3-versioning-replication-01",
+    "question": "A team enables S3 Replication today but 2 million old objects do not appear in the destination bucket. What is the right solution?",
+    "options": [
+      "Turn versioning off and on again",
+      "Use S3 Batch Replication for the existing objects",
+      "Delete the bucket and recreate it",
+      "Change the destination Region"
+    ],
+    "explanation": "A replication rule only applies to new objects after it is created. Turning versioning off is wrong because replication requires versioning and Suspend does not help copy old objects."
+  },
+  {
+    "id": "s3-versioning-replication-02",
+    "question": "A bucket has versioning on, a user deletes an object without specifying a versionId and then reports 'the file is gone'. What really happens and how do you recover?",
+    "options": [
+      "All versions are permanently deleted",
+      "A delete marker is inserted, older versions remain, remove the marker to recover",
+      "It errors and does not delete",
+      "Versioning turns itself off"
+    ],
+    "explanation": "A DELETE without a versionId only creates a delete marker. 'All versions permanently deleted' is easily confused with the behavior of a bucket without versioning."
+  },
+  {
+    "id": "s3-versioning-replication-03",
+    "question": "A developer overwrites a config file with a bad version and a few seconds later the error has appeared in the CRR bucket. Why is replication not a replacement for backup and what must be combined with it?",
+    "modelAnswer": "Replication copies both overwrites and accidental deletions asynchronously to the replica, so mistakes are replicated too. You need versioning to recover earlier versions, Object Lock for immutable data and point-in-time backups. A delete with a versionId is not replicated, but an overwrite that creates a new version is still replicated.",
+    "keyPoints": [
+      "Replication copies mistakes too",
+      "Versioning to restore old versions",
+      "Object Lock or point-in-time backup",
+      "Deletes with a versionId are not replicated"
+    ]
+  },
+  {
+    "id": "s3-versioning-replication-04",
+    "question": "The S3 bill keeps rising although the displayed object count is unchanged; the bucket has versioning on and objects are overwritten daily. What is the cause and the fix?",
+    "options": [
+      "Request charges are rising",
+      "Every old version takes space, use a Lifecycle rule to expire noncurrent versions",
+      "Replication is broken",
+      "The bucket is Suspended"
+    ],
+    "explanation": "Every overwrite keeps a version and is billed for storage. Suspend does not solve it because old versions are still kept and still billed."
+  },
+  {
+    "id": "s3-versioning-replication-05",
+    "question": "Which two requirements are mandatory to enable S3 Replication? (choose 2)",
+    "options": [
+      "Versioning enabled on both source and destination",
+      "The destination bucket must be in the same Region",
+      "An IAM role for S3 to perform the replication",
+      "The bucket must be public"
+    ],
+    "explanation": "You need versioning on both sides and an IAM role. The destination can be in a different Region (CRR) or the same Region (SRR), so 'same Region' is wrong although it is easy to assume it is a condition."
   }
 ]
