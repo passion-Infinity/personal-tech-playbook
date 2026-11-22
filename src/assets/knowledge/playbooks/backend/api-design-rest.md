@@ -1,51 +1,83 @@
 ## 1. Core Concept
 
-**API** là hợp đồng giữa các hệ thống; thiết kế tốt nghĩa là **dễ dùng đúng, khó dùng sai, và tiến hoá được mà không phá client**. **REST** mô hình hoá thế giới thành **resource** được thao tác qua ngữ nghĩa chuẩn của HTTP. Mental model: *API công khai là "lời hứa" — sau khi có client dùng, bạn không còn tự do đổi nó.*
+**REST API** là cách thiết kế API HTTP xoay quanh **tài nguyên (resource)** được định danh bằng URL và thao tác bằng **động từ HTTP** có ngữ nghĩa chuẩn. API tốt là **hợp đồng (contract)** giữa bên cung cấp và nhiều client bạn **không kiểm soát được**: mọi thay đổi **phá vỡ tương thích** (đổi tên trường, đổi kiểu) đều làm hỏng ai đó. Vì vậy thiết kế API là bài toán **nhất quán, tương thích ngược và dễ dùng đúng**.
+
+**Mental model:** API như **menu nhà hàng in sẵn**: khách (client) gọi món theo tên cố định; bạn có thể **thêm món mới** thoải mái, nhưng **đổi tên hay bỏ món** làm khách gọi sai. Mã lỗi là **cách bếp báo "hết món"** — phải rõ ràng và nhất quán để khách biết xử lý.
 
 ## 2. How It Works
 
-- **Resource & URL**: danh từ số nhiều (`/orders`, `/orders/42/items`), không để động từ trong URL.
-- **Ngữ nghĩa method**: `GET` (an toàn, idempotent), `PUT` (thay thế, idempotent), `DELETE` (idempotent), `POST` (tạo/hành động, **không** idempotent), `PATCH` (sửa một phần).
-- **Status code**: `200/201/204` thành công; `400` yêu cầu sai; `401` chưa xác thực; `403` không đủ quyền; `404` không có; `409` xung đột trạng thái; `422` dữ liệu không hợp lệ; `429` vượt giới hạn; `5xx` lỗi server.
-- **Pagination**: **offset** (`?page=3`) đơn giản nhưng chậm và lệch khi dữ liệu thay đổi; **cursor/keyset** (`?after=<token>`) ổn định và nhanh với bảng lớn.
-- **Versioning**: URL (`/v2/...`) hoặc header; ưu tiên **thay đổi tương thích ngược** (thêm field, không xoá/đổi nghĩa).
-- **Lỗi nhất quán**: cấu trúc chuẩn (ví dụ **Problem Details, RFC 9457**) có `type`, `title`, `detail`, mã lỗi máy đọc được.
-- **Đồng thời**: `ETag` + `If-Match` cho optimistic concurrency; **`Idempotency-Key`** cho `POST` quan trọng; header giới hạn tốc độ (`Retry-After`).
-- **REST vs gRPC vs GraphQL**: REST dễ cache/dễ dùng công khai; **gRPC** (HTTP/2 + Protobuf) nhanh, hợp service-to-service; **GraphQL** linh hoạt truy vấn cho client đa dạng nhưng khó cache và kiểm soát chi phí.
+**Tài nguyên và động từ**
+- URL là **danh từ số nhiều** (`/orders`, `/orders/42/items`), động từ nằm ở **method**: `GET` (đọc, **an toàn + idempotent**), `POST` (tạo, **không idempotent**), `PUT` (thay thế toàn bộ, idempotent), `PATCH` (sửa một phần), `DELETE` (idempotent). Mã trạng thái: `201 Created` + `Location`, `204 No Content`, `400/422` (dữ liệu sai), `401/403`, `404`, `409` (xung đột), `429`, `5xx`.
+
+**Phân trang → Cursor so với offset**
+- **Offset** (`?page=5000&limit=20`): DB phải **đọc rồi bỏ** 100.000 hàng (chậm dần) và **kết quả trôi** nếu dữ liệu thay đổi giữa các trang. **Cursor/keyset** (`?after=<token>`): dùng điều kiện trên khoá sắp xếp (`WHERE (created_at, id) < (...)`) → **chi phí gần như hằng số và ổn định**; không nhảy tới trang bất kỳ.
+
+**Versioning và tương thích ngược**
+- Cách: **URL** (`/v1/`), **header**, hoặc content negotiation. **Thay đổi tương thích**: thêm trường/endpoint mới (client phải **bỏ qua trường lạ**). **Phá vỡ**: xoá/đổi tên/đổi kiểu trường, biến trường tuỳ chọn thành bắt buộc, đổi ngữ nghĩa. Khi phải phá vỡ: **phiên bản mới + lộ trình deprecate** (header `Deprecation`/`Sunset`).
+
+**Lỗi chuẩn hoá → Problem Details (RFC 9457)**
+- Trả `application/problem+json` với `type`, `title`, `status`, `detail`, `instance` (và trường mở rộng) để client **xử lý máy đọc được** thay vì parse chuỗi.
+
+**Idempotency và đồng thời**
+- `POST` quan trọng (thanh toán) nhận **`Idempotency-Key`**; cập nhật dùng **`ETag` + `If-Match`** (412 nếu đã đổi) để chống ghi đè mất cập nhật. Việc dài: **`202 Accepted`** + `Location` để polling.
+
+**REST vs gRPC vs GraphQL**
+- **REST**: đơn giản, cache HTTP, hợp API công khai. **gRPC**: Protobuf nhị phân trên HTTP/2, **streaming**, hợp **service nội bộ** hiệu năng cao. **GraphQL**: client **chọn trường** (giảm over/under-fetch), nhưng cần kiểm soát **độ phức tạp truy vấn, N+1** và cache khó hơn.
+
+**OpenAPI**
+- Mô tả API dạng chuẩn → **tài liệu, sinh client/server, validation, kiểm thử hợp đồng** và **phát hiện thay đổi phá vỡ trong CI**.
 
 ```http
-POST /v1/payments
-Idempotency-Key: 7f3c-91ab
-Content-Type: application/json
+GET /v1/orders?limit=20&after=eyJjIjoiMjAyNi0xMS0yMSJ9 HTTP/1.1
 
-{ "orderId": "o-42", "amount": 120000, "currency": "VND" }
+HTTP/1.1 422 Unprocessable Content
+Content-Type: application/problem+json
+{"type":"https://api.example.com/errors/invalid-quantity","title":"Số lượng không hợp lệ",
+ "status":422,"detail":"quantity phải >= 1","instance":"/v1/orders/42"}
 ```
 
 ## 3. Visual Diagram
 
-_No diagram needed._
+```mermaid
+flowchart TD
+    C[Client] -->|"GET /v1/orders?after=cursor"| API["API: validate, authorize"]
+    API --> P{"Pagination?"}
+    P -->|"offset lớn: chậm, trôi"| X["Tránh"]
+    P -->|"cursor/keyset: ổn định"| DB[("DB: WHERE sort_key < cursor")]
+    API -->|"lỗi"| PD["application/problem+json"]
+    API -->|"thay đổi phá vỡ"| V["Phiên bản mới /v2 + deprecate v1"]
+```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- API công khai/đối tác → **REST + OpenAPI**; nội bộ hiệu năng cao → **gRPC**; nhiều loại client cần hình dạng dữ liệu khác nhau → cân nhắc **GraphQL/BFF**.
-- **Luôn phân trang** mọi danh sách và đặt giới hạn tối đa kích thước trang.
-- Trả về **vừa đủ**: tránh endpoint "chatty" (client gọi 20 lần) lẫn endpoint "god" trả mọi thứ.
-- Trade-off: linh hoạt của client vs. khả năng cache/kiểm soát tải của server.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Danh sách lớn, dữ liệu thay đổi | Cursor/keyset pagination |
+| Cần nhảy tới trang bất kỳ, dữ liệu nhỏ | Offset |
+| Thêm trường mới | Thay đổi tương thích, không cần version mới |
+| Đổi tên/xoá trường | Phiên bản mới + deprecate |
+| Thanh toán/tạo tài nguyên có hậu quả | `Idempotency-Key` |
+| Service nội bộ hiệu năng cao, streaming | gRPC |
+| Client cần chọn trường linh hoạt | GraphQL (kèm giới hạn độ phức tạp) |
+| Lỗi máy đọc được | Problem Details |
+
+- **Được gì:** API dễ dùng, tiến hoá không vỡ client. **Mất gì:** giữ tương thích ngược tốn công, nhiều phiên bản tăng chi phí bảo trì; cursor không nhảy tới trang tuỳ ý.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Breaking change** (xoá field, đổi kiểu, đổi nghĩa) làm vỡ client cũ; có chính sách deprecation và đo ai còn dùng bản cũ.
-- Trả **`200` kèm lỗi** trong body phá vỡ retry, monitoring và cache.
-- **Offset pagination** trên bảng lớn (`OFFSET 1000000`) rất chậm; dữ liệu chèn giữa chừng làm trùng/sót bản ghi.
-- Lộ **ID tuần tự** hoặc kiểm tra quyền chỉ ở tầng route gây **IDOR** — luôn kiểm tra quyền trên từng đối tượng.
-- `POST` không idempotent: client retry khi timeout sẽ **tạo trùng** nếu không có idempotency key.
-- Interview trap: "PUT khác POST thế nào?" → PUT **idempotent** và thay thế toàn bộ tại URL đã biết; POST tạo mới/hành động, có thể tạo trùng.
+- **API chậm dần ở trang sâu → offset lớn quét-bỏ nhiều hàng → keyset pagination**.
+- **Client cũ hỏng sau khi deploy → đổi tên/kiểu trường (thay đổi phá vỡ) → thêm trường mới, giữ cũ, deprecate có lộ trình, kiểm tra bằng OpenAPI diff trong CI**.
+- **Tạo đơn hai lần khi client retry → POST không idempotent → `Idempotency-Key` lưu kết quả**.
+- **Hai client sửa cùng tài nguyên ghi đè nhau → thiếu kiểm soát đồng thời → `ETag`/`If-Match` (412)**.
+- **Client không biết xử lý lỗi → trả chuỗi tự do và mã 200 cho lỗi → mã trạng thái đúng + Problem Details**.
+- **Chatty API (nhiều request để dựng một màn hình) → thiết kế quá chi tiết → endpoint tổng hợp hoặc GraphQL/BFF**.
+- Interview trap: "PUT vs POST?" → **PUT idempotent thay thế toàn bộ, POST tạo và không idempotent**; "offset vs cursor?" → **cursor ổn định và nhanh ở trang sâu**; "thêm trường có phá vỡ không?" → **không, xoá/đổi tên mới phá vỡ**.
 
 ## 6. Search Hooks
 
-- `REST API design best practices` — quy ước đặt tên, method, status code.
-- `cursor pagination vs offset pagination` — phân trang ổn định cho bảng lớn.
-- `API versioning backward compatibility` — tiến hoá API mà không phá client.
-- `Problem Details RFC 9457` — chuẩn mô tả lỗi cho HTTP API.
-- `REST vs gRPC vs GraphQL` — chọn kiểu API theo nhu cầu.
-- `OpenAPI specification` — mô tả hợp đồng API bằng tài liệu máy đọc được.
+- `REST API design best practices` — nguyên tắc thiết kế API REST.
+- `cursor vs offset pagination` — hai cách phân trang.
+- `API versioning backward compatibility` — tiến hoá API không phá client.
+- `Problem Details RFC 9457` — định dạng lỗi chuẩn.
+- `REST vs gRPC vs GraphQL` — chọn kiểu API.
+- `OpenAPI specification` — mô tả và kiểm thử hợp đồng API.

@@ -1,54 +1,89 @@
 ## 1. Core Concept
 
-Tối ưu hiệu năng là **quy trình khoa học**, không phải đoán mò: *đo → tìm điểm nghẽn → sửa đúng chỗ → đo lại*. Phần lớn "backend chậm" đến từ vài nguyên nhân lặp lại: truy vấn DB kém, kết nối/thread bị cạn, gọi mạng thừa, lock và GC. Mental model: *thời gian một request là tổng các lần chờ — bạn chỉ làm nhanh hơn được bằng cách gỡ phần chờ lớn nhất.*
+Tối ưu hiệu năng backend là **đo, tìm nút thắt, sửa đúng chỗ, đo lại** — không phải đoán. Đa số "chậm" đến từ **vài điểm nóng**: truy vấn DB (đặc biệt **N+1**), **connection pool** cạn, **thread pool bị bão hoà**, tranh chấp khoá hoặc một hàm tốn CPU. Công cụ tư duy: **RED/USE** để biết **chỗ nào bất thường**, **profiling/flame graph** để biết **hàm nào nóng**, **load test đúng cách** (tránh coordinated omission) để biết **giới hạn thật**.
+
+**Mental model:** hệ thống như **đường ống nước**: lưu lượng bị **đoạn hẹp nhất** quyết định, mở rộng các đoạn khác không giúp gì. Profiling là **đo áp suất ở từng đoạn** để tìm chỗ hẹp, thay vì đập cả đường ống.
 
 ## 2. How It Works
 
-- **Chỉ số đúng**: dùng **percentile (p50/p95/p99)** và histogram, không dùng trung bình. Đo cả **throughput** và **error rate**.
-- **Hai khung kiểm tra nhanh**: **RED** cho service (**R**ate, **E**rrors, **D**uration) và **USE** cho tài nguyên (**U**tilization, **S**aturation, **E**rrors) — saturation (hàng đợi, thread chờ) thường là dấu hiệu sớm nhất.
-- **Profiling**: **CPU profiler/flame graph** cho thấy hàm nào tốn CPU; **tracing** cho thấy thời gian nằm ở dependency nào; **EXPLAIN ANALYZE** cho truy vấn chậm; **heap/GC log** cho áp lực bộ nhớ.
-- **Điểm nghẽn thường gặp**:
-  - **N+1 query**, thiếu index, `SELECT *`, `OFFSET` lớn.
-  - **Connection pool cạn** (request chờ lấy kết nối): pool quá nhỏ hoặc truy vấn giữ kết nối quá lâu; pool quá lớn lại làm DB quá tải.
-  - **Thread pool starvation**: thread bị chặn bởi I/O chậm, hàng đợi dài.
-  - **Chatty calls** (gọi nhiều lần nhỏ qua mạng), serialization/JSON lớn.
-  - **Lock contention**, **GC pause**, log đồng bộ.
-- **Load testing** (k6, wrk, Gatling) với dữ liệu và mẫu truy cập **giống thật**, tăng dần tải để tìm điểm gãy; chạy ở môi trường gần production.
-- **Đòn bẩy sửa**: index/viết lại truy vấn, **batching**, **cache**, bất đồng bộ hoá việc không cần chờ, giảm payload, tái dùng kết nối.
+**RED và USE → Biết nhìn vào đâu**
+- **RED** (cho **dịch vụ/endpoint**): **R**ate (request/giây), **E**rrors (tỷ lệ lỗi), **D**uration (độ trễ, theo **percentile**). **USE** (cho **tài nguyên**): **U**tilization, **S**aturation, **E**rrors. Luôn xem **p95/p99**, không chỉ trung bình (bài Scalability).
+
+**Profiling → Tìm hàm nóng**
+- **CPU profiler** lấy mẫu stack định kỳ; **flame graph** hiển thị: **chiều rộng = tỷ lệ thời gian**, tìm **các "cao nguyên" rộng**. Phân biệt **CPU profile** (thời gian trên CPU) với **wall-clock/off-CPU** (thời gian chờ I/O, khoá — quan trọng khi CPU rảnh mà chậm). Có **allocation profile** (cấp phát bộ nhớ/GC) và **continuous profiling** ở production (overhead thấp).
+
+**Connection pool sizing**
+- Pool quá nhỏ → request **xếp hàng chờ kết nối**; quá lớn → **quá tải DB** (`max_connections`, context switch). Công thức tham khảo (HikariCP): **`((số core DB × 2) + số đĩa hiệu dụng)`**, thường chỉ **~10–30 kết nối** là đủ; hoặc Little's Law: **`pool ≈ TPS × thời gian giữ kết nối trung bình`** (500 TPS × 20 ms = ~10). Nhiều app instance → tổng kết nối = instance × pool → dùng **PgBouncer**.
+
+**N+1 query**
+- Một truy vấn lấy danh sách + **N truy vấn** cho từng phần tử (thường do ORM lazy loading). 100 đơn → **101 truy vấn**, mỗi cái thêm ~1 ms RTT. Sửa: **JOIN/prefetch/IN**, đếm số query mỗi request trong test.
+
+**Thread pool starvation**
+- Pool nhỏ chứa các task **chặn** (gọi HTTP/DB đồng bộ) hoặc **task chờ task khác trong cùng pool** → hết thread, **deadlock logic** hoặc độ trễ vọt lên dù CPU rảnh. Cách: **pool riêng cho I/O chặn**, timeout, async, giới hạn đồng thời (bulkhead).
+
+**Coordinated omission → Load test nói dối**
+- Công cụ gửi request **kế tiếp chỉ sau khi nhận phản hồi trước** sẽ **tự giảm tải** đúng lúc hệ thống chậm → **p99 thấp giả tạo**. Dùng **mô hình tốc độ đến cố định (open model)**: `wrk2`, k6 `constant-arrival-rate`, và tính độ trễ từ **thời điểm đáng lẽ gửi**. Ngoài ra: ramp-up, giai đoạn ổn định, **soak test** để thấy rò rỉ.
+
+**Quy trình tối ưu**
+- **Đo (baseline) → tìm bottleneck → sửa một thứ → đo lại**; truy vấn chậm xem `pg_stat_statements`/slow log; nhớ **Amdahl**: tối ưu phần chiếm 5% thời gian tối đa chỉ tăng 5%.
+
+```python
+# Sai: rò rỉ kết nối khi return sớm (chỉ sập sau vài giờ khi pool cạn)
+def get_user(uid):
+    conn = pool.acquire()
+    row = conn.fetch(uid)
+    if not row: return None          # quên release!
+    pool.release(conn); return row
+
+# Đúng: luôn trả kết nối
+def get_user(uid):
+    with pool.connection() as conn:
+        return conn.fetch(uid)
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart TD
-    S[Slow endpoint] --> M[Measure: p99, RED/USE]
-    M --> T[Trace: where is the time?]
-    T --> DB[DB query: EXPLAIN]
-    T --> NET[Downstream calls: batch / cache]
-    T --> CPU[CPU: flame graph]
-    T --> WAIT["Waiting: pools, locks, GC"]
-    DB --> F[Fix one thing, re-measure]
+    A["Chậm / lỗi"] --> R{"RED: endpoint nào lệch?"}
+    R --> U{"USE: tài nguyên nào bão hoà?"}
+    U -->|"CPU"| FG["CPU profile + flame graph"]
+    U -->|"Chờ I/O hoặc khoá"| OFF["Off-CPU / wall-clock profile"]
+    U -->|"DB"| Q["Slow query, N+1, pool"]
+    FG --> FIX["Sửa một thứ → đo lại"]
+    OFF --> FIX
+    Q --> FIX
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- **Đừng tối ưu trước khi đo**; sửa điểm nghẽn lớn nhất theo **Amdahl's law**, tối ưu phần chiếm 5% thời gian không đáng.
-- Đặt **timeout** cho mọi lời gọi ngoài và **giới hạn** hàng đợi để tránh sập dây chuyền.
-- Kích thước connection pool: bắt đầu nhỏ (số core DB × 2 trở lại là điểm khởi đầu thường dùng), **đo** rồi chỉnh — nhiều kết nối hơn không có nghĩa nhanh hơn.
-- Trade-off: **hiệu năng vs. độ phức tạp/độ đúng** (cache, async làm code khó hơn); đừng đánh đổi tính đúng để lấy vài mili-giây.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Biết endpoint nào bất thường | RED (Rate, Errors, Duration) |
+| Biết tài nguyên nào bão hoà | USE |
+| Tìm hàm tốn CPU | CPU profile + flame graph |
+| CPU rảnh mà vẫn chậm | Off-CPU/wall-clock profile, xem khoá/I/O |
+| Truy vấn lặp theo phần tử | Sửa N+1 (JOIN/prefetch) |
+| Tính cỡ pool | Công thức Hikari / Little's Law, nhỏ vẫn tốt |
+| Load test đáng tin | Open model, arrival rate cố định |
+
+- **Được gì:** sửa đúng chỗ, hiệu quả lớn với ít thay đổi. **Mất gì:** profiling thêm overhead nhỏ, cần môi trường giống production; tối ưu quá sớm làm code khó đọc.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Trung bình che giấu đuôi**: p99 mới phản ánh người dùng chậm nhất.
-- **Coordinated omission**: công cụ load test đợi phản hồi rồi mới gửi tiếp làm **độ trễ đuôi bị đánh giá thấp**.
-- Benchmark trên **dữ liệu nhỏ/DB rỗng** không phản ánh production (index, cache, kế hoạch truy vấn khác).
-- Cache che vấn đề thay vì sửa gốc; **cache lạnh** sau deploy vẫn làm sập hệ thống.
-- Interview trap: "API chậm, bạn làm gì đầu tiên?" → **đo/trace để xác định thời gian nằm ở đâu**, không phải thêm cache hay scale.
+- **Endpoint chạy tốt khi test nhưng sập sau vài giờ → rò rỉ kết nối (return sớm không release) → try/finally hoặc context manager, giám sát pool**.
+- **Độ trễ cao dù CPU rảnh → thread pool starvation hoặc chờ khoá/I/O → pool riêng cho I/O chặn, timeout, off-CPU profile**.
+- **Số truy vấn mỗi request tăng theo dữ liệu → N+1 → JOIN/prefetch, test đếm query**.
+- **Tăng pool lên 500 mà DB càng chậm → quá tải DB → giảm pool, dùng PgBouncer, đo thông lượng**.
+- **Load test báo p99 đẹp nhưng production tệ → coordinated omission → open model (wrk2/k6 arrival-rate)**.
+- **Tối ưu theo cảm tính không đo → sửa sai chỗ → profile trước, đo trước/sau**.
+- Interview trap: "RED và USE khác gì?" → **RED cho dịch vụ (Rate/Errors/Duration), USE cho tài nguyên (Utilization/Saturation/Errors)**; "pool càng lớn càng tốt?" → **không, quá lớn làm DB quá tải**; "flame graph đọc thế nào?" → **chiều rộng là tỷ lệ thời gian, tìm cao nguyên rộng**.
 
 ## 6. Search Hooks
 
-- `RED method USE method` — hai khung kiểm tra hiệu năng nhanh.
-- `flame graphs CPU profiling` — trực quan hoá hàm tốn CPU.
-- `connection pool sizing HikariCP` — cách chọn kích thước pool.
-- `N+1 query problem` — một truy vấn cho danh sách rồi thêm truy vấn mỗi phần tử.
-- `coordinated omission load testing` — sai lệch đo độ trễ khi load test.
-- `thread pool starvation` — thread bị chặn làm hàng đợi dài ra.
+- `RED method USE method` — hai khung quan sát hệ thống.
+- `flame graphs CPU profiling` — tìm hàm nóng bằng flame graph.
+- `connection pool sizing HikariCP` — chọn cỡ pool kết nối.
+- `N+1 query problem` — truy vấn lặp theo phần tử.
+- `coordinated omission load testing` — vì sao load test báo độ trễ thấp giả.
+- `thread pool starvation` — pool bị bão hoà bởi task chặn.

@@ -1,21 +1,42 @@
 ## 1. Core Concept
 
-Mạng và service có thể lỗi bất cứ lúc nào, nên client **phải retry**; nhưng retry thao tác có tác dụng phụ (trừ tiền, tạo đơn) sẽ làm **chạy hai lần**. **Idempotency** là tính chất "làm một lần hay nhiều lần cho cùng kết quả", biến retry từ nguy hiểm thành an toàn. Mental model: *không thể biết request "mất" hay "response mất" — cách duy nhất để retry an toàn là làm cho thao tác **lặp lại được**.*
+Trên mạng, **không thể phân biệt "yêu cầu thất bại" với "yêu cầu thành công nhưng phản hồi bị mất"** — một **timeout không có nghĩa là thất bại**. Vì vậy hệ thống phân tán **phải retry**, và khi retry thì thao tác phải **idempotent**: thực hiện lại **không gây thêm tác dụng**. Không có idempotency, retry biến sự cố tạm thời thành **trừ tiền hai lần, tạo đơn trùng**; không có backoff, retry biến sự cố nhỏ thành **retry storm** sập cả hệ thống.
+
+**Mental model:** như **bấm nút thang máy**: bấm thêm vài lần cũng chỉ gọi **một** thang (idempotent) — an toàn khi bạn không chắc đã bấm chưa. Trái lại, **nút "mua ngay" không idempotent**: bấm hai lần mua hai món. Retry an toàn chỉ khi hành động giống nút thang máy.
 
 ## 2. How It Works
 
-- **Ngữ nghĩa giao nhận**: **at-most-once** (có thể mất), **at-least-once** (có thể trùng), **exactly-once** (thực tế = at-least-once + **xử lý idempotent**).
-- **Idempotency tự nhiên**: `PUT`/`DELETE`, **upsert**, "set trạng thái = X" thay vì "cộng thêm 1".
-- **Idempotency key**: client sinh khoá duy nhất (UUID) cho mỗi **ý định** và gửi kèm mọi lần retry; server lưu `key → kết quả` với **ràng buộc UNIQUE** và trả lại kết quả cũ nếu thấy key đã xử lý.
-- **Retry đúng cách**: chỉ retry **lỗi tạm thời** (timeout, `503`, `429`), không retry `4xx` logic; dùng **exponential backoff + jitter** (`delay = random(0, base × 2^attempt)`), có **giới hạn số lần** và **deadline** tổng.
-- **Timeout** ở mọi lời gọi; kết hợp **circuit breaker** để dừng retry khi dependency đã chết.
-- **Dedup ở consumer**: lưu `messageId` đã xử lý (cùng transaction với tác dụng phụ) hoặc dùng upsert theo business key.
+**Idempotent là gì**
+- Làm một lần hay nhiều lần **cho cùng kết quả**. HTTP: `GET`, `PUT`, `DELETE` **idempotent**; **`POST` không**. Ví dụ `balance = balance + 50` **không** idempotent, còn `set status = 'PAID'` thì có.
+
+**Idempotency key pattern**
+- Client sinh **UUID** cho mỗi ý định (header **`Idempotency-Key`**) và gửi lại **cùng key** khi retry. Server **chèn key vào bảng có ràng buộc UNIQUE trước khi xử lý** (nguyên tử), lưu **kết quả** theo key (thường ~24 giờ): lần retry trả **kết quả đã lưu** thay vì xử lý lại; request song song cùng key nhận `409`/chờ; **cùng key khác payload** → `422`. (Ví dụ cách Stripe làm.)
 
 ```sql
--- Đảm bảo một key chỉ được xử lý một lần, kể cả khi hai request đến đồng thời
-INSERT INTO idempotency_keys (key, request_hash, status)
-VALUES (:key, :hash, 'IN_PROGRESS')
-ON CONFLICT (key) DO NOTHING;   -- 0 hàng chèn được => key đã tồn tại, trả kết quả đã lưu
+INSERT INTO idempotency (key, request_hash, status) VALUES ($1, $2, 'IN_PROGRESS')
+ON CONFLICT (key) DO NOTHING;      -- 0 hàng → đã có: trả kết quả cũ / báo đang xử lý
+```
+
+**Chỉ retry lỗi tạm thời**
+- **Nên**: timeout, mất kết nối, `429`, `503`, `502/504`. **Không nên**: `4xx` lỗi do client (`400`, `401`, `403`, `404`, `422`) vì retry không thay đổi kết quả. Đặt **số lần tối đa** và **tổng deadline**.
+
+**Exponential backoff với jitter**
+- Chờ lâu dần: `sleep = random(0, min(cap, base × 2ⁿ))` (**full jitter**). **Jitter** (ngẫu nhiên) rải thời điểm thử lại để **không đồng loạt**; không có jitter, hàng nghìn client retry **cùng lúc** → **retry storm / thundering herd**.
+
+**Retry amplification**
+- Retry ở **nhiều tầng nhân lên**: 3 tầng × 3 lần thử = **27 lời gọi** xuống dependency đang yếu. Cách giảm: **retry ở một tầng**, **retry budget** (giới hạn tỉ lệ retry), kết hợp **circuit breaker** và **timeout**.
+
+**At-least-once vs exactly-once**
+- Messaging thực tế là **at-least-once** (có thể trùng). **"Exactly-once" ở biên hệ thống = at-least-once + xử lý idempotent**: **idempotent consumer** (bảng `processed_message_id`, upsert theo business key, ràng buộc UNIQUE) và **message deduplication** (ví dụ SQS FIFO khử trùng trong 5 phút).
+
+```python
+def retry(fn, attempts=5, base=0.2, cap=10, deadline=30):
+    start = time.monotonic()
+    for n in range(attempts):
+        try: return fn()
+        except TransientError:
+            if n == attempts - 1 or time.monotonic() - start > deadline: raise
+            time.sleep(random.uniform(0, min(cap, base * 2 ** n)))   # full jitter
 ```
 
 ## 3. Visual Diagram
@@ -23,36 +44,44 @@ ON CONFLICT (key) DO NOTHING;   -- 0 hàng chèn được => key đã tồn tạ
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant S as Payment API
-    participant DB as DB
-    C->>S: POST /pay (Idempotency-Key: k1)
-    S->>DB: charge + save k1 -> result
-    S--xC: response lost (timeout)
-    C->>S: retry POST /pay (k1)
-    S-->>C: stored result, no second charge
+    participant S as Server
+    participant DB as Idempotency store
+    C->>S: POST /payments (Idempotency-Key K)
+    S->>DB: INSERT K (UNIQUE)
+    S-->>C: timeout (phản hồi mất)
+    C->>S: retry với cùng K sau backoff + jitter
+    S->>DB: K đã tồn tại, trả kết quả đã lưu
+    S-->>C: 201, không trừ tiền lần hai
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Mọi `POST` có tác dụng tiền bạc/đơn hàng nên hỗ trợ **idempotency key**; thiết kế thao tác theo kiểu **"đặt trạng thái"** thay vì "tăng/giảm".
-- Retry ở **một tầng** (gần client nhất hoặc tại gateway); nhiều tầng cùng retry nhân lên (3×3×3 = **27 lần**).
-- Giữ idempotency key **đủ lâu** (thường 24 giờ–vài ngày) để bao phủ cửa sổ retry.
-- Trade-off: idempotency cần **lưu trạng thái và thêm bước ghi**, đổi lại độ an toàn khi lỗi.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Thao tác tạo/thanh toán có thể retry | Idempotency key + lưu kết quả |
+| Retry lỗi tạm thời | Exponential backoff + jitter, giới hạn số lần và deadline |
+| Retry nhiều tầng | Retry ở một tầng + retry budget + circuit breaker |
+| Consumer nhận message trùng | Idempotent consumer (dedup theo id/UNIQUE) |
+| Cập nhật nên idempotent | Đặt trạng thái tuyệt đối thay vì cộng dồn |
+| Lỗi 4xx của client | Không retry |
+
+- **Được gì:** chịu lỗi tạm thời an toàn. **Mất gì:** lưu trữ và quản lý khoá, thêm độ phức tạp, độ trễ khi retry; cần dọn khoá cũ.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Retry storm**: dependency chậm → mọi client retry cùng lúc → sập hẳn; luôn **jitter** và giới hạn.
-- **Hai request cùng key đến đồng thời**: kiểm tra-rồi-chèn không nguyên tử sẽ xử lý hai lần → dùng **UNIQUE constraint** làm cổng.
-- **Cùng key nhưng payload khác** nên bị từ chối (`422`), không trả kết quả cũ.
-- **Exactly-once là ảo tưởng ở tầng mạng**: broker "exactly-once" chỉ đúng trong phạm vi của nó; tác dụng phụ ra ngoài vẫn cần idempotent.
-- Lỗi **timeout không có nghĩa là thất bại** — thao tác có thể đã thành công; phải truy vấn trạng thái hoặc retry idempotent.
-- Interview trap: "Làm sao không trừ tiền hai lần?" → idempotency key + ràng buộc unique trong cùng transaction với việc trừ tiền.
+- **Trừ tiền/tạo đơn hai lần khi client retry → thao tác không idempotent → Idempotency-Key lưu kết quả, UNIQUE constraint**.
+- **Mọi client retry cùng lúc làm sập dịch vụ đang phục hồi → backoff cố định, không jitter → exponential backoff + full jitter**.
+- **Một lỗi nhỏ nhân thành tải khổng lồ → retry ở nhiều tầng → một tầng retry, retry budget, circuit breaker**.
+- **Retry cả lỗi 400/422 → vô ích và tốn tải → chỉ retry lỗi tạm thời**.
+- **Coi timeout là thất bại và ghi nhận lỗi → thực tế đã thành công → kiểm tra trạng thái trước khi thử lại/khử trùng bằng key**.
+- **Retry không giới hạn thời gian → treo luồng → số lần tối đa và deadline tổng**.
+- Interview trap: "timeout có nghĩa là thất bại?" → **không, có thể đã thành công**; "exactly-once có thật?" → **thực tế là at-least-once + idempotent**; "vì sao cần jitter?" → **tránh retry đồng loạt (thundering herd)**.
 
 ## 6. Search Hooks
 
-- `idempotency key pattern` — dùng khoá duy nhất để retry không lặp tác dụng phụ.
-- `exponential backoff with jitter` — giãn cách retry có ngẫu nhiên để tránh dồn đồng loạt.
-- `at-least-once vs exactly-once delivery` — ngữ nghĩa giao nhận và ý nghĩa thực tế.
-- `retry storm retry amplification` — retry nhiều tầng làm quá tải dependency.
-- `Stripe idempotent requests` — ví dụ tham chiếu triển khai idempotency key.
-- `deduplication processed message id` — loại message trùng phía consumer.
+- `idempotency key pattern` — chống xử lý trùng khi retry.
+- `exponential backoff with jitter` — thử lại có rải ngẫu nhiên.
+- `at-least-once vs exactly-once delivery` — ngữ nghĩa giao hàng.
+- `retry storm retry amplification` — retry khuếch đại tải.
+- `message deduplication` — khử trùng message.
+- `idempotent consumer` — xử lý an toàn khi nhận trùng.

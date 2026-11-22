@@ -324,63 +324,63 @@
     "playbookId": "db-indexing-storage-engines",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Bảng có index (a, b). Truy vấn nào hưởng lợi ít nhất từ index này?",
+    "question": "Bảng orders có index (customer_id, created_at). Truy vấn nào dùng index này hiệu quả nhất?",
     "options": [
-      "WHERE a = 1",
-      "WHERE a = 1 AND b = 2",
-      "WHERE b = 2 (không có điều kiện trên a)",
-      "WHERE a = 1 ORDER BY b"
+      "WHERE created_at > '2026-01-01' (không có customer_id)",
+      "WHERE customer_id = 42 AND created_at > '2026-01-01'",
+      "WHERE date(created_at) = '2026-01-01'",
+      "WHERE customer_id + 0 = 42"
     ],
     "answer": [
-      2
+      1
     ],
-    "explanation": "Leftmost prefix: index (a, b) chủ yếu hỗ trợ truy vấn bắt đầu từ a. Lọc chỉ theo b thường không dùng được index hiệu quả."
+    "explanation": "Leftmost prefix: dùng cột đầu bằng rồi cột khoảng. Phương án chỉ có created_at dễ nhầm vì có cột trong index, nhưng thiếu cột đầu."
   },
   {
     "id": "db-indexing-storage-engines-02",
     "playbookId": "db-indexing-storage-engines",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Workload ghi rất nhiều (log, time-series, key-value) thường hợp với engine nào?",
+    "difficulty": 3,
+    "question": "Một hệ thống ghi log sự kiện hàng trăm nghìn bản ghi mỗi giây và ít khi đọc theo khoảng. Engine nào hợp lý hơn?",
     "options": [
-      "B-Tree cập nhật tại chỗ",
-      "LSM-tree: ghi tuần tự vào memtable/WAL rồi compaction nền",
-      "Không engine nào",
-      "Chỉ cần thêm nhiều index"
+      "B-Tree vì đọc nhanh",
+      "LSM-Tree vì ghi tuần tự nhanh",
+      "Hash index",
+      "Không cần engine"
     ],
     "answer": [
       1
     ],
-    "explanation": "LSM-tree biến ghi ngẫu nhiên thành ghi tuần tự nên rất hợp ghi nhiều; đổi lại đọc phức tạp hơn và có compaction."
+    "explanation": "LSM chuyển ghi ngẫu nhiên thành tuần tự. B-Tree dễ nhầm vì phổ biến, nhưng tách trang và ghi tại chỗ tốn kém hơn ở tải ghi cao."
   },
   {
     "id": "db-indexing-storage-engines-03",
     "playbookId": "db-indexing-storage-engines",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Dùng UUID v4 ngẫu nhiên làm khoá chính của bảng clustered (InnoDB). Hệ quả chính?",
+    "difficulty": 2,
+    "question": "Truy vấn chỉ cần cột customer_id và total và đã có index chứa cả hai. DB làm gì để nhanh nhất?",
     "options": [
-      "Truy vấn luôn nhanh hơn",
-      "Phân mảnh page vì chèn vào vị trí ngẫu nhiên, ghi và cache kém hiệu quả",
-      "Không thể tạo thêm index",
-      "Dữ liệu tự động được mã hoá"
+      "Seq scan bảng",
+      "Index-only scan, không đọc bảng chính",
+      "Bỏ index",
+      "Bitmap scan luôn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Clustered index sắp dữ liệu theo khoá chính; khoá ngẫu nhiên chèn khắp nơi. Ưu tiên ID tăng dần theo thời gian (UUIDv7, ULID, snowflake)."
+    "explanation": "Covering index cho phép trả kết quả chỉ từ index."
   },
   {
     "id": "db-indexing-storage-engines-04",
     "playbookId": "db-indexing-storage-engines",
     "type": "explain",
     "difficulty": 3,
-    "question": "So sánh B-Tree và LSM-tree, và khi nào chọn mỗi loại?",
-    "modelAnswer": "B-Tree là cây cân bằng các page cập nhật tại chỗ, đọc điểm và range scan tốt, nhưng ghi ngẫu nhiên tốn I/O. LSM-tree ghi vào memtable và WAL rồi flush thành SSTable bất biến và compaction nền, ghi tuần tự rất nhanh nhưng đọc phải kiểm tra nhiều SSTable (dùng Bloom filter) và có write amplification do compaction. Chọn B-Tree cho OLTP đọc nhiều cần transaction; LSM cho workload ghi lớn.",
+    "question": "Team thêm 8 index cho một bảng ghi nhiều và thấy INSERT chậm đi rõ rệt. Hãy giải thích đánh đổi của index, write amplification và cách quyết định index nào nên giữ.",
+    "modelAnswer": "Mỗi index phải được cập nhật ở mọi INSERT/UPDATE/DELETE nên nhiều index làm ghi chậm và tốn dung lượng; engine còn có write amplification do tách trang (B-Tree) hoặc compaction (LSM). Chỉ giữ index phục vụ các truy vấn thật sự chạy (xác nhận bằng EXPLAIN và thống kê sử dụng), gộp thành composite index đúng thứ tự và xoá index không dùng.",
     "keyPoints": [
-      "B-Tree: in-place, tốt cho đọc/range",
-      "LSM: ghi tuần tự, compaction, Bloom filter",
-      "Chọn theo tỉ lệ đọc/ghi"
+      "Mỗi ghi cập nhật mọi index",
+      "Write amplification",
+      "Chỉ giữ index phục vụ truy vấn thật"
     ]
   },
   {
@@ -388,63 +388,63 @@
     "playbookId": "db-transactions-isolation",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai transaction cùng đọc balance = 100, một cộng 50 và một trừ 30, rồi ghi đè giá trị tính ở ứng dụng. Cách nào tránh lost update?",
+    "question": "Hai request cùng cộng 50 vào số dư 100 bằng cách đọc, tính ở ứng dụng rồi ghi lại, và kết quả là 150 thay vì 200. Hiện tượng gì và cách sửa nhanh nhất?",
     "options": [
-      "Tăng timeout kết nối",
-      "Dùng cập nhật nguyên tử trong SQL (balance = balance + 50) hoặc optimistic lock bằng version",
-      "Đọc lại balance sau khi ghi",
-      "Dùng Read Uncommitted"
+      "Dirty read; tăng isolation",
+      "Lost update; UPDATE balance = balance + 50",
+      "Deadlock; retry",
+      "Phantom; thêm index"
     ],
     "answer": [
       1
     ],
-    "explanation": "Read-modify-write ở ứng dụng dễ đè nhau. Đẩy phép tính vào câu UPDATE hoặc kiểm tra version để phát hiện xung đột."
+    "explanation": "Đọc-sửa-ghi ở ứng dụng gây lost update. Phép cộng nguyên tử trong SQL tránh được."
   },
   {
     "id": "db-transactions-isolation-02",
     "playbookId": "db-transactions-isolation",
     "type": "mcq",
-    "difficulty": 1,
-    "question": "Mức isolation mặc định của PostgreSQL là gì?",
+    "difficulty": 3,
+    "question": "Hai bác sĩ trực cùng kiểm tra 'còn ít nhất 2 người đang trực' rồi cùng xin nghỉ, kết quả còn 0 người dù dùng Repeatable Read (snapshot). Hiện tượng gì?",
     "options": [
-      "Read Uncommitted",
-      "Read Committed",
-      "Repeatable Read",
-      "Serializable"
+      "Dirty read",
+      "Write skew; cần Serializable hoặc khoá tập đã đọc",
+      "Lost update",
+      "Deadlock"
     ],
     "answer": [
       1
     ],
-    "explanation": "PostgreSQL mặc định Read Committed; MySQL InnoDB mặc định Repeatable Read."
+    "explanation": "Snapshot isolation vẫn cho phép write skew vì hai transaction ghi các hàng khác nhau."
   },
   {
     "id": "db-transactions-isolation-03",
     "playbookId": "db-transactions-isolation",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Hai bác sĩ cùng đọc \"còn 2 người trực\" rồi mỗi người tự xin nghỉ (ghi hai hàng khác nhau), kết quả không còn ai trực. Đây là dị thường nào và mức nào ngăn được?",
+    "difficulty": 2,
+    "question": "MVCC mang lại lợi ích chính nào?",
     "options": [
-      "Dirty read; Read Committed",
-      "Write skew; chỉ Serializable (hoặc khoá tường minh) ngăn được",
-      "Phantom read; Read Uncommitted",
-      "Lost update; Repeatable Read luôn ngăn được"
+      "Đọc không chặn ghi và ghi không chặn đọc nhờ nhiều phiên bản",
+      "Loại bỏ mọi bất thường",
+      "Không cần VACUUM",
+      "Tắt ghi log"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Write skew xảy ra dưới snapshot isolation vì hai transaction ghi hàng khác nhau. Cần Serializable hoặc khoá/ràng buộc tường minh."
+    "explanation": "MVCC giữ nhiều phiên bản. 'Loại bỏ mọi bất thường' dễ nhầm, nhưng snapshot isolation vẫn có write skew."
   },
   {
     "id": "db-transactions-isolation-04",
     "playbookId": "db-transactions-isolation",
     "type": "explain",
     "difficulty": 3,
-    "question": "Giải thích lost update và nêu 3 cách phòng tránh.",
-    "modelAnswer": "Lost update xảy ra khi hai transaction cùng đọc một giá trị, tính toán rồi ghi đè nhau nên một thay đổi bị mất. Phòng tránh bằng: cập nhật nguyên tử trong SQL (x = x + n), khoá bi quan (SELECT FOR UPDATE), khoá lạc quan với cột version, hoặc dùng mức Serializable và retry khi lỗi serialization.",
+    "question": "Giải thích khác biệt giữa lost update và write skew, cho ví dụ và cách phòng cho mỗi loại.",
+    "modelAnswer": "Lost update xảy ra khi hai transaction đọc-sửa-ghi cùng một hàng và bản sau đè bản trước (số dư 100, cả hai ghi 150); phòng bằng UPDATE nguyên tử, SELECT FOR UPDATE hoặc optimistic version. Write skew xảy ra khi hai transaction đọc cùng tập hàng rồi ghi các hàng khác nhau làm vi phạm ràng buộc chung (hai bác sĩ cùng nghỉ); phòng bằng Serializable hoặc khoá cả tập đã đọc.",
     "keyPoints": [
-      "Hai read-modify-write đè nhau trên cùng hàng",
-      "Atomic update / FOR UPDATE / optimistic version",
-      "Hoặc Serializable kèm retry"
+      "Lost update: cùng một hàng",
+      "Write skew: ghi các hàng khác nhau",
+      "Serializable hoặc khoá tập đã đọc"
     ]
   },
   {
@@ -452,63 +452,63 @@
     "playbookId": "api-design-rest",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Method HTTP nào có ngữ nghĩa idempotent?",
+    "question": "API cần trả danh sách hàng triệu bản ghi, dữ liệu thay đổi liên tục và client duyệt tới trang rất sâu. Cách phân trang nào phù hợp?",
     "options": [
-      "POST",
-      "PUT",
-      "Không có method nào",
-      "Chỉ GET"
+      "Offset lớn",
+      "Cursor/keyset pagination",
+      "Trả toàn bộ một lần",
+      "Phân trang ngẫu nhiên"
     ],
     "answer": [
       1
     ],
-    "explanation": "GET, PUT, DELETE là idempotent; POST không (có thể tạo trùng). Vì vậy POST quan trọng cần idempotency key."
+    "explanation": "Cursor có chi phí ổn định và không bị trôi. Offset lớn phải quét rồi bỏ nhiều hàng."
   },
   {
     "id": "api-design-rest-02",
     "playbookId": "api-design-rest",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Vì sao cursor (keyset) pagination thường tốt hơn offset với bảng lớn?",
+    "question": "Team cần đổi tên trường `fullname` thành `name` trong response đang có nhiều client. Cách làm đúng?",
     "options": [
-      "Cursor luôn trả nhiều dữ liệu hơn",
-      "Offset phải quét và bỏ qua nhiều hàng nên chậm, và lệch trang khi dữ liệu chèn/xoá; cursor nhanh và ổn định",
-      "Offset không được hỗ trợ trong SQL",
-      "Cursor không cần sắp xếp"
+      "Đổi ngay",
+      "Thêm `name`, giữ `fullname`, deprecate có lộ trình hoặc ra phiên bản mới",
+      "Xoá trường cũ",
+      "Đổi kiểu dữ liệu"
     ],
     "answer": [
       1
     ],
-    "explanation": "OFFSET N buộc DB đọc N hàng rồi bỏ đi. Keyset dùng điều kiện trên khoá sắp xếp nên dùng được index."
+    "explanation": "Đổi tên là thay đổi phá vỡ. Thêm trường mới là tương thích ngược."
   },
   {
     "id": "api-design-rest-03",
     "playbookId": "api-design-rest",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Người dùng đã đăng nhập nhưng không có quyền xem tài nguyên. Mã trạng thái phù hợp?",
+    "difficulty": 3,
+    "question": "Client retry POST /payments khi timeout và tạo hai khoản thanh toán. Giải pháp?",
     "options": [
-      "401 Unauthorized",
-      "403 Forbidden",
-      "404 luôn luôn",
-      "200 kèm thông báo lỗi"
+      "Cấm retry",
+      "Header Idempotency-Key và lưu kết quả theo key",
+      "Đổi sang GET",
+      "Tăng timeout"
     ],
     "answer": [
       1
     ],
-    "explanation": "401 nghĩa chưa xác thực; 403 là đã xác thực nhưng không đủ quyền."
+    "explanation": "POST không idempotent; key cho phép server nhận biết yêu cầu lặp."
   },
   {
     "id": "api-design-rest-04",
     "playbookId": "api-design-rest",
     "type": "explain",
     "difficulty": 3,
-    "question": "Ở mức thiết kế API, làm sao đảm bảo client retry POST /payments không trừ tiền hai lần?",
-    "modelAnswer": "Dùng idempotency key: client sinh khoá duy nhất cho mỗi ý định và gửi kèm mọi lần retry qua header. Server lưu khoá cùng kết quả với ràng buộc unique trong cùng transaction với việc trừ tiền; gặp lại khoá thì trả kết quả đã lưu, và từ chối nếu cùng khoá nhưng payload khác.",
+    "question": "Hãy so sánh phân trang offset và cursor, nêu khi nào dùng mỗi loại và đánh đổi của cursor.",
+    "modelAnswer": "Offset đọc rồi bỏ N hàng nên chậm dần ở trang sâu và kết quả có thể trôi khi dữ liệu thay đổi; cursor/keyset dùng điều kiện trên khoá sắp xếp nên chi phí gần như hằng số và ổn định. Dùng offset cho dữ liệu nhỏ cần nhảy tới trang bất kỳ, cursor cho danh sách lớn hoặc thay đổi nhiều; đánh đổi là không nhảy tới trang tuỳ ý.",
     "keyPoints": [
-      "Idempotency-Key do client sinh",
-      "Server lưu key + kết quả với unique constraint, cùng transaction",
-      "Trả lại kết quả cũ; từ chối nếu payload khác"
+      "Offset: chậm và trôi",
+      "Cursor: ổn định, nhanh",
+      "Cursor không nhảy trang tuỳ ý"
     ]
   },
   {
@@ -516,63 +516,63 @@
     "playbookId": "authn-authz-oauth-jwt",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Payload của một JWT thông thường (JWS) có được mã hoá không?",
+    "question": "Một SPA cần đăng nhập người dùng qua nhà cung cấp danh tính và gọi API. Luồng OAuth nào nên dùng?",
     "options": [
-      "Có, luôn được mã hoá",
-      "Không, chỉ được ký; ai cũng đọc được nội dung",
-      "Chỉ mã hoá khi dùng HTTPS",
-      "Chỉ mã hoá với HS256"
+      "Implicit flow",
+      "Authorization Code + PKCE",
+      "Client credentials",
+      "Password grant"
     ],
     "answer": [
       1
     ],
-    "explanation": "JWS chỉ đảm bảo toàn vẹn qua chữ ký. Không đặt dữ liệu nhạy cảm vào payload."
+    "explanation": "Code + PKCE là khuyến nghị cho public client. Implicit flow dễ nhầm vì từng phổ biến, nhưng đã lỗi thời."
   },
   {
     "id": "authn-authz-oauth-jwt-02",
     "playbookId": "authn-authz-oauth-jwt",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Với SPA, lưu access token ở đâu an toàn hơn trước tấn công XSS?",
+    "question": "Một dev dùng access token để biết người dùng là ai. Điều đúng?",
     "options": [
-      "localStorage",
-      "Cookie HttpOnly (kèm SameSite/CSRF protection)",
-      "Biến toàn cục window",
-      "Trong URL"
+      "Đúng, access token chứa danh tính",
+      "Nên dùng ID token của OIDC cho xác thực",
+      "Dùng refresh token",
+      "Dùng cookie"
     ],
     "answer": [
       1
     ],
-    "explanation": "JavaScript không đọc được cookie HttpOnly nên XSS khó lấy token; cần chống CSRF bằng SameSite/CSRF token."
+    "explanation": "OAuth ủy quyền, OIDC xác thực."
   },
   {
     "id": "authn-authz-oauth-jwt-03",
     "playbookId": "authn-authz-oauth-jwt",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Người dùng đổi /orders/42 thành /orders/43 và xem được đơn của người khác. Lỗi này gọi là gì và sửa thế nào?",
+    "difficulty": 3,
+    "question": "API nhận `GET /orders/42` và trả đơn mà không kiểm tra người gọi có sở hữu đơn 42. Lỗ hổng?",
     "options": [
-      "XSS; escape HTML",
-      "IDOR; kiểm tra quyền sở hữu trên từng đối tượng ở server",
-      "CSRF; thêm SameSite",
-      "SQL injection; dùng prepared statement"
+      "XSS",
+      "IDOR/BOLA: thiếu kiểm tra quyền trên từng đối tượng",
+      "CSRF",
+      "SQL injection"
     ],
     "answer": [
       1
     ],
-    "explanation": "Insecure Direct Object Reference: thiếu kiểm tra quyền theo từng object. Authorization phải thực hiện ở server cho mỗi resource."
+    "explanation": "Phải kiểm tra quyền theo đối tượng ở server."
   },
   {
     "id": "authn-authz-oauth-jwt-04",
     "playbookId": "authn-authz-oauth-jwt",
     "type": "explain",
     "difficulty": 2,
-    "question": "Access token và refresh token khác nhau thế nào, và vì sao access token nên ngắn hạn?",
-    "modelAnswer": "Access token dùng để gọi API, hạn ngắn (khoảng 5–15 phút) để giảm rủi ro khi bị lộ vì JWT khó thu hồi. Refresh token dài hạn hơn, chỉ gửi tới authorization server để lấy access token mới, được lưu an toàn, xoay vòng và có thể thu hồi phía server.",
+    "question": "Hãy liệt kê những thứ phải kiểm tra khi xác minh một JWT và vì sao jwt.decode không đủ.",
+    "modelAnswer": "Phải kiểm tra chữ ký bằng khoá đúng (JWKS theo kid) với danh sách thuật toán cho phép (từ chối none), cùng các claim exp, nbf, iss và aud. jwt.decode chỉ đọc payload mà không kiểm tra chữ ký nên kẻ tấn công có thể tự tạo token giả.",
     "keyPoints": [
-      "Access token ngắn hạn để gọi API",
-      "Refresh token dài hạn, chỉ đổi token mới, xoay vòng/thu hồi được",
-      "Ngắn hạn vì khó thu hồi JWT stateless"
+      "Chữ ký + whitelist thuật toán",
+      "exp, nbf, iss, aud",
+      "decode không kiểm tra chữ ký"
     ]
   },
   {
@@ -580,63 +580,63 @@
     "playbookId": "idempotency-retries",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Nên retry loại lỗi nào?",
+    "question": "Client gọi API thanh toán và bị timeout, rồi thử lại. Vì sao timeout không có nghĩa là thất bại và cần gì để retry an toàn?",
     "options": [
-      "Mọi lỗi 4xx",
-      "Lỗi tạm thời như timeout, 503, 429 (kèm backoff)",
-      "Lỗi validation 422",
-      "Không bao giờ retry"
+      "Timeout luôn là thất bại",
+      "Yêu cầu đầu có thể đã thành công; cần idempotency key",
+      "Không cần gì",
+      "Giảm timeout"
     ],
     "answer": [
       1
     ],
-    "explanation": "Retry lỗi tạm thời. Lỗi logic (4xx, validation) sẽ lặp lại y hệt nên retry chỉ vô ích."
+    "explanation": "Phản hồi có thể mất trong khi thao tác đã thực hiện."
   },
   {
     "id": "idempotency-retries-02",
     "playbookId": "idempotency-retries",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Ba tầng (client, gateway, service) mỗi tầng retry tối đa 3 lần. Trong trường hợp xấu nhất, backend nhận bao nhiêu lần gọi cho một yêu cầu?",
+    "difficulty": 2,
+    "question": "Hàng nghìn client cùng retry sau 1 giây sau sự cố làm dịch vụ không hồi phục được. Cách giảm?",
     "options": [
-      "3",
-      "9",
-      "27",
-      "81"
+      "Retry nhanh hơn",
+      "Exponential backoff với jitter",
+      "Bỏ timeout",
+      "Tăng số lần retry"
     ],
     "answer": [
-      2
+      1
     ],
-    "explanation": "Retry nhân lên theo tầng: 3×3×3 = 27. Nên retry ở một tầng và có giới hạn tổng."
+    "explanation": "Jitter rải thời điểm retry."
   },
   {
     "id": "idempotency-retries-03",
     "playbookId": "idempotency-retries",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai request cùng idempotency key đến đồng thời. Cách đảm bảo chỉ một request thực thi?",
+    "question": "Ba tầng dịch vụ mỗi tầng retry 3 lần. Một lỗi ở tầng dưới nhân thành bao nhiêu lời gọi?",
     "options": [
-      "Kiểm tra key tồn tại rồi mới chèn",
-      "Dùng ràng buộc UNIQUE trên key làm cổng (INSERT, xung đột thì không thực thi)",
-      "Chờ ngẫu nhiên rồi thử lại",
-      "Bỏ qua nếu request thứ hai chậm hơn"
+      "3",
+      "9",
+      "27",
+      "Không đổi"
     ],
     "answer": [
-      1
+      2
     ],
-    "explanation": "Kiểm tra-rồi-chèn có race. Ràng buộc unique là phép nguyên tử do DB đảm bảo."
+    "explanation": "Retry nhân lên theo tầng; chỉ retry ở một tầng."
   },
   {
     "id": "idempotency-retries-04",
     "playbookId": "idempotency-retries",
     "type": "explain",
     "difficulty": 3,
-    "question": "Giải thích vì sao \"exactly-once\" thực tế = at-least-once + xử lý idempotent.",
-    "modelAnswer": "Trên mạng không biết được request hay response bị mất nên để không mất message phải gửi lại, dẫn tới có thể trùng (at-least-once). Để kết quả như xử lý đúng một lần, phía nhận phải idempotent: nhận trùng vẫn cho cùng kết quả (dedup theo id hoặc upsert). Exactly-once của broker chỉ đúng trong phạm vi nó.",
+    "question": "Giải thích 'exactly-once' trong thực tế và cách đạt hiệu ứng tương đương.",
+    "modelAnswer": "Hệ thống phân tán thực tế chỉ bảo đảm at-least-once nên message có thể trùng. Hiệu ứng exactly-once đạt bằng at-least-once cộng xử lý idempotent: consumer khử trùng theo message id hoặc business key (bảng processed_message_id, UNIQUE, upsert).",
     "keyPoints": [
-      "Không thể phân biệt mất request hay mất response",
-      "Retry gây trùng → at-least-once",
-      "Idempotent ở phía nhận cho kết quả như một lần"
+      "Thực tế là at-least-once",
+      "Idempotent consumer",
+      "Khử trùng theo id/UNIQUE"
     ]
   },
   {
@@ -1747,63 +1747,63 @@
     "playbookId": "backend-performance-profiling",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Vì sao nên theo dõi p99 thay vì chỉ độ trễ trung bình?",
+    "question": "Team cần biết endpoint nào bất thường và đo gì cho một dịch vụ?",
     "options": [
-      "p99 luôn nhỏ hơn trung bình",
-      "Trung bình che giấu đuôi chậm mà người dùng thực sự cảm nhận",
-      "p99 rẻ hơn để tính",
-      "Trung bình không đo được"
+      "Chỉ CPU",
+      "RED: Rate, Errors, Duration",
+      "Chỉ RAM",
+      "Chỉ số commit"
     ],
     "answer": [
       1
     ],
-    "explanation": "Một số ít request rất chậm kéo trải nghiệm xuống nhưng gần như không làm đổi trung bình."
+    "explanation": "RED cho dịch vụ; USE cho tài nguyên."
   },
   {
     "id": "backend-performance-profiling-02",
     "playbookId": "backend-performance-profiling",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Endpoint chậm, CPU máy chủ thấp, nhiều request đang chờ lấy kết nối DB. Nghi ngờ đầu tiên?",
+    "difficulty": 3,
+    "question": "Pool kết nối được tăng từ 20 lên 500 và DB lại chậm hơn. Vì sao?",
     "options": [
-      "GC của frontend",
-      "Connection pool bị cạn (pool nhỏ hoặc truy vấn giữ kết nối quá lâu)",
-      "Thiếu CDN",
-      "Dùng HTTP/2"
+      "Pool lớn luôn tốt",
+      "Quá tải DB do quá nhiều kết nối đồng thời; pool nhỏ vẫn tốt",
+      "Mạng chậm",
+      "Thiếu index luôn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Saturation ở pool kết nối khiến request xếp hàng dù CPU rảnh; kiểm tra thời gian giữ kết nối và kích thước pool."
+    "explanation": "DB chỉ xử lý song song hữu hạn."
   },
   {
     "id": "backend-performance-profiling-03",
     "playbookId": "backend-performance-profiling",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Công cụ load test gửi request tiếp theo chỉ sau khi nhận phản hồi trước đó. Hệ quả?",
+    "question": "Load test báo p99 rất thấp nhưng production tệ hơn nhiều. Nguyên nhân khả dĩ?",
     "options": [
-      "Đo chính xác hơn",
-      "Coordinated omission: độ trễ đuôi bị đánh giá thấp khi hệ thống bị nghẽn",
-      "Không ảnh hưởng",
-      "Luôn tăng throughput"
+      "Coordinated omission: công cụ chờ phản hồi mới gửi tiếp",
+      "Chỉ do mạng",
+      "Do cache",
+      "Không có"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Khi hệ thống chậm, công cụ tự giảm tải và \"bỏ sót\" các request đáng lẽ đã chờ lâu."
+    "explanation": "Dùng open model với arrival rate cố định."
   },
   {
     "id": "backend-performance-profiling-04",
     "playbookId": "backend-performance-profiling",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi API chậm, bạn tiếp cận theo quy trình nào?",
-    "modelAnswer": "Đo trước: xác định chỉ số RED/USE và p99, dùng tracing để biết thời gian nằm ở DB, dịch vụ ngoài, CPU hay chờ (pool, lock, GC). Sau đó sửa đúng điểm nghẽn lớn nhất như index hoặc N+1, batching, cache, rồi đo lại để chắc nó thật sự cải thiện và điểm nghẽn không dịch chuyển.",
+    "question": "CPU rảnh nhưng độ trễ cao. Hãy giải thích thread pool starvation và cách chẩn đoán.",
+    "modelAnswer": "Pool nhỏ chứa các task chặn (gọi HTTP/DB đồng bộ) hoặc task chờ task khác trong cùng pool nên hết thread, request xếp hàng dù CPU rảnh. Chẩn đoán bằng thread dump, off-CPU/wall-clock profile và theo dõi queue của pool; sửa bằng pool riêng cho I/O chặn, timeout, async và giới hạn đồng thời.",
     "keyPoints": [
-      "Đo và trace trước khi sửa",
-      "Sửa điểm nghẽn lớn nhất",
-      "Đo lại sau khi sửa"
+      "Task chặn chiếm hết thread",
+      "CPU rảnh nhưng chờ",
+      "Pool riêng, timeout, async"
     ]
   },
   {
@@ -9783,106 +9783,102 @@
     "playbookId": "db-indexing-storage-engines",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Index composite (a,b) hỗ trợ truy vấn nào hiệu quả?",
+    "question": "Dùng UUID v4 ngẫu nhiên làm khoá chính cho bảng ghi nhiều và thấy phân mảnh, ghi chậm. Nguyên nhân và hướng xử lý?",
     "options": [
-      "Chỉ lọc b",
-      "Lọc a hoặc a và b",
-      "Không truy vấn nào",
-      "Chỉ ORDER BY b"
+      "Không liên quan",
+      "Chèn vào vị trí ngẫu nhiên gây tách trang; dùng UUIDv7/ULID tuần tự hoặc khoá tăng dần",
+      "Cần tăng RAM",
+      "Cần bỏ khoá chính"
     ],
     "answer": [
       1
     ],
-    "explanation": "Quy tắc leftmost prefix."
+    "explanation": "Khoá tuần tự chèn về cuối cây nên ít tách trang."
   },
   {
     "id": "db-transactions-isolation-06",
     "playbookId": "db-transactions-isolation",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai hiện tượng nào có thể xảy ra ở Read Committed? (chọn 2)",
+    "question": "Ứng dụng bắt đầu nhận lỗi deadlock thỉnh thoảng khi hai luồng cập nhật hai hàng theo thứ tự ngược nhau. Cách xử lý đúng?",
     "options": [
-      "Non-repeatable read",
-      "Phantom read",
-      "Dirty read",
-      "Lost commit"
+      "Tắt transaction",
+      "Lấy khoá theo thứ tự nhất quán và retry khi bị chọn làm nạn nhân",
+      "Tăng timeout vô hạn",
+      "Dùng Read Uncommitted"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Read Committed chặn dirty read nhưng không chặn hai cái kia."
+    "explanation": "Thứ tự khoá cố định và retry giải quyết deadlock. Giảm isolation không giải quyết."
   },
   {
     "id": "api-design-rest-05",
     "playbookId": "api-design-rest",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai điều nào đúng về idempotent trong HTTP? (chọn 2)",
+    "question": "Server trả HTTP 200 kèm chuỗi 'error' khi dữ liệu sai và client khó xử lý. Cách đúng?",
     "options": [
-      "PUT idempotent",
-      "DELETE idempotent",
-      "POST luôn idempotent",
-      "GET thay đổi dữ liệu"
+      "Giữ nguyên",
+      "Mã trạng thái phù hợp (400/422) kèm Problem Details (application/problem+json)",
+      "Trả 500 cho mọi lỗi",
+      "Trả HTML"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "PUT và DELETE idempotent."
+    "explanation": "Lỗi chuẩn hoá giúp client xử lý bằng máy."
   },
   {
     "id": "authn-authz-oauth-jwt-06",
     "playbookId": "authn-authz-oauth-jwt",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai rủi ro khi dùng JWT? (chọn 2)",
+    "question": "Người dùng đã đăng nhập nhưng gọi API quản trị nhận lỗi. Nên trả mã nào?",
     "options": [
-      "Khó thu hồi trước hạn",
-      "Lộ nếu lưu sai chỗ",
-      "Không thể ký",
-      "Không có hạn"
+      "401",
+      "403",
+      "404",
+      "502"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Cần TTL ngắn và lưu an toàn."
+    "explanation": "403 là đã xác thực nhưng không đủ quyền."
   },
   {
     "id": "idempotency-retries-06",
     "playbookId": "idempotency-retries",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai thành phần retry an toàn? (chọn 2)",
+    "question": "Lỗi nào KHÔNG nên retry tự động?",
     "options": [
-      "Exponential backoff có jitter",
-      "Idempotency key",
-      "Retry vô hạn",
-      "Retry mọi lỗi 4xx"
+      "503 Service Unavailable",
+      "429 kèm Retry-After",
+      "422 dữ liệu không hợp lệ",
+      "Mất kết nối tạm thời"
     ],
     "answer": [
-      0,
-      1
+      2
     ],
-    "explanation": "Backoff và khoá idempotency."
+    "explanation": "Lỗi do client không đổi khi thử lại."
   },
   {
     "id": "backend-performance-profiling-06",
     "playbookId": "backend-performance-profiling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tìm hàm tốn CPU nhất?",
+    "question": "Trong flame graph, thứ nào cho biết hàm tốn nhiều thời gian?",
     "options": [
-      "Flame graph profiler",
-      "Đoán",
-      "Thêm RAM",
-      "Khởi động lại"
+      "Màu sắc",
+      "Chiều rộng của khối",
+      "Chiều cao",
+      "Tên hàm"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "Profile thay vì đoán."
+    "explanation": "Chiều rộng là tỷ lệ thời gian lấy mẫu."
   },
   {
     "id": "microservices-fundamentals-05",
