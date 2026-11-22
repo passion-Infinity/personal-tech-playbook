@@ -1,50 +1,77 @@
 ## 1. Core Concept
 
-Mọi request giữa các service đều đi qua mạng, và mạng là thứ **chậm, không đáng tin và có độ trễ không thể nén dưới tốc độ ánh sáng**. **IP** định tuyến gói tin tới máy đích, **TCP** biến mạng không tin cậy thành luồng byte tin cậy có thứ tự, **DNS** đổi tên miền thành địa chỉ IP. Mental model: *mỗi lần "gọi API" là một chuỗi chi phí — DNS lookup, TCP handshake, rồi mới tới dữ liệu — và bạn trả bằng **round-trip time (RTT)**.*
+Mọi hệ thống phân tán đều chạy trên **mạng**, và mạng có những giới hạn vật lý không thể tối ưu bằng code: **độ trễ (latency)**, **băng thông**, **mất gói**. Hiểu **TCP** (đảm bảo giao hàng, có handshake và kiểm soát tắc nghẽn), **UDP** (nhẹ, không đảm bảo) và **DNS** (dịch tên sang IP, có cache theo TTL) giúp bạn **chẩn đoán độ trễ, lỗi kết nối và thiết kế giao thức đúng**.
+
+**Mental model:** TCP như **gọi điện có xác nhận từng câu** (mở đầu bằng "alô, nghe rõ không?", mất câu nào thì nói lại), UDP như **gửi bưu thiếp** (nhanh, không đảm bảo tới nơi). DNS là **danh bạ điện thoại có ghi chú "số này dùng được trong N phút"** (TTL).
 
 ## 2. How It Works
 
-- **Mô hình phân lớp (TCP/IP)**: Link → **IP** (địa chỉ, định tuyến) → **TCP/UDP** (cổng, độ tin cậy) → Application (HTTP, DNS, gRPC).
-- **TCP** (hướng kết nối): **3-way handshake** `SYN → SYN-ACK → ACK` tốn **1 RTT** trước khi gửi dữ liệu; đảm bảo thứ tự bằng **sequence number**, báo nhận bằng **ACK**, gửi lại gói mất (**retransmission**).
-- **Flow control** (cửa sổ nhận, tránh làm tràn người nhận) khác **congestion control** (tránh làm nghẽn mạng): bắt đầu bằng **slow start**, tăng dần, giảm mạnh khi mất gói (**AIMD**; CUBIC/BBR).
-- **UDP**: không kết nối, không đảm bảo thứ tự/đến nơi; nhanh, dùng cho DNS, video, QUIC (HTTP/3).
-- **DNS**: client hỏi **recursive resolver** → resolver hỏi **root → TLD → authoritative server**, rồi **cache theo TTL**. Bản ghi thường gặp: `A/AAAA`, `CNAME`, `MX`, `TXT`.
-- **Độ trễ tham khảo**: cùng data center ≈ 0.5 ms; cùng Region khác AZ ≈ 1–2 ms; liên lục địa ≈ 100–200 ms.
+**TCP three-way handshake → Chi phí 1 RTT trước khi gửi dữ liệu**
+- **SYN → SYN-ACK → ACK**, mất **1 RTT**. Ví dụ client ở Việt Nam gọi server Mỹ (RTT ~200 ms): chỉ để mở kết nối đã tốn ~200 ms; thêm TLS 1.3 là +1 RTT nữa (HTTP/1.1 qua TLS có thể ~3 RTT trước byte dữ liệu đầu). Vì thế **tái sử dụng kết nối (keep-alive, connection pool)** quan trọng.
+
+**TCP congestion control → Slow start và AIMD**
+- **Slow start**: `cwnd` (cửa sổ tắc nghẽn) bắt đầu nhỏ (thường 10 MSS) và **gấp đôi mỗi RTT** cho tới ngưỡng. **Congestion avoidance (AIMD)**: **tăng cộng (additive increase)** mỗi RTT, **giảm nhân (multiplicative decrease)** — giảm một nửa khi mất gói. Hệ quả: kết nối **mới** bắt đầu chậm; truyền file nhỏ trên kết nối mới **không bao giờ đạt hết băng thông**. **Flow control** (cửa sổ nhận `rwnd`) là cơ chế riêng để không làm tràn bên nhận.
+
+**TCP vs UDP → Chọn theo yêu cầu**
+- **TCP**: tin cậy, đúng thứ tự, kiểm soát tắc nghẽn; đổi lại **head-of-line blocking** (một gói mất làm nghẽn cả luồng) và handshake. **UDP**: không kết nối, không đảm bảo, độ trễ thấp — dùng cho **DNS, VoIP, game, streaming, QUIC/HTTP3** (ứng dụng tự lo độ tin cậy nếu cần).
+
+**DNS resolution → Chuỗi tra cứu và cache**
+- Client hỏi **recursive resolver**; nếu chưa có cache thì hỏi **root → TLD (.com) → authoritative server** rồi trả kết quả, **cache theo TTL**. Bản ghi: **A/AAAA** (IPv4/IPv6), **CNAME** (bí danh, **không đặt ở domain gốc**), **MX**, **TXT**, **NS**. **TTL** đánh đổi: **TTL thấp** → đổi IP/failover nhanh nhưng tải DNS cao và thêm độ trễ; **TTL cao** ngược lại. Có cả **negative caching** (cache cả kết quả "không tồn tại").
+
+**TIME_WAIT và cạn ephemeral port**
+- Bên **đóng kết nối trước** vào **TIME_WAIT** khoảng **60 giây** (Linux). Mỗi kết nối ra dùng một **ephemeral port** (mặc định khoảng **28.000** cổng: 32768–60999). Ví dụ: **1.000 kết nối mới/giây** tới cùng một đích → cạn cổng trong ~**28–60 giây** → lỗi `Cannot assign requested address`. Cách xử lý: **connection pool/keep-alive**, mở rộng dải cổng, `tcp_tw_reuse` (cho kết nối ra), tránh tạo kết nối mới cho mỗi request.
+
+**Latency numbers → Thang đo trực giác**
+- Truy cập bộ nhớ chính ~**100 ns**; đọc ngẫu nhiên SSD ~**100 µs**; **RTT trong cùng datacenter ~0,5 ms**; seek đĩa quay ~**10 ms**; **RTT liên lục địa ~150 ms**. Một lời gọi mạng chậm hơn bộ nhớ **hàng nghìn đến hàng triệu lần**.
+
+```bash
+dig +trace example.com            # xem chuỗi root → TLD → authoritative
+curl -w "dns:%{time_namelookup} tcp:%{time_connect} tls:%{time_appconnect} ttfb:%{time_starttransfer}\n" -so /dev/null https://example.com
+ss -s                              # đếm kết nối, TIME_WAIT
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant D as DNS resolver
+    participant R as Resolver
     participant S as Server
-    C->>D: Resolve api.example.com
-    D-->>C: IP 203.0.113.10 (TTL 60s)
+    C->>R: DNS: example.com?
+    R-->>C: IP (cache theo TTL)
     C->>S: SYN
     S-->>C: SYN-ACK
-    C->>S: ACK + first request
+    C->>S: ACK (kết nối xong sau 1 RTT)
+    C->>S: dữ liệu (slow start: cwnd nhỏ rồi gấp đôi mỗi RTT)
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Giảm RTT hiệu quả hơn tối ưu code: **connection pooling/keep-alive**, đặt dịch vụ gần nhau, **CDN**, gộp request (batching).
-- **TCP** cho nhu cầu tin cậy (API, DB); **UDP/QUIC** khi độ trễ quan trọng hơn độ tin cậy từng gói.
-- **TTL DNS thấp** → failover/đổi IP nhanh nhưng tăng tải DNS và độ trễ; **TTL cao** ngược lại.
-- Trade-off cốt lõi: *Reliability vs. Latency* — TCP trả giá bằng handshake và head-of-line blocking.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Cần tin cậy và đúng thứ tự | TCP |
+| Độ trễ thấp, chịu mất gói (game, VoIP, DNS) | UDP |
+| Nhiều request tới cùng đích | Keep-alive, connection pool |
+| Failover nhanh bằng DNS | TTL thấp (đổi lấy tải và trễ) |
+| Cạn ephemeral port | Pool kết nối, mở rộng dải cổng |
+| Giảm RTT cho người dùng xa | CDN, edge, đặt server gần người dùng |
+
+- **Được gì:** đúng giao thức cho đúng bài toán. **Mất gì:** TCP tốn handshake và có HOL blocking; TTL thấp tăng tải/độ trễ DNS; UDP buộc ứng dụng tự lo độ tin cậy.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Không có "mạng tin cậy"**: gói có thể mất, trễ, trùng → mọi lời gọi từ xa cần **timeout** và chiến lược retry.
-- **Ephemeral port exhaustion / `TIME_WAIT`**: mở/đóng quá nhiều kết nối ngắn làm cạn port, bị `cannot assign requested address`.
-- **DNS cache** ở nhiều tầng (OS, JVM, resolver): đổi IP mà client vẫn dùng IP cũ lâu hơn TTL (JVM từng cache vô hạn).
-- **Head-of-line blocking** của TCP: một gói mất làm chậm cả luồng phía sau.
-- Interview trap: "Tại sao request đầu tiên chậm hơn?" → DNS + TCP (+ TLS) handshake; những lần sau tái dùng kết nối.
+- **Lỗi "Cannot assign requested address" khi tải cao → mở kết nối mới cho mỗi request, TIME_WAIT chiếm hết cổng → connection pooling/keep-alive, mở rộng dải cổng**.
+- **Request đầu tiên rất chậm với người dùng xa → handshake TCP + TLS tốn nhiều RTT → keep-alive, TLS 1.3/0-RTT, CDN gần người dùng**.
+- **Đổi IP/failover nhưng người dùng vẫn vào IP cũ → cache DNS theo TTL → hạ TTL trước khi chuyển, chấp nhận độ trễ lan truyền**.
+- **Truyền file nhỏ chậm dù băng thông lớn → slow start trên kết nối mới → tái dùng kết nối**.
+- **Không đặt CNAME ở domain gốc → ràng buộc DNS → dùng ALIAS/ANAME của nhà cung cấp**.
+- Interview trap: "chi phí mở một kết nối TCP?" → **1 RTT handshake (cộng TLS)**; "TCP vs UDP?" → **tin cậy + đúng thứ tự vs nhanh + không đảm bảo**; "vì sao cạn cổng?" → **TIME_WAIT 60 giây × tốc độ tạo kết nối mới**.
 
 ## 6. Search Hooks
 
-- `TCP three-way handshake` — bắt tay ba bước tạo kết nối và tốn 1 RTT.
-- `TCP congestion control slow start AIMD` — cách TCP tránh làm nghẽn mạng.
-- `TCP vs UDP` — đánh đổi giữa độ tin cậy và độ trễ.
-- `DNS resolution recursive authoritative TTL` — quá trình phân giải tên miền và cache.
-- `TIME_WAIT ephemeral port exhaustion` — cạn port khi mở/đóng kết nối liên tục.
-- `Latency numbers every programmer should know` — bảng độ trễ tham chiếu của phần cứng và mạng.
+- `TCP three-way handshake` — chi phí 1 RTT để mở kết nối.
+- `TCP congestion control slow start AIMD` — vì sao kết nối mới chậm.
+- `TCP vs UDP` — đánh đổi tin cậy và độ trễ.
+- `DNS resolution TTL` — chuỗi tra cứu và cache.
+- `TIME_WAIT ephemeral port exhaustion` — cạn cổng khi tạo quá nhiều kết nối.
+- `latency numbers every programmer should know` — thang đo độ trễ.

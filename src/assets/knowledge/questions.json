@@ -4,63 +4,63 @@
     "playbookId": "networking-tcp-ip-dns",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Với kết nối mới dùng TCP + TLS 1.3, cần tối thiểu bao nhiêu RTT trước khi gửi được dữ liệu ứng dụng?",
+    "question": "Client ở Việt Nam gọi server ở Mỹ (RTT ~200 ms) qua HTTPS với kết nối mới. Chi phí tối thiểu trước khi gửi được dữ liệu đầu tiên và cách giảm?",
     "options": [
-      "1 RTT",
-      "2 RTT",
-      "3 RTT",
-      "0 RTT (luôn luôn)"
+      "0 ms",
+      "Ít nhất 1 RTT cho TCP handshake (cộng TLS); dùng keep-alive/connection pool",
+      "50 ms",
+      "Không thể giảm"
     ],
     "answer": [
       1
     ],
-    "explanation": "TCP handshake tốn 1 RTT và TLS 1.3 tốn thêm 1 RTT, tổng 2 RTT (TLS 1.2 là 3 RTT). Vì vậy nên tái dùng kết nối."
+    "explanation": "Handshake TCP tốn 1 RTT, TLS thêm RTT. Tái dùng kết nối tránh chi phí này. 'Không thể giảm' dễ nhầm vì RTT là vật lý, nhưng số lần trả RTT thì giảm được."
   },
   {
     "id": "networking-tcp-ip-dns-02",
     "playbookId": "networking-tcp-ip-dns",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Một service mở rồi đóng hàng chục nghìn kết nối ngắn tới cùng một đích và bắt đầu lỗi \"cannot assign requested address\". Nguyên nhân khả dĩ nhất?",
+    "difficulty": 3,
+    "question": "Service gọi API đối tác mở kết nối mới cho mỗi request ở 1.000 request/giây và bắt đầu báo 'Cannot assign requested address'. Nguyên nhân và cách xử lý?",
     "options": [
-      "DNS cache bị đầu độc",
-      "Cạn ephemeral port do các kết nối ở trạng thái TIME_WAIT",
-      "Congestion window quá nhỏ",
-      "MTU không khớp"
+      "DNS lỗi",
+      "Cạn ephemeral port do TIME_WAIT; dùng connection pool/keep-alive",
+      "Mất gói",
+      "Hết RAM"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mỗi kết nối đóng giữ TIME_WAIT một lúc; mở dồn dập làm hết port tạm. Giải bằng connection pooling/keep-alive."
+    "explanation": "Mỗi kết nối chiếm một cổng và TIME_WAIT giữ ~60 giây nên dải ~28.000 cổng cạn nhanh. Tăng RAM không giải quyết."
   },
   {
     "id": "networking-tcp-ip-dns-03",
     "playbookId": "networking-tcp-ip-dns",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Bạn đổi IP của server nhưng bản ghi DNS có TTL 24 giờ. Điều gì xảy ra?",
+    "question": "Ứng dụng cần truyền video thời gian thực, chấp nhận mất vài gói nhưng cần độ trễ thấp. Giao thức hợp lý?",
     "options": [
-      "Mọi client chuyển sang IP mới ngay lập tức",
-      "Một số client/resolver vẫn dùng IP cũ tới 24 giờ",
-      "DNS tự ép xoá cache của mọi client",
-      "TTL chỉ áp dụng cho bản ghi MX"
+      "TCP",
+      "UDP (hoặc QUIC)",
+      "FTP",
+      "SMTP"
     ],
     "answer": [
       1
     ],
-    "explanation": "Resolver và client cache theo TTL. Muốn failover/đổi IP nhanh, hãy hạ TTL trước khi thay đổi."
+    "explanation": "UDP không phải chờ gửi lại. TCP dễ nhầm là 'đáng tin hơn', nhưng head-of-line blocking làm tăng độ trễ khi mất gói."
   },
   {
     "id": "networking-tcp-ip-dns-04",
     "playbookId": "networking-tcp-ip-dns",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích vì sao request đầu tiên tới một API thường chậm hơn các request sau, và nêu 2 cách giảm.",
-    "modelAnswer": "Request đầu phải trả chi phí thiết lập: DNS lookup, TCP handshake (1 RTT) và TLS handshake (1–2 RTT) trước khi gửi dữ liệu. Các request sau tái dùng kết nối (keep-alive) và DNS đã cache nên bỏ được các bước đó. Giảm bằng connection pooling/keep-alive, HTTP/2–3, đặt service gần nhau hoặc dùng CDN, TLS session resumption.",
+    "question": "Team muốn failover bằng DNS và hỏi nên đặt TTL thế nào. Hãy giải thích cách DNS resolution và cache theo TTL hoạt động và đánh đổi của TTL thấp.",
+    "modelAnswer": "Client hỏi recursive resolver; nếu chưa có cache thì hỏi root, rồi TLD, rồi authoritative server, và kết quả được cache theo TTL. TTL thấp giúp đổi IP và failover nhanh hơn nhưng tăng tải DNS và thêm độ trễ tra cứu; TTL cao thì ngược lại. Khi cần failover, hạ TTL trước khi chuyển và chấp nhận một số client vẫn dùng cache cũ.",
     "keyPoints": [
-      "Có chi phí DNS + TCP + TLS cho kết nối mới",
-      "Request sau tái dùng kết nối và cache DNS",
-      "Giải pháp: connection pool/keep-alive, HTTP/2–3, giảm khoảng cách (CDN)"
+      "Chuỗi root → TLD → authoritative",
+      "Cache theo TTL",
+      "TTL thấp: failover nhanh nhưng tải và trễ cao hơn"
     ]
   },
   {
@@ -68,63 +68,63 @@
     "playbookId": "http-https-tls",
     "type": "mcq",
     "difficulty": 2,
-    "question": "HTTP/2 giải quyết head-of-line blocking ở tầng HTTP, nhưng vẫn còn vấn đề ở tầng nào?",
+    "question": "Một trang tải hàng chục tài nguyên nhỏ từ cùng origin và HTTP/1.1 chậm. Nâng lên HTTP/2 giúp gì?",
     "options": [
-      "Tầng DNS",
-      "Tầng TCP: mất một gói làm chậm mọi stream trên kết nối",
-      "Tầng ứng dụng",
-      "Tầng vật lý"
+      "Không khác gì",
+      "Multiplexing nhiều stream trên một kết nối và nén header",
+      "Chỉ mã hoá tốt hơn",
+      "Bỏ TLS"
     ],
     "answer": [
       1
     ],
-    "explanation": "HTTP/2 ghép nhiều stream trên một kết nối TCP nên một gói mất vẫn chặn tất cả. HTTP/3 chuyển sang QUIC (UDP) để các stream độc lập."
+    "explanation": "HTTP/2 giải quyết head-of-line blocking tầng HTTP. HTTP/3 còn giải quyết tiếp HOL tầng TCP."
   },
   {
     "id": "http-https-tls-02",
     "playbookId": "http-https-tls",
     "type": "mcq",
-    "difficulty": 1,
-    "question": "Load balancer trả về 504 Gateway Timeout. Ý nghĩa đúng nhất?",
+    "difficulty": 3,
+    "question": "Người dùng liên tục thấy file JS cũ sau mỗi lần deploy dù server đã cập nhật. Cách làm đúng?",
     "options": [
-      "Client gửi request sai định dạng",
-      "Backend (upstream) không phản hồi kịp thời gian cho phép",
-      "Client chưa đăng nhập",
-      "Chứng chỉ TLS hết hạn"
+      "Tắt cache toàn bộ",
+      "Đặt tên file có hash và Cache-Control dài cho file đó, ngắn/no-cache cho HTML",
+      "Tăng max-age cho HTML",
+      "Xoá cookie"
     ],
     "answer": [
       1
     ],
-    "explanation": "502 là upstream trả phản hồi không hợp lệ/lỗi; 504 là upstream không trả lời kịp (timeout)."
+    "explanation": "Tên file đổi thì URL mới tránh cache cũ. Tắt cache hoàn toàn dễ nhầm là chắc chắn nhưng mất lợi ích hiệu năng."
   },
   {
     "id": "http-https-tls-03",
     "playbookId": "http-https-tls",
     "type": "mcq",
     "difficulty": 2,
-    "question": "TLS termination tại load balancer có hệ quả gì cần lưu ý?",
+    "question": "Người dùng đã đăng nhập nhưng truy cập trang quản trị nhận lỗi. Nên trả mã nào?",
     "options": [
-      "Chứng chỉ không còn cần thiết",
-      "Traffic từ LB tới backend mặc định không được mã hoá, cần re-encrypt hoặc mTLS nếu yêu cầu zero-trust",
-      "HTTP/2 không dùng được nữa",
-      "Mọi request phải dùng UDP"
+      "401",
+      "403",
+      "502",
+      "504"
     ],
     "answer": [
       1
     ],
-    "explanation": "LB giải mã TLS và chuyển tiếp traffic nội bộ; nếu mạng nội bộ không tin cậy, cần mã hoá lại hoặc mTLS giữa các service."
+    "explanation": "403 là đã xác thực nhưng không đủ quyền. 401 dễ nhầm, nhưng dành cho chưa xác thực."
   },
   {
     "id": "http-https-tls-04",
     "playbookId": "http-https-tls",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao nên tái dùng kết nối (keep-alive/connection pool), và HTTP/2 multiplexing giúp gì?",
-    "modelAnswer": "Mỗi kết nối mới tốn DNS, TCP và TLS handshake nên tái dùng tiết kiệm các RTT này và tránh cạn port. HTTP/1.1 chỉ xử lý tuần tự trên một kết nối nên phải mở nhiều kết nối song song, còn HTTP/2 ghép nhiều request đồng thời trên một kết nối, giảm số kết nối và độ trễ.",
+    "question": "Reverse proxy trả 502 cho một số request và 504 cho request khác. Hãy phân biệt hai mã này và nêu cách điều tra.",
+    "modelAnswer": "502 Bad Gateway là proxy nhận phản hồi không hợp lệ từ upstream (upstream crash, đóng kết nối đột ngột). 504 Gateway Timeout là upstream không trả lời kịp trong thời hạn của proxy. Điều tra bằng log upstream, kiểm tra timeout giữa các tầng và sức khoẻ/độ trễ của upstream.",
     "keyPoints": [
-      "Tiết kiệm handshake DNS/TCP/TLS",
-      "HTTP/1.1 cần nhiều kết nối song song vì xử lý tuần tự",
-      "HTTP/2 multiplexing nhiều stream trên một kết nối"
+      "502: phản hồi không hợp lệ",
+      "504: không trả lời kịp",
+      "Xem log upstream và timeout"
     ]
   },
   {
@@ -132,63 +132,63 @@
     "playbookId": "os-processes-threads",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Điều nào đúng về thread cùng một process?",
+    "question": "Một service chạy nhiều tác vụ chia sẻ cấu hình trong bộ nhớ và cần giao tiếp nhanh. Chọn process hay thread và vì sao?",
     "options": [
-      "Mỗi thread có heap riêng hoàn toàn",
-      "Các thread chia sẻ heap nhưng có stack riêng",
-      "Thread không thể chạy song song trên nhiều core",
-      "Thread luôn cô lập lỗi tốt hơn process"
+      "Process vì luôn nhanh hơn",
+      "Thread vì chia sẻ heap, giao tiếp nhanh (cần đồng bộ)",
+      "Process vì không cần đồng bộ",
+      "Không có khác biệt"
     ],
     "answer": [
       1
     ],
-    "explanation": "Thread chia sẻ không gian địa chỉ (heap, code) của process và có stack/thanh ghi riêng — nhẹ nhưng cần đồng bộ; process mới cô lập lỗi tốt."
+    "explanation": "Thread chia sẻ bộ nhớ. Process cô lập tốt hơn nhưng giao tiếp qua IPC chậm hơn."
   },
   {
     "id": "os-processes-threads-02",
     "playbookId": "os-processes-threads",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Với tác vụ thuần CPU-bound, kích thước thread pool hợp lý xấp xỉ bao nhiêu?",
+    "difficulty": 3,
+    "question": "Container bị OOMKilled dù node còn nhiều RAM. Nguyên nhân phổ biến?",
     "options": [
-      "Gấp 100 lần số core",
-      "Bằng khoảng số core",
-      "Luôn bằng 1",
-      "Bằng số request đang chờ"
+      "Node hỏng",
+      "Vượt giới hạn bộ nhớ cgroup của container",
+      "Thiếu CPU",
+      "Mạng lỗi"
     ],
     "answer": [
       1
     ],
-    "explanation": "Quá nhiều thread cho CPU-bound chỉ thêm context switch. I/O-bound mới có thể dùng nhiều thread hơn vì phần lớn thời gian chờ."
+    "explanation": "cgroup giới hạn tổng bộ nhớ của container (heap, non-heap, cache). Thiếu CPU dễ nhầm nhưng gây chậm, không gây OOM."
   },
   {
     "id": "os-processes-threads-03",
     "playbookId": "os-processes-threads",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Container bị OOMKilled dù heap của ứng dụng nhỏ hơn memory limit. Giải thích hợp lý nhất?",
+    "difficulty": 2,
+    "question": "Máy 8 core, mỗi request chờ I/O 90 ms và tính toán 10 ms. Cỡ thread pool hợp lý?",
     "options": [
-      "Heap không bao giờ được tính vào memory limit",
-      "Tổng bộ nhớ gồm heap, metaspace, thread stack và native memory vượt limit",
-      "cgroups không giới hạn RAM",
-      "Kernel chỉ giết container khi dùng CPU nhiều"
+      "8",
+      "Khoảng 80 (8 × (1 + 9))",
+      "800",
+      "1"
     ],
     "answer": [
       1
     ],
-    "explanation": "Memory limit tính toàn bộ tiến trình, không chỉ heap. Cần chừa dư địa cho phần non-heap."
+    "explanation": "Với I/O-bound cần nhiều thread hơn số core. Chọn 8 dễ nhầm vì áp công thức CPU-bound."
   },
   {
     "id": "os-processes-threads-04",
     "playbookId": "os-processes-threads",
     "type": "explain",
     "difficulty": 2,
-    "question": "Process khác thread thế nào, và vì sao mô hình thread-per-request khó scale lên hàng chục nghìn kết nối?",
-    "modelAnswer": "Process có không gian địa chỉ riêng nên cô lập lỗi tốt nhưng tốn chi phí tạo/chuyển ngữ cảnh; thread chia sẻ heap nên nhẹ hơn nhưng cần đồng bộ. Thread-per-request tốn stack (khoảng 1 MB mỗi thread) và context switch, nên hàng chục nghìn kết nối đồng thời làm cạn bộ nhớ và giảm hiệu năng; cần I/O không chặn/event loop.",
+    "question": "Server bắt đầu báo 'Too many open files' dưới tải. Hãy giải thích file descriptor, ulimit và cách khắc phục.",
+    "modelAnswer": "Mọi file, socket và pipe đều là file descriptor, mỗi process có giới hạn (ulimit -n, thường 1024 mềm). Server nhiều kết nối vượt giới hạn hoặc rò rỉ FD do quên đóng sẽ gặp lỗi này. Khắc phục bằng nâng ulimit, đóng kết nối đúng cách, dùng connection pool và theo dõi số FD đang mở.",
     "keyPoints": [
-      "Process: không gian địa chỉ riêng, cô lập; thread: chia sẻ heap",
-      "Mỗi thread tốn stack và context switch",
-      "Giải pháp: I/O không chặn, event loop, async"
+      "Socket cũng là FD",
+      "ulimit -n",
+      "Nâng giới hạn, đóng FD, theo dõi"
     ]
   },
   {
@@ -196,63 +196,63 @@
     "playbookId": "concurrency-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cách nào sửa đúng lỗi oversell trong đoạn \"đọc stock rồi nếu > 0 thì trừ 1\" khi có nhiều request đồng thời?",
+    "question": "Hai luồng cùng chạy counter++ trên biến chung và kết quả đôi khi thiếu một lần tăng. Nguyên nhân?",
     "options": [
-      "Thêm Thread.sleep trước khi trừ",
-      "Dùng cập nhật nguyên tử có điều kiện: UPDATE ... SET stock = stock - 1 WHERE stock > 0",
-      "Đọc stock hai lần để chắc chắn",
-      "Tăng số thread của server"
+      "CPU lỗi",
+      "counter++ là đọc-cộng-ghi không nguyên tử nên hai luồng ghi đè",
+      "Thiếu RAM",
+      "GC"
     ],
     "answer": [
       1
     ],
-    "explanation": "Check-then-act phải nguyên tử. Để database kiểm tra điều kiện và trừ trong một câu lệnh, kết quả đúng kể cả nhiều instance."
+    "explanation": "Read-modify-write bị chen. Dùng atomic hoặc khoá."
   },
   {
     "id": "concurrency-fundamentals-02",
     "playbookId": "concurrency-fundamentals",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Cách phổ biến nhất để loại bỏ deadlock giữa nhiều lock là gì?",
+    "difficulty": 3,
+    "question": "Thread A giữ khoá X chờ khoá Y; thread B giữ Y chờ X. Cách phòng ngừa hiệu quả nhất?",
     "options": [
-      "Tăng timeout của lock",
-      "Luôn lấy các lock theo một thứ tự cố định (phá circular wait)",
-      "Thêm nhiều thread hơn",
-      "Dùng lock lớn hơn"
+      "Tăng số thread",
+      "Luôn lấy khoá theo cùng một thứ tự toàn cục hoặc dùng timeout",
+      "Giảm RAM",
+      "Dùng nhiều khoá hơn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Deadlock cần đủ bốn điều kiện Coffman; thứ tự lock toàn cục phá điều kiện circular wait."
+    "explanation": "Phá điều kiện circular wait. Tăng số thread chỉ làm xác suất xảy ra cao hơn."
   },
   {
     "id": "concurrency-fundamentals-03",
     "playbookId": "concurrency-fundamentals",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Ứng dụng chạy 4 instance, bạn dùng synchronized để bảo vệ tồn kho. Điều gì đúng?",
+    "difficulty": 2,
+    "question": "Cập nhật số dư với tranh chấp thấp và thông lượng cao. Chiến lược nào hợp lý?",
     "options": [
-      "Đủ an toàn vì synchronized là toàn cục",
-      "Chỉ bảo vệ trong một process; vẫn có race giữa các instance nên cần DB atomic/lock hoặc distributed lock",
-      "synchronized tự đồng bộ qua mạng",
-      "Chỉ cần với đọc, không cần với ghi"
+      "Pessimistic locking cho mọi thứ",
+      "Optimistic locking với version và retry",
+      "Không khoá",
+      "Khoá toàn bảng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Lock trong bộ nhớ chỉ có phạm vi một process. Giữa nhiều instance, tranh chấp phải được giải ở tầng dữ liệu."
+    "explanation": "Optimistic hợp tranh chấp thấp. Pessimistic giảm song song không cần thiết."
   },
   {
     "id": "concurrency-fundamentals-04",
     "playbookId": "concurrency-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Race condition là gì? Cho một ví dụ và nêu 2 cách khắc phục.",
-    "modelAnswer": "Race condition là lỗi khi kết quả phụ thuộc thứ tự thực thi của nhiều luồng trên dữ liệu dùng chung, thường là check-then-act hoặc read-modify-write không nguyên tử. Ví dụ hai request cùng thấy stock = 1 rồi cùng trừ. Khắc phục bằng thao tác nguyên tử (atomic/CAS, UPDATE có điều kiện), lock/transaction, hoặc loại bỏ shared state bằng immutable và message passing.",
+    "question": "Hãy nêu bốn điều kiện của deadlock (Coffman) và cách phá một điều kiện trong thực tế.",
+    "modelAnswer": "Bốn điều kiện là mutual exclusion, hold and wait, no preemption và circular wait, phải xảy ra đồng thời. Phá một điều kiện là đủ: thực tế thường lấy khoá theo thứ tự cố định toàn cục để loại bỏ circular wait, hoặc dùng tryLock với timeout để tránh chờ vô hạn.",
     "keyPoints": [
-      "Định nghĩa: thứ tự thực thi ảnh hưởng kết quả trên state dùng chung",
-      "Ví dụ check-then-act (oversell)",
-      "Giải pháp: atomic/CAS/UPDATE điều kiện, lock, tránh shared state"
+      "Bốn điều kiện Coffman",
+      "Thứ tự khoá cố định",
+      "Timeout/tryLock"
     ]
   },
   {
@@ -260,63 +260,63 @@
     "playbookId": "scalability-fundamentals",
     "type": "mcq",
     "difficulty": 1,
-    "question": "1 triệu request mỗi ngày tương đương khoảng bao nhiêu QPS trung bình?",
+    "question": "Team muốn tăng khả năng chịu tải gần như không giới hạn và chịu lỗi. Hướng nào và điều kiện gì?",
     "options": [
-      "Khoảng 1",
-      "Khoảng 12",
-      "Khoảng 120",
-      "Khoảng 1,200"
+      "Scale up mãi",
+      "Scale out kèm thiết kế stateless",
+      "Giảm người dùng",
+      "Chỉ tăng CPU"
     ],
     "answer": [
       1
     ],
-    "explanation": "1,000,000 / 86,400 giây ≈ 11.6 QPS. Peak thường gấp 2–5 lần trung bình."
+    "explanation": "Scale up có trần và là điểm lỗi đơn. Scale out cần stateless để thêm instance an toàn."
   },
   {
     "id": "scalability-fundamentals-02",
     "playbookId": "scalability-fundamentals",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Năm service gọi nối tiếp, mỗi service có availability 99.9%. Availability tổng thể xấp xỉ?",
+    "difficulty": 3,
+    "question": "Một API nhận 100 request/giây và mỗi request mất trung bình 0,2 giây. Theo Little's Law có khoảng bao nhiêu request đang xử lý đồng thời?",
     "options": [
-      "99.9%",
-      "Khoảng 99.5%",
-      "Khoảng 99.99%",
-      "100%"
+      "2",
+      "20",
+      "200",
+      "0,2"
     ],
     "answer": [
       1
     ],
-    "explanation": "Xác suất nhân lên: 0.999^5 ≈ 0.995. Chuỗi gọi đồng bộ dài làm availability giảm."
+    "explanation": "L = λ × W = 100 × 0,2 = 20. Nếu W tăng lên 2 giây thì L = 200, dễ làm cạn thread pool."
   },
   {
     "id": "scalability-fundamentals-03",
     "playbookId": "scalability-fundamentals",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Một request gọi song song 100 service, mỗi service có p99 = 200 ms. Vì sao trải nghiệm tổng thể thường tệ hơn nhiều so với 200 ms?",
+    "question": "Một request gọi 100 dịch vụ, mỗi dịch vụ chậm 1% số lần. Xác suất request gặp ít nhất một lời gọi chậm khoảng?",
     "options": [
-      "Mạng luôn nhân đôi thời gian",
-      "Xác suất ít nhất một service chậm trong 100 lần gọi rất cao nên p99 từng service gần như thành trường hợp thường gặp",
-      "Số lượng service không ảnh hưởng độ trễ",
-      "p99 không liên quan tới trải nghiệm"
+      "1%",
+      "63%",
+      "99%",
+      "0%"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tail latency amplification: với fan-out lớn, gần như mọi request gặp ít nhất một lời gọi chậm."
+    "explanation": "0,99^100 ≈ 37% nhanh nên ~63% gặp ít nhất một lần chậm. Đó là lý do p99 quan trọng hơn trung bình."
   },
   {
     "id": "scalability-fundamentals-04",
     "playbookId": "scalability-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi hệ thống chậm dưới tải, bạn tiếp cận thế nào trước khi quyết định scale?",
-    "modelAnswer": "Đo trước: xác định bottleneck bằng metric (CPU, I/O, DB, độ trễ p95/p99, queue depth) và profiling, rồi gỡ đúng điểm nghẽn. Chọn đòn bẩy phù hợp: cache/replica cho đọc, sharding cho ghi, queue cho đỉnh tải, scale ngang cho service stateless; tránh thêm máy vào chỗ không phải bottleneck.",
+    "question": "Ước lượng nhanh: 1 triệu người dùng hoạt động mỗi ngày, mỗi người 10 request. Hãy tính tải trung bình, tải đỉnh và giải thích vì sao ước lượng này quan trọng.",
+    "modelAnswer": "10 triệu request/ngày chia cho 86.400 giây được khoảng 115 request/giây trung bình; đỉnh thường gấp 3–5 lần nên khoảng 350–600 rps. Ước lượng giúp chọn cỡ kiến trúc phù hợp (một máy có đủ không, có cần shard/cache) trước khi đầu tư, và tránh tối ưu sai chỗ.",
     "keyPoints": [
-      "Đo và tìm bottleneck trước",
-      "Chọn đòn bẩy theo loại tải",
-      "Tránh scale mù quáng/premature scaling"
+      "10^7 / 86.400 ≈ 115 rps",
+      "Đỉnh gấp 3–5 lần",
+      "Chọn kiến trúc đúng cỡ"
     ]
   },
   {

@@ -54,7 +54,6 @@ sequenceDiagram
     participant D as DB
     R1->>C: GET key (miss)
     R1->>C: SET lock NX PX
-    R2->>C: GET key (miss), lock bị giữ
     R1->>D: dựng lại giá trị
     R1->>C: SET key (TTL + jitter), xoá lock
     R2->>C: chờ ngắn rồi GET: hit
