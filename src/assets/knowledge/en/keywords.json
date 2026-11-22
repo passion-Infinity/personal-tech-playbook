@@ -98,5 +98,115 @@
     "id": "geodns-anycast",
     "meaning": "Send users to the nearest Region",
     "definition": "Global load balancing at the DNS layer or via anycast routing."
+  },
+  {
+    "id": "queue-vs-log-streaming",
+    "meaning": "Two broker models",
+    "definition": "A queue deletes a message after the ack and gives it to one consumer; a log keeps messages, supports many consumer groups and can replay."
+  },
+  {
+    "id": "delivery-semantics",
+    "meaning": "Message delivery semantics",
+    "definition": "Exactly-once is in practice at-least-once plus idempotent processing."
+  },
+  {
+    "id": "dead-letter-queue",
+    "meaning": "Where messages that failed many times go",
+    "definition": "Prevents a poison message from crashing the consumer in a loop; alert when the DLQ has data."
+  },
+  {
+    "id": "consumer-groups-ordering",
+    "meaning": "Balancing ordering and parallelism",
+    "definition": "Ordering is only guaranteed within a partition; each partition is assigned to one consumer in the group."
+  },
+  {
+    "id": "backpressure",
+    "meaning": "Handling consumers that are slower than producers",
+    "definition": "Bound the queue, scale consumers or slow producers so the system does not overflow."
+  },
+  {
+    "id": "competing-consumers",
+    "meaning": "Several workers sharing work from one queue",
+    "definition": "Raises throughput by adding workers; global ordering is no longer guaranteed."
+  },
+  {
+    "id": "consistent-hashing-ring",
+    "meaning": "A hash ring so adding or removing a node moves only about 1/N of the keys",
+    "definition": "Nodes and keys sit on the same ring; a key goes clockwise to the first node; vnodes balance the load."
+  },
+  {
+    "id": "rendezvous-hashing",
+    "meaning": "Pick the node with the largest hash(key, node)",
+    "definition": "Simple, evenly distributed and needs no stored ring."
+  },
+  {
+    "id": "jump-consistent-hash",
+    "meaning": "A consistent hashing algorithm that needs no stored ring",
+    "definition": "Only numbers nodes sequentially, uses almost no memory, but does not support removing an arbitrary node."
+  },
+  {
+    "id": "redis-cluster-hash-slots",
+    "meaning": "Splits 16,384 slots across nodes",
+    "definition": "Each key belongs to a slot; slots are moved between nodes to rebalance."
+  },
+  {
+    "id": "hash-mod-n-problem",
+    "meaning": "Changing the node count moves most keys",
+    "definition": "With hash(key) mod N, adding or removing a node moves about (N-1)/N of the keys."
+  },
+  {
+    "id": "database-replication-modes",
+    "meaning": "A common data copying model",
+    "definition": "Single-leader writes go through the leader and are copied to followers synchronously, asynchronously or semi-synchronously; multi-leader and leaderless setups must resolve write conflicts."
+  },
+  {
+    "id": "replication-lag-anomalies",
+    "meaning": "Anomalies when reading from a lagging replica",
+    "definition": "Not seeing data you just wrote, reads going back in time; mitigate by reading the leader after a write or using a sticky replica."
+  },
+  {
+    "id": "database-sharding-strategies",
+    "meaning": "Range, hash, directory and how to choose a shard key",
+    "definition": "The shard key needs high cardinality, even distribution and to match the access pattern so a request touches only one shard."
+  },
+  {
+    "id": "hot-shard",
+    "meaning": "One shard overloaded by skewed distribution",
+    "definition": "A monotonically increasing key or a celebrity key funnels all writes into one shard."
+  },
+  {
+    "id": "split-brain-fencing",
+    "meaning": "Two leaders coexisting and how to prevent it",
+    "definition": "Automatic failover without fencing can create two leaders accepting writes and break consistency."
+  },
+  {
+    "id": "rate-limiting-token-bucket",
+    "meaning": "Two popular rate limiting algorithms",
+    "definition": "A token bucket allows a burst up to the bucket capacity and then keeps the refill rate; a leaky bucket smooths output at a fixed rate."
+  },
+  {
+    "id": "sliding-window-counter",
+    "meaning": "A memory-efficient sliding window approximation",
+    "definition": "Combines the current and previous windows by proportion; avoids the double burst of a fixed window."
+  },
+  {
+    "id": "distributed-rate-limiter-redis",
+    "meaning": "Distributed limiting using atomic operations",
+    "definition": "Uses INCR with EXPIRE or a Lua script to check and deduct atomically across many instances."
+  },
+  {
+    "id": "http-429-retry-after",
+    "meaning": "How to tell clients they exceeded the quota",
+    "definition": "Return 429 with Retry-After and quota headers; clients should back off and respect the wait time."
+  },
+  {
+    "id": "load-shedding-vs-rate-limiting",
+    "meaning": "Protecting the system versus fairness between clients",
+    "definition": "Rate limiting divides quota per client; load shedding drops requests when the system is truly overloaded."
+  },
+  {
+    "id": "fail-open-vs-closed",
+    "meaning": "Behavior when a protection component fails",
+    "definition": "Fail-open lets traffic through to stay available; fail-closed blocks to stay safe; the choice must be deliberate."
   }
 ]

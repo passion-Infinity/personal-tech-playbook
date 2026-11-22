@@ -18,5 +18,25 @@
     "id": "load-balancing-reverse-proxy",
     "title": "Load Balancing & Reverse Proxy",
     "summary": "Distribute load and eject failing backends with L4/L7 load balancers, health checks and reverse proxies."
+  },
+  {
+    "id": "message-queues-streaming-basics",
+    "title": "Message Queues & Streaming Basics",
+    "summary": "Decouple producers and consumers with a queue or a log, and understand delivery semantics and ordering."
+  },
+  {
+    "id": "consistent-hashing",
+    "title": "Consistent Hashing",
+    "summary": "Adding or removing a node moves only about 1/N of the keys thanks to a hash ring and virtual nodes, unlike hash mod N."
+  },
+  {
+    "id": "db-replication-sharding",
+    "title": "DB Replication & Sharding",
+    "summary": "Scale reads and tolerate failures with replication, scale writes and capacity with sharding, and understand the anomalies that come with them."
+  },
+  {
+    "id": "rate-limiting-algorithms",
+    "title": "Rate Limiting Algorithms",
+    "summary": "Protect the system and share quotas fairly with token bucket, sliding window and atomic distributed counters."
   }
 ]

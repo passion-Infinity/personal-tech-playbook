@@ -184,5 +184,233 @@
       "It does not support health checks"
     ],
     "explanation": "A reverse proxy does application-layer work. The other two options are wrong."
+  },
+  {
+    "id": "message-queues-streaming-basics-01",
+    "question": "Three systems (billing, analytics, notifications) must all read one stream of order events and be able to re-read old data when fixing a bug. What do you choose?",
+    "options": [
+      "A regular message queue",
+      "An event log like Kafka with one consumer group per system",
+      "A cron job",
+      "A cache"
+    ],
+    "explanation": "A log is kept per retention and lets each consumer group read independently and replay. A regular queue deletes messages after the ack, so there is no replay."
+  },
+  {
+    "id": "message-queues-streaming-basics-02",
+    "question": "A Kafka consumer finishes a charge task and dies before committing the offset. What happens on restart, and how do you reduce the consequences?",
+    "options": [
+      "It is not reprocessed",
+      "The message is redelivered (at-least-once), so you need an idempotent consumer",
+      "Kafka compensates automatically",
+      "The message is lost"
+    ],
+    "explanation": "At-least-once can deliver duplicates. 'Kafka compensates automatically' is easily confused with exactly-once, but you still need idempotency at the system boundary."
+  },
+  {
+    "id": "message-queues-streaming-basics-03",
+    "question": "A Kafka topic has 6 partitions and a consumer group has 10 consumers. What happens?",
+    "options": [
+      "All 10 process",
+      "At most 6 consumers are active and 4 sit idle",
+      "Kafka adds partitions itself",
+      "Throughput doubles"
+    ],
+    "explanation": "Parallelism within a group is capped by the partition count. Adding consumers does not help once you exceed the partitions."
+  },
+  {
+    "id": "message-queues-streaming-basics-04",
+    "question": "Compare a message queue and an event log on delivery, storage and replay, and give an example of when to choose each.",
+    "modelAnswer": "A queue delivers each message to one consumer, deletes it after the ack, cannot replay, and suits task queues and retries. An event log is an append-only journal split into partitions, kept per retention, read independently by many consumer groups with their own offsets and replayable; it suits event streaming and data pipelines. Use a queue to offload image processing, and a log to broadcast events to many systems.",
+    "keyPoints": [
+      "Queue: delete after ack, no replay",
+      "Log: retention, many groups, replay",
+      "Choose by need"
+    ]
+  },
+  {
+    "id": "message-queues-streaming-basics-05",
+    "question": "A consumer is slower than the producer and the queue is swelling. Which two measures are sensible? (choose 2)",
+    "options": [
+      "Bound the queue size / apply backpressure",
+      "Add consumers or slow the producer",
+      "Let the queue grow without limit in memory",
+      "Turn off lag monitoring"
+    ],
+    "explanation": "Backpressure and scaling consumers. An unbounded queue is tempting as 'safe', but it eventually exhausts memory."
+  },
+  {
+    "id": "consistent-hashing-01",
+    "question": "A 4-node cache cluster uses hash mod N and the team adds a 5th node; the DB is overloaded by mass cache misses. Why, and what is better?",
+    "options": [
+      "Adding a node has no effect",
+      "Hash mod N moves almost every key to another node; use consistent hashing",
+      "The DB is faulty",
+      "The TTL must be increased"
+    ],
+    "explanation": "Changing N moves about 80% of the keys. Raising the TTL is tempting as a way to reduce misses, but it does not solve keys changing place."
+  },
+  {
+    "id": "consistent-hashing-02",
+    "question": "A cluster uses consistent hashing but one node takes far more load than the others. What is a likely cause and fix?",
+    "options": [
+      "There is nothing to do",
+      "Too few virtual nodes, so the distribution is skewed; raise the vnodes or weights",
+      "Add RAM",
+      "Turn hashing off"
+    ],
+    "explanation": "Vnodes spread evenly and let stronger nodes take more. Adding RAM is tempting but does not fix the key distribution."
+  },
+  {
+    "id": "consistent-hashing-03",
+    "question": "How does Redis Cluster distribute keys?",
+    "options": [
+      "A hash ring with virtual nodes",
+      "16,384 hash slots: CRC16(key) mod 16384",
+      "hash mod N",
+      "Randomly"
+    ],
+    "explanation": "Redis Cluster uses hash slots, not a hash ring; slots are moved when resharding."
+  },
+  {
+    "id": "consistent-hashing-04",
+    "question": "Explain why consistent hashing moves only about 1/N of the keys when a node is added, and what virtual nodes add.",
+    "modelAnswer": "Keys and nodes are hashed onto the same ring and a key belongs to the first node clockwise, so a new node only takes the keys in its adjacent arc, about 1/N of the total. Virtual nodes place each physical node at many points, giving an even distribution, letting stronger nodes take more and spreading a dead node's load across many nodes.",
+    "keyPoints": [
+      "A key belongs to the next node on the ring",
+      "Only the adjacent arc is affected",
+      "Vnodes balance and spread load"
+    ]
+  },
+  {
+    "id": "consistent-hashing-05",
+    "question": "Which two statements are true? (choose 2)",
+    "options": [
+      "Consistent hashing does not solve hot keys",
+      "Rendezvous hashing picks the node with the highest hash(key, node)",
+      "Consistent hashing guarantees a perfectly even key distribution",
+      "Jump hash lets you remove arbitrary nodes"
+    ],
+    "explanation": "A hot key still lands on one node; HRW picks the highest-scoring node. The other two are wrong."
+  },
+  {
+    "id": "db-replication-sharding-01",
+    "question": "A read-heavy application overloads the main DB on reads while writes are fine. What is the best fit before considering sharding?",
+    "options": [
+      "Shard immediately",
+      "Add read replicas (replication) and a cache",
+      "Drop indexes",
+      "Increase the timeout"
+    ],
+    "explanation": "Replication scales reads. Sharding is tempting as 'more powerful', but it adds unnecessary complexity when the problem is only reads."
+  },
+  {
+    "id": "db-replication-sharding-02",
+    "question": "A user updates their profile, reloads the page and sees old data because the read hit a lagging replica. Which anomaly is this and how do you reduce it?",
+    "options": [
+      "It is not a bug",
+      "A read-your-writes violation; read the leader after a write or use a sticky replica",
+      "The browser cache",
+      "Sharding"
+    ],
+    "explanation": "An asynchronous replica lags the leader. Sharding is unrelated to this behavior."
+  },
+  {
+    "id": "db-replication-sharding-03",
+    "question": "A cluster's shard key is user_id but one enterprise customer produces 40% of the traffic and one shard is overloaded. What is this and how do you handle it?",
+    "options": [
+      "A hot shard; add a suffix/split the hot key or use sub-shards",
+      "Replication lag",
+      "Split brain",
+      "The disk is full"
+    ],
+    "explanation": "Load piles onto one shard because of a skewed key. Adding replicas does not help because the problem is skewed writes/keys."
+  },
+  {
+    "id": "db-replication-sharding-04",
+    "question": "Distinguish replication from sharding, stating the problem each solves and the price you pay.",
+    "modelAnswer": "Replication copies data across nodes to increase availability and scale reads; its price is replication lag and the risk of losing the latest data on an asynchronous failover. Sharding splits data by shard key to scale writes and capacity; its price is complex cross-shard queries/transactions, hot shards and harder operations. The two are orthogonal and are often combined.",
+    "keyPoints": [
+      "Replication: HA and read scaling, with lag",
+      "Sharding: write and capacity scaling, hard cross-shard queries",
+      "Used together"
+    ]
+  },
+  {
+    "id": "db-replication-sharding-05",
+    "question": "Which two measures prevent split brain during failover? (choose 2)",
+    "options": [
+      "Quorum/consensus",
+      "Fencing token/epoch",
+      "Add RAM",
+      "Turn replication off"
+    ],
+    "explanation": "Quorum and fencing stop the old leader from continuing to write. The other two are unrelated."
+  },
+  {
+    "id": "rate-limiting-algorithms-01",
+    "question": "An API must allow a customer a short burst of 20 consecutive requests while keeping an average of 10 requests/second. Which algorithm?",
+    "options": [
+      "Fixed window",
+      "Token bucket with r = 10/s, b = 20",
+      "Leaky bucket",
+      "No limit"
+    ],
+    "explanation": "A token bucket allows bursts up to its capacity. A leaky bucket is tempting but smooths and does not allow bursts."
+  },
+  {
+    "id": "rate-limiting-algorithms-02",
+    "question": "A fixed window allows 100 requests/minute, but a customer sends 100 in the last second of one minute and 100 in the first second of the next. What is the problem?",
+    "options": [
+      "No problem",
+      "The boundary flaw: 200 requests in about 2 seconds",
+      "The algorithm blocks wrongly",
+      "Redis is faulty"
+    ],
+    "explanation": "A fixed window has a boundary flaw; use a sliding window or a token bucket."
+  },
+  {
+    "id": "rate-limiting-algorithms-03",
+    "question": "The limit is 100 but in practice many instances let more than 100 through under high load. What is the common cause?",
+    "options": [
+      "Not enough RAM",
+      "Read-then-write is not atomic, so many requests pass together",
+      "Redis is slow",
+      "The limit is too low"
+    ],
+    "explanation": "Use INCR/Lua so the operation is atomic."
+  },
+  {
+    "id": "rate-limiting-algorithms-04",
+    "question": "Compare rate limiting and load shedding, and state which behavior to choose when the Redis counter store dies.",
+    "modelAnswer": "Rate limiting enforces fairness per client; load shedding drops some requests when the whole system is overloaded, whichever client they come from. When Redis dies you must decide between fail open (let traffic through, favoring availability) and fail closed (block, favoring safety); usually fail open with a local limit for regular APIs and fail closed for sensitive operations.",
+    "keyPoints": [
+      "Fairness per client vs general protection",
+      "Fail open vs fail closed",
+      "Choose by sensitivity"
+    ]
+  },
+  {
+    "id": "rate-limiting-algorithms-05",
+    "question": "This rate limiter was written by an AI for an API running on many instances. What is the main problem?",
+    "code": "def allow(user_id, limit=100):\n    key = f\"rl:{user_id}\"\n    count = int(redis.get(key) or 0)      # read\n    if count >= limit:\n        return False\n    redis.set(key, count + 1, ex=60)      # write\n    return True",
+    "options": [
+      "Using Redis instead of local memory",
+      "Read-then-write is not atomic, so concurrent requests can all pass and exceed the limit; and every set also refreshes the TTL",
+      "A limit of 100 is too low",
+      "It should use ex=1"
+    ],
+    "explanation": "Two requests both read count = 99 and both write 100. Use INCR (atomic) and then EXPIRE when the key is new, or a Lua script; re-setting ex=60 every time also extends the window forever. The tempting distractor is 'using Redis instead of local memory', but Redis is the right direction for many instances; the bug is the non-atomic implementation."
+  },
+  {
+    "id": "rate-limiting-algorithms-06",
+    "question": "The server returns 429 with no guidance and clients retry immediately and constantly. What should be done?",
+    "options": [
+      "Drop the rate limit",
+      "Return Retry-After and have clients use backoff + jitter",
+      "Raise the limit",
+      "Switch to UDP"
+    ],
+    "explanation": "Retry-After tells the client when to try again. Raising the limit only hides the problem."
   }
 ]
