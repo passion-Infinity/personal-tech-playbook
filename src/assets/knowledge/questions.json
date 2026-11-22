@@ -3813,7 +3813,7 @@
     "playbookId": "responsible-ai",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Phát hiện thiên kiến và giải thích dự đoán trên AWS?",
+    "question": "Một ngân hàng cần phát hiện thiên kiến trong mô hình duyệt vay và giải thích vì sao một hồ sơ bị từ chối, trên AWS. Dùng gì?",
     "options": [
       "Bedrock Guardrails",
       "SageMaker Clarify",
@@ -3823,14 +3823,14 @@
     "answer": [
       1
     ],
-    "explanation": "Clarify đo bias và explainability."
+    "explanation": "Clarify đo bias và cung cấp explainability. Bedrock Guardrails dễ nhầm vì cũng thuộc an toàn AI, nhưng dành cho nội dung LLM, không đo bias của mô hình tabular."
   },
   {
     "id": "responsible-ai-02",
     "playbookId": "responsible-ai",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Sáu nguyên tắc Responsible AI của Microsoft gồm?",
+    "question": "Sáu nguyên tắc Responsible AI của Microsoft gồm những gì?",
     "options": [
       "Chỉ Fairness",
       "Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, Accountability",
@@ -3840,19 +3840,19 @@
     "answer": [
       1
     ],
-    "explanation": "Đây là sáu nguyên tắc chính thức."
+    "explanation": "Đây là sáu nguyên tắc chính thức. Speed/Cost/Scale là tiêu chí kỹ thuật, không phải nguyên tắc đạo đức."
   },
   {
     "id": "responsible-ai-03",
     "playbookId": "responsible-ai",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao bỏ cột nhạy cảm chưa đủ để loại bỏ thiên kiến?",
-    "modelAnswer": "Các đặc trưng khác có thể đóng vai trò proxy cho thuộc tính nhạy cảm, ví dụ mã bưu chính tương quan với chủng tộc, nên thiên kiến vẫn tồn tại. Cần đo công bằng trên kết quả và dùng công cụ như Clarify.",
+    "question": "Một đội đã bỏ cột 'giới tính' khỏi dữ liệu nhưng mô hình tuyển dụng vẫn cho kết quả lệch theo giới. Vì sao bỏ cột nhạy cảm chưa đủ và cần làm gì?",
+    "modelAnswer": "Các đặc trưng khác có thể đóng vai trò proxy cho thuộc tính nhạy cảm (ví dụ trường học, mã bưu chính tương quan với giới hoặc chủng tộc) nên mô hình vẫn học được thiên kiến. Cần đánh giá hiệu quả theo từng nhóm con, kiểm tra tương quan, dùng công cụ như Clarify/Fairlearn, cân bằng dữ liệu và giám sát liên tục.",
     "keyPoints": [
-      "Proxy feature",
-      "Đo công bằng trên kết quả",
-      "Dùng công cụ phát hiện bias"
+      "Thuộc tính proxy",
+      "Đánh giá theo nhóm con",
+      "Công cụ đo công bằng và giám sát"
     ]
   },
   {
@@ -3860,7 +3860,7 @@
     "playbookId": "amazon-bedrock",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chatbot trả lời theo tài liệu công ty, ít vận hành trên AWS?",
+    "question": "Công ty muốn chatbot trả lời theo tài liệu nội bộ trên S3 với ít vận hành nhất trên AWS. Chọn?",
     "options": [
       "SageMaker training",
       "Knowledge Bases for Amazon Bedrock",
@@ -3870,14 +3870,14 @@
     "answer": [
       1
     ],
-    "explanation": "Knowledge Bases là RAG được quản lý."
+    "explanation": "Knowledge Bases là RAG được quản lý. EC2 tự host dễ nhầm vì linh hoạt, nhưng tốn vận hành."
   },
   {
     "id": "amazon-bedrock-02",
     "playbookId": "amazon-bedrock",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chặn nội dung nhạy cảm và che PII của LLM?",
+    "question": "Cần chặn chủ đề nhạy cảm và che PII trong cả đầu vào và đầu ra của LLM trên Bedrock. Dùng gì?",
     "options": [
       "IAM",
       "Guardrails for Amazon Bedrock",
@@ -3887,19 +3887,19 @@
     "answer": [
       1
     ],
-    "explanation": "Guardrails lọc chủ đề, nội dung có hại và PII."
+    "explanation": "Guardrails lọc chủ đề, nội dung hại và PII. IAM/VPC/KMS là kiểm soát truy cập và mã hoá, không lọc nội dung."
   },
   {
     "id": "amazon-bedrock-03",
     "playbookId": "amazon-bedrock",
     "type": "explain",
     "difficulty": 2,
-    "question": "Bedrock khác SageMaker thế nào?",
-    "modelAnswer": "Bedrock là dịch vụ serverless để dùng foundation model có sẵn qua API cùng RAG, agent, guardrails. SageMaker là nền tảng ML end-to-end để tự huấn luyện, tinh chỉnh, triển khai và giám sát mô hình riêng.",
+    "question": "Một đội cân nhắc giữa Bedrock và SageMaker cho một ứng dụng tóm tắt tài liệu dùng model có sẵn. Bedrock khác SageMaker thế nào và chọn gì?",
+    "modelAnswer": "Bedrock là dịch vụ serverless để dùng foundation model có sẵn qua API cùng RAG, agent, guardrails. SageMaker là nền tảng ML end-to-end để tự huấn luyện, tinh chỉnh, triển khai và giám sát model riêng. Với tóm tắt bằng model có sẵn nên chọn Bedrock; chỉ dùng SageMaker khi cần huấn luyện/triển khai model riêng.",
     "keyPoints": [
-      "Bedrock: dùng mô hình có sẵn",
-      "SageMaker: tự huấn luyện/vận hành",
-      "Chọn theo mức tuỳ biến"
+      "Bedrock: model có sẵn qua API",
+      "SageMaker: tự huấn luyện/triển khai",
+      "Chọn theo nhu cầu tuỳ biến"
     ]
   },
   {
@@ -3907,7 +3907,7 @@
     "playbookId": "amazon-sagemaker",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dự đoán hàng loạt không cần endpoint chạy liên tục?",
+    "question": "Một công ty chấm điểm tín dụng cho 5 triệu hồ sơ mỗi đêm và không cần endpoint chạy cả ngày. Chọn?",
     "options": [
       "Real-time endpoint",
       "Batch transform",
@@ -3917,14 +3917,14 @@
     "answer": [
       1
     ],
-    "explanation": "Batch transform chạy theo lô rồi dừng."
+    "explanation": "Batch transform chạy theo lô rồi dừng nên không tốn tiền endpoint rảnh."
   },
   {
     "id": "amazon-sagemaker-02",
     "playbookId": "amazon-sagemaker",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Phát hiện drift sau khi triển khai?",
+    "question": "Model đã triển khai và team muốn tự động phát hiện phân phối dữ liệu đầu vào lệch so với lúc huấn luyện. Dùng gì?",
     "options": [
       "Ground Truth",
       "Model Monitor",
@@ -3934,17 +3934,17 @@
     "answer": [
       1
     ],
-    "explanation": "Model Monitor so sánh với baseline."
+    "explanation": "Model Monitor so sánh với baseline để phát hiện drift. Ground Truth dễ nhầm vì liên quan dữ liệu, nhưng dùng để gắn nhãn."
   },
   {
     "id": "amazon-sagemaker-03",
     "playbookId": "amazon-sagemaker",
     "type": "explain",
     "difficulty": 2,
-    "question": "Feature Store giải quyết vấn đề gì?",
-    "modelAnswer": "Lưu feature dùng chung ở cả online và offline để dùng cùng một định nghĩa feature cho training và inference, tránh lệch giữa huấn luyện và dự đoán và cho phép tái sử dụng.",
+    "question": "Model có điểm tốt khi huấn luyện nhưng kém khi chạy thật vì feature được tính khác nhau giữa train và serve. Feature Store giải quyết vấn đề gì?",
+    "modelAnswer": "Feature Store lưu feature dùng chung ở cả offline (huấn luyện) và online (suy luận) với cùng một định nghĩa feature, tránh lệch giữa huấn luyện và dự đoán (training-serving skew) và cho phép tái sử dụng feature giữa các mô hình.",
     "keyPoints": [
-      "Online và offline store",
+      "Một định nghĩa cho cả train và serve",
       "Tránh training-serving skew",
       "Tái sử dụng feature"
     ]
@@ -3954,7 +3954,7 @@
     "playbookId": "aws-ai-services",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Trích dữ liệu từ form và bảng trong tài liệu scan?",
+    "question": "Công ty muốn trích các cặp khoá–giá trị và bảng từ hàng nghìn hoá đơn scan. Dùng gì?",
     "options": [
       "Rekognition",
       "Textract",
@@ -3964,14 +3964,14 @@
     "answer": [
       1
     ],
-    "explanation": "Textract hiểu cấu trúc tài liệu."
+    "explanation": "Textract hiểu cấu trúc tài liệu. Rekognition dễ nhầm vì cũng xử lý ảnh, nhưng tập trung nhận diện đối tượng/khuôn mặt."
   },
   {
     "id": "aws-ai-services-02",
     "playbookId": "aws-ai-services",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Chuyển cuộc gọi thành văn bản?",
+    "question": "Trung tâm cuộc gọi muốn chuyển ghi âm thành văn bản để phân tích. Dùng gì?",
     "options": [
       "Polly",
       "Transcribe",
@@ -3981,19 +3981,19 @@
     "answer": [
       1
     ],
-    "explanation": "Transcribe là speech-to-text."
+    "explanation": "Transcribe là speech-to-text. Polly làm ngược lại (text-to-speech)."
   },
   {
     "id": "aws-ai-services-03",
     "playbookId": "aws-ai-services",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào dùng AI service dựng sẵn thay vì tự huấn luyện?",
-    "modelAnswer": "Khi bài toán là tác vụ phổ biến như OCR, dịch, phân tích cảm xúc hay nhận diện đối tượng và không cần tuỳ biến sâu: nhanh, rẻ và ít công. Tuỳ biến sâu thì SageMaker, sinh nội dung thì Bedrock.",
+    "question": "Một đội muốn làm OCR hoá đơn, dịch tài liệu và phân tích cảm xúc đánh giá khách hàng. Khi nào dùng AI service dựng sẵn thay vì tự huấn luyện?",
+    "modelAnswer": "Khi bài toán là tác vụ phổ biến như OCR, dịch, phân tích cảm xúc hay nhận diện đối tượng và không cần tuỳ biến sâu: nhanh, rẻ, không cần chuyên môn ML và trả theo dùng. Chỉ tự huấn luyện (SageMaker) khi dữ liệu/nghiệp vụ rất đặc thù hoặc cần độ chính xác vượt khả năng dịch vụ dựng sẵn.",
     "keyPoints": [
       "Tác vụ phổ biến",
-      "Nhanh và rẻ",
-      "Tuỳ biến sâu: SageMaker"
+      "Nhanh, rẻ, không cần ML",
+      "Tự huấn luyện khi rất đặc thù"
     ]
   },
   {
@@ -4001,7 +4001,7 @@
     "playbookId": "azure-ai-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Trích dữ liệu từ hoá đơn trên Azure?",
+    "question": "Phòng kế toán muốn trích dữ liệu có cấu trúc từ hoá đơn bằng model dựng sẵn trên Azure. Chọn?",
     "options": [
       "AI Speech",
       "Document Intelligence",
@@ -4011,14 +4011,14 @@
     "answer": [
       1
     ],
-    "explanation": "Trước đây là Form Recognizer."
+    "explanation": "Document Intelligence (trước là Form Recognizer) có model hoá đơn dựng sẵn."
   },
   {
     "id": "azure-ai-services-02",
     "playbookId": "azure-ai-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tìm kiếm tài liệu có làm giàu bằng AI (knowledge mining)?",
+    "question": "Cần lập chỉ mục tài liệu và làm giàu bằng OCR/trích thực thể để tìm kiếm (knowledge mining). Dùng gì?",
     "options": [
       "Azure AI Search",
       "Event Grid",
@@ -4035,11 +4035,11 @@
     "playbookId": "azure-ai-services",
     "type": "explain",
     "difficulty": 2,
-    "question": "Multi-service resource khác single-service resource thế nào?",
-    "modelAnswer": "Multi-service dùng một endpoint và key cho nhiều dịch vụ AI, tiện quản lý. Single-service có endpoint, key và chi phí riêng cho từng dịch vụ, tiện tách chi phí và quyền.",
+    "question": "Một đội cần dùng Vision, Speech và Language trong cùng ứng dụng. Multi-service resource khác single-service resource thế nào và nên chọn khi nào?",
+    "modelAnswer": "Multi-service dùng một endpoint và key cho nhiều dịch vụ AI, tiện quản lý và hoá đơn gộp. Single-service có endpoint, key và chi phí riêng cho từng dịch vụ, dễ phân quyền và theo dõi chi tiết. Chọn multi-service cho tiện, single-service khi cần tách quyền/chi phí.",
     "keyPoints": [
-      "Multi: một key nhiều dịch vụ",
-      "Single: tách chi phí/quyền",
+      "Multi-service: một endpoint/key",
+      "Single-service: riêng từng dịch vụ",
       "Chọn theo nhu cầu quản lý"
     ]
   },
@@ -4048,24 +4048,24 @@
     "playbookId": "azure-openai-foundry",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Nhận HTTP 429 từ Azure OpenAI. Nguyên nhân thường gặp?",
+    "question": "Ứng dụng nhận HTTP 429 từ Azure OpenAI khi lưu lượng tăng. Nguyên nhân thường gặp và xử lý?",
     "options": [
       "Sai key",
-      "Vượt quota TPM của deployment",
+      "Vượt quota TPM của deployment; retry backoff hoặc tăng quota",
       "Chưa bật Defender",
       "Thiếu VNet"
     ],
     "answer": [
       1
     ],
-    "explanation": "Retry với backoff hoặc tăng quota."
+    "explanation": "429 là vượt giới hạn tốc độ. Sai key cho 401, không phải 429."
   },
   {
     "id": "azure-openai-foundry-02",
     "playbookId": "azure-openai-foundry",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần hiệu năng ổn định, độ trễ dự đoán được cho tải cao?",
+    "question": "Ứng dụng tải cao cần độ trễ ổn định và dự đoán được. Loại triển khai nào?",
     "options": [
       "Standard",
       "Provisioned (PTU)",
@@ -4075,19 +4075,19 @@
     "answer": [
       1
     ],
-    "explanation": "PTU dành riêng dung lượng."
+    "explanation": "PTU đặt trước dung lượng. Standard dễ nhầm vì phổ biến, nhưng độ trễ có thể dao động."
   },
   {
     "id": "azure-openai-foundry-03",
     "playbookId": "azure-openai-foundry",
     "type": "explain",
     "difficulty": 2,
-    "question": "Làm sao dùng GPT với dữ liệu nội bộ mà dữ liệu không rời Azure?",
-    "modelAnswer": "Dùng Azure OpenAI kết hợp Azure AI Search (On Your Data) để RAG, bật Private Endpoint, Managed Identity và content filtering; prompt và completion không dùng để huấn luyện mô hình nền.",
+    "question": "Công ty muốn dùng GPT với dữ liệu nội bộ mà dữ liệu không rời Azure. Mô tả giải pháp và các biện pháp bảo mật.",
+    "modelAnswer": "Dùng Azure OpenAI kết hợp Azure AI Search (On Your Data) để RAG trên tài liệu nội bộ, bật Private Endpoint để không ra Internet công cộng, dùng Managed Identity thay khoá, và bật content filtering. Prompt và completion không dùng để huấn luyện model.",
     "keyPoints": [
-      "RAG qua AI Search",
+      "Azure OpenAI + AI Search (On Your Data)",
       "Private Endpoint và Managed Identity",
-      "Không dùng để huấn luyện mô hình nền"
+      "Content filtering, dữ liệu không dùng để huấn luyện"
     ]
   },
   {
@@ -9515,14 +9515,14 @@
       0,
       1
     ],
-    "explanation": "Đo công bằng theo nhóm."
+    "explanation": "Đo công bằng theo nhóm và dùng dữ liệu đại diện. Chỉ nhìn độ chính xác tổng che giấu thiệt hại ở nhóm nhỏ."
   },
   {
     "id": "amazon-bedrock-04",
     "playbookId": "amazon-bedrock",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Muốn gọi nhiều foundation model qua một API managed trên AWS?",
+    "question": "Ứng dụng muốn gọi nhiều foundation model của các hãng khác nhau qua một API managed trên AWS. Dùng gì?",
     "options": [
       "SageMaker training",
       "Amazon Bedrock",
@@ -9532,14 +9532,14 @@
     "answer": [
       1
     ],
-    "explanation": "Bedrock cung cấp model qua API."
+    "explanation": "Bedrock cung cấp model từ nhiều nhà cung cấp qua API thống nhất."
   },
   {
     "id": "amazon-sagemaker-04",
     "playbookId": "amazon-sagemaker",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Huấn luyện và triển khai model tuỳ biến quy mô lớn?",
+    "question": "Cần huấn luyện và triển khai model tuỳ biến quy mô lớn trên AWS. Chọn?",
     "options": [
       "SageMaker",
       "Rekognition",
@@ -9549,19 +9549,19 @@
     "answer": [
       0
     ],
-    "explanation": "SageMaker là nền tảng ML đầy đủ."
+    "explanation": "SageMaker là nền tảng ML đầy đủ. Các dịch vụ còn lại là AI dựng sẵn cho tác vụ cụ thể."
   },
   {
     "id": "aws-ai-services-04",
     "playbookId": "aws-ai-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Trích xuất văn bản và bảng từ tài liệu scan?",
+    "question": "Cần trích xuất văn bản và bảng từ tài liệu scan. Dùng gì?",
     "options": [
       "Textract",
       "Polly",
       "Lex",
-      "Forecast"
+      "Personalize"
     ],
     "answer": [
       0
@@ -9573,7 +9573,7 @@
     "playbookId": "azure-ai-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dịch vụ nhận dạng giọng nói và chuyển văn bản trên Azure?",
+    "question": "Cần nhận dạng giọng nói và chuyển thành văn bản trên Azure. Dùng gì?",
     "options": [
       "Azure AI Speech",
       "Key Vault",
@@ -9583,24 +9583,24 @@
     "answer": [
       0
     ],
-    "explanation": "Speech service."
+    "explanation": "AI Speech cung cấp speech-to-text."
   },
   {
     "id": "azure-openai-foundry-04",
     "playbookId": "azure-openai-foundry",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dữ liệu doanh nghiệp cần dùng model OpenAI với kiểm soát mạng và bảo mật của Azure?",
+    "question": "Doanh nghiệp cần model OpenAI với kiểm soát mạng và bảo mật của Azure. Chọn?",
     "options": [
       "Dùng API công khai",
       "Azure OpenAI/Foundry với Private Endpoint",
-      "Email dữ liệu",
+      "Gửi dữ liệu qua email",
       "Không thể"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tích hợp mạng riêng."
+    "explanation": "Azure OpenAI tích hợp mạng riêng và Entra ID."
   },
   {
     "id": "outbox-pattern-04",

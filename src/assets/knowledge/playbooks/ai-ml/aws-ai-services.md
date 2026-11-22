@@ -1,60 +1,82 @@
 ## 1. Core Concept
 
-**AWS AI services** là các API **AI dựng sẵn, gọi là chạy** cho tác vụ phổ biến (thị giác, ngôn ngữ, giọng nói, tìm kiếm) — không cần kinh nghiệm ML hay tự huấn luyện mô hình. Chúng nằm ở tầng trên cùng của "ngăn xếp AI/ML" của AWS. Mental model: *gặp bài toán có tên quen thuộc (OCR, dịch, nhận diện khuôn mặt) → tìm dịch vụ đúng tên trước khi nghĩ đến việc tự huấn luyện.*
+**AWS AI services** là các dịch vụ AI **đã được huấn luyện sẵn, gọi qua API** cho tác vụ phổ biến (nhìn, nghe, nói, đọc, dịch, gợi ý) mà **không cần chuyên môn ML hay hạ tầng huấn luyện**. Nguyên tắc chọn: **dịch vụ dựng sẵn khi bài toán là tác vụ chuẩn**, SageMaker khi cần model tuỳ biến, Bedrock khi cần AI sinh nội dung (generative).
+
+**Mental model:** như **thuê chuyên gia theo giờ**: cần dịch thuật thì thuê phiên dịch (Translate), cần đọc hoá đơn thì thuê nhân viên nhập liệu (Textract) — nhanh, trả theo dùng, không phải đào tạo ai. Chỉ khi nghiệp vụ rất đặc thù mới tự đào tạo nhân viên riêng (SageMaker).
 
 ## 2. How It Works
 
-- **Ngăn xếp AI/ML của AWS**: **AI services** (API sẵn dùng) → **Bedrock/SageMaker** (xây và tuỳ biến) → **hạ tầng** (EC2 GPU, **Trainium/Inferentia**).
-- **Thị giác & tài liệu**:
-  - **Amazon Rekognition**: nhận diện đối tượng, khuôn mặt, văn bản trong ảnh/video, kiểm duyệt nội dung.
-  - **Amazon Textract**: trích xuất **text, bảng, form** từ tài liệu quét (vượt OCR thường).
-- **Ngôn ngữ**:
-  - **Amazon Comprehend**: **NLP** — cảm xúc, thực thể, từ khoá, ngôn ngữ, phát hiện **PII**.
-  - **Amazon Translate**: dịch máy; **Amazon Lex**: chatbot/voice bot hội thoại (công nghệ giống Alexa).
-- **Giọng nói**: **Amazon Transcribe** (giọng nói → văn bản); **Amazon Polly** (văn bản → giọng nói).
-- **Tìm kiếm & trợ lý**: **Amazon Kendra** (tìm kiếm doanh nghiệp bằng ML), **Amazon Q** (trợ lý GenAI cho doanh nghiệp/lập trình viên), **Amazon Personalize** (gợi ý cá nhân hoá).
-- Gọi qua **API/SDK**, trả tiền theo **số lần gọi/dữ liệu xử lý**; dữ liệu thường lưu trong S3.
+**Thị giác (Vision)**
+- **Amazon Rekognition**: phân tích ảnh/video (nhãn đối tượng, khuôn mặt, kiểm duyệt nội dung, văn bản trong ảnh), có **Custom Labels** cho nhãn riêng.
+- **Amazon Textract**: **OCR có cấu trúc** — trích **văn bản, form (cặp khoá–giá trị), bảng** từ tài liệu scan; có API cho hoá đơn/CMND.
+
+**Ngôn ngữ và hội thoại**
+- **Amazon Comprehend**: NLP — **cảm xúc, thực thể, cụm từ khoá, ngôn ngữ, PII**, phân loại tuỳ biến. **Amazon Translate**: dịch máy. **Amazon Lex**: xây chatbot/voice bot (cùng công nghệ Alexa). **Amazon Kendra**: tìm kiếm doanh nghiệp thông minh trên tài liệu.
+
+**Giọng nói (Speech)**
+- **Amazon Transcribe**: **speech-to-text** (nhận diện người nói, từ vựng tuỳ chỉnh, che PII, phân tích cuộc gọi). **Amazon Polly**: **text-to-speech** (giọng neural, SSML).
+
+**Gợi ý và dự báo**
+- **Amazon Personalize**: gợi ý cá nhân hoá (như Amazon.com). Một số dịch vụ dự báo/phát hiện gian lận đã ngừng nhận khách hàng mới, hãy kiểm tra tài liệu hiện hành.
+
+**Cách dùng và giới hạn**
+- Gọi API với **IAM**; tính tiền **theo số lượng sử dụng** (ảnh, trang, phút, ký tự). Giới hạn: ít tuỳ biến sâu; dữ liệu đặc thù hoặc yêu cầu độ chính xác rất cao có thể cần mô hình riêng.
+
+**Kết hợp**
+- Ví dụ pipeline: **Transcribe** (cuộc gọi → văn bản) → **Comprehend** (cảm xúc, PII) → **Translate** → lưu S3; hoặc **Textract → Comprehend → Bedrock** để tóm tắt hợp đồng.
+
+```python
+import boto3
+tx = boto3.client("textract")
+resp = tx.analyze_document(Document={"S3Object": {"Bucket": "b", "Name": "invoice.png"}},
+                           FeatureTypes=["FORMS", "TABLES"])   # form + bảng
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart TD
-    Q{What is the input?} -->|Image / video| RK[Rekognition]
-    Q -->|Scanned document / form| TX[Textract]
-    Q -->|Text| CP["Comprehend / Translate"]
-    Q -->|Audio| TR["Transcribe / Polly"]
-    Q -->|Conversation| LX[Lex]
+    N{"Cần gì?"} -->|"Đọc form, bảng từ scan"| TX[Textract]
+    N -->|"Nhận diện đối tượng, khuôn mặt trong ảnh/video"| RK[Rekognition]
+    N -->|"Chuyển giọng nói thành văn bản"| TR[Transcribe]
+    N -->|"Chuyển văn bản thành giọng nói"| PO[Polly]
+    N -->|"Cảm xúc, thực thể, PII trong văn bản"| CP[Comprehend]
+    N -->|"Dịch"| TL[Translate]
+    N -->|"Chatbot"| LX[Lex]
+    N -->|"Gợi ý"| PS[Personalize]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Cần | Dịch vụ |
+| Tình huống / Nhu cầu | Chọn gì |
 | --- | --- |
-| Đọc hoá đơn, form, bảng từ PDF/ảnh | **Textract** |
-| Nhận diện đối tượng/khuôn mặt/kiểm duyệt ảnh | **Rekognition** |
-| Cảm xúc, thực thể, PII trong văn bản | **Comprehend** |
-| Phụ đề, ghi âm cuộc gọi → text | **Transcribe** |
-| Đọc văn bản thành giọng nói | **Polly** |
-| Chatbot | **Lex** |
-| Tìm kiếm tài liệu nội bộ | **Kendra** |
+| Trích form và bảng từ tài liệu scan | Textract |
+| Nhận diện đối tượng/khuôn mặt, kiểm duyệt ảnh | Rekognition |
+| Chuyển cuộc gọi thành văn bản | Transcribe |
+| Đọc văn bản thành giọng nói | Polly |
+| Phân tích cảm xúc, PII trong văn bản | Comprehend |
+| Chatbot/voice bot | Lex |
+| Tìm kiếm tài liệu doanh nghiệp | Kendra |
+| Gợi ý sản phẩm | Personalize |
+| Tác vụ đặc thù cần tuỳ biến sâu | SageMaker |
+| Sinh nội dung | Bedrock |
 
-- Dịch vụ sẵn dùng **nhanh, rẻ, ít công**; tuỳ biến sâu hoặc miền rất đặc thù → **SageMaker**; sinh văn bản/ảnh → **Bedrock**.
-- Trade-off: ít kiểm soát mô hình và dữ liệu đặc thù, đổi lại triển khai trong vài giờ.
+- **Được gì:** nhanh, rẻ, không cần ML. **Mất gì:** ít tuỳ biến, chi phí theo lượng có thể lớn khi khối lượng cao, phụ thuộc năng lực dịch vụ.
 
 ## 5. Must Remember / Production Pitfalls
 
-- Dịch vụ nhận diện **khuôn mặt** có rủi ro riêng tư, thiên kiến và pháp lý: cần chính sách sử dụng rõ ràng.
-- Textract ≠ Rekognition text: Textract hiểu **cấu trúc tài liệu** (form, bảng), Rekognition chỉ đọc chữ trong cảnh.
-- Comprehend phát hiện **PII**, nhưng **che/redact** là bước bạn phải thực hiện.
-- Giới hạn kích thước/định dạng đầu vào và **quota** theo từng API; xử lý lớn nên dùng **asynchronous** API.
-- Một số dịch vụ AI cũ đã ngừng nhận khách hàng mới: kiểm tra trạng thái trong tài liệu AWS.
-- Exam trap: "trích dữ liệu từ form scan" → **Textract**; "xác định cảm xúc khách hàng" → **Comprehend**; "chuyển cuộc gọi thành văn bản" → **Transcribe**.
+- **Tự huấn luyện OCR cho hoá đơn → tốn công vô ích → Textract (hoặc Document Intelligence bên Azure)**.
+- **Gửi dữ liệu nhạy cảm vào dịch vụ mà chưa kiểm soát → rủi ro tuân thủ → kiểm tra chính sách lưu trữ, mã hoá, che PII (Comprehend/Transcribe)**.
+- **Độ chính xác không đủ cho nghiệp vụ đặc thù → dịch vụ dựng sẵn không tuỳ biến sâu → custom (Rekognition Custom Labels, Comprehend custom) hoặc SageMaker**.
+- **Hoá đơn tăng theo khối lượng → tính theo trang/phút/ký tự → ước lượng chi phí, xử lý theo lô**.
+- **Dùng sai dịch vụ cho tác vụ sinh nội dung → AI service dựng sẵn không sinh văn bản tự do → dùng Bedrock**.
+- Exam trap: "trích dữ liệu từ form và bảng trong tài liệu scan" → **Textract**; "chuyển cuộc gọi thành văn bản" → **Transcribe**; "khi nào dùng AI service dựng sẵn" → **tác vụ phổ biến, không cần tuỳ biến sâu**.
 
 ## 6. Search Hooks
 
-- `Amazon Textract vs Rekognition` — trích cấu trúc tài liệu so với nhận diện ảnh.
-- `Amazon Comprehend sentiment entities PII` — phân tích ngôn ngữ và phát hiện dữ liệu cá nhân.
-- `Amazon Transcribe vs Polly` — giọng nói thành văn bản và ngược lại.
-- `Amazon Lex chatbot` — xây bot hội thoại bằng ngôn ngữ tự nhiên.
-- `Amazon Kendra intelligent search` — tìm kiếm doanh nghiệp bằng ML.
-- `AWS AI ML stack layers` — ba tầng AI services, ML platforms và hạ tầng.
+- `Amazon Textract forms tables` — trích form/bảng từ tài liệu.
+- `Amazon Rekognition image video analysis` — phân tích ảnh/video.
+- `Amazon Transcribe speech to text` — nhận dạng giọng nói.
+- `Amazon Comprehend sentiment entities PII` — NLP có sẵn.
+- `Amazon Lex Polly Translate` — chatbot, TTS, dịch.
+- `Amazon Personalize recommendations` — gợi ý cá nhân hoá.

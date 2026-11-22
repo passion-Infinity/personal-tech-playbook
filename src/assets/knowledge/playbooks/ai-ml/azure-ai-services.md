@@ -1,54 +1,78 @@
 ## 1. Core Concept
 
-**Azure AI services** (trước đây là **Cognitive Services**) là bộ API AI dựng sẵn cho **thị giác, ngôn ngữ, giọng nói, tài liệu và tìm kiếm** mà không cần tự huấn luyện mô hình. Khung kiến thức của **AI-900** chia thành các **AI workload**: computer vision, NLP, document intelligence, knowledge mining, generative AI. Mental model: *mỗi workload có một dịch vụ tương ứng — chọn đúng dịch vụ rồi gọi bằng endpoint + key hoặc Entra ID.*
+**Azure AI services** (trước đây là Cognitive Services) là bộ dịch vụ AI **dựng sẵn, gọi qua API** cho thị giác, giọng nói, ngôn ngữ, tài liệu và tìm kiếm; **Azure AI Foundry** là nơi tập trung xây ứng dụng/agent AI; **Azure Machine Learning** dành cho model tuỳ biến. Nguyên tắc: **dùng dịch vụ dựng sẵn khi tác vụ chuẩn**, Azure OpenAI khi cần sinh nội dung, Azure ML khi cần huấn luyện model riêng.
+
+**Mental model:** như AWS, là **thuê chuyên gia theo từng nghiệp vụ**: đọc hoá đơn → **Document Intelligence**, nghe/nói → **Speech**, phân tích văn bản → **Language**, tìm kiếm tài liệu có AI → **AI Search**. Điều khác Azure là có sẵn **"gói tất cả trong một"** (multi-service resource) để quản lý khoá và hoá đơn gọn hơn.
 
 ## 2. How It Works
 
-- **Computer Vision**: **Azure AI Vision** (phân tích ảnh, OCR, object detection, tạo caption), **Face** (phát hiện/nhận diện khuôn mặt, có hạn chế sử dụng), **Custom Vision** (huấn luyện mô hình ảnh riêng).
-- **NLP**: **Azure AI Language** (cảm xúc, nhận dạng thực thể **NER**, trích cụm từ khoá, tóm tắt, **CLU** hiểu ý định hội thoại, hỏi–đáp), **Azure AI Translator** (dịch).
-- **Giọng nói**: **Azure AI Speech** (speech-to-text, text-to-speech, dịch giọng nói).
-- **Tài liệu**: **Azure AI Document Intelligence** (trước đây là Form Recognizer) trích **text, bảng, key-value** từ hoá đơn, biên lai, CMND bằng mô hình dựng sẵn hoặc tuỳ biến.
-- **Knowledge mining**: **Azure AI Search** (trước đây Azure Cognitive Search) lập chỉ mục tài liệu, làm giàu bằng AI (**skillset**), tìm kiếm full-text/vector/hybrid.
-- **An toàn nội dung**: **Azure AI Content Safety**; **Generative AI**: **Azure OpenAI** (xem bài riêng).
-- **Cách dùng**: tạo **resource** — **single-service** (một dịch vụ, endpoint/key riêng, giá riêng) hoặc **multi-service** (một endpoint và key cho nhiều dịch vụ); xác thực bằng **key** hoặc **Microsoft Entra ID**; có thể chạy một số dịch vụ trong **container** (kể cả on-premises/edge).
+**Các dịch vụ chính**
+- **Azure AI Vision**: phân tích ảnh, **OCR**, nhận dạng đối tượng. **Azure AI Speech**: **speech-to-text**, text-to-speech, dịch giọng nói, nhận dạng người nói. **Azure AI Language**: cảm xúc, nhận dạng thực thể, tóm tắt, hiểu hội thoại (CLU), hỏi đáp. **Azure AI Translator**: dịch văn bản/tài liệu.
+- **Azure AI Document Intelligence** (trước là **Form Recognizer**): **trích dữ liệu có cấu trúc** từ hoá đơn, biên lai, CMND, form bằng **model dựng sẵn** hoặc model tuỳ chỉnh.
+- **Azure AI Search**: **lập chỉ mục và tìm kiếm** tài liệu; **knowledge mining** nhờ **skillset** (OCR, trích thực thể, embedding…) **làm giàu** dữ liệu; hỗ trợ **hybrid** (từ khoá + vector) và **semantic ranker**; hay làm kho RAG cho Azure OpenAI.
+- **Azure AI Content Safety**: kiểm duyệt văn bản/ảnh, **Prompt Shields**, groundedness detection.
+
+**Multi-service vs single-service resource**
+- **Multi-service**: **một endpoint và một khoá** dùng cho nhiều dịch vụ, tiện quản lý và hoá đơn gộp. **Single-service**: endpoint, khoá và chi phí **riêng từng dịch vụ**, dễ phân quyền/theo dõi chi tiết và cần khi một số tính năng chỉ có ở loại này.
+
+**Xác thực và mạng**
+- **Khoá API** hoặc **Microsoft Entra ID/managed identity** (khuyên dùng); **Private Endpoint** để không ra Internet; một số dịch vụ chạy được trong **container** tại chỗ/edge.
+
+**Azure Machine Learning**
+- Nền tảng ML tuỳ biến: **AutoML**, designer, pipeline, MLflow, **managed endpoint**, giám sát (tương đương SageMaker).
+
+**Foundry**
+- **Azure AI Foundry**: cổng/SDK để quản lý model (catalog), đánh giá, agent và triển khai ứng dụng AI an toàn (xem bài Azure OpenAI & Foundry).
+
+```python
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.identity import DefaultAzureCredential
+client = DocumentIntelligenceClient(ENDPOINT, DefaultAzureCredential())  # Entra ID, không khoá
+result = client.begin_analyze_document("prebuilt-invoice", body=open("inv.pdf","rb")).result()
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart TD
-    W{AI workload} -->|Images / video| V[AI Vision / Face / Custom Vision]
-    W -->|Text| L[AI Language / Translator]
-    W -->|Audio| S[AI Speech]
-    W -->|Forms and invoices| D[Document Intelligence]
-    W -->|Search over documents| AS[AI Search]
+    N{"Cần gì?"} -->|"Trích dữ liệu từ hoá đơn, biên lai"| DI["Document Intelligence"]
+    N -->|"Nhận dạng giọng nói, tạo giọng nói"| SP["AI Speech"]
+    N -->|"Cảm xúc, thực thể, tóm tắt"| LG["AI Language"]
+    N -->|"Ảnh, OCR"| VS["AI Vision"]
+    N -->|"Tìm kiếm có làm giàu bằng AI"| AS["AI Search"]
+    N -->|"Sinh nội dung"| OA["Azure OpenAI"]
+    N -->|"Model tuỳ biến"| ML["Azure Machine Learning"]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Cần | Dịch vụ |
+| Tình huống / Nhu cầu | Chọn gì |
 | --- | --- |
-| Trích dữ liệu từ hoá đơn/form | **Document Intelligence** |
-| Cảm xúc, thực thể, tóm tắt văn bản | **AI Language** |
-| Phụ đề, giọng nói ↔ văn bản | **AI Speech** |
-| Mô tả/nhận diện nội dung ảnh | **AI Vision** |
-| Tìm kiếm trên kho tài liệu có làm giàu AI | **AI Search** |
+| Trích dữ liệu từ hoá đơn | Document Intelligence |
+| Nhận dạng giọng nói thành văn bản | AI Speech |
+| Tìm kiếm tài liệu có làm giàu bằng AI | AI Search |
+| Dịch văn bản | Translator |
+| Kiểm duyệt nội dung | Content Safety |
+| Một khoá cho nhiều dịch vụ | Multi-service resource |
+| Tách khoá/chi phí từng dịch vụ | Single-service resource |
+| Huấn luyện model riêng | Azure Machine Learning |
 
-- Dùng **multi-service resource** để quản lý một key/hoá đơn; dùng **single-service** khi cần tách chi phí/quyền theo dịch vụ.
-- Trade-off: dịch vụ dựng sẵn nhanh và rẻ, nhưng ít tuỳ biến hơn **Azure Machine Learning**.
+- **Được gì:** nhanh, không cần ML, tích hợp Entra ID/Private Endpoint. **Mất gì:** ít tuỳ biến, chi phí theo lượng dùng, phụ thuộc năng lực/giới hạn dịch vụ.
 
 ## 5. Must Remember / Production Pitfalls
 
-- Tên dịch vụ **đổi thường xuyên** (Cognitive Services → AI services, Form Recognizer → Document Intelligence, Azure AI Studio → Azure AI Foundry): đối chiếu tài liệu mới nhất.
-- **Key** bị lộ là rủi ro lớn; ưu tiên **Entra ID + managed identity** và lưu key trong **Key Vault**.
-- **Face** và nhận dạng sinh trắc học bị **hạn chế sử dụng** theo chính sách AI có trách nhiệm.
-- Mỗi dịch vụ có **quota/giới hạn tần suất** (TPS) theo tier; tải cao cần tier phù hợp và retry.
-- Exam trap: "trích dữ liệu từ hoá đơn" → **Document Intelligence**; "tạo chatbot hiểu ý định" → **CLU**; "tìm kiếm có làm giàu bằng AI (knowledge mining)" → **AI Search**.
+- **Lộ khoá API → ai cũng gọi được và tính tiền bạn → dùng Entra ID/managed identity, xoay khoá, Key Vault**.
+- **Một khoá dùng chung nhiều dịch vụ bị lộ → ảnh hưởng rộng → cân nhắc single-service cho dịch vụ nhạy cảm**.
+- **Tự huấn luyện model đọc hoá đơn → tốn công → Document Intelligence prebuilt**.
+- **Dữ liệu nhạy cảm ra Internet công cộng → thiếu Private Endpoint → Private Endpoint và kiểm soát mạng**.
+- **Nhầm tên cũ/mới → học sai (Form Recognizer, Cognitive Services) → đối chiếu tên hiện hành**.
+- Exam trap: "trích dữ liệu từ hoá đơn trên Azure" → **Document Intelligence**; "tìm kiếm tài liệu có làm giàu bằng AI" → **Azure AI Search**; "nhận dạng giọng nói thành văn bản" → **AI Speech**; "multi-service resource" → **một endpoint/khoá cho nhiều dịch vụ**.
 
 ## 6. Search Hooks
 
-- `Azure AI services multi-service vs single-service resource` — hai kiểu tài nguyên AI services.
-- `Azure AI Document Intelligence prebuilt models` — trích dữ liệu từ hoá đơn, biên lai, form.
-- `Azure AI Language NER sentiment CLU` — các khả năng NLP của AI Language.
-- `Azure AI Speech speech-to-text` — chuyển giọng nói thành văn bản và ngược lại.
-- `Azure AI Search skillset knowledge mining` — lập chỉ mục và làm giàu tài liệu bằng AI.
-- `AI-900 AI workloads` — các loại workload AI trong đề thi AI-900.
+- `Azure AI Document Intelligence prebuilt models` — trích dữ liệu từ tài liệu.
+- `Azure AI Search skillset knowledge mining` — làm giàu và tìm kiếm tài liệu.
+- `Azure AI Speech speech to text` — nhận dạng giọng nói.
+- `Azure AI services multi-service resource` — một khoá cho nhiều dịch vụ.
+- `Azure AI Content Safety Prompt Shields` — kiểm duyệt và chống prompt injection.
+- `Azure Machine Learning vs Azure AI services` — tuỳ biến so với dựng sẵn.
