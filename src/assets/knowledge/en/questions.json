@@ -5675,5 +5675,177 @@
       "Catalyst optimizes",
       "Avoid redundant computation"
     ]
+  },
+  {
+    "id": "dbt-analytics-engineering-01",
+    "question": "A fact table of billions of rows only has new data appended each day. What is a reasonable materialization?",
+    "options": [
+      "view",
+      "incremental",
+      "ephemeral",
+      "a table every time"
+    ],
+    "explanation": "Incremental only processes the new part."
+  },
+  {
+    "id": "dbt-analytics-engineering-02",
+    "question": "What is ref() used for in dbt?",
+    "options": [
+      "Creating dependencies and the DAG",
+      "Encryption",
+      "Scheduling",
+      "Creating indexes"
+    ],
+    "explanation": "ref declares dependencies between models."
+  },
+  {
+    "id": "dbt-analytics-engineering-03",
+    "question": "An incremental model misses late-updated rows. What is the remedy?",
+    "options": [
+      "A lookback window and a periodic full-refresh",
+      "Delete the table",
+      "Add workers",
+      "Use a view"
+    ],
+    "explanation": "Tight filtering by updated_at misses late updates."
+  },
+  {
+    "id": "dbt-analytics-engineering-04",
+    "question": "Which part of ELT does dbt do and why does it matter?",
+    "modelAnswer": "dbt does only the T, with SQL inside the warehouse, bringing version control, tests, documentation and CI to transforms, so pipelines are trustworthy and easy to collaborate on.",
+    "keyPoints": [
+      "Transform only",
+      "Tests + lineage",
+      "CI/version control"
+    ]
+  },
+  {
+    "id": "lakehouse-table-formats-01",
+    "question": "A raw data lake lacks ACID. Which component adds transactions?",
+    "options": [
+      "An open table format such as Iceberg/Delta",
+      "Add nodes",
+      "CSV",
+      "An index"
+    ],
+    "explanation": "Metadata and atomic commits create ACID."
+  },
+  {
+    "id": "lakehouse-table-formats-02",
+    "question": "You need high-frequency updates and accept slower reads. What do you choose?",
+    "options": [
+      "Merge-on-read",
+      "Copy-on-write",
+      "No updates",
+      "Delete everything"
+    ],
+    "explanation": "MoR writes small deltas and compacts later."
+  },
+  {
+    "id": "lakehouse-table-formats-03",
+    "question": "Storage does not shrink even though data was deleted. What is the cause?",
+    "options": [
+      "Old snapshots still hold the files",
+      "Parquet",
+      "Compression",
+      "Partitioning"
+    ],
+    "explanation": "You need to expire snapshots and remove orphan files."
+  },
+  {
+    "id": "lakehouse-table-formats-04",
+    "question": "How does a table format achieve ACID?",
+    "modelAnswer": "A writer writes new Parquet files and then atomically commits a metadata version. Two concurrent writers use optimistic concurrency: the first to commit wins and the second checks for conflicts. Readers read a consistent snapshot so they are not blocked.",
+    "keyPoints": [
+      "An atomic metadata commit",
+      "Optimistic concurrency",
+      "Snapshot isolation"
+    ]
+  },
+  {
+    "id": "testing-strategy-pyramid-01",
+    "question": "A team's test suite takes 40 minutes, is mostly E2E and is often randomly red. What is the way to improve it?",
+    "options": [
+      "Add more E2E",
+      "Push checks down to unit/integration/contract, keep a few E2E smoke tests",
+      "Turn off tests",
+      "Increase timeouts"
+    ],
+    "explanation": "Lower levels are cheaper and more stable; raising timeouts only hides flakiness."
+  },
+  {
+    "id": "testing-strategy-pyramid-02",
+    "question": "A small refactor breaks dozens of tests although behavior is unchanged. What is the cause?",
+    "options": [
+      "Mocks verify too many implementation details",
+      "Missing coverage",
+      "A slow machine",
+      "Missing E2E"
+    ],
+    "explanation": "Tests should verify behavior/results; use fakes instead of mocks."
+  },
+  {
+    "id": "testing-strategy-pyramid-03",
+    "question": "Coverage is 90% yet bugs slip through. Which tool measures assertion quality?",
+    "options": [
+      "A linter",
+      "Mutation testing",
+      "A load test",
+      "A profiler"
+    ],
+    "explanation": "Mutation alters code and checks whether tests catch it."
+  },
+  {
+    "id": "testing-strategy-pyramid-04",
+    "question": "Why is contract testing useful for microservices?",
+    "modelAnswer": "The consumer describes the contract and the provider verifies it in its own CI, so incompatible APIs are detected before deployment without standing up a whole slow, flaky E2E environment.",
+    "keyPoints": [
+      "Consumer-driven contract",
+      "Early detection",
+      "Replaces part of E2E"
+    ]
+  },
+  {
+    "id": "design-patterns-solid-01",
+    "question": "Every new discount type means editing a long switch in many places. What is the solution?",
+    "options": [
+      "Add a case",
+      "Strategy: each type is a class implementing an interface",
+      "Use global variables",
+      "Copy code"
+    ],
+    "explanation": "Strategy allows extension without editing old code (Open/Closed)."
+  },
+  {
+    "id": "design-patterns-solid-02",
+    "question": "A subclass throws UnsupportedOperationException for a parent-class method. What does this violate?",
+    "options": [
+      "Liskov Substitution",
+      "Single Responsibility",
+      "Open/Closed",
+      "DRY"
+    ],
+    "explanation": "A subclass must be able to replace its parent without breaking the contract."
+  },
+  {
+    "id": "design-patterns-solid-03",
+    "question": "You have only seen two similar pieces of code. What should you do?",
+    "options": [
+      "Abstract immediately",
+      "Accept the duplication and wait for the third (Rule of Three)",
+      "Delete one",
+      "Use inheritance"
+    ],
+    "explanation": "Abstracting early easily guesses the axis of variation wrong; the wrong abstraction costs more than duplication."
+  },
+  {
+    "id": "design-patterns-solid-04",
+    "question": "Distinguish Dependency Inversion from Dependency Injection.",
+    "modelAnswer": "Dependency Inversion is a principle: high-level modules depend on abstractions rather than concrete implementations. Dependency Injection is a technique of passing dependencies in from outside, through the constructor, which helps achieve that principle and makes testing easy with fakes.",
+    "keyPoints": [
+      "A principle vs a technique",
+      "Depend on abstractions",
+      "Easy to test"
+    ]
   }
 ]

@@ -548,5 +548,25 @@
     "id": "spark-fundamentals",
     "title": "Apache Spark Fundamentals",
     "summary": "Understand the DAG, shuffle, joins and skew to write fast Spark jobs that do not OOM."
+  },
+  {
+    "id": "dbt-analytics-engineering",
+    "title": "dbt & Analytics Engineering",
+    "summary": "Transform data with SQL in the warehouse using models, tests, lineage and staging/marts layering."
+  },
+  {
+    "id": "lakehouse-table-formats",
+    "title": "Open Table Formats: Iceberg, Delta, Hudi",
+    "summary": "ACID, time travel and schema evolution on a data lake through snapshot metadata."
+  },
+  {
+    "id": "testing-strategy-pyramid",
+    "title": "Testing Strategy & Test Pyramid",
+    "summary": "Verify risk at the cheapest test level that can catch it: many unit tests, some integration/contract tests, few E2E tests."
+  },
+  {
+    "id": "design-patterns-solid",
+    "title": "Design Patterns & SOLID",
+    "summary": "Use SOLID and common patterns as a shared language to lower the cost of the next change without over-engineering."
   }
 ]

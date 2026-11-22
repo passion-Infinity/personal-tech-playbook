@@ -2768,5 +2768,100 @@
     "id": "spark-partitioning",
     "meaning": "Splitting data for parallelism",
     "definition": "The partition count determines parallelism."
+  },
+  {
+    "id": "dbt-incremental-models",
+    "meaning": "Process only new data",
+    "definition": "Needs a unique_key and handling of late-arriving data."
+  },
+  {
+    "id": "dbt-tests",
+    "meaning": "Data testing",
+    "definition": "unique, not_null, relationships."
+  },
+  {
+    "id": "analytics-engineering-layers",
+    "meaning": "Model layering",
+    "definition": "From cleaning to BI-serving tables."
+  },
+  {
+    "id": "dbt-snapshots-scd2",
+    "meaning": "Keep change history",
+    "definition": "Tracks dimension changes over time."
+  },
+  {
+    "id": "iceberg-snapshots",
+    "meaning": "Iceberg's metadata structure",
+    "definition": "A snapshot points to manifests and data files."
+  },
+  {
+    "id": "delta-lake-log",
+    "meaning": "The transaction log",
+    "definition": "_delta_log records commits."
+  },
+  {
+    "id": "iceberg-delta-hudi",
+    "meaning": "Comparing the three formats",
+    "definition": "Choose by ecosystem."
+  },
+  {
+    "id": "cow-vs-mor",
+    "meaning": "Two update approaches",
+    "definition": "A trade-off between write and read."
+  },
+  {
+    "id": "table-compaction",
+    "meaning": "Merging small files",
+    "definition": "Reduces small files."
+  },
+  {
+    "id": "test-pyramid",
+    "meaning": "Balancing the three test levels",
+    "definition": "Many fast unit tests at the base, few integration tests in the middle, very few E2E at the top because they are slow and fragile."
+  },
+  {
+    "id": "test-doubles",
+    "meaning": "Replacement objects used in tests",
+    "definition": "A stub returns fixed data, a mock verifies interactions, a fake is a simple working implementation, a spy records calls."
+  },
+  {
+    "id": "contract-testing",
+    "meaning": "Checking contracts between services",
+    "definition": "Consumer and provider agree on an API contract and verify it independently, replacing multi-service E2E."
+  },
+  {
+    "id": "flaky-tests",
+    "meaning": "Tests that sometimes pass and sometimes fail",
+    "definition": "Usual causes are real time, run order, shared data or asynchrony."
+  },
+  {
+    "id": "mutation-testing",
+    "meaning": "Measuring the quality of a test suite",
+    "definition": "Mutation testing deliberately breaks code to see whether tests catch it; property-based testing generates random inputs to check invariants."
+  },
+  {
+    "id": "solid-principles",
+    "meaning": "Five object-oriented design principles",
+    "definition": "Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion."
+  },
+  {
+    "id": "strategy-pattern",
+    "meaning": "Swap algorithms at runtime",
+    "definition": "Encapsulate algorithms behind one interface so they can be replaced without editing the caller."
+  },
+  {
+    "id": "dependency-injection-vs-inversion",
+    "meaning": "Distinguishing the technique from the principle",
+    "definition": "Dependency Inversion is the principle of depending on abstractions; DI is the technique of passing dependencies in from outside."
+  },
+  {
+    "id": "composition-over-inheritance",
+    "meaning": "Compose objects instead of deep inheritance",
+    "definition": "Inheritance used only to reuse code creates a fragile hierarchy; composition is more flexible."
+  },
+  {
+    "id": "rule-of-three-dry",
+    "meaning": "When to abstract",
+    "definition": "Wait for two to three real cases; a wrong abstraction costs more than small duplication."
   }
 ]
