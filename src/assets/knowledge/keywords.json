@@ -4268,5 +4268,222 @@
     "meaning": "Học và đề thử chính thức",
     "definition": "Đề thi thử và khoá học.",
     "topicId": "aws"
+  },
+  {
+    "id": "cosmos-consistency-levels",
+    "term": "Cosmos DB Consistency Levels",
+    "meaning": "Năm mức nhất quán",
+    "definition": "Strong, Bounded Staleness, Session, Consistent Prefix, Eventual.",
+    "topicId": "azure"
+  },
+  {
+    "id": "cosmos-partition-key-ru",
+    "term": "Cosmos DB Partition Key and Request Units",
+    "meaning": "Thiết kế partition và RU",
+    "definition": "Hot partition gây throttle 429.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-sql-pool-vs-mi",
+    "term": "Azure SQL Elastic Pool vs Managed Instance",
+    "meaning": "Dạng triển khai SQL",
+    "definition": "Pool chia sẻ tài nguyên, MI tương thích SQL Server.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-sql-failover-groups",
+    "term": "Azure SQL Failover Groups",
+    "meaning": "Failover đa Region",
+    "definition": "Chuỗi kết nối nhóm.",
+    "topicId": "azure"
+  },
+  {
+    "id": "cosmos-change-feed",
+    "term": "Cosmos DB Change Feed",
+    "meaning": "Luồng thay đổi",
+    "definition": "Kích hoạt xử lý sau khi ghi.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-service-bus",
+    "term": "Azure Service Bus",
+    "meaning": "Message broker doanh nghiệp",
+    "definition": "Queue, topic, dead-letter, sessions.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-event-grid",
+    "term": "Azure Event Grid",
+    "meaning": "Phân phối sự kiện",
+    "definition": "Push tới handler, retry.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-event-hubs",
+    "term": "Azure Event Hubs",
+    "meaning": "Ingest streaming",
+    "definition": "Partition, consumer group, Kafka endpoint.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-messaging-comparison",
+    "term": "Event Grid vs Event Hubs vs Service Bus",
+    "meaning": "So sánh ba dịch vụ",
+    "definition": "Sự kiện vs luồng vs lệnh.",
+    "topicId": "azure"
+  },
+  {
+    "id": "bicep-vs-arm",
+    "term": "Bicep vs ARM Templates",
+    "meaning": "IaC của Azure",
+    "definition": "Bicep gọn hơn và biên dịch ra ARM.",
+    "topicId": "azure"
+  },
+  {
+    "id": "arm-what-if",
+    "term": "az deployment what-if",
+    "meaning": "Xem trước thay đổi",
+    "definition": "Tránh bất ngờ khi deploy.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-devops-pipelines",
+    "term": "Azure DevOps YAML Pipelines",
+    "meaning": "CI/CD",
+    "definition": "Stages, jobs, environments, approvals.",
+    "topicId": "azure"
+  },
+  {
+    "id": "workload-identity-federation",
+    "term": "Workload Identity Federation",
+    "meaning": "Xác thực không cần secret",
+    "definition": "Pipeline dùng token liên kết.",
+    "topicId": "azure"
+  },
+  {
+    "id": "adls-gen2",
+    "term": "ADLS Gen2 Hierarchical Namespace",
+    "meaning": "Data lake trên Blob",
+    "definition": "ACL kiểu POSIX và thư mục thật.",
+    "topicId": "azure"
+  },
+  {
+    "id": "synapse-dedicated-serverless",
+    "term": "Synapse Dedicated vs Serverless SQL",
+    "meaning": "Hai chế độ SQL",
+    "definition": "Dedicated MPP, serverless trả theo quét.",
+    "topicId": "azure"
+  },
+  {
+    "id": "delta-lake",
+    "term": "Delta Lake",
+    "meaning": "ACID trên data lake",
+    "definition": "Giao dịch và time travel.",
+    "topicId": "azure"
+  },
+  {
+    "id": "microsoft-fabric",
+    "term": "Microsoft Fabric",
+    "meaning": "Nền tảng dữ liệu hợp nhất",
+    "definition": "OneLake, Lakehouse, Power BI.",
+    "topicId": "azure"
+  },
+  {
+    "id": "key-vault-soft-delete",
+    "term": "Key Vault Soft Delete and Purge Protection",
+    "meaning": "Chống xoá nhầm",
+    "definition": "Bắt buộc với production.",
+    "topicId": "azure"
+  },
+  {
+    "id": "microsoft-sentinel",
+    "term": "Microsoft Sentinel",
+    "meaning": "SIEM và SOAR",
+    "definition": "KQL, rules, playbook.",
+    "topicId": "azure"
+  },
+  {
+    "id": "hub-and-spoke",
+    "term": "Hub and Spoke Topology",
+    "meaning": "Mô hình mạng chuẩn",
+    "definition": "Dịch vụ chung ở hub.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-virtual-wan",
+    "term": "Azure Virtual WAN",
+    "meaning": "Hub toàn cầu",
+    "definition": "Nối nhiều site và VNet.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-arc",
+    "term": "Azure Arc",
+    "meaning": "Quản lý tài nguyên ngoài Azure",
+    "definition": "Policy và Defender cho server khác.",
+    "topicId": "azure"
+  },
+  {
+    "id": "private-vs-service-endpoint",
+    "term": "Private Endpoint vs Service Endpoint",
+    "meaning": "Hai cách truy cập PaaS",
+    "definition": "IP riêng vs đường tối ưu.",
+    "topicId": "azure"
+  },
+  {
+    "id": "app-service-slots",
+    "term": "App Service Deployment Slots",
+    "meaning": "Triển khai không downtime",
+    "definition": "Slot swap giữa staging và production.",
+    "topicId": "azure"
+  },
+  {
+    "id": "app-service-scale",
+    "term": "App Service Scale Up vs Scale Out",
+    "meaning": "Hai kiểu mở rộng",
+    "definition": "To hơn vs nhiều instance.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-apim",
+    "term": "Azure API Management",
+    "meaning": "Cổng API",
+    "definition": "Policy rate-limit, validate-jwt.",
+    "topicId": "azure"
+  },
+  {
+    "id": "front-door-vs-appgw",
+    "term": "Front Door vs Application Gateway",
+    "meaning": "L7 toàn cầu vs Region",
+    "definition": "Cả hai có WAF.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-certification-paths",
+    "term": "Azure Certification Paths",
+    "meaning": "Lộ trình theo vai trò",
+    "definition": "Fundamentals, Associate, Expert.",
+    "topicId": "azure"
+  },
+  {
+    "id": "az-104-skills",
+    "term": "AZ-104 Skills Measured",
+    "meaning": "Domain của AZ-104",
+    "definition": "Quản trị danh tính, mạng, compute, storage, monitor.",
+    "topicId": "azure"
+  },
+  {
+    "id": "azure-composite-sla",
+    "term": "Azure Composite SLA",
+    "meaning": "SLA tổng hợp",
+    "definition": "Nhân SLA tuần tự, song song tăng SLA.",
+    "topicId": "azure"
+  },
+  {
+    "id": "microsoft-learn-assessment",
+    "term": "Microsoft Learn Practice Assessment",
+    "meaning": "Đánh giá thử",
+    "definition": "Đề thử chính thức.",
+    "topicId": "azure"
   }
 ]

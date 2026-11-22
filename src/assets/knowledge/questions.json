@@ -7281,5 +7281,517 @@
       "Loại đáp án sai",
       "Ưu tiên managed"
     ]
+  },
+  {
+    "id": "azure-databases-cosmos-sql-01",
+    "playbookId": "azure-databases-cosmos-sql",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Mức nhất quán mặc định của Cosmos DB?",
+    "options": [
+      "Strong",
+      "Session",
+      "Eventual",
+      "Bounded Staleness"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Session là mặc định."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-02",
+    "playbookId": "azure-databases-cosmos-sql",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Di chuyển SQL Server on-prem với ít sửa đổi nhất?",
+    "options": [
+      "Azure SQL Database",
+      "Managed Instance",
+      "Cosmos DB",
+      "Table Storage"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "MI tương thích gần đầy đủ."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-03",
+    "playbookId": "azure-databases-cosmos-sql",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cosmos DB trả 429 thường xuyên. Nguyên nhân khả dĩ?",
+    "options": [
+      "Hết đĩa",
+      "Hot partition hoặc RU không đủ",
+      "Sai DNS",
+      "Lỗi mạng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Partition key kém dồn tải."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-04",
+    "playbookId": "azure-databases-cosmos-sql",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao partition key quan trọng trong Cosmos DB?",
+    "modelAnswer": "Partition key quyết định phân bổ dữ liệu và tải. Key kém làm hot partition, tốn RU và bị throttle; truy vấn cross-partition cũng đắt. Key tốt có cardinality cao và phân phối đều.",
+    "keyPoints": [
+      "Phân bổ dữ liệu và tải",
+      "Hot partition",
+      "Cardinality cao"
+    ]
+  },
+  {
+    "id": "azure-messaging-event-services-01",
+    "playbookId": "azure-messaging-event-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xử lý đơn hàng cần dead-letter và giao dịch?",
+    "options": [
+      "Event Grid",
+      "Service Bus",
+      "Event Hubs",
+      "Storage Queue"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Broker doanh nghiệp."
+  },
+  {
+    "id": "azure-messaging-event-services-02",
+    "playbookId": "azure-messaging-event-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ingest hàng triệu sự kiện telemetry, cần replay?",
+    "options": [
+      "Service Bus",
+      "Event Hubs",
+      "Event Grid",
+      "Logic Apps"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giữ retention, partition."
+  },
+  {
+    "id": "azure-messaging-event-services-03",
+    "playbookId": "azure-messaging-event-services",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Poison message lặp vô hạn. Xử lý?",
+    "options": [
+      "Bỏ qua",
+      "Dead-letter và MaxDeliveryCount",
+      "Tăng timeout",
+      "Restart"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chuyển sang DLQ sau số lần thử."
+  },
+  {
+    "id": "azure-messaging-event-services-04",
+    "playbookId": "azure-messaging-event-services",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao consumer phải idempotent?",
+    "modelAnswer": "Các dịch vụ này giao at-least-once: message có thể được giao lặp khi retry hoặc lock hết hạn. Consumer idempotent đảm bảo xử lý lặp không gây tác dụng phụ trùng.",
+    "keyPoints": [
+      "At-least-once",
+      "Retry giao lặp",
+      "Tránh tác dụng phụ trùng"
+    ]
+  },
+  {
+    "id": "azure-devops-bicep-iac-01",
+    "playbookId": "azure-devops-bicep-iac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xem trước thay đổi trước khi deploy production?",
+    "options": [
+      "Deploy luôn",
+      "what-if",
+      "Xoá rồi tạo lại",
+      "Dùng portal"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "what-if hiển thị thay đổi."
+  },
+  {
+    "id": "azure-devops-bicep-iac-02",
+    "playbookId": "azure-devops-bicep-iac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Complete deployment mode nguy hiểm vì?",
+    "options": [
+      "Chậm",
+      "Có thể xoá tài nguyên không có trong template",
+      "Tốn tiền",
+      "Không idempotent"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Xoá tài nguyên thừa."
+  },
+  {
+    "id": "azure-devops-bicep-iac-03",
+    "playbookId": "azure-devops-bicep-iac",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Pipeline truy cập Azure không lưu secret?",
+    "options": [
+      "Client secret trong biến",
+      "Workload identity federation",
+      "Mật khẩu admin",
+      "Key trong repo"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Token liên kết."
+  },
+  {
+    "id": "azure-devops-bicep-iac-04",
+    "playbookId": "azure-devops-bicep-iac",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao dùng IaC thay thao tác portal?",
+    "modelAnswer": "IaC có version, review, lặp lại được, phát hiện drift và dựng môi trường nhất quán; thao tác tay khó tái tạo và kiểm toán.",
+    "keyPoints": [
+      "Versioned và review",
+      "Lặp lại được",
+      "Nhất quán"
+    ]
+  },
+  {
+    "id": "azure-data-platform-01",
+    "playbookId": "azure-data-platform",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn Parquet trên lake không dựng cluster?",
+    "options": [
+      "Dedicated pool",
+      "Synapse serverless SQL",
+      "Databricks job",
+      "VM"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Trả theo dữ liệu quét."
+  },
+  {
+    "id": "azure-data-platform-02",
+    "playbookId": "azure-data-platform",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Medallion có nghĩa?",
+    "options": [
+      "Ba Region",
+      "Bronze/Silver/Gold",
+      "Ba DB",
+      "Ba cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Các lớp tinh luyện."
+  },
+  {
+    "id": "azure-data-platform-03",
+    "playbookId": "azure-data-platform",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Synapse dedicated pool quên tạm dừng?",
+    "options": [
+      "Không tốn",
+      "Vẫn tính tiền compute",
+      "Tự xoá",
+      "Mất dữ liệu"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tính tiền khi chạy."
+  },
+  {
+    "id": "azure-data-platform-04",
+    "playbookId": "azure-data-platform",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Delta Lake giải quyết vấn đề gì?",
+    "modelAnswer": "Thêm giao dịch ACID, schema enforcement và time travel lên file Parquet trên lake nên ghi đồng thời và sửa dữ liệu an toàn.",
+    "keyPoints": [
+      "ACID",
+      "Schema",
+      "Time travel"
+    ]
+  },
+  {
+    "id": "azure-security-keyvault-defender-01",
+    "playbookId": "azure-security-keyvault-defender",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "App truy cập Key Vault không lưu credential?",
+    "options": [
+      "Connection string",
+      "Managed Identity",
+      "Mật khẩu",
+      "Key trong code"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Token từ danh tính."
+  },
+  {
+    "id": "azure-security-keyvault-defender-02",
+    "playbookId": "azure-security-keyvault-defender",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bảo vệ vault khỏi xoá vĩnh viễn?",
+    "options": [
+      "Không",
+      "Soft delete và purge protection",
+      "RBAC",
+      "Tag"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giữ lại thời gian."
+  },
+  {
+    "id": "azure-security-keyvault-defender-03",
+    "playbookId": "azure-security-keyvault-defender",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Defender for Cloud tự sửa lỗi cấu hình?",
+    "options": [
+      "Có luôn",
+      "Chủ yếu khuyến nghị và phát hiện",
+      "Chỉ Sentinel",
+      "Không dùng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần hành động hoặc automation."
+  },
+  {
+    "id": "azure-security-keyvault-defender-04",
+    "playbookId": "azure-security-keyvault-defender",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "System-assigned vs user-assigned identity?",
+    "modelAnswer": "System-assigned gắn vòng đời một tài nguyên và bị xoá cùng nó; user-assigned độc lập và dùng chung cho nhiều tài nguyên.",
+    "keyPoints": [
+      "Vòng đời gắn tài nguyên",
+      "User-assigned dùng chung",
+      "Chọn theo nhu cầu"
+    ]
+  },
+  {
+    "id": "azure-hybrid-connectivity-01",
+    "playbookId": "azure-hybrid-connectivity",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Kết nối nhanh, rẻ?",
+    "options": [
+      "ExpressRoute",
+      "VPN Gateway",
+      "Data Box",
+      "Arc"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dựng trong phút."
+  },
+  {
+    "id": "azure-hybrid-connectivity-02",
+    "playbookId": "azure-hybrid-connectivity",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "VNet peering có bắc cầu?",
+    "options": [
+      "Có",
+      "Không mặc định",
+      "Chỉ cùng Region",
+      "Chỉ ARM"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần hub/Firewall."
+  },
+  {
+    "id": "azure-hybrid-connectivity-03",
+    "playbookId": "azure-hybrid-connectivity",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Quản trị server on-prem bằng Azure Policy?",
+    "options": [
+      "Không thể",
+      "Azure Arc",
+      "VPN",
+      "Front Door"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Arc gắn server."
+  },
+  {
+    "id": "azure-hybrid-connectivity-04",
+    "playbookId": "azure-hybrid-connectivity",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao tránh chồng lấn địa chỉ?",
+    "modelAnswer": "Định tuyến cần mạng phân biệt; CIDR trùng làm không route được giữa on-prem và VNet, buộc đổi địa chỉ hoặc NAT.",
+    "keyPoints": [
+      "Cần mạng phân biệt",
+      "Không route được",
+      "NAT phức tạp"
+    ]
+  },
+  {
+    "id": "azure-app-service-api-management-01",
+    "playbookId": "azure-app-service-api-management",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Triển khai không downtime trên App Service?",
+    "options": [
+      "Restart",
+      "Slot swap",
+      "Xoá app",
+      "Scale in"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Swap staging và production."
+  },
+  {
+    "id": "azure-app-service-api-management-02",
+    "playbookId": "azure-app-service-api-management",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cân bằng tải L7 toàn cầu có WAF?",
+    "options": [
+      "Load Balancer",
+      "Front Door",
+      "NSG",
+      "Traffic Manager"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Front Door."
+  },
+  {
+    "id": "azure-app-service-api-management-03",
+    "playbookId": "azure-app-service-api-management",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Swap mang cấu hình staging lên production vì?",
+    "options": [
+      "Lỗi Azure",
+      "Quên đánh dấu slot setting",
+      "Plan nhỏ",
+      "Thiếu Always On"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Slot setting dính theo slot."
+  },
+  {
+    "id": "azure-app-service-api-management-04",
+    "playbookId": "azure-app-service-api-management",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Scale up và scale out khác nhau thế nào?",
+    "modelAnswer": "Scale up đổi sang kích cỡ lớn hơn (CPU/RAM), scale out thêm nhiều instance. Scale out cần ứng dụng stateless hoặc state lưu ngoài.",
+    "keyPoints": [
+      "Scale up kích cỡ",
+      "Scale out số instance",
+      "Cần stateless"
+    ]
+  },
+  {
+    "id": "azure-certification-roadmap-01",
+    "playbookId": "azure-certification-roadmap",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Chứng chỉ nền tảng Azure?",
+    "options": [
+      "AZ-900",
+      "AZ-400",
+      "AZ-305",
+      "SC-100"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Fundamentals."
+  },
+  {
+    "id": "azure-certification-roadmap-02",
+    "playbookId": "azure-certification-roadmap",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ngăn tạo tài nguyên ngoài Region cho phép?",
+    "options": [
+      "RBAC",
+      "Azure Policy",
+      "NSG",
+      "Key Vault"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Policy ép quy tắc."
+  },
+  {
+    "id": "azure-certification-roadmap-03",
+    "playbookId": "azure-certification-roadmap",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Nhầm phổ biến?",
+    "options": [
+      "Entra ID roles với Azure RBAC roles",
+      "Hai chữ AZ",
+      "Hai VNet",
+      "Không có"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Thư mục vs tài nguyên."
+  },
+  {
+    "id": "azure-certification-roadmap-04",
+    "playbookId": "azure-certification-roadmap",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Tính SLA tổng của hai dịch vụ nối tiếp?",
+    "modelAnswer": "Nhân SLA của từng dịch vụ nên SLA tổng thấp hơn mỗi dịch vụ; dự phòng song song tăng SLA.",
+    "keyPoints": [
+      "Nhân SLA",
+      "Tổng thấp hơn",
+      "Song song tăng"
+    ]
   }
 ]

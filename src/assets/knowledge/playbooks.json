@@ -2254,5 +2254,151 @@
     "prerequisites": [
       "aws-well-architected-framework"
     ]
+  },
+  {
+    "id": "azure-databases-cosmos-sql",
+    "title": "Azure SQL & Cosmos DB",
+    "summary": "Chọn Azure SQL hay Cosmos DB, hiểu RU, partition key và năm mức nhất quán.",
+    "topicId": "azure",
+    "keywordIds": [
+      "cosmos-consistency-levels",
+      "cosmos-partition-key-ru",
+      "azure-sql-pool-vs-mi",
+      "azure-sql-failover-groups",
+      "cosmos-change-feed"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-databases-cosmos-sql.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-core-architecture"
+    ]
+  },
+  {
+    "id": "azure-messaging-event-services",
+    "title": "Service Bus, Event Grid & Event Hubs",
+    "summary": "Chọn đúng dịch vụ messaging Azure cho lệnh, sự kiện và streaming khối lượng lớn.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-service-bus",
+      "azure-event-grid",
+      "azure-event-hubs",
+      "azure-messaging-comparison"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-messaging-event-services.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-compute-serverless-containers"
+    ]
+  },
+  {
+    "id": "azure-devops-bicep-iac",
+    "title": "Azure DevOps & Bicep (IaC)",
+    "summary": "Triển khai hạ tầng Azure bằng Bicep với what-if và pipeline có approval, không lưu secret.",
+    "topicId": "azure",
+    "keywordIds": [
+      "bicep-vs-arm",
+      "arm-what-if",
+      "azure-devops-pipelines",
+      "workload-identity-federation",
+      "azure-policy"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-devops-bicep-iac.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-core-architecture",
+      "entra-id-rbac"
+    ]
+  },
+  {
+    "id": "azure-data-platform",
+    "title": "Azure Data Platform (ADLS, ADF, Synapse, Databricks, Fabric)",
+    "summary": "Dựng lakehouse trên ADLS Gen2 với Data Factory, Synapse/Databricks và Fabric.",
+    "topicId": "azure",
+    "keywordIds": [
+      "adls-gen2",
+      "medallion-architecture",
+      "synapse-dedicated-serverless",
+      "delta-lake",
+      "microsoft-fabric"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-data-platform.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-storage",
+      "batch-vs-stream-processing"
+    ]
+  },
+  {
+    "id": "azure-security-keyvault-defender",
+    "title": "Key Vault, Managed Identity & Defender",
+    "summary": "Loại bỏ secret bằng Managed Identity, bảo vệ khoá bằng Key Vault và phát hiện đe doạ bằng Defender/Sentinel.",
+    "topicId": "azure",
+    "keywordIds": [
+      "key-vault-soft-delete",
+      "managed-identity",
+      "defender-for-cloud",
+      "microsoft-sentinel",
+      "azure-private-endpoint"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-security-keyvault-defender.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "entra-id-rbac",
+      "azure-monitor-security"
+    ]
+  },
+  {
+    "id": "azure-hybrid-connectivity",
+    "title": "Azure Hybrid: VPN, ExpressRoute, Virtual WAN, Arc",
+    "summary": "Kết nối on-prem với Azure bằng VPN/ExpressRoute, hub-and-spoke và quản trị bằng Arc.",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-expressroute-vs-vpn",
+      "hub-and-spoke",
+      "azure-virtual-wan",
+      "azure-arc",
+      "private-vs-service-endpoint"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-hybrid-connectivity.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-networking-load-balancing"
+    ]
+  },
+  {
+    "id": "azure-app-service-api-management",
+    "title": "App Service, API Management & Front Door",
+    "summary": "Chạy web app PaaS với slot, công bố API qua APIM và cân bằng tải L7 bằng Front Door/Application Gateway.",
+    "topicId": "azure",
+    "keywordIds": [
+      "app-service-slots",
+      "app-service-scale",
+      "azure-apim",
+      "front-door-vs-appgw",
+      "azure-traffic-manager"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-app-service-api-management.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-compute-serverless-containers",
+      "azure-networking-load-balancing"
+    ]
+  },
+  {
+    "id": "azure-certification-roadmap",
+    "title": "Lộ trình Chứng chỉ Azure & Kỹ thuật làm đề",
+    "summary": "Chọn chứng chỉ Azure theo vai trò và tránh các nhầm lẫn thường gặp (RBAC vs Policy, AZ vs Region pair).",
+    "topicId": "azure",
+    "keywordIds": [
+      "azure-certification-paths",
+      "az-104-skills",
+      "azure-composite-sla",
+      "microsoft-learn-assessment"
+    ],
+    "filePath": "assets/knowledge/playbooks/azure/azure-certification-roadmap.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "azure-governance-cost"
+    ]
   }
 ]
