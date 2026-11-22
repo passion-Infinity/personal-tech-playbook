@@ -56,6 +56,9 @@ If the raw notes are empty, stop and ask the user to run `/distill <notes>` with
      questions the change affects. Test trade-offs, failure modes and "why", with plausible distractors,
      ids `<playbookId>-NN`, and a short explanation. Add a `challenges.json` entry only if the notes
      describe a realistic design/debug scenario.
+   - **English version (mandatory)**: write the matching English overlay under `src/assets/knowledge/en/`
+     (`playbooks/<topic>/<id>.md`, plus entries in `en/playbooks.json`, `en/keywords.json`, `en/questions.json`,
+     and `en/topics.json` / `en/challenges.json` when touched) as described in `CLAUDE.md` → *Bilingual Content*.
    - Validate: run `npm run validate` and fix every error (it checks references, prerequisite cycles,
      question shapes and the 6-part structure; warnings on word count and diagram size are advisory).
 
@@ -73,6 +76,7 @@ If the raw notes are empty, stop and ask the user to run `/distill <notes>` with
      - (or "None — all claims are standard and verified against well-known behaviour.")
    Learning tree: Level <n> · prerequisites: <ids> · unlocks: <ids>
    Practice added: <n> mcq, <n> explain, <n> bug (<question ids>)
+   English version: written (en/playbooks/<topic>/<id>.md + overlay entries) | missing
    Index changes: <files touched in topics / keywords / playbooks / questions / challenges>
    Next: review with `git diff`, then commit.
    ```

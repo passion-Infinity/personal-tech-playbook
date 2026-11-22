@@ -49,6 +49,31 @@ from `playbooks.json`). Use exactly these six `##` headings, in this order:
    Bullet list of exact English keywords for external deep-dive searching, each with a 1-line
    Vietnamese summary. Format: ``- `Exact English Term` — tóm tắt 1 dòng tiếng Việt.``
 
+## Bilingual Content (Vietnamese + English)
+
+The system ships in **two languages**. Vietnamese is the **source of truth**; English is an **overlay** under
+`src/assets/knowledge/en/` that mirrors the same ids. The UI language switch (VI/EN, stored in `localStorage`
+`playbook-lang`, or `?lang=en`) selects which version is shown. A missing English item **falls back to Vietnamese**
+(the reader shows a notice), so partial translation never breaks the app.
+
+```
+src/assets/knowledge/en/
+├── topics.json       # [{ id, name, description }]
+├── keywords.json     # [{ id, meaning, definition }]          (term is already English)
+├── playbooks.json    # [{ id, title, summary }]               (presence = the English .md exists)
+├── questions.json    # [{ id, question, options[], explanation | modelAnswer, keyPoints[], code?: { text } }]
+├── challenges.json   # [{ id, title, scenario, requirements[], hints[], rubric: [{ item }], solution, pitfalls[] }]
+├── exams.json        # [{ id, title, description }]
+└── playbooks/<topic-id>/<playbook-id>.md
+```
+
+Rules for the English version:
+- Same **six `##` headings**, same structure, same Mermaid shape, same `Search Hooks` (keep the exact English terms and translate the one-line summaries into English). Translate faithfully, do not add or drop claims.
+- Keep ids, `answer` indexes and numbers identical: an English question must have the **same number of options in the same order** as the Vietnamese one (the correct answer indexes live only in the Vietnamese file). `rubric` points are not repeated: only `item` text, in the same order.
+- Keep technical terms of art as-is; write natural, concise English (no translationese).
+- **Whenever you add or change a Vietnamese playbook, keyword, question, challenge, topic or exam, update the English overlay in the same change.** `npm run validate` reports English coverage and validates the overlay (`--strict-en` fails when anything is untranslated).
+- UI strings: Vietnamese text in templates is the key; English lives in `src/app/core/ui-en.ts`. Use `i18n.t('Vietnamese text', { param })` and add the English entry.
+
 ## Knowledge Layout
 
 ```
@@ -112,7 +137,7 @@ Whenever adding or updating knowledge:
 4. **Validate before finishing**: `npm run validate` (also runs automatically before `npm run build`).
    It fails on broken references, prerequisite cycles, bad question shapes and a non-standard
    playbook structure, and warns on word count (800–1,100) and a missing diagram and Mermaid size (≤ 10 lines).
-   Then run `npm run build` for larger changes.
+   It also validates the English overlay (`en/`) and prints coverage. Then run `npm run build` for larger changes.
 
 ## Daily Workflow
 
