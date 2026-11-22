@@ -1,61 +1,86 @@
 ## 1. Core Concept
 
-**Apache Kafka** là nền tảng **distributed commit log**: producer **append** sự kiện vào **topic** chia thành **partition**, broker lưu bền theo thời gian, nhiều consumer đọc độc lập theo **offset** của mình. Nó đạt throughput rất cao nhờ ghi/đọc **tuần tự** và dựa vào page cache của OS. Mental model: *Kafka là cuốn sổ cái chỉ-ghi-thêm có đánh số dòng (offset); ai muốn đọc thì tự nhớ mình đọc tới dòng nào.*
+**Apache Kafka** là **log phân tán, bền, chia partition** dùng để truyền và lưu **dòng sự kiện** khối lượng lớn. Producer **ghi nối đuôi** vào topic, consumer **đọc theo offset của riêng mình** nên nhiều ứng dụng đọc độc lập, **replay** được. Kafka giải quyết **tách rời, chịu đột biến, thông lượng rất cao** (hàng trăm nghìn–triệu message/giây) — nhưng đòi bạn hiểu **partition, offset, replication, delivery guarantees**.
+
+**Mental model:** Kafka là **cuốn nhật ký chung chia thành nhiều quyển (partition)**, chỉ ghi nối đuôi, giữ theo thời hạn. Mỗi người đọc có **thẻ đánh dấu riêng (offset)** và đọc theo tốc độ riêng; nhóm người đọc cùng nhiệm vụ (consumer group) **chia nhau mỗi quyển một người** để không đọc trùng.
 
 ## 2. How It Works
 
-- **Topic → partition → offset**: mỗi partition là log có thứ tự; **thứ tự chỉ được đảm bảo trong một partition**. Message có **key** → hash tới partition cố định → cùng key luôn cùng thứ tự.
-- **Producer**: `acks=0/1/all` (không chờ / chờ leader / chờ toàn bộ **ISR**); **`enable.idempotence=true`** chống trùng khi retry; batching + nén để tăng throughput.
-- **Replication**: mỗi partition có **leader** và **follower**; **ISR** (in-sync replicas) là các bản sao theo kịp; kết hợp `acks=all` + **`min.insync.replicas`** để đảm bảo độ bền. Từ Kafka 4.0, metadata dùng **KRaft** (không còn ZooKeeper).
-- **Consumer group**: mỗi partition được gán cho **đúng một consumer trong group** → **độ song song tối đa = số partition**; group khác đọc độc lập. Thêm/bớt consumer gây **rebalance**.
-- **Offset commit**: commit **sau khi xử lý** → at-least-once (có thể trùng); commit **trước** → at-most-once (có thể mất). **Exactly-once** trong Kafka dùng **transaction** (read-process-write).
-- **Retention**: xoá theo **thời gian/dung lượng**, hoặc **log compaction** (giữ giá trị mới nhất mỗi key — dùng làm "bảng" changelog).
-- **Hiệu năng**: ghi tuần tự, **zero-copy**, page cache, batching.
+**Topic, partition, offset**
+- Topic chia thành **partition**; mỗi partition là **log append-only có thứ tự**, mỗi bản ghi có **offset** tăng dần. **Thứ tự chỉ đảm bảo trong một partition**; **key** của message quyết định partition (cùng key → cùng partition). Dữ liệu **giữ theo retention** (thời gian/dung lượng), không xoá khi đọc.
+
+**Consumer group**
+- Trong một **group**, mỗi partition được **đúng một consumer** đọc ⇒ **độ song song tối đa = số partition**; nhiều group đọc độc lập (billing, analytics). **Offset** đã xử lý được commit; commit **sau khi xử lý** → **at-least-once**, **trước** → **at-most-once**. **Consumer lag** = vị trí cuối log − offset đã commit (chỉ số sức khoẻ quan trọng).
+
+**Replication và độ bền**
+- Mỗi partition có **replication factor (thường 3)**: một **leader** nhận ghi, các **follower** sao chép; **ISR** (in-sync replicas) là các replica theo kịp. **`acks`**: `0` (không chờ), `1` (leader ghi), **`all`** (chờ mọi ISR). **`min.insync.replicas=2`** cùng **RF=3, `acks=all`** → chịu mất **1 broker** mà **không mất message đã ack** (nếu ISR < 2 thì ghi bị từ chối — đổi khả dụng lấy độ bền). Tắt `unclean.leader.election`.
+
+**Idempotent producer và transactions**
+- **Idempotent producer** (`enable.idempotence=true`): broker dùng **producer id + sequence** để **khử trùng khi retry** trong một partition. **Transactions**: ghi **nguyên tử nhiều partition** và commit offset trong cùng giao dịch (mẫu **consume–transform–produce**), consumer `read_committed` chỉ thấy dữ liệu đã commit → **exactly-once trong phạm vi Kafka**.
+
+**Log compaction**
+- Thay vì xoá theo thời gian, **chỉ giữ bản ghi mới nhất cho mỗi key**; ghi **tombstone** (value null) để xoá key. Dùng cho **changelog/trạng thái** (bảng, cấu hình, CDC).
+
+**Rebalance**
+- Khi consumer vào/ra hoặc **xử lý quá chậm** (vượt `max.poll.interval.ms`/mất heartbeat `session.timeout.ms`), group **rebalance** và tạm dừng đọc. Giảm: **cooperative rebalancing**, **static membership**, xử lý ngắn gọn, tăng `max.poll.interval.ms`.
+
+**KRaft**
+- Kafka mới dùng **Raft nội bộ (KRaft)** quản lý metadata thay cho ZooKeeper → đơn giản vận hành, scale số partition tốt hơn.
+
+**Chọn số partition**
+- Quyết định **song song tối đa** và thông lượng; **tăng được, không giảm được**, và **tăng làm đổi ánh xạ key → partition** (phá thứ tự theo key). Ước lượng theo thông lượng mục tiêu/consumer.
 
 ```properties
-# Producer an toàn cho dữ liệu quan trọng
+# Producer bền: không mất message đã ack, không trùng khi retry
 acks=all
 enable.idempotence=true
 retries=2147483647
 delivery.timeout.ms=120000
-compression.type=lz4
-# Broker/topic: replication.factor=3, min.insync.replicas=2
+# Topic: replication.factor=3, min.insync.replicas=2
 ```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    P1[Producer key=order-1] --> T0["Partition 0 (leader)"]
-    P2[Producer key=order-2] --> T1["Partition 1 (leader)"]
-    T0 --> C1[Consumer A in group G1]
-    T1 --> C2[Consumer B in group G1]
-    T0 --> C3[Consumer in group G2]
-    T1 --> C3
+    P["Producer: key → partition"] --> T0["Partition 0: leader + followers"]
+    P --> T1["Partition 1"]
+    P --> T2["Partition 2"]
+    T0 --> C1["Consumer A (group billing)"]
+    T1 --> C2["Consumer B (group billing)"]
+    T2 --> C2
+    T0 --> G2["Group analytics: offset riêng"]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- **Số partition** quyết định song song tối đa và khó giảm; chọn theo throughput mục tiêu và số consumer dự kiến, chừa dư địa tăng.
-- Dữ liệu không được mất → `acks=all`, `replication.factor=3`, `min.insync.replicas=2`; chấp nhận độ trễ ghi cao hơn.
-- Cần thứ tự theo thực thể → **key = id thực thể**; cần thứ tự toàn cục → một partition (đánh đổi throughput).
-- Trade-off: **Throughput/Durability/Latency** (acks, batching) và **Ordering vs Parallelism**.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Không mất message đã ack | RF=3, `acks=all`, `min.insync.replicas=2` |
+| Không trùng khi retry | Idempotent producer |
+| Ghi nguyên tử nhiều partition + offset | Transactions |
+| Giữ trạng thái mới nhất theo key | Log compaction |
+| Thứ tự theo thực thể | Key = id thực thể |
+| Consumer chậm | Thêm consumer (≤ số partition), xử lý nhanh hơn |
+| Xử lý không mất message | Commit offset sau khi xử lý + idempotent |
+
+- **Được gì:** throughput lớn, bền, replay, nhiều consumer. **Mất gì:** độ phức tạp vận hành, thứ tự chỉ trong partition, `acks=all` tăng độ trễ, rebalance gây gián đoạn.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Consumer lag** tăng liên tục = consumer chậm hơn producer → theo dõi và scale, kiểm tra xử lý chậm.
-- **Hot partition** do key lệch (một khách hàng lớn) → một partition quá tải trong khi phần còn lại rảnh.
-- **Rebalance storm**: consumer xử lý quá lâu (`max.poll.interval.ms`) bị coi là chết → rebalance liên tục; xử lý nặng nên tách khỏi poll loop.
-- **Tăng số partition** làm đổi ánh xạ key → thứ tự theo key bị phá với dữ liệu mới.
-- `acks=1` có thể **mất message** nếu leader chết trước khi follower sao chép; **unclean leader election** đánh đổi độ bền lấy sẵn sàng.
-- Kích thước message mặc định tối đa ~**1 MB**: dữ liệu lớn nên lưu ngoài (S3) và gửi tham chiếu.
-- Interview trap: "Kafka có exactly-once không?" → **trong phạm vi Kafka + transaction**; ghi ra hệ thống ngoài vẫn cần idempotent.
+- **Mất message sau khi broker chết → `acks=1` hoặc RF thấp → RF=3, `acks=all`, `min.insync.replicas=2`**.
+- **Message trùng sau retry → producer không idempotent → `enable.idempotence=true`; consumer vẫn cần idempotent (at-least-once)**.
+- **Thêm consumer không nhanh hơn → vượt số partition → tăng partition (cẩn thận ánh xạ key) hoặc song song trong consumer**.
+- **Consumer lag tăng, rebalance liên tục → xử lý quá lâu vượt `max.poll.interval.ms` → xử lý nhẹ/bất đồng bộ, tăng timeout, cooperative rebalancing**.
+- **Một partition quá nóng → key lệch (hot partition) → chọn key phân bố đều/thêm hậu tố**.
+- **Tăng partition làm đảo thứ tự theo key → ánh xạ đổi → lên kế hoạch số partition từ đầu**.
+- Interview trap: "thứ tự đảm bảo ở đâu?" → **trong một partition**; "exactly-once trong Kafka?" → **idempotent producer + transactions (trong Kafka), ngoài ra cần consumer idempotent**; "độ song song tối đa?" → **số partition**.
 
 ## 6. Search Hooks
 
-- `Kafka partitions offsets consumer groups` — mô hình dữ liệu và cách consumer chia việc.
-- `Kafka acks min.insync.replicas durability` — cấu hình độ bền khi ghi.
-- `Kafka idempotent producer exactly-once transactions` — chống trùng và xử lý read-process-write.
-- `Kafka log compaction` — giữ giá trị mới nhất mỗi key.
-- `Kafka consumer lag rebalancing` — giám sát độ trễ và xử lý rebalance.
-- `KRaft Kafka without ZooKeeper` — kiến trúc metadata mới của Kafka.
+- `Kafka partitions offsets consumer groups` — mô hình log, song song và đọc độc lập.
+- `Kafka acks min.insync.replicas` — cấu hình độ bền khi ghi.
+- `Kafka idempotent producer transactions` — chống trùng và exactly-once trong Kafka.
+- `Kafka log compaction` — giữ bản ghi mới nhất theo key.
+- `Kafka consumer lag rebalancing` — chỉ số lag và rebalance.
+- `KRaft Kafka without ZooKeeper` — metadata bằng Raft nội bộ.

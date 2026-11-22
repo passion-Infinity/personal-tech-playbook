@@ -1092,63 +1092,63 @@
     "playbookId": "oltp-olap-data-modeling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Một bảng fact có lẫn dòng hoá đơn và hàng hoá đơn trong cùng một bảng với grain không rõ. Hậu quả điển hình?",
+    "question": "Báo cáo doanh thu theo tháng trên hàng tỷ dòng chỉ dùng 3 cột trong bảng 100 cột. Lưu trữ nào hợp lý?",
     "options": [
-      "Truy vấn luôn nhanh hơn",
-      "Tổng SUM bị nhân đôi hoặc sai do sai grain",
-      "Không thể tạo dimension",
-      "Dữ liệu tự động xoá"
+      "Row store",
+      "Column store",
+      "Key-value",
+      "Graph"
     ],
     "answer": [
       1
     ],
-    "explanation": "Grain phải xác định rõ một hàng fact đại diện cho gì; sai grain là nguồn sai số liệu phổ biến nhất."
+    "explanation": "Column store chỉ đọc cột cần và nén tốt. Row store phải đọc cả hàng."
   },
   {
     "id": "oltp-olap-data-modeling-02",
     "playbookId": "oltp-olap-data-modeling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Mục đích chính của SCD Type 2?",
+    "question": "Khách đổi thành phố và báo cáo cần doanh thu đúng theo thành phố tại thời điểm mua. Cách mô hình hoá?",
     "options": [
-      "Ghi đè giá trị cũ",
-      "Giữ lịch sử thay đổi của dimension bằng hàng mới và valid_from/valid_to",
-      "Xoá dimension",
-      "Nén dữ liệu"
+      "Ghi đè (SCD Type 1)",
+      "SCD Type 2: thêm hàng mới kèm valid_from/valid_to",
+      "Xoá khách",
+      "Dùng khoá tự nhiên"
     ],
     "answer": [
       1
     ],
-    "explanation": "Type 2 giúp báo cáo quá khứ phản ánh đúng trạng thái tại thời điểm đó."
+    "explanation": "Type 2 giữ lịch sử đúng thời điểm; Type 1 mất lịch sử."
   },
   {
     "id": "oltp-olap-data-modeling-03",
     "playbookId": "oltp-olap-data-modeling",
     "type": "mcq",
-    "difficulty": 1,
-    "question": "Vì sao không nên chạy truy vấn phân tích nặng trực tiếp trên DB giao dịch (OLTP) chính?",
+    "difficulty": 3,
+    "question": "Một bảng fact chứa cả dòng đơn hàng lẫn tổng đơn và số liệu doanh thu bị đếm đôi. Lỗi gì?",
     "options": [
-      "Vì SQL không hỗ trợ",
-      "Quét lớn tranh tài nguyên với giao dịch, làm chậm production; row store cũng kém cho aggregation",
-      "Vì dữ liệu bị mã hoá",
-      "Không có lý do"
+      "Thiếu index",
+      "Trộn nhiều grain trong một fact table",
+      "Thiếu surrogate key",
+      "Dùng quá nhiều dimension"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tách workload: dùng replica hoặc warehouse riêng cho phân tích."
+    "explanation": "Phải khai báo một grain duy nhất cho mỗi fact."
   },
   {
     "id": "oltp-olap-data-modeling-04",
     "playbookId": "oltp-olap-data-modeling",
     "type": "explain",
     "difficulty": 2,
-    "question": "Star schema là gì? Fact và dimension khác nhau thế nào?",
-    "modelAnswer": "Star schema là mô hình dimensional với một bảng fact ở trung tâm chứa các số đo (số tiền, số lượng) rất nhiều hàng, bao quanh bởi các dimension table chứa ngữ cảnh mô tả (khách hàng, sản phẩm, thời gian, vùng). Nó phi chuẩn hoá để truy vấn phân tích ít JOIN và nhanh.",
+    "question": "Giải thích vì sao column store nhanh hơn cho phân tích còn row store phù hợp OLTP.",
+    "modelAnswer": "Phân tích thường quét nhiều hàng nhưng chỉ vài cột nên column store chỉ đọc cột cần và nén tốt vì các giá trị giống nhau nằm cạnh nhau. OLTP đọc/ghi cả một hàng theo khoá nên row store, nơi các cột của một hàng nằm cạnh nhau, hiệu quả hơn.",
     "keyPoints": [
-      "Fact ở giữa chứa số đo",
-      "Dimension là ngữ cảnh mô tả",
-      "Phi chuẩn hoá cho truy vấn phân tích"
+      "Column: chỉ đọc cột cần, nén tốt",
+      "Row: đọc/ghi cả hàng",
+      "Chọn theo mẫu truy cập"
     ]
   },
   {
@@ -1156,63 +1156,63 @@
     "playbookId": "batch-vs-stream-processing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tính số đơn theo giờ cho báo cáo nghiệp vụ, dữ liệu có thể đến muộn. Nên dùng thời gian nào?",
+    "question": "Báo cáo doanh thu hằng đêm cho ban lãnh đạo, chấp nhận trễ vài giờ. Cách xử lý đơn giản và rẻ?",
     "options": [
-      "Processing time",
-      "Event time (kèm watermark xử lý dữ liệu muộn)",
-      "Giờ của máy chủ ngẫu nhiên",
-      "Không cần thời gian"
+      "Stream",
+      "Batch",
+      "Micro-batch mỗi giây",
+      "Không cần"
     ],
     "answer": [
       1
     ],
-    "explanation": "Processing time thay đổi theo trễ và replay; event time phản ánh đúng khi sự kiện xảy ra."
+    "explanation": "Batch đơn giản và đủ SLA."
   },
   {
     "id": "batch-vs-stream-processing-02",
     "playbookId": "batch-vs-stream-processing",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Watermark dùng để làm gì?",
+    "difficulty": 3,
+    "question": "Sự kiện click lúc 10:00 đến hệ thống lúc 10:07 do mạng. Tính số click theo phút nên dùng thời gian nào?",
     "options": [
-      "Nén dữ liệu",
-      "Ước lượng đã thấy đủ sự kiện đến thời điểm T để biết khi nào đóng cửa sổ",
-      "Mã hoá dữ liệu",
-      "Chia partition"
+      "Processing time",
+      "Event time (kèm watermark)",
+      "Giờ máy chủ",
+      "Ngẫu nhiên"
     ],
     "answer": [
       1
     ],
-    "explanation": "Watermark cân bằng giữa độ trễ và đầy đủ khi xử lý dữ liệu đến muộn."
+    "explanation": "Event time phản ánh lúc xảy ra thực."
   },
   {
     "id": "batch-vs-stream-processing-03",
     "playbookId": "batch-vs-stream-processing",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Nhược điểm chính của Lambda architecture?",
+    "difficulty": 2,
+    "question": "Watermark dùng để làm gì?",
     "options": [
-      "Không có batch",
-      "Phải duy trì hai đường xử lý nên nhân đôi logic và dễ lệch kết quả",
-      "Không dùng được Kafka",
-      "Không hỗ trợ real-time"
+      "Mã hoá dữ liệu",
+      "Ước lượng tiến độ event time để biết khi nào đóng cửa sổ",
+      "Nén dữ liệu",
+      "Sao lưu"
     ],
     "answer": [
       1
     ],
-    "explanation": "Kappa đơn giản hơn bằng cách chỉ stream và tái xử lý bằng replay."
+    "explanation": "Khi watermark vượt cuối cửa sổ, cửa sổ được đóng và phát kết quả."
   },
   {
     "id": "batch-vs-stream-processing-04",
     "playbookId": "batch-vs-stream-processing",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào chọn batch thay vì stream?",
-    "modelAnswer": "Khi độ mới phút-giờ là đủ (báo cáo ngày, huấn luyện ML, backfill) vì batch rẻ, đơn giản, dễ tái xử lý và kiểm thử. Stream tốn vận hành (state, checkpoint, watermark) nên chỉ đáng khi cần phản ứng trong giây như cảnh báo gian lận.",
+    "question": "So sánh kiến trúc Lambda và Kappa và nêu đánh đổi.",
+    "modelAnswer": "Lambda dùng hai đường song song: batch layer chính xác nhưng chậm và speed layer nhanh nhưng xấp xỉ rồi gộp, nhược điểm là phải viết và đồng bộ logic hai lần. Kappa dùng một pipeline stream duy nhất và tính lại bằng cách replay log, đơn giản hơn nhưng cần log bền và replay hiệu quả.",
     "keyPoints": [
-      "Độ mới phút–giờ là đủ",
-      "Batch đơn giản, rẻ, dễ backfill",
-      "Stream tốn vận hành"
+      "Lambda: hai đường, logic lặp",
+      "Kappa: một pipeline, replay log",
+      "Đánh đổi độ phức tạp và yêu cầu log bền"
     ]
   },
   {
@@ -1220,63 +1220,63 @@
     "playbookId": "kafka-fundamentals",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Độ song song tối đa của một consumer group đọc một topic là bao nhiêu?",
+    "question": "Team muốn không mất message đã được xác nhận khi một broker chết. Cấu hình hợp lý?",
     "options": [
-      "Số consumer bất kỳ",
-      "Số partition của topic",
-      "Số broker",
-      "Luôn bằng 1"
+      "acks=1, RF=1",
+      "acks=all, RF=3, min.insync.replicas=2",
+      "acks=0",
+      "RF=2 không ISR"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mỗi partition chỉ gán cho một consumer trong group; consumer thừa sẽ rảnh."
+    "explanation": "Chịu mất 1 broker mà không mất dữ liệu đã ack."
   },
   {
     "id": "kafka-fundamentals-02",
     "playbookId": "kafka-fundamentals",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Thứ tự message được Kafka đảm bảo ở phạm vi nào?",
+    "difficulty": 3,
+    "question": "Topic có 6 partition và group có 10 consumer. Điều gì xảy ra?",
     "options": [
-      "Toàn cục trên topic",
-      "Trong một partition (cùng key vào cùng partition)",
-      "Giữa các consumer group",
-      "Không được đảm bảo ở đâu cả"
+      "Cả 10 đều xử lý",
+      "Chỉ tối đa 6 consumer hoạt động",
+      "Kafka tự tăng partition",
+      "Gấp đôi throughput"
     ],
     "answer": [
       1
     ],
-    "explanation": "Muốn thứ tự theo thực thể, dùng id thực thể làm key."
+    "explanation": "Mỗi partition một consumer trong group."
   },
   {
     "id": "kafka-fundamentals-03",
     "playbookId": "kafka-fundamentals",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Cấu hình nào cho độ bền tốt khi mất một broker (replication factor 3)?",
+    "difficulty": 2,
+    "question": "Producer retry làm message bị ghi trùng. Cách tránh?",
     "options": [
-      "acks=0",
-      "acks=1",
-      "acks=all với min.insync.replicas=2",
-      "acks=all với min.insync.replicas=1"
+      "Tắt retry",
+      "enable.idempotence=true",
+      "Tăng partition",
+      "Dùng acks=0"
     ],
     "answer": [
-      2
+      1
     ],
-    "explanation": "acks=all và min.insync.replicas=2 đảm bảo ít nhất hai bản sao xác nhận trước khi coi là ghi thành công."
+    "explanation": "Idempotent producer khử trùng bằng PID + sequence."
   },
   {
     "id": "kafka-fundamentals-04",
     "playbookId": "kafka-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích consumer group và vì sao thêm consumer vượt số partition không tăng tốc.",
-    "modelAnswer": "Consumer group là tập consumer cùng chia nhau đọc topic: mỗi partition được gán cho đúng một consumer trong group, nên độ song song tối đa bằng số partition. Consumer thừa không được gán partition và ở trạng thái rảnh; muốn tăng song song phải tăng số partition (đánh đổi ảnh hưởng ánh xạ key).",
+    "question": "Giải thích consumer lag và nguyên nhân/biện pháp khi lag tăng và rebalance liên tục.",
+    "modelAnswer": "Lag là vị trí cuối log trừ offset đã commit, đo độ tụt của consumer. Lag tăng và rebalance liên tục thường do xử lý quá lâu vượt max.poll.interval.ms hoặc mất heartbeat. Biện pháp: xử lý nhẹ/bất đồng bộ, tăng timeout, cooperative rebalancing, static membership và thêm consumer trong giới hạn số partition.",
     "keyPoints": [
-      "Mỗi partition một consumer trong group",
-      "Song song tối đa = số partition",
-      "Tăng partition mới tăng song song"
+      "Lag = cuối log − offset commit",
+      "Xử lý chậm gây rebalance",
+      "Cooperative rebalancing, tăng consumer"
     ]
   },
   {
@@ -2152,63 +2152,63 @@
     "playbookId": "etl-elt-orchestration-airflow",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Task Airflow dùng datetime.now() để quyết định khoảng dữ liệu cần xử lý. Hậu quả khi backfill?",
+    "question": "Công ty dùng Snowflake và muốn nạp dữ liệu thô rồi biến đổi bằng SQL trong kho. Mô hình?",
     "options": [
-      "Không ảnh hưởng",
-      "Kết quả sai vì không gắn với khoảng dữ liệu của lần chạy (logical date)",
-      "Chạy nhanh hơn",
-      "Tự động idempotent"
+      "ETL",
+      "ELT",
+      "Streaming",
+      "Lambda"
     ],
     "answer": [
       1
     ],
-    "explanation": "Dùng data interval hoặc ds để backfill cho từng ngày một cách đúng."
+    "explanation": "ELT nạp thô rồi transform trong kho."
   },
   {
     "id": "etl-elt-orchestration-airflow-02",
     "playbookId": "etl-elt-orchestration-airflow",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Cách làm task nạp dữ liệu idempotent?",
+    "difficulty": 3,
+    "question": "Một task Airflow dùng INSERT nối đuôi và khi retry làm dữ liệu nhân đôi. Cách sửa?",
     "options": [
-      "INSERT thẳng mỗi lần chạy",
-      "Ghi đè partition của ngày hoặc MERGE theo khoá",
-      "Chỉ chạy một lần",
-      "Tăng retry"
+      "Tắt retry",
+      "Làm task idempotent: ghi đè theo partition/MERGE",
+      "Tăng worker",
+      "Dùng XCom"
     ],
     "answer": [
       1
     ],
-    "explanation": "Retry hoặc backfill sẽ cho cùng kết quả thay vì nhân đôi dữ liệu."
+    "explanation": "Idempotent cho phép retry/backfill an toàn."
   },
   {
     "id": "etl-elt-orchestration-airflow-03",
     "playbookId": "etl-elt-orchestration-airflow",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truyền cả bảng dữ liệu lớn giữa các task bằng XCom gây vấn đề gì?",
+    "question": "Vì sao không nên dùng now() trong task Airflow?",
     "options": [
-      "Không có vấn đề",
-      "Làm quá tải metadata DB; chỉ nên truyền tham chiếu nhỏ như đường dẫn hay ID",
-      "Làm task chạy nhanh hơn",
-      "Tự mã hoá"
+      "Chậm",
+      "Kết quả không tất định khi chạy lại/backfill; dùng data_interval",
+      "Không hỗ trợ",
+      "Tốn RAM"
     ],
     "answer": [
       1
     ],
-    "explanation": "XCom dành cho dữ liệu nhỏ; dữ liệu lớn nên nằm ở storage/warehouse."
+    "explanation": "Dùng data_interval_start/end để chạy lại cho cùng kết quả."
   },
   {
     "id": "etl-elt-orchestration-airflow-04",
     "playbookId": "etl-elt-orchestration-airflow",
     "type": "explain",
     "difficulty": 2,
-    "question": "ETL và ELT khác nhau thế nào và vì sao ELT được ưa chuộng?",
-    "modelAnswer": "ETL biến đổi dữ liệu trước khi nạp vào đích; ELT nạp dữ liệu thô vào warehouse rồi biến đổi bằng SQL ngay trong đó. ELT giữ được dữ liệu gốc để tái xử lý, tận dụng sức mạnh tính toán của warehouse hiện đại và dùng công cụ như dbt để quản lý biến đổi. ETL vẫn hợp khi phải che dữ liệu nhạy cảm trước khi nạp.",
+    "question": "Nạp incremental bằng updated_at > watermark bỏ sót một số thay đổi. Giải thích nguyên nhân và cách khắc phục.",
+    "modelAnswer": "Watermark theo updated_at không bắt được xoá cứng và các cập nhật đến muộn (updated_at nhỏ hơn watermark do giao dịch commit trễ). Khắc phục bằng lookback window nạp lại N giờ gần nhất, dùng CDC log-based và full refresh định kỳ để đối soát.",
     "keyPoints": [
-      "ETL biến đổi trước khi nạp",
-      "ELT nạp thô rồi biến đổi trong warehouse",
-      "ELT giữ dữ liệu gốc và tận dụng compute"
+      "Không bắt xoá cứng",
+      "Cập nhật đến muộn",
+      "Lookback, CDC, full refresh"
     ]
   },
   {
@@ -2216,63 +2216,63 @@
     "playbookId": "data-warehouse-lakehouse",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Parquet khác Apache Iceberg/Delta Lake thế nào?",
+    "question": "Cần một nơi lưu dữ liệu đa dạng rẻ tiền vừa phục vụ BI vừa phục vụ ML với giao dịch ACID. Kiến trúc?",
     "options": [
-      "Giống hệt nhau",
-      "Parquet là định dạng file cột; Iceberg/Delta là lớp bảng với metadata thêm ACID, schema evolution, time travel",
-      "Iceberg là định dạng nén",
-      "Delta chỉ cho CSV"
+      "Warehouse thuần",
+      "Lakehouse (lake + table format)",
+      "Cơ sở dữ liệu quan hệ nhỏ",
+      "Chỉ file CSV"
     ],
     "answer": [
       1
     ],
-    "explanation": "Table format quản lý tập hợp file Parquet như một bảng có transaction."
+    "explanation": "Table format thêm ACID lên lake."
   },
   {
     "id": "data-warehouse-lakehouse-02",
     "playbookId": "data-warehouse-lakehouse",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Phân vùng bảng theo user_id (hàng triệu giá trị) gây vấn đề gì?",
+    "difficulty": 3,
+    "question": "Truy vấn trên lake chậm dần khi streaming ghi hàng nghìn file nhỏ. Giải pháp?",
     "options": [
-      "Truy vấn nhanh hơn",
-      "Over-partitioning tạo vô số thư mục và file nhỏ làm truy vấn và metadata chậm",
-      "Dữ liệu bị mã hoá",
-      "Không ảnh hưởng"
+      "Thêm RAM",
+      "Compaction gộp file ~128–512 MB",
+      "Xoá partition",
+      "Dùng CSV"
     ],
     "answer": [
       1
     ],
-    "explanation": "Phân vùng nên theo cột cardinality thấp như ngày."
+    "explanation": "Overhead mở file làm chậm; compaction giảm số file."
   },
   {
     "id": "data-warehouse-lakehouse-03",
     "playbookId": "data-warehouse-lakehouse",
     "type": "mcq",
-    "difficulty": 1,
-    "question": "Trong medallion architecture, tầng Silver dùng để làm gì?",
+    "difficulty": 2,
+    "question": "Vì sao truy vấn Parquet với WHERE dt = ... quét ít dữ liệu?",
     "options": [
-      "Lưu dữ liệu thô bất biến",
-      "Làm sạch, chuẩn hoá và khử trùng dữ liệu",
-      "Chỉ chứa dashboard",
-      "Lưu log hệ thống"
+      "Do nén",
+      "Partition pruning, column pruning và predicate pushdown",
+      "Do cache",
+      "Do SQL"
     ],
     "answer": [
       1
     ],
-    "explanation": "Bronze thô, Silver sạch, Gold phục vụ báo cáo hoặc ML."
+    "explanation": "Bỏ qua partition/row group không liên quan."
   },
   {
     "id": "data-warehouse-lakehouse-04",
     "playbookId": "data-warehouse-lakehouse",
     "type": "explain",
     "difficulty": 2,
-    "question": "So sánh data lake, data warehouse và lakehouse.",
-    "modelAnswer": "Data lake lưu file thô trên object storage, rẻ và linh hoạt nhưng dễ thành data swamp. Data warehouse lưu có cấu trúc, cột, truy vấn SQL nhanh và được quản lý nhưng đắt hơn. Lakehouse giữ dữ liệu ở định dạng mở trên object storage và thêm lớp table format như Iceberg hay Delta để có ACID, schema và time travel, kết hợp ưu điểm của cả hai.",
+    "question": "Giải thích medallion architecture và lợi ích của việc tách storage khỏi compute.",
+    "modelAnswer": "Medallion chia dữ liệu thành Bronze (thô), Silver (làm sạch) và Gold (mô hình nghiệp vụ), chất lượng tăng dần và có thể tái tạo từ lớp dưới. Tách storage khỏi compute cho phép co giãn độc lập, nhiều engine cùng đọc một dữ liệu trên object storage rẻ và trả tiền compute theo dùng.",
     "keyPoints": [
-      "Lake: rẻ, linh hoạt, dễ lộn xộn",
-      "Warehouse: nhanh, quản lý sẵn, đắt",
-      "Lakehouse: lake + table format ACID"
+      "Bronze/Silver/Gold",
+      "Co giãn độc lập",
+      "Nhiều engine, object storage rẻ"
     ]
   },
   {
@@ -10021,86 +10021,85 @@
     "playbookId": "oltp-olap-data-modeling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Báo cáo tổng hợp trên hàng tỷ dòng nên dùng?",
+    "question": "Surrogate key khác natural key ở điểm nào và vì sao cần cho SCD Type 2?",
     "options": [
-      "OLTP",
-      "OLAP columnar",
-      "Cache",
-      "Queue"
+      "Là khoá số nguyên vô nghĩa, ổn định, cho phép nhiều hàng cho cùng một khách",
+      "Là email",
+      "Là tên",
+      "Không cần thiết"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Columnar tối ưu quét tổng hợp."
+    "explanation": "SCD2 có nhiều hàng cho một thực thể nên cần khoá thay thế."
   },
   {
     "id": "batch-vs-stream-processing-05",
     "playbookId": "batch-vs-stream-processing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Phát hiện gian lận trong vài giây?",
+    "question": "Spark Structured Streaming khác Flink ở điểm nào về mô hình xử lý?",
     "options": [
-      "Batch hằng đêm",
-      "Stream processing",
-      "Báo cáo tuần",
-      "Export CSV"
+      "Spark gom lô nhỏ (micro-batch), Flink xử lý từng sự kiện",
+      "Giống nhau",
+      "Spark không hỗ trợ stream",
+      "Flink chỉ batch"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Độ trễ thấp."
+    "explanation": "Micro-batch có độ trễ ≥ giây; Flink hợp độ trễ thấp hơn."
   },
   {
     "id": "kafka-fundamentals-05",
     "playbookId": "kafka-fundamentals",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Hai điều nào đúng về Kafka? (chọn 2)",
+    "difficulty": 2,
+    "question": "Log compaction giữ lại gì?",
     "options": [
-      "Thứ tự đảm bảo trong một partition",
-      "Consumer group chia partition",
-      "Thứ tự toàn cục giữa partition",
-      "Xoá message khi đọc"
+      "Mọi bản ghi",
+      "Bản ghi mới nhất cho mỗi key",
+      "Bản ghi cũ nhất",
+      "Bản ghi ngẫu nhiên"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Partition là đơn vị thứ tự và song song."
+    "explanation": "Dùng cho changelog/trạng thái; tombstone xoá key."
   },
   {
     "id": "etl-elt-orchestration-airflow-05",
     "playbookId": "etl-elt-orchestration-airflow",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Task Airflow nên?",
+    "question": "Dagster khác Airflow ở điểm nào?",
     "options": [
-      "Idempotent để chạy lại",
-      "Có tác dụng phụ duy nhất",
-      "Không retry",
-      "Lưu state cục bộ"
+      "Asset-centric: mô hình hoá dataset và lineage",
+      "Chỉ chạy trên Windows",
+      "Không có lịch",
+      "Không hỗ trợ Python"
     ],
     "answer": [
       0
     ],
-    "explanation": "Chạy lại an toàn."
+    "explanation": "Dagster nhấn mạnh asset; Airflow task-centric."
   },
   {
     "id": "data-warehouse-lakehouse-05",
     "playbookId": "data-warehouse-lakehouse",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Lakehouse thêm gì cho data lake?",
+    "question": "Nhược điểm của data lake thô không có table format?",
     "options": [
-      "Giao dịch ACID và schema trên file mở",
-      "Không gì",
-      "Chỉ rẻ hơn",
-      "Xoá lake"
+      "Quá nhanh",
+      "Thiếu ACID, schema lộn xộn, ghi đồng thời dễ hỏng",
+      "Quá đắt",
+      "Không lưu được file"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "Delta/Iceberg/Hudi."
+    "explanation": "Table format giải quyết các vấn đề này."
   },
   {
     "id": "stream-processing-flink-06",
