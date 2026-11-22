@@ -4745,5 +4745,134 @@
       "Silent degradation",
       "Retrain or roll back"
     ]
+  },
+  {
+    "id": "networking-tcp-ip-dns-01",
+    "question": "A client in Vietnam calls a server in the US (RTT ~200 ms) over HTTPS on a new connection. What is the minimum cost before the first data can be sent and how do you reduce it?",
+    "options": [
+      "0 ms",
+      "At least 1 RTT for the TCP handshake (plus TLS); use keep-alive/a connection pool",
+      "50 ms",
+      "It cannot be reduced"
+    ],
+    "explanation": "The TCP handshake costs 1 RTT and TLS adds more. Reusing connections avoids this cost. 'It cannot be reduced' is tempting because RTT is physics, but the number of times you pay the RTT can be reduced."
+  },
+  {
+    "id": "networking-tcp-ip-dns-02",
+    "question": "A service calling a partner API opens a new connection per request at 1,000 requests/second and starts reporting 'Cannot assign requested address'. What is the cause and the fix?",
+    "options": [
+      "A DNS error",
+      "Ephemeral port exhaustion from TIME_WAIT; use a connection pool/keep-alive",
+      "Packet loss",
+      "Out of RAM"
+    ],
+    "explanation": "Each connection holds a port and TIME_WAIT keeps it ~60 seconds, so the ~28,000-port range runs out quickly. Adding RAM does not solve it."
+  },
+  {
+    "id": "networking-tcp-ip-dns-03",
+    "question": "An application streams real-time video, accepts losing a few packets but needs low latency. Which protocol is reasonable?",
+    "options": [
+      "TCP",
+      "UDP (or QUIC)",
+      "FTP",
+      "SMTP"
+    ],
+    "explanation": "UDP does not wait for retransmission. TCP is tempting as 'more reliable', but head-of-line blocking increases latency on loss."
+  },
+  {
+    "id": "networking-tcp-ip-dns-04",
+    "question": "A team wants failover via DNS and asks how to set the TTL. Explain how DNS resolution and TTL caching work and the trade-off of a low TTL.",
+    "modelAnswer": "The client asks a recursive resolver; if nothing is cached it asks the root, then the TLD, then the authoritative server, and the result is cached by TTL. A low TTL makes IP changes and failover faster but increases DNS load and adds lookup latency; a high TTL does the opposite. When you need failover, lower the TTL before switching and accept that some clients still use the old cache.",
+    "keyPoints": [
+      "The root → TLD → authoritative chain",
+      "Caching by TTL",
+      "Low TTL: fast failover but higher load and latency"
+    ]
+  },
+  {
+    "id": "http-https-tls-01",
+    "question": "A page loads dozens of small resources from the same origin and HTTP/1.1 is slow. How does upgrading to HTTP/2 help?",
+    "options": [
+      "No difference",
+      "Multiplexing many streams on one connection and header compression",
+      "Only better encryption",
+      "Removing TLS"
+    ],
+    "explanation": "HTTP/2 solves head-of-line blocking at the HTTP layer. HTTP/3 goes further and solves HOL at the TCP layer."
+  },
+  {
+    "id": "http-https-tls-02",
+    "question": "Users keep seeing the old JS file after every deploy even though the server has been updated. What is the right approach?",
+    "options": [
+      "Turn off caching entirely",
+      "Use hashed file names and a long Cache-Control for those files, short/no-cache for HTML",
+      "Increase max-age for HTML",
+      "Clear cookies"
+    ],
+    "explanation": "A changed file name means a new URL that avoids the old cache. Turning caching off entirely is tempting as certain, but loses the performance benefit."
+  },
+  {
+    "id": "http-https-tls-03",
+    "question": "A logged-in user opens an admin page and gets an error. Which code should be returned?",
+    "options": [
+      "401",
+      "403",
+      "502",
+      "504"
+    ],
+    "explanation": "403 means authenticated but not permitted. 401 is tempting, but it is for unauthenticated."
+  },
+  {
+    "id": "http-https-tls-04",
+    "question": "A reverse proxy returns 502 for some requests and 504 for others. Distinguish the two codes and describe how to investigate.",
+    "modelAnswer": "502 Bad Gateway means the proxy received an invalid response from the upstream (the upstream crashed or abruptly closed the connection). 504 Gateway Timeout means the upstream did not answer within the proxy's deadline. Investigate with the upstream logs, check timeouts across the layers and the upstream's health/latency.",
+    "keyPoints": [
+      "502: invalid response",
+      "504: did not answer in time",
+      "Check upstream logs and timeouts"
+    ]
+  },
+  {
+    "id": "os-processes-threads-01",
+    "question": "A service runs many tasks that share configuration in memory and need fast communication. Process or thread, and why?",
+    "options": [
+      "Process because it is always faster",
+      "Thread because it shares the heap and communicates fast (needs synchronization)",
+      "Process because it needs no synchronization",
+      "No difference"
+    ],
+    "explanation": "Threads share memory. Processes isolate better but communicate more slowly through IPC."
+  },
+  {
+    "id": "os-processes-threads-02",
+    "question": "A container is OOMKilled even though the node has plenty of RAM. What is the common cause?",
+    "options": [
+      "The node is broken",
+      "It exceeded the container's cgroup memory limit",
+      "Not enough CPU",
+      "A network error"
+    ],
+    "explanation": "A cgroup limits the container's total memory (heap, non-heap, cache). Low CPU is tempting but causes slowness, not OOM."
+  },
+  {
+    "id": "os-processes-threads-03",
+    "question": "An 8-core machine, each request waits 90 ms on I/O and computes for 10 ms. What is a reasonable thread pool size?",
+    "options": [
+      "8",
+      "About 80 (8 × (1 + 9))",
+      "800",
+      "1"
+    ],
+    "explanation": "I/O-bound work needs more threads than cores. Choosing 8 is tempting because it applies the CPU-bound formula."
+  },
+  {
+    "id": "os-processes-threads-04",
+    "question": "A server starts reporting 'Too many open files' under load. Explain file descriptors, ulimit and how to fix it.",
+    "modelAnswer": "Every file, socket and pipe is a file descriptor, and each process has a limit (ulimit -n, often a 1024 soft default). A server with many connections that exceeds the limit, or leaks FDs by forgetting to close them, hits this error. Fix it by raising ulimit, closing connections properly, using a connection pool and monitoring the number of open FDs.",
+    "keyPoints": [
+      "Sockets are FDs too",
+      "ulimit -n",
+      "Raise the limit, close FDs, monitor"
+    ]
   }
 ]

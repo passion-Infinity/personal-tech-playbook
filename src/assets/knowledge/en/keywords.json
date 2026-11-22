@@ -2238,5 +2238,90 @@
     "id": "data-leakage",
     "meaning": "Data leaking during training",
     "definition": "Using future information."
+  },
+  {
+    "id": "tcp-three-way-handshake",
+    "meaning": "The three-step SYN, SYN-ACK, ACK handshake that creates a connection",
+    "definition": "Costs 1 RTT before data can be sent; the reason to reuse connections instead of constantly opening new ones."
+  },
+  {
+    "id": "tcp-congestion-control",
+    "meaning": "The mechanism TCP uses to avoid congesting the network",
+    "definition": "Starts with slow start, grows the send window gradually and cuts sharply on packet loss; distinct from flow control, which protects the receiver."
+  },
+  {
+    "id": "tcp-vs-udp",
+    "meaning": "The trade-off between reliability and latency",
+    "definition": "TCP guarantees ordering and delivery; UDP is connectionless and fast, the basis of DNS, video and QUIC."
+  },
+  {
+    "id": "dns-resolution-ttl",
+    "meaning": "Resolving names via a resolver and caching by TTL",
+    "definition": "The resolver asks root, TLD, authoritative; results are cached by TTL so an IP change has propagation delay."
+  },
+  {
+    "id": "time-wait-port-exhaustion",
+    "meaning": "Running out of ports when opening/closing too many short connections",
+    "definition": "A closed connection lingers in TIME_WAIT for a while; rapid opens exhaust ephemeral ports — solved with connection pooling."
+  },
+  {
+    "id": "latency-numbers",
+    "meaning": "Reference latency table for RAM, disk and network",
+    "definition": "For quick estimates: within a datacenter about 0.5 ms, intercontinental about 100–200 ms."
+  },
+  {
+    "id": "http-versions",
+    "meaning": "Three HTTP generations that differ in multiplexing and HOL blocking",
+    "definition": "HTTP/2 multiplexes many streams over one TCP connection; HTTP/3 runs on QUIC (UDP) to remove head-of-line blocking at the TCP layer."
+  },
+  {
+    "id": "tls-13-handshake",
+    "meaning": "A TLS handshake needing only 1 RTT",
+    "definition": "Negotiates the cipher, exchanges keys and authenticates the certificate faster than TLS 1.2 (2 RTTs)."
+  },
+  {
+    "id": "quic-protocol",
+    "meaning": "The UDP-based protocol underlying HTTP/3",
+    "definition": "Independent streams, integrated TLS 1.3, 0/1-RTT support and network changes without dropping the connection."
+  },
+  {
+    "id": "http-caching-etag",
+    "meaning": "Caching and revalidation at the HTTP layer",
+    "definition": "Cache-Control sets how long to keep; ETag with If-None-Match lets the server return 304 Not Modified."
+  },
+  {
+    "id": "http-status-codes-4xx-5xx",
+    "meaning": "Telling the confusable error codes apart",
+    "definition": "401 is unauthenticated, 403 is not permitted; 502 the upstream returned an error, 504 the upstream timed out."
+  },
+  {
+    "id": "process-vs-thread",
+    "meaning": "The difference in address space and cost",
+    "definition": "A process has its own address space and good isolation; threads share the heap, are lighter but need synchronization."
+  },
+  {
+    "id": "context-switch",
+    "meaning": "The cost of switching context between threads",
+    "definition": "Saving/restoring state and cooling the CPU cache; too many threads lowers performance."
+  },
+  {
+    "id": "virtual-memory-oom",
+    "meaning": "Memory management and the consequences of running out of RAM",
+    "definition": "The page table maps virtual memory; low RAM means very slow swap, and exhausting it makes the OOM killer kill processes."
+  },
+  {
+    "id": "linux-namespaces-cgroups",
+    "meaning": "The foundation of container isolation and resource limits",
+    "definition": "Namespaces isolate the system view; cgroups limit CPU/RAM and can throttle CPU."
+  },
+  {
+    "id": "cpu-vs-io-bound-pool",
+    "meaning": "Choose the thread pool size by workload type",
+    "definition": "CPU-bound should be about the number of cores; I/O-bound can be much larger because most of the time is spent waiting."
+  },
+  {
+    "id": "ulimit-file-descriptors",
+    "meaning": "The limit on a process's open files/sockets",
+    "definition": "The Too many open files error is usually caused by leaked connections or a ulimit that is too low."
   }
 ]

@@ -453,5 +453,20 @@
     "id": "mlops-model-lifecycle",
     "title": "MLOps: Model Lifecycle, Drift & Deployment",
     "summary": "Reproduce, deploy, monitor drift in and retrain models; avoid training-serving skew and data leakage."
+  },
+  {
+    "id": "networking-tcp-ip-dns",
+    "title": "Networking: TCP/IP & DNS",
+    "summary": "Understand the cost of every network call: DNS, the TCP handshake, reliability and latency."
+  },
+  {
+    "id": "http-https-tls",
+    "title": "HTTP, HTTPS & TLS",
+    "summary": "Grasp HTTP/1.1, HTTP/2, HTTP/3 and TLS to cut RTTs, reuse connections and secure the transport."
+  },
+  {
+    "id": "os-processes-threads",
+    "title": "OS: Processes, Threads & Memory",
+    "summary": "Understand processes, threads, virtual memory and containers to diagnose why a server runs out of threads, RAM or gets OOM-killed."
   }
 ]
