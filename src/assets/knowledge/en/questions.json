@@ -4659,5 +4659,91 @@
       "Bastion"
     ],
     "explanation": "AI Speech provides speech-to-text."
+  },
+  {
+    "id": "azure-openai-foundry-01",
+    "question": "An application receives HTTP 429 from Azure OpenAI when traffic grows. What is the common cause and the remedy?",
+    "options": [
+      "A wrong key",
+      "The deployment's TPM quota is exceeded; retry with backoff or raise quota",
+      "Defender is not enabled",
+      "A VNet is missing"
+    ],
+    "explanation": "429 means a rate limit was exceeded. A wrong key yields 401, not 429."
+  },
+  {
+    "id": "azure-openai-foundry-02",
+    "question": "A high-load application needs stable, predictable latency. Which deployment type?",
+    "options": [
+      "Standard",
+      "Provisioned (PTU)",
+      "Batch",
+      "Free"
+    ],
+    "explanation": "PTU reserves capacity. Standard is tempting because it is common, but its latency can fluctuate."
+  },
+  {
+    "id": "azure-openai-foundry-03",
+    "question": "A company wants to use GPT with internal data without the data leaving Azure. Describe the solution and the security measures.",
+    "modelAnswer": "Use Azure OpenAI combined with Azure AI Search (On Your Data) for RAG over internal documents, enable a Private Endpoint so traffic does not reach the public Internet, use Managed Identity instead of keys, and enable content filtering. Prompts and completions are not used to train the models.",
+    "keyPoints": [
+      "Azure OpenAI + AI Search (On Your Data)",
+      "Private Endpoint and Managed Identity",
+      "Content filtering, data not used for training"
+    ]
+  },
+  {
+    "id": "azure-openai-foundry-04",
+    "question": "An enterprise needs OpenAI models with Azure's network control and security. What do they choose?",
+    "options": [
+      "Use the public API",
+      "Azure OpenAI/Foundry with a Private Endpoint",
+      "Send data by email",
+      "Not possible"
+    ],
+    "explanation": "Azure OpenAI integrates private networking and Entra ID."
+  },
+  {
+    "id": "mlops-model-lifecycle-01",
+    "question": "A model is good offline but bad online. What is a likely cause?",
+    "options": [
+      "Too much RAM",
+      "Training-serving skew or leakage",
+      "Too many cores",
+      "Changing the UI color"
+    ],
+    "explanation": "Features/distributions differ."
+  },
+  {
+    "id": "mlops-model-lifecycle-02",
+    "question": "The input distribution changing over time is called?",
+    "options": [
+      "Data drift",
+      "Overfitting",
+      "Underfitting",
+      "Sharding"
+    ],
+    "explanation": "Data drift."
+  },
+  {
+    "id": "mlops-model-lifecycle-03",
+    "question": "What is the lowest-risk way to deploy a new model for comparison?",
+    "options": [
+      "Replace it directly",
+      "Shadow then canary",
+      "Delete the old model",
+      "Turn off monitoring"
+    ],
+    "explanation": "Shadow observes without affecting users."
+  },
+  {
+    "id": "mlops-model-lifecycle-04",
+    "question": "Why is monitoring a model after deployment necessary?",
+    "modelAnswer": "World data changes so quality silently degrades (data drift, concept drift). Monitoring detects this early so you can retrain or roll back.",
+    "keyPoints": [
+      "Data changes",
+      "Silent degradation",
+      "Retrain or roll back"
+    ]
   }
 ]

@@ -2183,5 +2183,60 @@
     "id": "ai-900-workloads",
     "meaning": "AI workload types in the AI-900 exam",
     "definition": "Computer vision, NLP, document intelligence, knowledge mining and generative AI."
+  },
+  {
+    "id": "azure-openai-deployments",
+    "meaning": "Model deployment types",
+    "definition": "Standard is billed per token; Provisioned (PTU) reserves capacity with stable latency; there are also Global, Data Zone and Batch."
+  },
+  {
+    "id": "azure-openai-quota-tpm",
+    "meaning": "Token quota and rate-limit error handling",
+    "definition": "Quota is in tokens-per-minute; exceeding it returns HTTP 429, handled by retry with exponential backoff or raising the quota."
+  },
+  {
+    "id": "azure-openai-on-your-data",
+    "meaning": "RAG over internal documents with citations",
+    "definition": "Connects Azure AI Search so the model answers from the organization's data."
+  },
+  {
+    "id": "azure-openai-content-filtering",
+    "meaning": "Content filters for prompts and responses",
+    "definition": "Filters hate, sexual, violence, self-harm; configurable, with added jailbreak and groundedness protection."
+  },
+  {
+    "id": "azure-ai-foundry-agent-service",
+    "meaning": "Build and manage AI agents on Azure",
+    "definition": "Foundry is the platform bringing together models, agents, evaluation and safety; the branding may change."
+  },
+  {
+    "id": "azure-openai-function-calling",
+    "meaning": "The model calls external functions or tools",
+    "definition": "The model returns a structured function call for the application to execute and feed the result back."
+  },
+  {
+    "id": "mlops-model-registry",
+    "meaning": "Manage model versions",
+    "definition": "Stages, approval, reproducibility."
+  },
+  {
+    "id": "data-vs-concept-drift",
+    "meaning": "Two kinds of data drift",
+    "definition": "The input changes vs the relationship changes."
+  },
+  {
+    "id": "feature-store-skew",
+    "meaning": "Feature consistency",
+    "definition": "Define once for offline and online."
+  },
+  {
+    "id": "ml-deployment-strategies",
+    "meaning": "Deploying models safely",
+    "definition": "Compare the new model with the old."
+  },
+  {
+    "id": "data-leakage",
+    "meaning": "Data leaking during training",
+    "definition": "Using future information."
   }
 ]

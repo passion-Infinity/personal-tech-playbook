@@ -443,5 +443,15 @@
     "id": "azure-ai-services",
     "title": "Azure AI Services",
     "summary": "Pick the right ready-made Azure AI service for each AI workload: vision, language, speech, documents and search."
+  },
+  {
+    "id": "azure-openai-foundry",
+    "title": "Azure OpenAI & AI Foundry",
+    "summary": "Use OpenAI models inside Azure's security perimeter with deployments, quotas, content filtering and RAG through AI Search."
+  },
+  {
+    "id": "mlops-model-lifecycle",
+    "title": "MLOps: Model Lifecycle, Drift & Deployment",
+    "summary": "Reproduce, deploy, monitor drift in and retrain models; avoid training-serving skew and data leakage."
   }
 ]
