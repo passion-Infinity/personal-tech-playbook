@@ -7680,24 +7680,24 @@
     "playbookId": "azure-app-service-api-management",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Triển khai không downtime trên App Service?",
+    "question": "Team muốn đưa phiên bản mới lên App Service, kiểm tra ở staging rồi chuyển sang production không downtime. Dùng gì?",
     "options": [
       "Restart",
       "Slot swap",
-      "Xoá app",
+      "Xoá app rồi tạo lại",
       "Scale in"
     ],
     "answer": [
       1
     ],
-    "explanation": "Swap staging và production."
+    "explanation": "Deployment slot cho staging và swap không downtime. Restart dễ nhầm là cập nhật nhanh, nhưng gây gián đoạn."
   },
   {
     "id": "azure-app-service-api-management-02",
     "playbookId": "azure-app-service-api-management",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cân bằng tải L7 toàn cầu có WAF?",
+    "question": "Một web toàn cầu cần cân bằng tải L7, CDN, WAF và failover giữa nhiều Region. Chọn?",
     "options": [
       "Load Balancer",
       "Front Door",
@@ -7707,36 +7707,36 @@
     "answer": [
       1
     ],
-    "explanation": "Front Door."
+    "explanation": "Front Door là L7 toàn cầu có CDN và WAF. Traffic Manager dễ nhầm vì cũng toàn cầu, nhưng chỉ trả DNS và không có WAF/CDN."
   },
   {
     "id": "azure-app-service-api-management-03",
     "playbookId": "azure-app-service-api-management",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Swap mang cấu hình staging lên production vì?",
+    "question": "Sau khi swap slot, production bắt đầu gọi database của môi trường staging. Nguyên nhân?",
     "options": [
       "Lỗi Azure",
-      "Quên đánh dấu slot setting",
-      "Plan nhỏ",
+      "Quên đánh dấu slot setting cho connection string",
+      "Plan quá nhỏ",
       "Thiếu Always On"
     ],
     "answer": [
       1
     ],
-    "explanation": "Slot setting dính theo slot."
+    "explanation": "Setting không được đánh dấu slot setting sẽ đi theo app khi swap."
   },
   {
     "id": "azure-app-service-api-management-04",
     "playbookId": "azure-app-service-api-management",
     "type": "explain",
     "difficulty": 2,
-    "question": "Scale up và scale out khác nhau thế nào?",
-    "modelAnswer": "Scale up đổi sang kích cỡ lớn hơn (CPU/RAM), scale out thêm nhiều instance. Scale out cần ứng dụng stateless hoặc state lưu ngoài.",
+    "question": "Khi lưu lượng tăng, team phân vân giữa scale up và scale out cho App Service. Giải thích khác biệt và điều kiện để scale out an toàn.",
+    "modelAnswer": "Scale up đổi sang kích cỡ lớn hơn (CPU/RAM) cho cùng một instance, scale out thêm nhiều instance chạy song song và có thể autoscale. Scale out an toàn khi ứng dụng stateless hoặc state lưu ngoài như Redis/DB, vì request có thể rơi vào bất kỳ instance nào.",
     "keyPoints": [
-      "Scale up kích cỡ",
-      "Scale out số instance",
-      "Cần stateless"
+      "Scale up: kích cỡ",
+      "Scale out: số instance",
+      "Cần stateless hoặc state ngoài"
     ]
   },
   {
@@ -7744,7 +7744,7 @@
     "playbookId": "azure-certification-roadmap",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Chứng chỉ nền tảng Azure?",
+    "question": "Một người mới hoàn toàn với Azure muốn chứng chỉ khởi đầu. Chọn?",
     "options": [
       "AZ-900",
       "AZ-400",
@@ -7754,14 +7754,14 @@
     "answer": [
       0
     ],
-    "explanation": "Fundamentals."
+    "explanation": "AZ-900 là Fundamentals. AZ-400/AZ-305 dễ nhầm vì uy tín, nhưng ở cấp Expert."
   },
   {
     "id": "azure-certification-roadmap-02",
     "playbookId": "azure-certification-roadmap",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ngăn tạo tài nguyên ngoài Region cho phép?",
+    "question": "Công ty muốn ngăn mọi người tạo tài nguyên ngoài các Region được phép, kể cả Owner. Dùng gì?",
     "options": [
       "RBAC",
       "Azure Policy",
@@ -7771,36 +7771,36 @@
     "answer": [
       1
     ],
-    "explanation": "Policy ép quy tắc."
+    "explanation": "Policy ép quy tắc tài nguyên. RBAC dễ nhầm vì liên quan quyền, nhưng không ép tài nguyên đúng Region."
   },
   {
     "id": "azure-certification-roadmap-03",
     "playbookId": "azure-certification-roadmap",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Nhầm phổ biến?",
+    "question": "Nhầm lẫn phổ biến nào thường gặp trong đề Azure về quyền?",
     "options": [
-      "Entra ID roles với Azure RBAC roles",
-      "Hai chữ AZ",
-      "Hai VNet",
-      "Không có"
+      "Nhầm Entra ID roles với Azure RBAC roles",
+      "Nhầm hai chữ AZ",
+      "Nhầm hai VNet",
+      "Không có nhầm lẫn"
     ],
     "answer": [
       0
     ],
-    "explanation": "Thư mục vs tài nguyên."
+    "explanation": "Entra roles quản lý thư mục/danh tính, RBAC quản lý tài nguyên Azure."
   },
   {
     "id": "azure-certification-roadmap-04",
     "playbookId": "azure-certification-roadmap",
     "type": "explain",
     "difficulty": 2,
-    "question": "Tính SLA tổng của hai dịch vụ nối tiếp?",
-    "modelAnswer": "Nhân SLA của từng dịch vụ nên SLA tổng thấp hơn mỗi dịch vụ; dự phòng song song tăng SLA.",
+    "question": "Một hệ thống gồm App Service (99,95%) nối tiếp Azure SQL (99,99%). Hãy giải thích cách tính SLA tổng và kết luận.",
+    "modelAnswer": "Với dịch vụ nối tiếp, nhân SLA của từng thành phần: 0,9995 × 0,9999 ≈ 99,94%, nên SLA tổng thấp hơn mỗi thành phần. Dự phòng song song mới làm tăng SLA.",
     "keyPoints": [
-      "Nhân SLA",
-      "Tổng thấp hơn",
-      "Song song tăng"
+      "Nhân SLA nối tiếp",
+      "Tổng thấp hơn từng cái",
+      "Song song tăng SLA"
     ]
   },
   {
@@ -9029,7 +9029,7 @@
     "playbookId": "azure-app-service-api-management",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Rate limit và xác thực JWT cho API?",
+    "question": "Cần giới hạn 100 request/phút theo từng subscription và xác thực JWT cho nhiều API backend. Dùng gì?",
     "options": [
       "App Service Plan",
       "API Management policies",
@@ -9039,7 +9039,7 @@
     "answer": [
       1
     ],
-    "explanation": "APIM policy."
+    "explanation": "APIM policy gồm rate-limit và validate-jwt. NSG dễ nhầm vì là lớp bảo vệ, nhưng chỉ lọc L3/L4, không hiểu JWT."
   },
   {
     "id": "ai-model-landscape-05",
