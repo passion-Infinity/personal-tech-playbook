@@ -1368,5 +1368,65 @@
     "id": "multi-account-strategy",
     "meaning": "Separate accounts by workload",
     "definition": "A small blast radius and a clear bill."
+  },
+  {
+    "id": "aws-well-architected-pillars",
+    "meaning": "Six architectural pillars",
+    "definition": "Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability."
+  },
+  {
+    "id": "well-architected-tool-lenses",
+    "meaning": "An assessment tool",
+    "definition": "Lenses for Serverless, SaaS, ML."
+  },
+  {
+    "id": "trusted-advisor",
+    "meaning": "Optimization recommendations",
+    "definition": "Checks cost, security, performance and service limits."
+  },
+  {
+    "id": "shared-responsibility-model",
+    "meaning": "The split of responsibility",
+    "definition": "AWS secures the cloud, the customer secures what is in the cloud."
+  },
+  {
+    "id": "kms-envelope-encryption",
+    "meaning": "Encrypt with a data key",
+    "definition": "The CMK encrypts the data key, and the data key encrypts the data."
+  },
+  {
+    "id": "secrets-manager-rotation",
+    "meaning": "Rotate secrets automatically",
+    "definition": "Integrates with RDS and Lambda."
+  },
+  {
+    "id": "guardduty",
+    "meaning": "Threat detection",
+    "definition": "Analyzes CloudTrail, Flow Logs and DNS."
+  },
+  {
+    "id": "aws-waf-rules",
+    "meaning": "Web protection rules",
+    "definition": "SQLi, XSS and rate-based rules on ALB/CloudFront."
+  },
+  {
+    "id": "cognito-pools",
+    "meaning": "Authentication vs issuing credentials",
+    "definition": "The user pool issues JWTs, the identity pool issues AWS credentials."
+  },
+  {
+    "id": "elasticache-redis-memcached",
+    "meaning": "Choosing a cache engine",
+    "definition": "Redis has data structures and HA; Memcached is simple."
+  },
+  {
+    "id": "cache-strategies",
+    "meaning": "Caching strategies",
+    "definition": "Lazy loading versus write-through."
+  },
+  {
+    "id": "redis-cluster-sharding",
+    "meaning": "Sharding Redis",
+    "definition": "Scales capacity and throughput."
   }
 ]

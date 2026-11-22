@@ -263,5 +263,20 @@
     "id": "aws-organizations-governance",
     "title": "AWS Organizations, SCP & Control Tower",
     "summary": "Govern multiple accounts with OUs, SCP guardrails, Control Tower and IAM Identity Center."
+  },
+  {
+    "id": "aws-well-architected-framework",
+    "title": "AWS Well-Architected Framework",
+    "summary": "Assess architectures against 6 pillars and balance the trade-offs among them, and also serve as a reasoning frame for exam questions."
+  },
+  {
+    "id": "aws-security-services",
+    "title": "AWS Security Services (KMS, GuardDuty, WAF, Cognito)",
+    "summary": "Encrypt with KMS, manage secrets, detect threats and protect web/login on AWS."
+  },
+  {
+    "id": "elasticache-caching",
+    "title": "ElastiCache, DAX & Caching Strategies",
+    "summary": "Choose Redis or Memcached, cache-aside and write-through, TTLs and the stampede/stale-data traps."
   }
 ]

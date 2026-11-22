@@ -2847,5 +2847,167 @@
       "A NACL"
     ],
     "explanation": "An SCP applies to the whole account and beats an IAM Allow. Per-user IAM policies are tempting but the account's admin can remove them."
+  },
+  {
+    "id": "aws-well-architected-framework-01",
+    "question": "A team applies right-sizing, Savings Plans and Spot to cut the bill. Which pillar are they improving?",
+    "options": [
+      "Security",
+      "Cost Optimization",
+      "Reliability",
+      "Sustainability"
+    ],
+    "explanation": "That is Cost Optimization. Sustainability is easy to confuse because right-sizing also reduces wasted resources, but the main goal here is cost."
+  },
+  {
+    "id": "aws-well-architected-framework-02",
+    "question": "A lead says 'we deploy multi-AZ to tolerate datacenter failure'. Which pillar does this belong to?",
+    "options": [
+      "Cost",
+      "Reliability",
+      "Security",
+      "Sustainability"
+    ],
+    "explanation": "Fault tolerance and self-healing belong to Reliability. Cost is easy to confuse because multi-AZ costs more, but that is a consequence, not the goal."
+  },
+  {
+    "id": "aws-well-architected-framework-03",
+    "question": "A company deploys multi-AZ and believes it has DR. Which statement is correct?",
+    "options": [
+      "HA and DR are the same",
+      "HA is multi-AZ, DR is disaster recovery which usually needs multi-Region",
+      "DR is always cheaper than HA",
+      "HA only needs backups"
+    ],
+    "explanation": "Multi-AZ only protects against a single datacenter failure. Confusing HA with DR is a common mistake because both talk about fault tolerance."
+  },
+  {
+    "id": "aws-well-architected-framework-04",
+    "question": "An exam question asks for a web architecture with high availability and reasonable cost without saying more. Describe how to use Well-Architected to choose the answer.",
+    "modelAnswer": "When the question says nothing else, choose the answer that is managed, loosely coupled, multi-AZ, least privilege and reasonably cost-optimized. Read the constraints on cost, latency or RTO carefully because they decide which pillar is prioritized, and eliminate answers that violate a constraint.",
+    "keyPoints": [
+      "Managed and loosely coupled",
+      "Multi-AZ and least privilege",
+      "Read constraints carefully and eliminate wrong answers"
+    ]
+  },
+  {
+    "id": "aws-well-architected-framework-05",
+    "question": "Which two are pillars of the Well-Architected Framework? (choose 2)",
+    "options": [
+      "Reliability",
+      "Cost Optimization",
+      "Marketing",
+      "Procurement"
+    ],
+    "explanation": "The six official pillars include Reliability and Cost Optimization. Marketing and Procurement are distractors that are not part of the framework."
+  },
+  {
+    "id": "aws-security-services-01",
+    "question": "An application needs to encrypt a 20 GB backup file with a KMS-managed key. What is the right way?",
+    "options": [
+      "Send the whole file to KMS to encrypt",
+      "Envelope encryption: get a data key from KMS and encrypt the file locally",
+      "Impossible",
+      "Use SSH"
+    ],
+    "explanation": "KMS directly encrypts at most 4 KB so you use a data key. Sending the whole file to KMS is tempting as the direct way but exceeds the limit."
+  },
+  {
+    "id": "aws-security-services-02",
+    "question": "A web app behind an ALB is under SQL injection attack and bots are hammering the API. Where do you block?",
+    "options": [
+      "A security group",
+      "AWS WAF with managed rules and rate-based rules",
+      "GuardDuty",
+      "Shield Standard"
+    ],
+    "explanation": "WAF inspects request content at L7. Shield Standard is tempting because it protects against attacks, but it only blocks L3/L4 DDoS."
+  },
+  {
+    "id": "aws-security-services-03",
+    "question": "A team expected GuardDuty to block suspicious access automatically but sees nothing blocked. Why?",
+    "options": [
+      "GuardDuty is broken",
+      "GuardDuty only detects, you need EventBridge/Lambda to respond",
+      "WAF is not enabled",
+      "KMS is not used"
+    ],
+    "explanation": "GuardDuty produces findings, it does not block by itself. WAF is tempting as the blocking part, but it does not read GuardDuty findings."
+  },
+  {
+    "id": "aws-security-services-04",
+    "question": "A mobile app needs sign-up/sign-in and to let users upload photos directly to S3. Distinguish a Cognito User Pool from an Identity Pool and how to combine them.",
+    "modelAnswer": "A User Pool manages application users, sign-up/sign-in and issues JWTs. An Identity Pool exchanges an identity (from a User Pool or another IdP) for temporary AWS credentials to access AWS services such as S3 directly. Use the User Pool to authenticate and then the Identity Pool to obtain permission-limited credentials.",
+    "keyPoints": [
+      "The User Pool issues JWTs",
+      "The Identity Pool issues temporary AWS credentials",
+      "Used together"
+    ]
+  },
+  {
+    "id": "aws-security-services-05",
+    "question": "Which service analyzes CloudTrail, VPC Flow Logs and DNS logs to detect suspicious behavior without needing an agent?",
+    "options": [
+      "Inspector",
+      "GuardDuty",
+      "Macie",
+      "Shield"
+    ],
+    "explanation": "GuardDuty analyzes these log sources. Inspector is easy to confuse because it is also a security service, but it scans for software vulnerabilities rather than analyzing behavior."
+  },
+  {
+    "id": "elasticache-caching-01",
+    "question": "A team needs a cache with a sorted set data structure for a leaderboard, replication and automatic failover. What do you choose?",
+    "options": [
+      "Memcached",
+      "Redis",
+      "S3",
+      "CloudFront"
+    ],
+    "explanation": "Redis supports data structures, replication and Multi-AZ failover. Memcached is tempting because it is also a cache, but it has no replication or persistence."
+  },
+  {
+    "id": "elasticache-caching-02",
+    "question": "An API reads a user profile: check the cache, on a miss read the DB and store it in the cache with a TTL. What strategy is this?",
+    "options": [
+      "Write-through",
+      "Cache-aside (lazy loading)",
+      "No TTL",
+      "The cache is the primary DB"
+    ],
+    "explanation": "Cache-aside populates on a miss. Write-through is easy to confuse because it also involves the cache, but it writes the cache at the same time as the DB on writes."
+  },
+  {
+    "id": "elasticache-caching-03",
+    "question": "A trending key expires exactly at peak time and thousands of requests hit the DB, overloading it. What is this phenomenon called?",
+    "options": [
+      "Cache stampede",
+      "Sharding",
+      "Failover",
+      "Eviction"
+    ],
+    "explanation": "Many requests reloading when a key expires is called a cache stampede; reduce it with a randomized TTL and a reload lock. Eviction is easy to confuse but is removal due to memory pressure."
+  },
+  {
+    "id": "elasticache-caching-04",
+    "question": "State the risks of using a cache and how to reduce them for an e-commerce system.",
+    "modelAnswer": "The risks include stale data if you do not invalidate, a stampede when a hot key expires, hot keys piling onto one shard and treating the cache as the primary data source. Reduce them with a sensible TTL, write-through or deleting the key on write, a randomized TTL and a reload lock, and keeping the DB as the source of truth.",
+    "keyPoints": [
+      "Stale data",
+      "Stampede",
+      "The DB is the source of truth"
+    ]
+  },
+  {
+    "id": "elasticache-caching-05",
+    "question": "A web application behind an ASG must store sessions to scale horizontally without losing logins. Where do you store them?",
+    "options": [
+      "Local disk",
+      "ElastiCache Redis",
+      "S3 Glacier",
+      "Instance Store"
+    ],
+    "explanation": "Redis is shared across instances. Local disk is tempting for its simplicity, but it is lost when an instance is replaced and cannot be shared."
   }
 ]
