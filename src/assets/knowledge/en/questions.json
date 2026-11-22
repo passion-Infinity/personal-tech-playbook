@@ -6105,5 +6105,179 @@
       "Digests and SBOM",
       "Signatures and SLSA"
     ]
+  },
+  {
+    "id": "ai-model-landscape-01",
+    "question": "A colleague says 'install Ollama to use the free Ollama model'. What is Ollama really?",
+    "options": [
+      "A Google model",
+      "A runtime that runs open-weight models locally",
+      "A coding agent",
+      "A video generation service"
+    ],
+    "explanation": "Ollama packages llama.cpp to run and serve local models. Mistaking it for a model is a common error because the `ollama run` command looks like calling a model."
+  },
+  {
+    "id": "ai-model-landscape-02",
+    "question": "Patient data must not leave the internal network but the team wants to use an LLM. What is a reasonable direction?",
+    "options": [
+      "Call a frontier API",
+      "Self-hosted open-weight",
+      "Only use public chat",
+      "Drop AI"
+    ],
+    "explanation": "Self-hosting keeps data in your infrastructure. A frontier API is tempting for its quality, but the data leaves the network."
+  },
+  {
+    "id": "ai-model-landscape-03",
+    "question": "A team picked a model from a public leaderboard but results on internal contract extraction are poor. What should models be compared on?",
+    "options": [
+      "Only public benchmarks",
+      "An eval set from your real task",
+      "The vendor name",
+      "Parameter count"
+    ],
+    "explanation": "General benchmarks do not reflect your data and criteria. Parameter count is tempting as a quality indicator, but a bigger model is not necessarily better on a specific task."
+  },
+  {
+    "id": "ai-model-landscape-04",
+    "question": "A colleague uses GPT, Ollama, Claude Code and ChatGPT interchangeably. Distinguish model, runtime, agent and product and say why this matters in design.",
+    "modelAnswer": "A model is a set of weights that generates output. A runtime (Ollama, vLLM) is software that loads and runs a model. An agent (Claude Code, Codex CLI) is a program that uses a model together with tools in a loop to get work done. A product (a chat app) is the interface wrapped around it. They are different layers, so you can swap one without changing another, which helps avoid dependence on one provider.",
+    "keyPoints": [
+      "A model is weights",
+      "A runtime runs the model",
+      "An agent uses tools in a loop",
+      "Layers swap independently"
+    ]
+  },
+  {
+    "id": "ai-model-landscape-05",
+    "question": "Which two statements about open-weight models are correct? (choose 2)",
+    "options": [
+      "You can download the weights to run yourself",
+      "The license may restrict the purpose of use",
+      "They are always open source by the OSI definition",
+      "They cannot be fine-tuned"
+    ],
+    "explanation": "Open-weight lets you download weights but licenses differ. 'Always open source' is tempting because the names are similar, but many licenses have restrictions."
+  },
+  {
+    "id": "llm-local-inference-quantization-01",
+    "question": "A team wants to run a 7B model at FP16 on a 12 GB GPU. How much memory do the weights alone need and what is the conclusion?",
+    "options": [
+      "2 GB, fits comfortably",
+      "About 14 GB so it does not fit, quantization is needed",
+      "70 GB",
+      "1 GB"
+    ],
+    "explanation": "7 billion parameters × 2 bytes ≈ 14 GB, not counting the KV cache. Mistaking 7B for 7 GB is a mistake from forgetting bytes per parameter."
+  },
+  {
+    "id": "llm-local-inference-quantization-02",
+    "question": "A 7B Q4 model runs fine at a 2K context but OOMs when a user pastes a 32K document. What consumes the extra memory?",
+    "options": [
+      "The weights",
+      "The KV cache",
+      "The disk",
+      "Network bandwidth"
+    ],
+    "explanation": "The KV cache grows with context length. The weights are fixed per model so they are tempting as the cause."
+  },
+  {
+    "id": "llm-local-inference-quantization-03",
+    "question": "A company wants to serve 50 engineers sharing one internal model at high throughput. What should they choose?",
+    "options": [
+      "Only Ollama on one laptop",
+      "vLLM with continuous batching",
+      "Run requests sequentially",
+      "CPU only"
+    ],
+    "explanation": "vLLM optimizes batching and KV cache management for many users. Ollama is tempting for convenience, but it targets personal/simple use."
+  },
+  {
+    "id": "llm-local-inference-quantization-04",
+    "question": "After upgrading to a GPU with twice the FLOPS, token generation speed only rises a little. Explain why this speed is usually limited by memory bandwidth.",
+    "modelAnswer": "Each generated token must read nearly all the weights from memory while the computation is relatively small, so speed is bounded by memory bandwidth rather than FLOPS. That is why quantization helps: it reads fewer bytes, and the speed ceiling is roughly bandwidth divided by model size.",
+    "keyPoints": [
+      "Every token reads all the weights",
+      "Bounded by bandwidth",
+      "Quantization reduces the data to read"
+    ]
+  },
+  {
+    "id": "llm-local-inference-quantization-05",
+    "question": "The same model runs fine at a short context but OOMs at a long one. What is the main cause?",
+    "options": [
+      "The weights grow with context",
+      "The KV cache grows with context length",
+      "A tokenizer bug",
+      "Wrong quantization"
+    ],
+    "explanation": "The KV cache is proportional to context length and the number of requests. Quantization is tempting because it relates to memory, but it only compresses the weights."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-01",
+    "question": "A prompt for a model writing commit messages gives different results each time. What is the most effective way to add specificity?",
+    "options": [
+      "Add flowery language",
+      "Add context, constraints and success criteria",
+      "Write in all caps",
+      "Repeat the command"
+    ],
+    "explanation": "A prompt is a specification. Capitals/repetition are tempting as emphasis, but they add no information for the model."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-02",
+    "question": "A service uses an LLM to extract orders into JSON and occasionally returns extra text that breaks the parser. What is the reliable way in production?",
+    "options": [
+      "Politely ask for JSON",
+      "Structured output with validation and retry",
+      "Just raise the temperature",
+      "Skip checking"
+    ],
+    "explanation": "A schema forces the format, validation catches errors, retry handles exceptions. Raising the temperature makes output less stable."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-03",
+    "question": "After moving to a new model version, a previously well-working prompt gives different results. What should be done?",
+    "options": [
+      "Nothing",
+      "Rerun the eval set and adjust the prompt",
+      "Lower top_p",
+      "Delete the prompt"
+    ],
+    "explanation": "Evals detect regressions when the model changes. Lowering top_p is tempting as a way to stabilize, but it does not address changed behavior."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-04",
+    "question": "A team often edits prompts by feel and does not know which version is better. Why should prompts have evals?",
+    "modelAnswer": "Small prompt changes or a model upgrade can change quality in ways that are hard to see. An eval set of real cases lets you measure before and after like unit tests, so you can detect regressions, compare options with numbers and deploy with confidence.",
+    "keyPoints": [
+      "Detect regressions",
+      "Like unit tests",
+      "Compare with numbers"
+    ]
+  },
+  {
+    "id": "prompt-engineering-for-engineers-05",
+    "question": "Which two ways reduce the risk of wrongly formatted output in production? (choose 2)",
+    "options": [
+      "Structured output/schema",
+      "Validate then retry",
+      "Just write 'please return JSON'",
+      "Raise the temperature"
+    ],
+    "explanation": "Force a schema and then check again. Just writing the request in text is tempting as enough, but it has no guarantee mechanism."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-06",
+    "question": "A prompt has 3 nearly identical few-shot examples and the model keeps repeating the examples' structure for every input. What is the cause?",
+    "options": [
+      "The model is always right",
+      "Examples lacking diversity make the model imitate too closely",
+      "Fewer tokens",
+      "No effect"
+    ],
+    "explanation": "Few-shot steers strongly, so near-identical examples skew the output. Diversify the examples and add edge cases."
   }
 ]

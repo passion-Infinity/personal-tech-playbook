@@ -598,5 +598,20 @@
     "id": "software-supply-chain-security",
     "title": "Software Supply Chain Security",
     "summary": "Know what you use, verify where it came from and make builds repeatable to defend against attacks through dependencies and pipelines."
+  },
+  {
+    "id": "ai-model-landscape",
+    "title": "The AI Map: Models, Runtimes, Agents & Products",
+    "summary": "Distinguish models, runtimes, agents and products (GPT, Claude, Gemini, Llama, Ollama) to know which layer each belongs to."
+  },
+  {
+    "id": "llm-local-inference-quantization",
+    "title": "Running LLMs Locally: Ollama, vLLM & Quantization",
+    "summary": "Estimate memory, choose quantization and a runtime to self-run LLMs on a machine or server."
+  },
+  {
+    "id": "prompt-engineering-for-engineers",
+    "title": "Prompt Engineering for Engineers",
+    "summary": "Write prompts like a specification: context, constraints, examples, an output schema and measure with evals."
   }
 ]

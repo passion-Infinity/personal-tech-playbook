@@ -3008,5 +3008,70 @@
     "id": "lockfile-reproducible-builds",
     "meaning": "Install exactly the vetted version",
     "definition": "A lockfile pins versions; CI uses npm ci so newer versions are not pulled unintentionally."
+  },
+  {
+    "id": "open-vs-closed-weight",
+    "meaning": "Open-weight and closed models",
+    "definition": "Open-weight lets you download the weights to run yourself; closed is only called through an API."
+  },
+  {
+    "id": "reasoning-models",
+    "meaning": "Multi-step reasoning models",
+    "definition": "Spend extra tokens to think, stronger on hard problems but slow and costly."
+  },
+  {
+    "id": "multimodal-llm",
+    "meaning": "Multimodal models",
+    "definition": "Process text, images and audio in the same model."
+  },
+  {
+    "id": "llm-model-routing",
+    "meaning": "Choose a model by difficulty",
+    "definition": "Easy tasks use a small model, hard tasks use a large one."
+  },
+  {
+    "id": "llm-quantization-gguf",
+    "meaning": "Compress model weights",
+    "definition": "Reduce the bits per parameter to fit small hardware, at the cost of some quality."
+  },
+  {
+    "id": "kv-cache",
+    "meaning": "Attention memory",
+    "definition": "Grows with context length and the number of concurrent requests."
+  },
+  {
+    "id": "vllm-paged-attention",
+    "meaning": "High-throughput LLM serving",
+    "definition": "Manages the KV cache in pages and uses continuous batching."
+  },
+  {
+    "id": "ollama-modelfile",
+    "meaning": "Local model configuration",
+    "definition": "Sets the system prompt and parameters for a model."
+  },
+  {
+    "id": "few-shot-prompting",
+    "meaning": "Steer with examples",
+    "definition": "A few input/output examples showing the right format."
+  },
+  {
+    "id": "structured-outputs",
+    "meaning": "Force output into a schema",
+    "definition": "Use a schema and validation so output is reliable."
+  },
+  {
+    "id": "chain-of-thought",
+    "meaning": "Have the model reason step by step",
+    "definition": "Improves multi-step problems."
+  },
+  {
+    "id": "prompt-chaining",
+    "meaning": "A chain of several calls",
+    "definition": "Break a large task into small steps."
+  },
+  {
+    "id": "system-prompt",
+    "meaning": "Fixed behavior instructions",
+    "definition": "Sets the role, rules and constraints."
   }
 ]
