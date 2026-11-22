@@ -18,6 +18,7 @@ import { PracticeService } from '../core/practice.service';
 import { topicVars } from '../core/topic-style';
 import { ExplainBack } from '../shared/explain-back';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 const TYPE_LABEL: Record<Question['type'], string> = {
   mcq: 'Trắc nghiệm',
@@ -36,7 +37,7 @@ const TYPE_LABEL: Record<Question['type'], string> = {
         routerLink="/practice"
         class="mb-3 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
       >
-        <app-icon name="arrowLeft" [size]="14" /> Luyện tập
+        <app-icon name="arrowLeft" [size]="14" /> {{ i18n.t('Luyện tập') }}
       </a>
       <h1 class="text-2xl font-bold sm:text-3xl">{{ title() }}</h1>
     </header>
@@ -46,18 +47,21 @@ const TYPE_LABEL: Record<Question['type'], string> = {
     } @else if (!queue().length) {
       <div class="glass mx-auto max-w-xl rounded-3xl p-8 text-center">
         <app-icon name="lightbulb" [size]="36" class="text-accent-ink" />
-        <h2 class="mt-3 text-xl font-bold">Chưa có câu hỏi phù hợp</h2>
+        <h2 class="mt-3 text-xl font-bold">{{ i18n.t('Chưa có câu hỏi phù hợp') }}</h2>
         <p class="mt-2 text-muted">
-          Daily Drill lấy câu hỏi từ những bài bạn đã đánh dấu "đã đọc". Hãy đọc một bài trong
-          Roadmap rồi quay lại.
+          {{
+            i18n.t(
+              'Daily Drill lấy câu hỏi từ những bài bạn đã đánh dấu "đã đọc". Hãy đọc một bài trong Roadmap rồi quay lại.'
+            )
+          }}
         </p>
         <div class="mt-5 flex flex-wrap justify-center gap-3">
           <a routerLink="/roadmap" class="btn-primary"
-            ><app-icon name="map" [size]="16" /> Mở Roadmap</a
+            ><app-icon name="map" [size]="16" /> {{ i18n.t('Mở Roadmap') }}</a
           >
-          <a routerLink="/practice/drill" [queryParams]="{ all: 1 }" class="btn-secondary"
-            >Luyện thử các bài nền tảng</a
-          >
+          <a routerLink="/practice/drill" [queryParams]="{ all: 1 }" class="btn-secondary">{{
+            i18n.t('Luyện thử các bài nền tảng')
+          }}</a>
         </div>
       </div>
     } @else if (done()) {
@@ -67,11 +71,16 @@ const TYPE_LABEL: Record<Question['type'], string> = {
             ><app-icon name="trophy" [size]="30"
           /></span>
           <h2 class="mt-4 text-3xl font-bold">
-            <span class="text-gradient">{{ percent() }}%</span> chính xác
+            <span class="text-gradient">{{ percent() }}%</span> {{ i18n.t('chính xác') }}
           </h2>
           <p class="mt-1 text-muted">
-            {{ correctCount() }}/{{ results().length }} câu đúng · chuỗi ngày học:
-            {{ store.streak() }} 🔥
+            {{
+              i18n.t('{correct}/{total} câu đúng · chuỗi ngày học: {streak} 🔥', {
+                correct: correctCount(),
+                total: results().length,
+                streak: store.streak(),
+              })
+            }}
           </p>
         </div>
         <ul class="mt-6 space-y-2">
@@ -89,7 +98,7 @@ const TYPE_LABEL: Record<Question['type'], string> = {
                     [routerLink]="['/playbooks', r.q.playbookId]"
                     class="mt-1 inline-flex items-center gap-1 text-xs text-accent-ink hover:underline"
                   >
-                    <app-icon name="book" [size]="12" /> Đọc lại:
+                    <app-icon name="book" [size]="12" /> {{ i18n.t('Đọc lại:') }}
                     {{ kb.playbookById().get(r.q.playbookId)?.title }}
                   </a>
                 }
@@ -99,9 +108,9 @@ const TYPE_LABEL: Record<Question['type'], string> = {
         </ul>
         <div class="mt-6 flex flex-wrap justify-center gap-3">
           <button type="button" class="btn-primary" (click)="restart()">
-            <app-icon name="rotate" [size]="16" /> Luyện thêm
+            <app-icon name="rotate" [size]="16" /> {{ i18n.t('Luyện thêm') }}
           </button>
-          <a routerLink="/practice" class="btn-secondary">Về trang luyện tập</a>
+          <a routerLink="/practice" class="btn-secondary">{{ i18n.t('Về trang luyện tập') }}</a>
         </div>
       </div>
     } @else {
@@ -109,8 +118,10 @@ const TYPE_LABEL: Record<Question['type'], string> = {
       <div class="mx-auto max-w-2xl">
         <div class="mb-4">
           <div class="mb-1.5 flex justify-between text-xs text-muted">
-            <span>Câu {{ index() + 1 }} / {{ queue().length }}</span>
-            <span>{{ typeLabel[q.type] }}</span>
+            <span>{{
+              i18n.t('Câu {n} / {total}', { n: index() + 1, total: queue().length })
+            }}</span>
+            <span>{{ i18n.t(typeLabel[q.type]) }}</span>
           </div>
           <div class="progress-track">
             <div class="progress-fill" [style.width.%]="(index() / queue().length) * 100"></div>
@@ -124,11 +135,15 @@ const TYPE_LABEL: Record<Question['type'], string> = {
             <section class="glass rounded-3xl p-5 sm:p-6">
               <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
                 <span class="badge">{{ kb.playbookById().get(q.playbookId)?.title }}</span>
-                <span class="text-muted" [attr.aria-label]="'Độ khó ' + q.difficulty"
+                <span
+                  class="text-muted"
+                  [attr.aria-label]="i18n.t('Độ khó {n}', { n: q.difficulty })"
                   >{{ '●'.repeat(q.difficulty) }}{{ '○'.repeat(3 - q.difficulty) }}</span
                 >
                 @if (q.type === 'bug') {
-                  <span class="chip"><app-icon name="bug" [size]="12" /> Tìm lỗi</span>
+                  <span class="chip"
+                    ><app-icon name="bug" [size]="12" /> {{ i18n.t('Tìm lỗi') }}</span
+                  >
                 }
               </div>
               <h2 class="text-lg font-semibold leading-snug sm:text-xl">{{ q.question }}</h2>
@@ -139,7 +154,9 @@ const TYPE_LABEL: Record<Question['type'], string> = {
                 ></div>
               }
               @if (isMulti()) {
-                <p class="mt-3 text-xs font-medium text-accent-ink">Chọn tất cả đáp án đúng</p>
+                <p class="mt-3 text-xs font-medium text-accent-ink">
+                  {{ i18n.t('Chọn tất cả đáp án đúng') }}
+                </p>
               }
               <div class="mt-4 space-y-2" role="group">
                 @for (o of q.options ?? []; track $index) {
@@ -171,14 +188,14 @@ const TYPE_LABEL: Record<Question['type'], string> = {
                     [class.text-emerald-500]="lastCorrect()"
                     [class.text-rose-500]="!lastCorrect()"
                   >
-                    {{ lastCorrect() ? 'Chính xác!' : 'Chưa đúng' }}
+                    {{ lastCorrect() ? i18n.t('Chính xác!') : i18n.t('Chưa đúng') }}
                   </p>
                   <p class="mt-1 text-[0.95rem] leading-relaxed">{{ q.explanation }}</p>
                   <a
                     [routerLink]="['/playbooks', q.playbookId]"
                     class="mt-2 inline-flex items-center gap-1 text-xs text-accent-ink hover:underline"
                   >
-                    <app-icon name="book" [size]="12" /> Xem lại bài
+                    <app-icon name="book" [size]="12" /> {{ i18n.t('Xem lại bài') }}
                   </a>
                 </div>
               }
@@ -190,7 +207,7 @@ const TYPE_LABEL: Record<Question['type'], string> = {
           @if (q.type === 'explain') {
             @if (submitted()) {
               <button type="button" class="btn-primary" (click)="next()">
-                {{ isLast() ? 'Xem kết quả' : 'Câu tiếp theo' }}
+                {{ isLast() ? i18n.t('Xem kết quả') : i18n.t('Câu tiếp theo') }}
                 <app-icon name="arrowRight" [size]="16" />
               </button>
             }
@@ -202,11 +219,11 @@ const TYPE_LABEL: Record<Question['type'], string> = {
               [class.opacity-50]="!selected().length"
               (click)="submit()"
             >
-              Kiểm tra <span class="kbd !text-white/80">Enter</span>
+              {{ i18n.t('Kiểm tra') }} <span class="kbd !text-white/80">Enter</span>
             </button>
           } @else {
             <button type="button" class="btn-primary" (click)="next()">
-              {{ isLast() ? 'Xem kết quả' : 'Câu tiếp theo' }}
+              {{ isLast() ? i18n.t('Xem kết quả') : i18n.t('Câu tiếp theo') }}
               <app-icon name="arrowRight" [size]="16" />
             </button>
           }
@@ -216,6 +233,7 @@ const TYPE_LABEL: Record<Question['type'], string> = {
   `,
 })
 export class Drill {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly store = inject(LearningStore);
   private readonly practice = inject(PracticeService);
@@ -259,11 +277,16 @@ export class Drill {
   protected readonly title = computed(() => {
     const p = this.params();
     const pb = p.get('playbook');
-    if (pb) return `Luyện: ${this.kb.playbookById().get(pb)?.title ?? pb}`;
+    if (pb)
+      return this.i18n.t('Luyện: {name}', { name: this.kb.playbookById().get(pb)?.title ?? pb });
     const topic = p.get('topic');
-    if (topic) return `Luyện chủ đề: ${this.kb.topicById().get(topic)?.name ?? topic}`;
-    if (p.get('type') === 'bug') return 'Review điều phối AI: tìm lỗi trong code';
-    if (p.get('type') === 'explain') return 'Explain-back: giải thích bằng lời của bạn';
+    if (topic)
+      return this.i18n.t('Luyện chủ đề: {name}', {
+        name: this.kb.topicById().get(topic)?.name ?? topic,
+      });
+    if (p.get('type') === 'bug') return this.i18n.t('Review điều phối AI: tìm lỗi trong code');
+    if (p.get('type') === 'explain')
+      return this.i18n.t('Explain-back: giải thích bằng lời của bạn');
     return 'Daily Drill';
   });
 

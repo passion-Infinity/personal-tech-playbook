@@ -1,0 +1,62 @@
+[
+  {
+    "id": "fundamentals",
+    "name": "System Fundamentals",
+    "description": "Networking, HTTP/TLS, operating systems, concurrency and scalability — the foundation for understanding every distributed system."
+  },
+  {
+    "id": "system-design",
+    "name": "System Design",
+    "description": "Distributed systems, scalability, resilience and architectural patterns."
+  },
+  {
+    "id": "caching",
+    "name": "Caching",
+    "description": "Cache strategies, Redis, invalidation, hot keys and cache failure modes."
+  },
+  {
+    "id": "backend",
+    "name": "Backend Deep Dive",
+    "description": "Database internals, transactions, API design, authentication/authorization, idempotency and retries."
+  },
+  {
+    "id": "distributed",
+    "name": "Microservices & Distributed Systems",
+    "description": "Microservices, event-driven design, sagas, consistency and fault-tolerance patterns for distributed systems."
+  },
+  {
+    "id": "data-engineering",
+    "name": "Data Engineering",
+    "description": "OLTP/OLAP, data modeling, batch and stream processing, Kafka and data pipelines."
+  },
+  {
+    "id": "engineering-practices",
+    "name": "Software Engineering Practices",
+    "description": "Testing, software design, clean architecture/DDD, code review and refactoring — the foundation for owning code quality, including AI-generated code."
+  },
+  {
+    "id": "security",
+    "name": "Application Security",
+    "description": "OWASP, practical cryptography, secrets management and software supply chain security."
+  },
+  {
+    "id": "ai-engineering",
+    "name": "AI Engineering",
+    "description": "Building and operating AI applications: models, prompts, context, tools/MCP, agents, multi-agent systems, coding assistants, evaluation and cost optimization."
+  },
+  {
+    "id": "aws",
+    "name": "AWS Cloud",
+    "description": "AWS services and architecture for the Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 and beyond."
+  },
+  {
+    "id": "azure",
+    "name": "Microsoft Azure",
+    "description": "Azure for AZ-900 / AZ-104: architecture, identity, compute, storage, networking, governance and monitoring."
+  },
+  {
+    "id": "ai-ml",
+    "name": "AI & ML",
+    "description": "AI/ML and generative AI for AWS AI Practitioner / ML Engineer and Azure AI-900 / AI-102: concepts, RAG, Bedrock, SageMaker, Azure AI and OpenAI."
+  }
+]

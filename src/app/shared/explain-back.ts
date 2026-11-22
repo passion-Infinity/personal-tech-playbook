@@ -10,6 +10,7 @@ import {
 import { LearningStore } from '../core/learning.store';
 import { Question } from '../core/models';
 import { Icon } from './icon';
+import { I18n } from '../core/i18n.service';
 
 const MIN_CHARS = 30;
 const LABELS = ['Chưa đạt', 'Tạm ổn', 'Nắm chắc'];
@@ -30,22 +31,24 @@ const LABELS = ['Chưa đạt', 'Tạm ổn', 'Nắm chắc'];
       </p>
       <h2 class="mt-2 text-lg font-semibold leading-snug sm:text-xl">{{ q.question }}</h2>
       <p class="mt-1 text-sm text-muted">
-        Tự viết 3–5 câu bằng lời của mình, không nhìn bài. Viết xong mới xem đáp án mẫu.
+        {{
+          i18n.t('Tự viết 3–5 câu bằng lời của mình, không nhìn bài. Viết xong mới xem đáp án mẫu.')
+        }}
       </p>
 
       <textarea
         class="glass mt-4 min-h-32 w-full resize-y rounded-2xl p-3 text-[0.95rem] leading-relaxed outline-none placeholder:text-muted focus:border-violet-400"
-        placeholder="Giải thích bằng lời của bạn…"
+        placeholder="{{ i18n.t('Giải thích bằng lời của bạn…') }}"
         [value]="text()"
         (input)="onInput($event)"
-        aria-label="Your explanation"
+        aria-label="{{ i18n.t('Phần giải thích của bạn') }}"
       ></textarea>
 
       @if (!revealed()) {
         <div class="mt-3 flex items-center justify-between gap-3">
-          <span class="text-xs text-muted"
-            >{{ text().trim().length }}/{{ min }} ký tự tối thiểu</span
-          >
+          <span class="text-xs text-muted">{{
+            i18n.t('{n}/{min} ký tự tối thiểu', { n: text().trim().length, min: min })
+          }}</span>
           <button
             type="button"
             class="btn-primary"
@@ -53,15 +56,15 @@ const LABELS = ['Chưa đạt', 'Tạm ổn', 'Nắm chắc'];
             [class.opacity-50]="text().trim().length < min"
             (click)="revealed.set(true)"
           >
-            <app-icon name="eye" [size]="16" /> Xem đáp án mẫu
+            <app-icon name="eye" [size]="16" /> {{ i18n.t('Xem đáp án mẫu') }}
           </button>
         </div>
       } @else {
         <div class="fade-up mt-5 rounded-2xl border border-line bg-accent-soft p-4">
-          <p class="text-sm font-semibold text-accent-ink">Đáp án mẫu</p>
+          <p class="text-sm font-semibold text-accent-ink">{{ i18n.t('Đáp án mẫu') }}</p>
           <p class="mt-2 leading-relaxed">{{ q.modelAnswer }}</p>
           @if (q.keyPoints?.length) {
-            <p class="mt-4 text-sm font-semibold">Ý chính cần có — tự đối chiếu:</p>
+            <p class="mt-4 text-sm font-semibold">{{ i18n.t('Ý chính cần có — tự đối chiếu:') }}</p>
             <ul class="mt-2 space-y-1.5 text-sm">
               @for (k of q.keyPoints; track k) {
                 <li class="flex gap-2">
@@ -74,23 +77,32 @@ const LABELS = ['Chưa đạt', 'Tạm ổn', 'Nắm chắc'];
         </div>
         @if (!chosen()) {
           <p class="mt-4 text-sm text-muted">
-            Câu trả lời của bạn so với đáp án mẫu thế nào?
+            {{ i18n.t('Câu trả lời của bạn so với đáp án mẫu thế nào?') }}
             @if (previous(); as prev) {
-              <span class="text-xs">(Lần trước bạn chấm: {{ labels[prev - 1] }})</span>
+              <span class="text-xs">{{
+                i18n.t('(Lần trước bạn chấm: {r})', { r: i18n.t(labels[prev - 1]) })
+              }}</span>
             }
           </p>
           <div class="mt-2 grid grid-cols-3 gap-2">
             <button type="button" class="btn-secondary !border-rose-500/40" (click)="rate(1)">
-              Chưa đạt
+              {{ i18n.t('Chưa đạt') }}
             </button>
-            <button type="button" class="btn-secondary" (click)="rate(2)">Tạm ổn</button>
-            <button type="button" class="btn-primary" (click)="rate(3)">Nắm chắc</button>
+            <button type="button" class="btn-secondary" (click)="rate(2)">
+              {{ i18n.t('Tạm ổn') }}
+            </button>
+            <button type="button" class="btn-primary" (click)="rate(3)">
+              {{ i18n.t('Nắm chắc') }}
+            </button>
           </div>
         } @else {
           <p class="mt-4 flex items-center gap-2 text-sm text-emerald-500">
-            <app-icon name="check" [size]="16" /> Đã ghi nhận ({{ labels[chosen()! - 1] }}).
+            <app-icon name="check" [size]="16" />
+            {{ i18n.t('Đã ghi nhận ({r}).', { r: i18n.t(labels[chosen()! - 1]) }) }}
             {{
-              chosen() === 1 ? 'Câu này sẽ quay lại sớm để ôn.' : 'Sẽ được nhắc ôn lại theo lịch.'
+              chosen() === 1
+                ? i18n.t('Câu này sẽ quay lại sớm để ôn.')
+                : i18n.t('Sẽ được nhắc ôn lại theo lịch.')
             }}
           </p>
         }
@@ -99,6 +111,7 @@ const LABELS = ['Chưa đạt', 'Tạm ổn', 'Nắm chắc'];
   `,
 })
 export class ExplainBack {
+  protected readonly i18n = inject(I18n);
   private readonly store = inject(LearningStore);
   readonly question = input.required<Question>();
   readonly rated = output<1 | 2 | 3>();

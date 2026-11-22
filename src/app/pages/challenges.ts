@@ -4,6 +4,7 @@ import { KnowledgeService } from '../core/knowledge.service';
 import { LearningStore } from '../core/learning.store';
 import { topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 @Component({
   selector: 'app-challenges',
@@ -15,17 +16,21 @@ import { Icon } from '../shared/icon';
         routerLink="/practice"
         class="mb-3 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
       >
-        <app-icon name="arrowLeft" [size]="14" /> Luyện tập
+        <app-icon name="arrowLeft" [size]="14" /> {{ i18n.t('Luyện tập') }}
       </a>
       <p class="eyebrow flex items-center gap-2">
         <app-icon name="target" [size]="14" /> Design Challenge
       </p>
       <h1 class="mt-2 text-3xl font-bold sm:text-4xl">
-        Đề thiết kế & <span class="text-gradient">debug thực tế</span>
+        {{ i18n.t('Đề thiết kế &') }}
+        <span class="text-gradient">{{ i18n.t('debug thực tế') }}</span>
       </h1>
       <p class="mt-2 max-w-2xl text-muted">
-        Đề giống tình huống đi làm. Tự nghĩ và viết ra trước, rồi mới xem rubric và lời giải để tự
-        chấm.
+        {{
+          i18n.t(
+            'Đề giống tình huống đi làm. Tự nghĩ và viết ra trước, rồi mới xem rubric và lời giải để tự chấm.'
+          )
+        }}
       </p>
     </header>
     <div class="grid gap-4 md:grid-cols-2">
@@ -46,26 +51,27 @@ import { Icon } from '../shared/icon';
           <p class="mt-2 line-clamp-3 text-sm text-muted">{{ c.scenario }}</p>
           <div class="mt-auto pt-4 text-xs text-muted">
             @if (store.challenges()[c.id]?.doneOn) {
-              <span class="text-emerald-500"
-                >✓ Hoàn thành {{ store.challenges()[c.id].score }}/{{
-                  store.challenges()[c.id].max
-                }}
-                điểm</span
-              >
+              <span class="text-emerald-500">{{
+                i18n.t('✓ Hoàn thành {score}/{max} điểm', {
+                  score: store.challenges()[c.id].score,
+                  max: store.challenges()[c.id].max,
+                })
+              }}</span>
             } @else if (store.challenges()[c.id]?.draft) {
-              <span>Đang viết dở…</span>
+              <span>{{ i18n.t('Đang viết dở…') }}</span>
             } @else {
-              <span>Chưa làm</span>
+              <span>{{ i18n.t('Chưa làm') }}</span>
             }
           </div>
         </a>
       } @empty {
-        <p class="text-muted">Chưa có đề nào.</p>
+        <p class="text-muted">{{ i18n.t('Chưa có đề nào.') }}</p>
       }
     </div>
   `,
 })
 export class Challenges {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly store = inject(LearningStore);
   protected readonly vars = topicVars;

@@ -5,6 +5,7 @@ import { KnowledgeService } from '../core/knowledge.service';
 import { filterKeywords } from '../core/search';
 import { Icon } from '../shared/icon';
 import { KeywordCard } from '../shared/keyword-card';
+import { I18n } from '../core/i18n.service';
 
 @Component({
   selector: 'app-keyword-directory',
@@ -19,17 +20,20 @@ import { KeywordCard } from '../shared/keyword-card';
         Keywords <span class="text-gradient">Directory</span>
       </h1>
       <p class="mt-2 max-w-2xl text-muted">
-        Exact English terms with Vietnamese meanings — copy one and deep-dive on Google, docs or
-        papers.
+        {{
+          i18n.t(
+            'Các term tiếng Anh chuẩn kèm nghĩa tiếng Việt — copy một term rồi tra sâu trên Google, tài liệu hoặc paper.'
+          )
+        }}
       </p>
       <a routerLink="/flashcards" class="btn-secondary mt-4">
-        <app-icon name="cards" [size]="16" /> Ôn bằng flashcards
+        <app-icon name="cards" [size]="16" /> {{ i18n.t('Ôn bằng flashcards') }}
       </a>
     </header>
 
     <div class="glass-strong sticky top-16 z-10 mb-5 rounded-2xl p-3 lg:top-4">
       <label class="relative block">
-        <span class="sr-only">Filter keywords</span>
+        <span class="sr-only">{{ i18n.t('Lọc từ khoá') }}</span>
         <app-icon
           name="search"
           class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
@@ -37,7 +41,7 @@ import { KeywordCard } from '../shared/keyword-card';
         <input
           type="search"
           class="h-11 w-full glass rounded-xl pl-10 pr-3 text-ink outline-none placeholder:text-muted focus:border-violet-400"
-          placeholder="Filter by term, nghĩa tiếng Việt, definition…"
+          placeholder="{{ i18n.t('Lọc theo term, nghĩa tiếng Việt, định nghĩa…') }}"
           [value]="query()"
           (input)="setQuery($event)"
           autocomplete="off"
@@ -70,18 +74,19 @@ import { KeywordCard } from '../shared/keyword-card';
     </div>
 
     <p class="mb-3 text-sm text-muted">
-      {{ keywords().length }} of {{ kb.keywords().length }} hooks
+      {{ i18n.t('{a} / {b} hooks', { a: keywords().length, b: kb.keywords().length }) }}
     </p>
     <div class="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
       @for (k of keywords(); track k.id) {
         <app-keyword-card [keyword]="k" />
       } @empty {
-        <p class="text-muted">No keywords match “{{ query() }}”.</p>
+        <p class="text-muted">{{ i18n.t('Không có từ khoá nào khớp “{q}”.', { q: query() }) }}</p>
       }
     </div>
   `,
 })
 export class KeywordDirectory {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

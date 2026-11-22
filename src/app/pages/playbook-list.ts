@@ -9,13 +9,14 @@ import { LearningStore } from '../core/learning.store';
 import { PracticeService } from '../core/practice.service';
 import { UiService } from '../core/ui.service';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 const QUOTES = [
   'Hiểu sâu một khái niệm hôm nay đáng giá hơn lướt qua mười khái niệm.',
   'Mỗi trade-off bạn nắm được là một câu trả lời interview bạn đã có sẵn.',
   'Đọc 5 phút, nhớ cả đời: ôn lại Search Hooks trước khi quên.',
   'Kiến trúc tốt bắt đầu từ việc biết khi nào KHÔNG dùng một pattern.',
-  'Consistency in learning beats intensity.',
+  'Học đều đặn thắng học dồn dập.',
   'Hôm nay học một điều, ngày mai giải thích được cho người khác.',
 ];
 
@@ -37,19 +38,20 @@ const QUOTES = [
           <app-icon name="sparkles" [size]="14" /> {{ greeting() }}
         </p>
         <h1 id="hero-title" class="mt-3 max-w-2xl text-3xl font-bold leading-tight sm:text-5xl">
-          Hôm nay học gì <span class="text-gradient">thật sâu</span>?
+          {{ i18n.t('Hôm nay học gì') }} <span class="text-gradient">{{ i18n.t('thật sâu') }}</span
+          >{{ i18n.t('?') }}
         </h1>
         <p class="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{{ quote() }}</p>
 
         <div class="mt-6 flex flex-wrap gap-3">
           <a routerLink="/practice" class="btn-primary">
-            <app-icon name="flame" [size]="16" /> Luyện hôm nay
+            <app-icon name="flame" [size]="16" /> {{ i18n.t('Luyện hôm nay') }}
           </a>
           <a routerLink="/roadmap" class="btn-secondary">
             <app-icon name="map" [size]="16" /> Roadmap
           </a>
           <button type="button" class="btn-secondary" (click)="ui.openPalette()">
-            <app-icon name="search" [size]="16" /> Tìm kiếm
+            <app-icon name="search" [size]="16" /> {{ i18n.t('Tìm kiếm') }}
             <span class="kbd hidden sm:inline-flex">{{ modKey }} K</span>
           </button>
         </div>
@@ -68,7 +70,7 @@ const QUOTES = [
             </dd>
           </div>
           <div class="glass rounded-2xl p-3 sm:p-4">
-            <dt class="text-xs text-muted">Đã nhớ</dt>
+            <dt class="text-xs text-muted">{{ i18n.t('Đã nhớ') }}</dt>
             <dd class="mt-1 font-display text-2xl font-bold sm:text-3xl">
               <span class="text-gradient">{{ knownPercent() }}%</span>
             </dd>
@@ -78,7 +80,7 @@ const QUOTES = [
 
       <!-- Today -->
       <section class="mb-10" aria-labelledby="today-title">
-        <h2 id="today-title" class="mb-4 text-lg font-semibold">Hôm nay</h2>
+        <h2 id="today-title" class="mb-4 text-lg font-semibold">{{ i18n.t('Hôm nay') }}</h2>
         <div class="grid gap-4 md:grid-cols-3">
           <a
             routerLink="/practice/drill"
@@ -88,7 +90,7 @@ const QUOTES = [
             <span class="topic-tile h-10 w-10"><app-icon name="cards" [size]="18" /></span>
             <p class="mt-3 font-semibold">Daily Drill</p>
             <p class="mt-1 text-sm text-muted">
-              {{ due() }} câu đến hạn ôn · {{ fresh() }} câu mới
+              {{ i18n.t('{due} câu đến hạn ôn · {fresh} câu mới', { due: due(), fresh: fresh() }) }}
             </p>
           </a>
           @if (challenge(); as ch) {
@@ -109,9 +111,9 @@ const QUOTES = [
               [style]="vars(n.topicId)"
             >
               <span class="topic-tile h-10 w-10"><app-icon name="map" [size]="18" /></span>
-              <p class="mt-3 font-semibold">Nên học tiếp</p>
+              <p class="mt-3 font-semibold">{{ i18n.t('Nên học tiếp') }}</p>
               <p class="mt-1 line-clamp-2 text-sm text-muted">
-                Tầng {{ kb.levels().get(n.id) }} · {{ n.title }}
+                {{ i18n.t('Tầng {n} ·', { n: kb.levels().get(n.id) }) }} {{ n.title }}
               </p>
             </a>
           }
@@ -120,7 +122,7 @@ const QUOTES = [
 
       <!-- Topic cards -->
       <section class="mb-10" aria-labelledby="topics-title">
-        <h2 id="topics-title" class="mb-4 text-lg font-semibold">Chủ đề</h2>
+        <h2 id="topics-title" class="mb-4 text-lg font-semibold">{{ i18n.t('Chủ đề') }}</h2>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           @for (t of topicCards(); track t.topic.id; let i = $index) {
             <a
@@ -139,8 +141,10 @@ const QUOTES = [
               <p class="mt-1 line-clamp-2 text-sm text-muted">{{ t.topic.description }}</p>
               <div class="mt-auto pt-5">
                 <div class="mb-1.5 flex justify-between text-xs text-muted">
-                  <span>{{ t.playbooks }} playbooks · {{ t.hooks }} hooks</span>
-                  <span>{{ t.known }}/{{ t.hooks }} nhớ</span>
+                  <span>{{
+                    i18n.t('{p} playbooks · {h} hooks', { p: t.playbooks, h: t.hooks })
+                  }}</span>
+                  <span>{{ i18n.t('{k}/{h} nhớ', { k: t.known, h: t.hooks }) }}</span>
                 </div>
                 <div class="progress-track">
                   <div
@@ -159,7 +163,7 @@ const QUOTES = [
           routerLink="/"
           class="mb-4 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
         >
-          <app-icon name="arrowLeft" [size]="14" /> Tất cả playbooks
+          <app-icon name="arrowLeft" [size]="14" /> {{ i18n.t('Tất cả playbooks') }}
         </a>
         <div class="flex items-center gap-4">
           <span class="topic-tile h-14 w-14 !rounded-2xl">
@@ -174,14 +178,14 @@ const QUOTES = [
         </div>
         <p class="mt-4 max-w-2xl text-muted">{{ topic()?.description }}</p>
         <a routerLink="/flashcards" [queryParams]="{ topic: topicId() }" class="btn-secondary mt-5">
-          <app-icon name="cards" [size]="16" /> Ôn flashcards topic này
+          <app-icon name="cards" [size]="16" /> {{ i18n.t('Ôn flashcards topic này') }}
         </a>
       </header>
     }
 
     <div class="mb-5 flex flex-wrap items-center gap-2">
       <h2 class="mr-auto text-lg font-semibold">
-        {{ topicId() ? 'Playbooks' : 'Mới cập nhật' }}
+        {{ topicId() ? 'Playbooks' : i18n.t('Mới cập nhật') }}
       </h2>
       <a routerLink="/" class="chip-filter" [class.chip-active]="!topicId()">
         All <span class="opacity-60">{{ kb.playbooks().length }}</span>
@@ -223,7 +227,9 @@ const QUOTES = [
                 {{ kb.topicById().get(p.topicId)?.name ?? p.topicId }}
               </span>
               <span class="flex items-center gap-2 text-muted">
-                <span class="chip">Tầng {{ kb.levels().get(p.id) ?? 0 }}</span>
+                <span class="chip">{{
+                  i18n.t('Tầng {n}', { n: kb.levels().get(p.id) ?? 0 })
+                }}</span>
                 @if (learning.isRead(p.id)) {
                   <app-icon name="check" [size]="14" class="text-emerald-500" />
                 }
@@ -248,7 +254,12 @@ const QUOTES = [
                   [style.width.%]="(cards.knownCount(p.keywordIds) / p.keywordIds.length) * 100"
                 ></div>
               </div>
-              <span>{{ cards.knownCount(p.keywordIds) }}/{{ p.keywordIds.length }} hooks</span>
+              <span>{{
+                i18n.t('{k}/{h} hooks', {
+                  k: cards.knownCount(p.keywordIds),
+                  h: p.keywordIds.length,
+                })
+              }}</span>
               <app-icon
                 name="arrowRight"
                 [size]="15"
@@ -257,13 +268,14 @@ const QUOTES = [
             </div>
           </a>
         } @empty {
-          <p class="text-muted">Chưa có playbook trong topic này.</p>
+          <p class="text-muted">{{ i18n.t('Chưa có playbook trong topic này.') }}</p>
         }
       </div>
     }
   `,
 })
 export class PlaybookList {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly ui = inject(UiService);
   protected readonly cards = inject(FlashcardStore);
@@ -316,18 +328,19 @@ export class PlaybookList {
 
   protected readonly greeting = computed(() => {
     const h = new Date().getHours();
+    const t = (s: string) => this.i18n.t(s);
     return h < 11
-      ? 'Chào buổi sáng'
+      ? t('Chào buổi sáng')
       : h < 14
-        ? 'Chào buổi trưa'
+        ? t('Chào buổi trưa')
         : h < 18
-          ? 'Chào buổi chiều'
-          : 'Chào buổi tối';
+          ? t('Chào buổi chiều')
+          : t('Chào buổi tối');
   });
 
   /** One quote per day, stable through the day. */
   protected readonly quote = computed(() => {
     const day = Math.floor(Date.now() / 86_400_000);
-    return QUOTES[day % QUOTES.length];
+    return this.i18n.t(QUOTES[day % QUOTES.length]);
   });
 }

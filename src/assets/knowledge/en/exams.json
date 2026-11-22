@@ -1,0 +1,27 @@
+[
+  {
+    "id": "aws-architect-practice",
+    "title": "AWS Solutions Architect — practice exam",
+    "description": "Scenario questions on IAM, VPC, EC2, S3, databases, messaging, security, cost and the Well-Architected Framework."
+  },
+  {
+    "id": "aws-quick-15",
+    "title": "AWS — quick 15-question check",
+    "description": "A shortened set for daily review."
+  },
+  {
+    "id": "azure-practice",
+    "title": "Azure — practice exam (AZ-900/104/305)",
+    "description": "Compute, networking, storage, Entra ID/RBAC, databases, messaging, security and IaC."
+  },
+  {
+    "id": "ai-engineering-practice",
+    "title": "AI Engineering — practice exam",
+    "description": "LLMs, prompts, context/memory, tools/MCP, agents, multi-agent systems, evaluation and cost."
+  },
+  {
+    "id": "system-design-backend-practice",
+    "title": "System Design & Backend — practice exam",
+    "description": "Caching, databases, distributed systems, APIs and system design."
+  }
+]

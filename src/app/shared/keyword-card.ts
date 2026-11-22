@@ -7,6 +7,7 @@ import { Keyword } from '../core/models';
 import { googleUrl } from '../core/search';
 import { topicVars } from '../core/topic-style';
 import { Icon } from './icon';
+import { I18n } from '../core/i18n.service';
 
 @Component({
   selector: 'app-keyword-card',
@@ -27,14 +28,18 @@ import { Icon } from './icon';
         </h3>
         <div class="-mr-1 -mt-1 flex shrink-0 items-center">
           @if (known()) {
-            <span class="mr-1 text-xs text-emerald-500" title="Đã nhớ trong flashcards">✓</span>
+            <span
+              class="mr-1 text-xs text-emerald-500"
+              title="{{ i18n.t('Đã nhớ trong flashcards') }}"
+              >✓</span
+            >
           }
           <button
             type="button"
             class="icon-btn"
             (click)="clipboard.copy(k.term, 'kw:' + k.id)"
             [attr.aria-label]="'Copy ' + k.term"
-            title="Copy term"
+            title="{{ i18n.t('Sao chép term') }}"
           >
             <app-icon [name]="copied() ? 'check' : 'copy'" [size]="16" />
           </button>
@@ -44,7 +49,7 @@ import { Icon } from './icon';
             target="_blank"
             rel="noopener noreferrer"
             [attr.aria-label]="'Search ' + k.term + ' on Google'"
-            title="Search on Google"
+            title="{{ i18n.t('Tìm trên Google') }}"
           >
             <app-icon name="external" [size]="16" />
           </a>
@@ -67,6 +72,7 @@ import { Icon } from './icon';
   `,
 })
 export class KeywordCard {
+  protected readonly i18n = inject(I18n);
   protected readonly clipboard = inject(ClipboardService);
   private readonly kb = inject(KnowledgeService);
   private readonly cards = inject(FlashcardStore);

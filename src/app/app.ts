@@ -21,6 +21,7 @@ import { UiService } from './core/ui.service';
 import { Icon } from './shared/icon';
 import { PwaPrompts } from './shared/pwa-prompts';
 import { SearchPalette } from './shared/search-palette';
+import { I18n } from './core/i18n.service';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +37,7 @@ import { SearchPalette } from './shared/search-palette';
       href="#main"
       class="btn-primary sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50"
     >
-      Skip to content
+      {{ i18n.t('Bỏ qua, tới nội dung') }}
     </a>
 
     <!-- Mobile top bar -->
@@ -46,7 +47,7 @@ import { SearchPalette } from './shared/search-palette';
       <button
         type="button"
         class="icon-btn"
-        aria-label="Open menu"
+        aria-label="{{ i18n.t('Mở menu') }}"
         (click)="ui.drawerOpen.set(true)"
       >
         <app-icon name="menu" />
@@ -60,7 +61,15 @@ import { SearchPalette } from './shared/search-palette';
         class="glass ml-auto flex h-9 flex-1 items-center gap-2 rounded-xl px-3 text-sm text-muted sm:max-w-xs"
         (click)="ui.openPalette()"
       >
-        <app-icon name="search" [size]="16" /> Search…
+        <app-icon name="search" [size]="16" /> {{ i18n.t('Tìm kiếm…') }}
+      </button>
+      <button
+        type="button"
+        class="icon-btn shrink-0 !w-auto px-2 text-xs font-semibold"
+        (click)="i18n.toggle()"
+        [attr.aria-label]="i18n.t('Đổi ngôn ngữ')"
+      >
+        {{ i18n.isEn() ? 'EN' : 'VI' }}
       </button>
     </header>
 
@@ -100,7 +109,7 @@ import { SearchPalette } from './shared/search-palette';
         <button
           type="button"
           class="icon-btn ml-auto lg:hidden"
-          aria-label="Close menu"
+          aria-label="{{ i18n.t('Đóng menu') }}"
           (click)="ui.drawerOpen.set(false)"
         >
           <app-icon name="x" />
@@ -114,7 +123,7 @@ import { SearchPalette } from './shared/search-palette';
           (click)="ui.openPalette()"
         >
           <app-icon name="search" [size]="16" />
-          <span>Search…</span>
+          <span>{{ i18n.t('Tìm kiếm…') }}</span>
           <span class="ml-auto hidden gap-1 sm:flex">
             <kbd class="kbd">{{ modKey }}</kbd
             ><kbd class="kbd">K</kbd>
@@ -122,8 +131,11 @@ import { SearchPalette } from './shared/search-palette';
         </button>
       </div>
 
-      <nav class="scroll-soft flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Main">
-        <p class="eyebrow mb-2 px-3 !text-muted">Learn</p>
+      <nav
+        class="scroll-soft flex-1 space-y-1 overflow-y-auto px-3 pb-4"
+        aria-label="{{ i18n.t('Chính') }}"
+      >
+        <p class="eyebrow mb-2 px-3 !text-muted">{{ i18n.t('Học') }}</p>
         <a
           routerLink="/"
           [queryParams]="{}"
@@ -132,7 +144,7 @@ import { SearchPalette } from './shared/search-palette';
           class="nav-item"
           (click)="ui.drawerOpen.set(false)"
         >
-          <app-icon name="book" [size]="17" /> All Playbooks
+          <app-icon name="book" [size]="17" /> {{ i18n.t('Tất cả playbook') }}
           <span class="count">{{ kb.playbooks().length }}</span>
         </a>
         <a
@@ -150,7 +162,7 @@ import { SearchPalette } from './shared/search-palette';
           class="nav-item"
           (click)="ui.drawerOpen.set(false)"
         >
-          <app-icon name="flame" [size]="17" /> Luyện tập
+          <app-icon name="flame" [size]="17" /> {{ i18n.t('Luyện tập') }}
           @if (learning.streak() > 0) {
             <span class="count !text-orange-400">🔥 {{ learning.streak() }}</span>
           }
@@ -174,7 +186,7 @@ import { SearchPalette } from './shared/search-palette';
           <span class="count">{{ kb.keywords().length }}</span>
         </a>
 
-        <p class="eyebrow mb-2 mt-7 px-3 !text-muted">Chủ đề · lộ trình học</p>
+        <p class="eyebrow mb-2 mt-7 px-3 !text-muted">{{ i18n.t('Chủ đề · lộ trình học') }}</p>
         @for (t of kb.topics(); track t.id) {
           <div [style]="vars(t.id)">
             <div class="flex items-center">
@@ -199,7 +211,7 @@ import { SearchPalette } from './shared/search-palette';
                 type="button"
                 class="icon-btn -ml-1 h-8 w-8 shrink-0"
                 [attr.aria-expanded]="isOpen(t.id)"
-                [attr.aria-label]="'Danh sách bài: ' + t.name"
+                [attr.aria-label]="i18n.t('Danh sách bài: {name}', { name: t.name })"
                 (click)="toggleTopic(t.id)"
               >
                 <app-icon
@@ -217,7 +229,7 @@ import { SearchPalette } from './shared/search-palette';
                     <li
                       class="px-2 pb-0.5 pt-2 text-[0.65rem] font-semibold uppercase tracking-wider text-muted"
                     >
-                      Cấp {{ it.level }} · {{ levelLabel(it.level) }}
+                      {{ i18n.t('Cấp {n} ·', { n: it.level }) }} {{ levelLabel(it.level) }}
                     </li>
                   }
                   <li>
@@ -244,12 +256,22 @@ import { SearchPalette } from './shared/search-palette';
       <div class="space-y-2 border-t border-line p-3">
         @if (pwa.canInstall()) {
           <button type="button" class="btn-primary w-full" (click)="pwa.install()">
-            <app-icon name="download" [size]="16" /> Install App
+            <app-icon name="download" [size]="16" /> {{ i18n.t('Cài đặt ứng dụng') }}
           </button>
         }
+        <button
+          type="button"
+          class="nav-item w-full"
+          (click)="i18n.toggle()"
+          [attr.aria-label]="i18n.t('Đổi ngôn ngữ')"
+        >
+          <app-icon name="globe" [size]="17" />
+          {{ i18n.isEn() ? 'English' : 'Tiếng Việt' }}
+          <span class="count">{{ i18n.isEn() ? 'EN → VI' : 'VI → EN' }}</span>
+        </button>
         <button type="button" class="nav-item w-full" (click)="theme.toggle()">
           <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" [size]="17" />
-          {{ theme.theme() === 'dark' ? 'Light mode' : 'Dark mode' }}
+          {{ theme.theme() === 'dark' ? i18n.t('Chế độ sáng') : i18n.t('Chế độ tối') }}
         </button>
       </div>
     </aside>
@@ -266,7 +288,7 @@ import { SearchPalette } from './shared/search-palette';
     <!-- Mobile bottom bar -->
     <nav
       class="glass-strong fixed inset-x-3 bottom-[calc(0.6rem+env(safe-area-inset-bottom))] z-30 grid grid-cols-4 rounded-2xl shadow-2xl shadow-black/30 lg:hidden"
-      aria-label="Bottom navigation"
+      aria-label="{{ i18n.t('Điều hướng dưới') }}"
     >
       <a
         routerLink="/"
@@ -280,7 +302,7 @@ import { SearchPalette } from './shared/search-palette';
         <app-icon name="map" /> Roadmap
       </a>
       <a routerLink="/practice" routerLinkActive="tab-active" class="tab">
-        <app-icon name="flame" /> Luyện tập
+        <app-icon name="flame" /> {{ i18n.t('Luyện tập') }}
       </a>
       <button type="button" class="tab" (click)="ui.drawerOpen.set(true)">
         <app-icon name="menu" /> Menu
@@ -292,6 +314,7 @@ import { SearchPalette } from './shared/search-palette';
   `,
 })
 export class App {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly ui = inject(UiService);
   protected readonly theme = inject(ThemeService);
@@ -335,7 +358,7 @@ export class App {
       null,
   );
 
-  protected readonly levelLabel = levelName;
+  protected readonly levelLabel = (level: number) => levelName(level, this.i18n.lang());
   private readonly openTopics = signal<ReadonlySet<string>>(new Set());
   protected isOpen(id: string): boolean {
     return this.openTopics().has(id);

@@ -156,6 +156,65 @@ for (const c of challenges) {
   for (const f of ['requirements', 'hints', 'pitfalls']) if (!Array.isArray(c[f]) || !c[f].length) err(`${where} needs ${f}`);
 }
 
+
+// ---- English overlay (src/assets/knowledge/en) ----
+// Vietnamese files are the source of truth; each en/*.json holds translated fields keyed by the same ids.
+const EN = (name) => load(`en/${name}.json`, true);
+const enTopics = EN('topics');
+const enKeywords = EN('keywords');
+const enPlaybooks = EN('playbooks');
+const enQuestions = EN('questions');
+const enChallenges = EN('challenges');
+const enExams = EN('exams');
+const exams = load('exams.json', true);
+const checkOverlay = (list, ids, file) => {
+  const seen = new Set();
+  for (const o of list) {
+    if (!ids.has(o.id)) err(`en/${file}: unknown id "${o.id}"`);
+    if (seen.has(o.id)) err(`en/${file}: duplicate id "${o.id}"`);
+    seen.add(o.id);
+  }
+};
+checkOverlay(enTopics, topicIds, 'topics.json');
+checkOverlay(enKeywords, keywordIds, 'keywords.json');
+checkOverlay(enPlaybooks, playbookIds, 'playbooks.json');
+checkOverlay(enQuestions, new Set(questions.map((q) => q.id)), 'questions.json');
+checkOverlay(enChallenges, new Set(challenges.map((c) => c.id)), 'challenges.json');
+checkOverlay(enExams, new Set(exams.map((e) => e.id)), 'exams.json');
+for (const o of enPlaybooks) {
+  const p = playbooks.find((x) => x.id === o.id);
+  if (!p) continue;
+  if (!o.title || !o.summary) err(`en/playbooks.json: "${o.id}" needs title and summary`);
+  const rel = `assets/knowledge/en/playbooks/${p.topicId}/${p.id}.md`;
+  const file = join(ROOT, 'src', rel);
+  if (!existsSync(file)) { err(`en/playbooks.json: "${o.id}" missing file ${rel}`); continue; }
+  const md = readFileSync(file, 'utf8');
+  const h2 = md.replace(/```[\s\S]*?```/g, '').split('\n').filter((l) => l.startsWith('## '));
+  if (JSON.stringify(h2) !== JSON.stringify(HEADINGS)) err(`${rel}: must have exactly the six standard "##" headings in order`);
+  if (!/```mermaid\n/.test(md)) warn(`${rel}: no Mermaid diagram`);
+  const total = md.replace(/```mermaid[\s\S]*?```/g, ' ').split(/\s+/).filter(Boolean).length;
+  if (total < 350) warn(`${rel}: only ${total} words`);
+  const hooks = (md.split('## 6. Search Hooks')[1] ?? '').split('\n').filter((l) => l.startsWith('- ')).length;
+  const viMd = readFileSync(join(ROOT, 'src', p.filePath), 'utf8');
+  const viHooks = (viMd.split('## 6. Search Hooks')[1] ?? '').split('\n').filter((l) => l.startsWith('- ')).length;
+  if (hooks !== viHooks) warn(`${rel}: ${hooks} Search Hooks vs ${viHooks} in the Vietnamese file`);
+}
+for (const o of enQuestions) {
+  const q = questions.find((x) => x.id === o.id);
+  if (!q) continue;
+  if (q.options && o.options && o.options.length !== q.options.length) err(`en/questions.json: "${o.id}" has ${o.options.length} options, Vietnamese has ${q.options.length} (answer indices must stay valid)`);
+  if (q.type !== 'explain' && !o.options) err(`en/questions.json: "${o.id}" must translate options`);
+  if (q.type === 'explain' && (!o.modelAnswer || !Array.isArray(o.keyPoints) || o.keyPoints.length !== q.keyPoints.length)) err(`en/questions.json: "${o.id}" needs modelAnswer and the same number of keyPoints`);
+}
+for (const o of enChallenges) {
+  const c = challenges.find((x) => x.id === o.id);
+  if (c && o.rubric && o.rubric.length !== c.rubric.length) err(`en/challenges.json: "${o.id}" rubric must have ${c.rubric.length} items`);
+}
+const cover = (n, total) => `${n}/${total}`;
+const untranslatedPlaybooks = playbooks.length - enPlaybooks.length;
+console.log(`English coverage: playbooks ${cover(enPlaybooks.length, playbooks.length)}, keywords ${cover(enKeywords.length, keywords.length)}, questions ${cover(enQuestions.length, questions.length)}, challenges ${cover(enChallenges.length, challenges.length)}, topics ${cover(enTopics.length, topics.length)}, exams ${cover(enExams.length, exams.length)}`);
+if (process.argv.includes('--strict-en') && (untranslatedPlaybooks || enKeywords.length < keywords.length || enQuestions.length < questions.length)) err('English translation incomplete (--strict-en)');
+
 for (const w of warnings) console.warn('warning:', w);
 for (const e of errors) console.error('error:  ', e);
 const levels = new Map();

@@ -17,6 +17,7 @@ import { googleUrl } from '../core/search';
 import { topicStyle, topicVars } from '../core/topic-style';
 import { UiService } from '../core/ui.service';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 const SWIPE_THRESHOLD = 90;
 const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
@@ -32,10 +33,10 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
         <app-icon name="cards" [size]="14" /> Flashcards
       </p>
       <h1 class="mt-2 text-2xl font-bold sm:text-4xl">
-        Ôn <span class="text-gradient">Search Hooks</span>
+        {{ i18n.t('Ôn') }} <span class="text-gradient">Search Hooks</span>
       </h1>
       <p class="mt-2 hidden max-w-2xl text-muted sm:block">
-        Nhìn term tiếng Anh, tự nhớ nghĩa, rồi lật thẻ kiểm tra. Đã nhớ
+        {{ i18n.t('Nhìn term tiếng Anh, tự nhớ nghĩa, rồi lật thẻ kiểm tra. Đã nhớ') }}
         <b class="text-ink">{{ knownAll() }}/{{ kb.keywords().length }}</b> hooks.
       </p>
     </header>
@@ -78,16 +79,16 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
           [class.chip-active]="onlyUnknown()"
           [attr.aria-pressed]="onlyUnknown()"
           (click)="onlyUnknown.set(!onlyUnknown())"
-          title="Chỉ thẻ chưa nhớ"
+          title="{{ i18n.t('Chỉ thẻ chưa nhớ') }}"
         >
           <app-icon name="brain" [size]="14" />
-          <span class="hidden sm:inline">Chỉ thẻ chưa nhớ</span>
+          <span class="hidden sm:inline">{{ i18n.t('Chỉ thẻ chưa nhớ') }}</span>
         </button>
         <button
           type="button"
           class="chip-filter"
           (click)="restart(true)"
-          title="Xáo bài"
+          title="{{ i18n.t('Xáo bài') }}"
           aria-label="Shuffle"
         >
           <app-icon name="shuffle" [size]="14" /> <span class="hidden sm:inline">Shuffle</span>
@@ -100,12 +101,16 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
     } @else if (!order().length) {
       <div class="glass mx-auto max-w-xl rounded-3xl p-10 text-center">
         <app-icon name="trophy" [size]="40" class="text-accent-ink" />
-        <h2 class="mt-3 text-2xl font-bold">Bạn đã nhớ hết bộ này!</h2>
+        <h2 class="mt-3 text-2xl font-bold">{{ i18n.t('Bạn đã nhớ hết bộ này!') }}</h2>
         <p class="mt-2 text-muted">
-          Tắt "Chỉ thẻ chưa nhớ" để ôn lại toàn bộ, hoặc chọn topic khác.
+          {{
+            i18n.t('Tắt "{x}" để ôn lại toàn bộ, hoặc chọn topic khác.', {
+              x: i18n.t('Chỉ thẻ chưa nhớ'),
+            })
+          }}
         </p>
         <button type="button" class="btn-primary mt-6" (click)="onlyUnknown.set(false)">
-          <app-icon name="rotate" [size]="16" /> Ôn lại tất cả
+          <app-icon name="rotate" [size]="16" /> {{ i18n.t('Ôn lại tất cả') }}
         </button>
       </div>
     } @else if (done()) {
@@ -128,11 +133,16 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
           ><app-icon name="trophy" [size]="30"
         /></span>
         <h2 class="mt-5 text-3xl font-bold">
-          <span class="text-gradient">{{ sessionPercent() }}%</span> đã nhớ
+          <span class="text-gradient">{{ sessionPercent() }}%</span> {{ i18n.t('đã nhớ') }}
         </h2>
         <p class="mt-2 text-muted">
-          {{ sessionKnown() }} nhớ · {{ sessionUnknown().length }} cần ôn lại ·
-          {{ order().length }} thẻ
+          {{
+            i18n.t('{known} nhớ · {unknown} cần ôn lại · {total} thẻ', {
+              known: sessionKnown(),
+              unknown: sessionUnknown().length,
+              total: order().length,
+            })
+          }}
         </p>
         @if (sessionUnknown().length) {
           <div class="mt-5 flex flex-wrap justify-center gap-1.5">
@@ -144,11 +154,11 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
         <div class="mt-7 flex flex-wrap justify-center gap-3">
           @if (sessionUnknown().length) {
             <button type="button" class="btn-primary" (click)="reviewUnknown()">
-              <app-icon name="rotate" [size]="16" /> Ôn lại thẻ chưa nhớ
+              <app-icon name="rotate" [size]="16" /> {{ i18n.t('Ôn lại thẻ chưa nhớ') }}
             </button>
           }
           <button type="button" class="btn-secondary" (click)="restart(true)">
-            <app-icon name="shuffle" [size]="16" /> Bộ mới
+            <app-icon name="shuffle" [size]="16" /> {{ i18n.t('Bộ mới') }}
           </button>
         </div>
       </div>
@@ -156,7 +166,7 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
       <!-- Session progress -->
       <div class="mx-auto mb-4 max-w-xl">
         <div class="mb-1.5 flex justify-between text-xs text-muted">
-          <span>Thẻ {{ index() + 1 }} / {{ order().length }}</span>
+          <span>{{ i18n.t('Thẻ {n} / {total}', { n: index() + 1, total: order().length }) }}</span>
           <span>
             <span class="text-emerald-500">✓ {{ sessionKnown() }}</span> ·
             <span class="text-rose-500">✗ {{ sessionUnknown().length }}</span>
@@ -178,12 +188,12 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
             (pointerup)="onPointerUp($event)"
             (pointercancel)="resetDrag()"
           >
-            <span class="swipe-hint left-4 text-rose-400" [style.opacity]="-dragX() / 120"
-              >Chưa nhớ</span
-            >
-            <span class="swipe-hint right-4 text-emerald-400" [style.opacity]="dragX() / 120"
-              >Nhớ rồi</span
-            >
+            <span class="swipe-hint left-4 text-rose-400" [style.opacity]="-dragX() / 120">{{
+              i18n.t('Chưa nhớ')
+            }}</span>
+            <span class="swipe-hint right-4 text-emerald-400" [style.opacity]="dragX() / 120">{{
+              i18n.t('Nhớ rồi')
+            }}</span>
             <div
               class="flip-card relative min-h-[16.5rem] sm:min-h-[23rem]"
               [class.flipped]="flipped()"
@@ -207,15 +217,16 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
                   {{ kb.topicById().get(k.topicId)?.name ?? k.topicId }}
                 </span>
                 @if (cards.isKnown(k.id)) {
-                  <span class="chip absolute right-5 top-5 !text-emerald-500">✓ đã nhớ</span>
+                  <span class="chip absolute right-5 top-5 !text-emerald-500">{{
+                    i18n.t('✓ đã nhớ')
+                  }}</span>
                 }
                 <h2 class="relative font-display text-3xl font-bold leading-tight sm:text-4xl">
                   {{ k.term }}
                 </h2>
                 <p class="relative mt-6 text-sm text-muted">
-                  Nghĩa là gì? Chạm để lật<span class="hidden sm:inline">
-                    · <kbd class="kbd">Space</kbd></span
-                  >
+                  {{ i18n.t('Nghĩa là gì? Chạm để lật')
+                  }}<span class="hidden sm:inline"> · <kbd class="kbd">Space</kbd></span>
                 </p>
               </div>
               <!-- Back -->
@@ -272,25 +283,25 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
           (click)="answer(false)"
         >
           <app-icon name="x" [size]="18" class="text-rose-500" />
-          <span>Chưa nhớ</span>
+          <span>{{ i18n.t('Chưa nhớ') }}</span>
         </button>
         <button type="button" class="btn-secondary !px-2 !py-3 whitespace-nowrap" (click)="flip()">
-          <app-icon name="rotate" [size]="18" /> <span>Lật</span>
+          <app-icon name="rotate" [size]="18" /> <span>{{ i18n.t('Lật') }}</span>
         </button>
         <button
           type="button"
           class="btn-primary !px-2 !py-3 whitespace-nowrap"
           (click)="answer(true)"
         >
-          <app-icon name="check" [size]="18" /> <span>Nhớ rồi</span>
+          <app-icon name="check" [size]="18" /> <span>{{ i18n.t('Nhớ rồi') }}</span>
         </button>
       </div>
       <p class="mt-4 hidden text-center text-xs text-muted sm:block">
-        <kbd class="kbd">←</kbd> chưa nhớ · <kbd class="kbd">Space</kbd> lật ·
-        <kbd class="kbd">→</kbd> nhớ rồi
+        <kbd class="kbd">←</kbd> {{ i18n.t('chưa nhớ') }} · <kbd class="kbd">Space</kbd>
+        {{ i18n.t('lật') }} · <kbd class="kbd">→</kbd> {{ i18n.t('nhớ rồi') }}
       </p>
       <p class="mt-4 text-center text-xs text-muted sm:hidden">
-        Vuốt trái: chưa nhớ · vuốt phải: nhớ rồi
+        {{ i18n.t('Vuốt trái: chưa nhớ · vuốt phải: nhớ rồi') }}
       </p>
     }
   `,
@@ -367,6 +378,7 @@ const CONFETTI_COLORS = ['#a78bfa', '#22d3ee', '#f472b6', '#fbbf24', '#34d399'];
   `,
 })
 export class Flashcards {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly cards = inject(FlashcardStore);
   protected readonly clipboard = inject(ClipboardService);

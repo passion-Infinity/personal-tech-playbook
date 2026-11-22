@@ -1,0 +1,486 @@
+[
+  {
+    "id": "url-shortener",
+    "title": "Design a URL shortener service",
+    "scenario": "You are designing a URL shortening service (like bit.ly): users create short links and anyone opening a link is redirected to the original URL. There are 100 million new links per month, a read:write ratio of about 100:1, redirects must hit p99 under 50 ms, and links live for 5 years.",
+    "requirements": [
+      "Estimate write/read QPS and 5-year storage",
+      "How to generate short codes: unique, hard to guess, reasonable length",
+      "Choose the storage and schema; explain caching to reach p99 < 50 ms",
+      "Choose 301 or 302 and explain the consequences",
+      "Prevent abuse (spam, code scanning) and ensure high availability"
+    ],
+    "hints": [
+      "100 million / (30 days × 86,400 seconds) gives the average write QPS; multiply by 100 for reads.",
+      "A 7-character base62 code gives 62^7 ≈ 3.5 trillion possibilities.",
+      "Reads vastly outnumber writes — where does a cache help the most?"
+    ],
+    "rubric": [
+      {
+        "item": "Correct orders of magnitude: writes ≈ 40/s, reads ≈ 4k/s on average (peak a few times higher), storage a few TB"
+      },
+      {
+        "item": "A collision-free code generation scheme (sharded counter/snowflake + base62, or hashing with collision handling)"
+      },
+      {
+        "item": "Key-value/RDBMS storage with an index on the code; a simple schema"
+      },
+      {
+        "item": "Caches hot links (Redis/CDN) and states the expected hit ratio"
+      },
+      {
+        "item": "Analyzes 301 (permanent cache, lost analytics) vs 302"
+      },
+      {
+        "item": "Rate limiting, malicious URL checks, multiple instances + replicas for HA"
+      }
+    ],
+    "solution": "**Estimates.** 100M links/month ≈ **40 writes/s**; reads ≈ **4k/s** on average, peaking a few times higher. 5 years ≈ 6 billion records × ~500 B ≈ **3 TB**.\n\n**Code generation.** Use a global counter (each instance requests a *range of IDs* from the DB/ZooKeeper) and **base62-encode** it → 7 characters cover trillions of links with no collisions. If codes must be hard to guess, scramble the ID (for example Feistel/Hashids). Hashing the original URL also works but you must handle collisions.\n\n**Storage & reads.** A table `links(code PK, url, created_at, owner)`; access is only by `code`, so a key-value store or an indexed RDBMS is enough. Put a **cache** in front (Redis, plus a CDN for very hot links): the read distribution is heavily skewed, so the hit ratio is high.\n\n**Redirect.** 302 lets you count clicks/analytics; 301 reduces load but browsers cache it forever.\n\n**Availability & abuse.** Multiple stateless instances behind a load balancer, DB replicas, rate limiting per IP/API key, malicious URL checks, link expiry.",
+    "pitfalls": [
+      "Hashing the URL and truncating without handling collisions",
+      "Sequential incrementing codes are easy to scan and guess",
+      "No cache, so every redirect hits the DB",
+      "Using 301 and then wanting click metrics, but browsers already cached it"
+    ]
+  },
+  {
+    "id": "double-charge-retry",
+    "title": "Customers are charged twice when the network is flaky",
+    "scenario": "The POST /payments API calls the payment gateway and then writes the result to the DB. When the network is flaky, the mobile app times out and retries on its own; some customers are charged twice. You need to fix the design so retries are safe without slowing the system down.",
+    "requirements": [
+      "Explain exactly why the double charge happens",
+      "Design end-to-end idempotency (client, API, DB, payment gateway)",
+      "Handle two requests with the same key arriving concurrently",
+      "Client-side retry strategy",
+      "Handle the case where you are not sure the transaction succeeded (payment gateway timeout)"
+    ],
+    "hints": [
+      "A timeout does not mean failure.",
+      "Payment gateways usually support their own idempotency key.",
+      "You need a constraint that the database enforces atomically."
+    ],
+    "rubric": [
+      {
+        "item": "Points out timeout ≠ failure: the first attempt may have succeeded, so the retry creates a second transaction"
+      },
+      {
+        "item": "The client generates an Idempotency-Key per intent and resends it on every retry"
+      },
+      {
+        "item": "The server stores key → result with a UNIQUE constraint in the same transaction as the payment write"
+      },
+      {
+        "item": "Handles concurrency: INSERT ... ON CONFLICT as the gate, an IN_PROGRESS status; rejects a different payload"
+      },
+      {
+        "item": "Passes the idempotency key down to the payment gateway"
+      },
+      {
+        "item": "Exponential backoff + jitter, a bounded total time; reconciliation for unknown states"
+      }
+    ],
+    "solution": "**Cause.** The client times out but the first call **may have succeeded** on the server/payment gateway; the retry creates a second transaction.\n\n**Design.**\n1. The client generates an **`Idempotency-Key`** (UUID) per *payment intent* and resends the same key on every retry.\n2. The API stores `idempotency_keys(key UNIQUE, request_hash, status, response)`. Step one is `INSERT ... ON CONFLICT DO NOTHING`: whoever inserts executes, everyone else **returns the stored result** (or `409` if it is `IN_PROGRESS`).\n3. Write the key and the transaction in the **same DB transaction**.\n4. Pass the key down to the **payment gateway** (it is idempotent too) so the outbound call does not repeat.\n5. Same key with a different payload → `422`.\n\n**Retry & uncertainty.** The client uses **exponential backoff + jitter** with an overall deadline. If the payment gateway times out, set the status to `UNKNOWN` and run a **reconciliation job** that queries the real status instead of guessing.",
+    "pitfalls": [
+      "Checking whether the key exists and then inserting (a race between two concurrent requests)",
+      "Retrying without a key, so duplicate transactions",
+      "Retrying immediately, causing a retry storm",
+      "Treating a timeout as failure and then refunding wrongly"
+    ]
+  },
+  {
+    "id": "flash-sale-inventory",
+    "title": "Flash sale: 10,000 products, 50,000 requests per second",
+    "scenario": "An e-commerce site runs a flash sale: 10,000 phones, peaking at 50,000 requests/second during the first few minutes. You must not oversell, the system must not go down, and users must get results quickly.",
+    "requirements": [
+      "Guarantee no overselling",
+      "Survive the peak without hitting the DB directly",
+      "Be fair and do not let bots take everything",
+      "Handle failed orders (payment not completed) by returning stock",
+      "State the failure points and how to monitor them"
+    ],
+    "hints": [
+      "A single hot DB row is the bottleneck because every update fights for the lock.",
+      "Reserve quickly in a cheaper layer, then persist to the DB afterwards.",
+      "Reserved stock must expire."
+    ],
+    "rubric": [
+      {
+        "item": "Atomic stock updates (UPDATE ... WHERE stock > 0 or Redis DECR/Lua), no check-then-act"
+      },
+      {
+        "item": "A fast reservation layer (Redis) as a gate that blocks most requests before the DB"
+      },
+      {
+        "item": "Orders written via a queue, processed asynchronously with idempotency; results reported via polling/websocket"
+      },
+      {
+        "item": "Reservations have a TTL; stock is returned when unpaid reservations expire"
+      },
+      {
+        "item": "Rate limiting, a waiting room/virtual queue, bot protection"
+      },
+      {
+        "item": "Stock reconciliation, monitoring, controlled degradation"
+      }
+    ],
+    "solution": "**Principle.** Every stock change must be **atomic**; never \"read then write\".\n\n**Flow.**\n1. A **waiting room + rate limit** at the edge (CDN/gateway) to flatten the peak and block bots.\n2. **Fast reservation in Redis**: a Lua script that does `DECR` if `stock > 0`; out of stock → reject immediately (most of the 50k req/s stop here without touching the DB).\n3. A successful reservation → **push the order onto a queue** (Kafka/SQS) with an idempotency key; a worker writes durably with `UPDATE inventory SET stock = stock - 1 WHERE sku = ? AND stock > 0` (the final guard against overselling).\n4. Reservations have a **TTL** (for example 10 minutes); a job releases stock that was never paid for.\n5. Results are returned asynchronously (polling/WebSocket).\n\n**Reducing the hot row.** Split stock into several \"buckets\" to reduce contention when needed.\n\n**Operations.** Reconcile Redis with the DB, monitor queue depth, enable degradation (turn off secondary features).",
+    "pitfalls": [
+      "Check-then-act: reading stock and then decrementing it in the application",
+      "Every request hits one hot DB row",
+      "Reservations that never expire make stock \"disappear\"",
+      "Redis and the DB drift apart with no reconciliation"
+    ]
+  },
+  {
+    "id": "slow-endpoint-debug",
+    "title": "The order list endpoint gets slower over time",
+    "scenario": "GET /users/{id}/orders returns the 20 most recent orders with their products. A year ago p99 was 80 ms; now it is 6 seconds even though traffic has not changed much. The orders table has 200 million rows. You are asked to find the cause and fix it.",
+    "requirements": [
+      "Describe the diagnostic process in order (what to measure first)",
+      "List the likely causes at each layer",
+      "Propose a concrete index and how to verify it",
+      "Fix the N+1 problem and pagination",
+      "A safe rollout plan on a large table"
+    ],
+    "hints": [
+      "Start with EXPLAIN ANALYZE of the main query.",
+      "The query filters by user_id and sorts by created_at: the column order of the index matters.",
+      "Count the number of queries per request."
+    ],
+    "rubric": [
+      {
+        "item": "Measure first: traces/slow query log to determine whether the time is in the DB or the app"
+      },
+      {
+        "item": "EXPLAIN ANALYZE reveals a seq scan/large sort caused by a missing suitable index"
+      },
+      {
+        "item": "Proposes a composite index (user_id, created_at DESC) and explains the column order"
+      },
+      {
+        "item": "Removes N+1 with a JOIN/prefetch and selects only needed columns"
+      },
+      {
+        "item": "Uses keyset pagination instead of a large OFFSET"
+      },
+      {
+        "item": "Creates the index CONCURRENTLY, verifies on staging, watches the write impact"
+      }
+    ],
+    "solution": "**Diagnosis.** Measure first: traces show the time is in the DB; the slow query log lists the heavy queries. Then `EXPLAIN (ANALYZE, BUFFERS)`.\n\n**Common causes.** (1) No suitable index → a *seq scan* + *sort* over tens of millions of rows; (2) **N+1**: one query for the list and then one query per order to fetch products; (3) `SELECT *` pulling large columns; (4) a large `OFFSET`; (5) stale table statistics.\n\n**Fix.**\n- `CREATE INDEX CONCURRENTLY idx_orders_user_created ON orders (user_id, created_at DESC);` — **equality** columns first, the **sort** column last so the first 20 rows come out without a sort.\n- Fetch items with a `JOIN`/prefetch (or `WHERE order_id = ANY(...)`), selecting only needed columns.\n- Use **keyset pagination** (`created_at < :cursor`).\n\n**Rollout.** Create the index `CONCURRENTLY`, test on staging with real data, watch write cost and index size.",
+    "pitfalls": [
+      "Adding indexes by guessing without looking at EXPLAIN",
+      "Wrong column order in a composite index",
+      "Creating an index that locks a large table in production",
+      "Only caching to hide the problem instead of fixing the query"
+    ]
+  },
+  {
+    "id": "monolith-to-microservices-order",
+    "title": "Splitting the order flow out of a monolith",
+    "scenario": "An e-commerce monolith has 40 developers, deploys every two weeks and suffers frequent conflicts. Leadership wants to split the order flow into Order, Payment, Inventory and Notification. You are the designer: boundaries, data, flows and the migration plan.",
+    "requirements": [
+      "Decide whether to split at all and where to start",
+      "Define data ownership for each service",
+      "Design the cross-service order flow and failure handling",
+      "Ensure reliable event publishing and safe consumers under duplicates",
+      "A low-risk migration plan and observability"
+    ],
+    "hints": [
+      "Split by business capability, not by technical layer.",
+      "There is no ACID across services anymore: think sagas.",
+      "Migrate piece by piece, not \"big bang\"."
+    ],
+    "rubric": [
+      {
+        "item": "Justifies the organizational/scale motivation and considers a modular monolith first"
+      },
+      {
+        "item": "Boundaries by bounded context; each service owns its DB with no cross-DB reads"
+      },
+      {
+        "item": "An orchestrated saga for the order flow with compensating steps and a clear order status"
+      },
+      {
+        "item": "Transactional outbox + idempotent consumers"
+      },
+      {
+        "item": "Strangler Fig, splitting gradually by value/risk, running in parallel"
+      },
+      {
+        "item": "Observability: correlation IDs, tracing, SLOs, circuit breakers"
+      }
+    ],
+    "solution": "**Should you split?** 40 people with conflicting deployments is an **organizational** problem that microservices address. Still, start with a **modular monolith** to clarify boundaries first.\n\n**Boundaries & data.** By bounded context: *Order* (order lifecycle), *Payment*, *Inventory*, *Notification* (reacts to events). Each service **owns its DB**; data is shared through APIs or events.\n\n**Flow (saga orchestration).** Order creates the order as `PENDING` → the orchestrator calls Payment (charge) → Inventory (reserve) → confirms as `CONFIRMED`. If any step fails, run the **compensating steps** in reverse (release stock, refund) and set `CANCELLED`. Every step is **idempotent**.\n\n**Reliability.** Write events through a **transactional outbox**; idempotent consumers (dedupe by messageId). Notification only **listens** to `OrderConfirmed`.\n\n**Migration.** **Strangler Fig**: put an API gateway in front, move features one at a time (start with low-risk ones like Notification), run in parallel to compare, then switch the old part off.\n\n**Observability.** Correlation IDs, distributed tracing, SLOs, timeouts + circuit breakers between services.",
+    "pitfalls": [
+      "Splitting by layer (a DB service, a UI service) instead of by business capability",
+      "Services still sharing one DB (a distributed monolith)",
+      "Long synchronous call chains that reduce availability",
+      "A big-bang rewrite instead of gradual extraction"
+    ]
+  },
+  {
+    "id": "clickstream-pipeline",
+    "title": "Clickstream pipeline: a real-time dashboard and exact reports",
+    "scenario": "A website produces 20,000 click events per second. You need a dashboard of active users that updates in under 5 seconds, daily revenue/conversion reports that must be exactly correct, and personal data must be deletable on user request (GDPR).",
+    "requirements": [
+      "Design event collection and transport",
+      "Separate the real-time path from the exact path and state the trade-off",
+      "Handle late and duplicate data",
+      "A data model for the daily reports",
+      "Meet the personal data deletion requirement"
+    ],
+    "hints": [
+      "Use event time and watermarks for windows.",
+      "Immutable raw data in the lake allows reprocessing.",
+      "The sink must be idempotent."
+    ],
+    "rubric": [
+      {
+        "item": "Kafka as the backbone: partition by user/session, schema registry, sensible retention"
+      },
+      {
+        "item": "A stream job computes event-time windows with watermarks → a serving store for real time (ClickHouse/Druid/Redis)"
+      },
+      {
+        "item": "Raw data lands in the lake (daily Parquet) as the source of truth for backfills"
+      },
+      {
+        "item": "Batch (dbt/Spark) builds a star schema in the warehouse for exact reports"
+      },
+      {
+        "item": "Idempotent sink/upsert and dedup by event_id; a late data policy"
+      },
+      {
+        "item": "Personal data deletion: pseudonymize, tombstone/rewrite lake partitions"
+      }
+    ],
+    "solution": "**Collection.** Client → collector → **Kafka** (topic `clicks`, key = `user_id` or `session_id`, enough partitions for 20k/s, a **schema registry** controlling schemas).\n\n**Two paths.**\n- **Real-time (< 5 s):** Flink/Kafka Streams computes *active users* with **event-time windows + watermarks** (allowing a few seconds of lateness) and writes to a fast serving store (ClickHouse/Druid/Redis) with an **idempotent upsert**.\n- **Exact:** Kafka → connector → **data lake** (Parquet partitioned by day) as the immutable source of truth. **Batch** (Spark/dbt) deduplicates by `event_id` and builds a **star schema** (fact_clicks/orders + dimensions) in the warehouse for reports.\n\n**Late & duplicate data.** Real time accepts approximation; batch corrects the numbers (this is the Lambda/Kappa spirit). Dedupe with `event_id`.\n\n**GDPR.** Identify with a **pseudonym**; on a deletion request, delete/hide the mapping and rewrite the affected lake partitions, and emit a tombstone for secondary stores.",
+    "pitfalls": [
+      "Computing windows by processing time",
+      "Only a stream path, so numbers cannot be corrected after a bug",
+      "A non-idempotent sink that writes duplicates on retry",
+      "Storing raw PII everywhere so it cannot be deleted"
+    ]
+  },
+  {
+    "id": "chat-app-design",
+    "title": "Design a real-time chat application",
+    "scenario": "Design a messaging app (1-on-1 and group chats of up to 500 people) for 50 million users with 5 million online at once. Messages must reach online recipients in under 200 ms, never be lost, stay in order within a conversation, and history must sync across multiple devices.",
+    "requirements": [
+      "Choose the real-time connection protocol and how to manage millions of connections",
+      "Design the send flow (online and offline) and guarantee no message loss",
+      "Guarantee message ordering within a conversation",
+      "The storage model and how to shard history",
+      "Handle presence and large group chats"
+    ],
+    "hints": [
+      "Each WebSocket connection is attached to one gateway; you need to know which gateway the recipient is connected to.",
+      "Store the message first, then push; use acks for sent/delivered state.",
+      "Ordering only needs to hold within one conversation: use conversation_id as the key."
+    ],
+    "rubric": [
+      {
+        "item": "WebSocket (or another long-lived connection) through a near-stateless gateway tier, with a connections-per-node estimate"
+      },
+      {
+        "item": "Send flow: persist first, route to the recipient's gateway via a registry (Redis) or pub/sub; offline → push notification and sync on reconnect"
+      },
+      {
+        "item": "Acks and retries with a unique message ID for dedup (at-least-once + idempotent)"
+      },
+      {
+        "item": "Ordering via partitioning by conversation_id and a per-conversation sequence number"
+      },
+      {
+        "item": "Storage sharded by conversation (wide-column/Cassandra-like), history read by cursor"
+      },
+      {
+        "item": "Presence via heartbeat/TTL; large groups use fan-out on read or write, weighed deliberately"
+      }
+    ],
+    "solution": "**Connections.** Clients hold a **WebSocket** to the **chat gateway** tier; each node handles tens of thousands of connections. A **session registry** (Redis) stores `user_id → gateway`.\n\n**Sending.** The client sends the message with a **message_id** (UUID) → gateway → **chat service** writes it to storage (**at-least-once**) and publishes it onto a **message bus** with **key = conversation_id** to keep ordering. The delivery service looks up the registry to push to the recipient's gateway; if they are **offline** it stores a pending state and sends a **push notification**, and the device syncs on reconnect using a \"messages after sequence N\" cursor.\n\n**Reliability.** The recipient **acks**; without an ack, retry. **message_id** enables **dedup**, so overall it is at-least-once + idempotent.\n\n**Ordering.** Each conversation has an increasing **sequence number** handled by a single partition.\n\n**Storage.** Wide-column (Cassandra/Dynamo-like) **partitioned by conversation_id**, sorted by sequence; read history with **cursor pagination**.\n\n**Presence & groups.** Presence via **heartbeat + TTL**. A 500-person group: **fan-out on write** for small groups, consider **fan-out on read** for very large ones.",
+    "pitfalls": [
+      "Pushing before storing, so messages are lost when a gateway crashes",
+      "Using server time for ordering instead of a per-conversation sequence",
+      "No dedup, so retries produce duplicate messages",
+      "Keeping connection state only in one node's memory with no registry"
+    ]
+  },
+  {
+    "id": "notification-system",
+    "title": "A notification system (push, email, SMS)",
+    "scenario": "Design a notification system for many services in a company: push, email, SMS. There are 10 million notifications per day, peaking 10× during campaigns. Users have preferences, external providers are sometimes failing or slow, and you must neither send duplicates nor over-bother people.",
+    "requirements": [
+      "The architecture for accepting requests and delivering to each channel",
+      "Guarantee no duplicates and no loss of important notifications",
+      "Handle providers that fail, are slow or rate-limit you",
+      "Respect user preferences and frequency limits",
+      "Track status and observe the system"
+    ],
+    "hints": [
+      "Separate ingestion from sending with a dedicated queue per channel.",
+      "Every request needs an idempotency key.",
+      "Providers have their own rate limits."
+    ],
+    "rubric": [
+      {
+        "item": "A fast intake API writing to a separate queue per channel (push/email/SMS) for isolation and independent scaling"
+      },
+      {
+        "item": "Idempotency key and dedup to avoid duplicates; a DLQ for failed notifications"
+      },
+      {
+        "item": "Retries with backoff + jitter, a circuit breaker and fallback to a backup provider"
+      },
+      {
+        "item": "Send-side rate limiting matching provider limits and per user (anti-spam)"
+      },
+      {
+        "item": "User preferences, quiet hours, priority (transactional before marketing) with priority queues"
+      },
+      {
+        "item": "Delivery status, provider webhooks, metrics and alerts (queue depth, error rate)"
+      }
+    ],
+    "solution": "**Architecture.** Source services call the **Notification API** (authenticate, validate, with an **idempotency key**) → write to a **message bus** → a **dispatcher** applies user preferences, templates and quiet hours and pushes to a **dedicated queue per channel** (push/email/SMS) with a **priority lane** (transactional/OTP before marketing).\n\n**Per-channel workers** call providers (FCM/APNs, SES, Twilio…): **retry with backoff + jitter**, a **circuit breaker** and a **backup provider**; permanent failures go to a **DLQ**.\n\n**No duplicates.** A dedup table on `(idempotency_key, channel)` with UNIQUE; idempotent consumers.\n\n**No overload/no spam.** **Rate limits** per provider quota (token bucket) and **per-user frequency**; large campaigns go through the marketing queue so they never block transactional notifications.\n\n**Observability.** Store `queued/sent/delivered/failed` status (provider webhooks), **queue depth** metrics, error rate, latency, SLO-based alerts.",
+    "pitfalls": [
+      "Calling providers synchronously inside the source service's request",
+      "One shared queue, so a marketing campaign delays OTPs",
+      "Retrying without backoff, causing a retry storm against the provider",
+      "No dedup, so customers receive the same notification several times"
+    ]
+  },
+  {
+    "id": "rate-limiter-design",
+    "title": "Design a rate limiter for a public API",
+    "scenario": "A public API has 3 customer plans (Free 60 req/min, Pro 600, Enterprise 6000) running on 20 instances behind a load balancer. You need to limit per API key, allow short bursts, be reasonably accurate, add under 2 ms of latency and not become a single point of failure.",
+    "requirements": [
+      "Choose the algorithm and explain the trade-offs",
+      "Design distributed state storage and atomic operations",
+      "Decide where to place the limiter",
+      "A strategy for when the limiter or Redis fails",
+      "Client communication (headers, error codes) and retry behavior"
+    ],
+    "hints": [
+      "Token bucket allows bursts.",
+      "Check-then-set will race across 20 instances.",
+      "Every Redis call adds network latency."
+    ],
+    "rubric": [
+      {
+        "item": "Chooses token bucket (or a sliding window counter) and explains why versus a fixed window"
+      },
+      {
+        "item": "State in Redis with atomic operations (Lua/INCR) keyed by API key"
+      },
+      {
+        "item": "Placed at the gateway/edge; may add a local limit to reduce Redis calls"
+      },
+      {
+        "item": "A deliberate fail-open or fail-closed choice, Redis HA/replicas, monitoring"
+      },
+      {
+        "item": "429 with Retry-After and quota headers; guides clients to backoff + jitter"
+      },
+      {
+        "item": "Per-plan limits, and long-term quota kept separate from the short-term rate"
+      }
+    ],
+    "solution": "**Algorithm.** A **token bucket** per `api_key`: capacity = burst, refill rate = quota/minute. It allows reasonable bursts, uses little memory and is more accurate than a fixed window (no double burst at the boundary).\n\n**State.** **Redis** stores `{tokens, timestamp}` per key; a **Lua script** refills and deducts atomically so 20 instances cannot race. Use Redis's clock to avoid clock skew.\n\n**Placement.** At the **API gateway/edge** to reject early; optionally add a small local bucket to reduce Redis calls for very hot clients.\n\n**Failure.** If Redis dies: default to **fail-open** for a public API (stay available) with a temporary local limiter; use Redis with replicas/cluster and alerting. Sensitive endpoints (login) may **fail-closed**.\n\n**Client.** Return **429** with `Retry-After` and remaining-quota headers; recommend backoff + jitter. Add a **monthly quota** separate from the short-term rate.",
+    "pitfalls": [
+      "GET then SET is not atomic, so limits get exceeded",
+      "Limiting by IP, which is wrong for users behind NAT",
+      "Redis as a single point of failure with no plan",
+      "Clients retrying immediately on 429, making things worse"
+    ]
+  },
+  {
+    "id": "news-feed-design",
+    "title": "Design a social network news feed",
+    "scenario": "A social network has 100 million daily users. Each follows 200 people on average, and some celebrities have 10 million followers. The feed must load in under 300 ms, show new posts within seconds and can tolerate slight staleness.",
+    "requirements": [
+      "Compare fan-out on write and fan-out on read",
+      "Handle users with millions of followers",
+      "Design storage and caching for the feed",
+      "Choose a consistency model and which trade-off to accept",
+      "Feed pagination and post deletion"
+    ],
+    "hints": [
+      "Writing into every follower's feed is expensive for celebrities.",
+      "You can combine the two approaches.",
+      "The feed is derived data: accept eventual consistency."
+    ],
+    "rubric": [
+      {
+        "item": "Analyzes fan-out on write (fast reads, expensive writes) and fan-out on read (cheap writes, slow reads)"
+      },
+      {
+        "item": "Hybrid: push for regular users, pull for celebrities and merge at read time"
+      },
+      {
+        "item": "A feed cache (Redis sorted set per user) holding post IDs, with content from a post cache/DB"
+      },
+      {
+        "item": "Accepts eventual consistency; handled with async queues/workers"
+      },
+      {
+        "item": "Cursor pagination by time/ID and handling post deletion/hiding"
+      },
+      {
+        "item": "Data sharding (by user/post), hot caches, a capacity estimate"
+      }
+    ],
+    "solution": "**Two approaches.** *Fan-out on write*: when a post is created, push the post ID into **each follower's feed cache** → reads are very fast but writes are expensive (a celebrity = millions of writes). *Fan-out on read*: only when the feed is opened, gather posts from the people you follow → cheap writes but slow reads.\n\n**Hybrid.** Regular users use **push** (an async worker via a queue writes into followers' feeds); **celebrities** use **pull**: their posts are not pushed ahead of time but are **merged into the feed on read**.\n\n**Storage.** Each user's feed is a **list of post IDs** in a **Redis sorted set** (capped at a few hundred entries); post content comes from a **post cache/DB** (sharded by post_id). A social network accepts **eventual consistency**: posts appear after a few seconds.\n\n**Pagination.** **Cursor** on (timestamp, id). **Deleting/hiding a post** is flagged in the post store and filtered at read time so you do not have to edit every feed.\n\n**Estimate.** 100M users × 500 IDs × 8 B ≈ 400 GB of feed cache — cluster it by user_id.",
+    "pitfalls": [
+      "Fan-out on write for celebrities causes a write storm",
+      "Storing the whole post in every feed, wasting memory and making edits/deletes hard",
+      "Offset pagination repeating posts when new ones arrive",
+      "Demanding strong consistency for the feed, adding latency for no reason"
+    ]
+  },
+  {
+    "id": "k8s-incident-debug",
+    "title": "Incident: after a deploy, some requests return 503",
+    "scenario": "After a rolling update of the orders service on Kubernetes, about 10% of requests return 503 for a few minutes and then recover on their own; afterwards Pods sometimes restart repeatedly (CrashLoopBackOff). The dashboard shows low average CPU but rising p99 latency. You are on call.",
+    "requirements": [
+      "Form hypotheses in order of likelihood and how to verify each",
+      "State the observability data to look at (metrics, logs, traces, kubectl)",
+      "Explain the root causes that can produce 503s during a rolling update",
+      "Explain the Pod restarts and the high latency despite low CPU",
+      "Propose a short-term fix and long-term prevention"
+    ],
+    "hints": [
+      "Look at the Ready state of the new Pods during the rollout.",
+      "CPU limits and throttling can cause latency even when average CPU is low.",
+      "A liveness probe can kill an application that starts slowly."
+    ],
+    "rubric": [
+      {
+        "item": "Starts from observation: kubectl describe/events, Ready state, Pod logs, per-Pod error metrics"
+      },
+      {
+        "item": "Hypothesis: a missing or wrong readiness probe lets traffic reach Pods that are not ready"
+      },
+      {
+        "item": "Hypothesis: an overly aggressive liveness probe or no startup probe causes CrashLoopBackOff"
+      },
+      {
+        "item": "Hypothesis: CPU throttling from a low limit, checking container_cpu_cfs_throttled"
+      },
+      {
+        "item": "Fixes: correct readiness/startup probes, PDB, maxUnavailable, graceful shutdown (preStop), raise limits"
+      },
+      {
+        "item": "Prevention: canary/rollouts with automated checks, SLOs and burn-rate alerts"
+      }
+    ],
+    "solution": "**Observe before guessing.** `kubectl rollout status`, `kubectl describe pod` (events, probes), `kubectl logs`, error/latency metrics **per Pod** and **traces** of failing requests.\n\n**Hypothesis 1 – readiness.** 503s only during the rollout suggest the Service sends traffic to **Pods that are not ready** (no or wrong **readiness probe**) or to Pods being shut down before they were removed from the endpoints. Verify: compare when the Pod becomes `Ready` with when the 503s occur. Fix: a readiness probe that reflects the app really accepting requests, `maxUnavailable: 0`, `maxSurge: 1`, **graceful shutdown** (SIGTERM + a `preStop` sleep) to drain.\n\n**Hypothesis 2 – CrashLoopBackOff.** A **liveness probe** with a short timeout kills a slow-starting application → add a **startup probe** and relax thresholds. Check for `OOMKilled` caused by a **memory limit** below real needs.\n\n**Hypothesis 3 – high latency despite low CPU.** **CPU throttling** from a low **limit** (cgroups cut CPU in periods) → check the throttled metric, raise or drop the CPU limit, keep requests accurate.\n\n**Prevention.** A **PodDisruptionBudget**, canary rollouts with automated SLO checks and **burn-rate** alerts.",
+    "pitfalls": [
+      "Restarting Pods or scaling up without checking Ready/probes",
+      "Looking only at average CPU and missing throttling",
+      "A liveness probe that calls an external dependency, so the whole fleet is killed when the dependency is slow",
+      "No graceful shutdown, so in-flight requests are cut off"
+    ]
+  }
+]

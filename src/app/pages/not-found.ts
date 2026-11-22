@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { I18n } from '../core/i18n.service';
 
 @Component({
   selector: 'app-not-found',
@@ -8,10 +9,12 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="py-20 text-center">
       <p class="text-gradient font-display text-7xl font-bold">404</p>
-      <h1 class="mt-2 text-2xl font-bold text-ink">Page not found</h1>
-      <p class="mt-2 text-muted">This playbook may have been renamed or merged.</p>
-      <a routerLink="/" class="btn-primary mt-6">Back to all playbooks</a>
+      <h1 class="mt-2 text-2xl font-bold text-ink">{{ i18n.t('Không tìm thấy trang') }}</h1>
+      <p class="mt-2 text-muted">{{ i18n.t('Playbook này có thể đã được đổi tên hoặc gộp.') }}</p>
+      <a routerLink="/" class="btn-primary mt-6">{{ i18n.t('Về tất cả playbook') }}</a>
     </div>
   `,
 })
-export class NotFound {}
+export class NotFound {
+  protected readonly i18n = inject(I18n);
+}

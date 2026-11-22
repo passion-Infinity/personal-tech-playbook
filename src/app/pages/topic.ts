@@ -7,6 +7,7 @@ import { LearningStore } from '../core/learning.store';
 import { Playbook } from '../core/models';
 import { topicStyle, topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 interface Row {
   p: Playbook;
@@ -29,8 +30,8 @@ interface Group {
       <div class="glass h-64 animate-pulse rounded-3xl"></div>
     } @else if (!topic()) {
       <div class="py-20 text-center">
-        <h1 class="text-2xl font-bold">Không tìm thấy chủ đề</h1>
-        <a routerLink="/" class="btn-primary mt-6">Về trang chủ</a>
+        <h1 class="text-2xl font-bold">{{ i18n.t('Không tìm thấy chủ đề') }}</h1>
+        <a routerLink="/" class="btn-primary mt-6">{{ i18n.t('Về trang chủ') }}</a>
       </div>
     } @else {
       @let t = topic()!;
@@ -39,7 +40,7 @@ interface Group {
           routerLink="/"
           class="mb-4 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
         >
-          <app-icon name="arrowLeft" [size]="14" /> Tất cả playbooks
+          <app-icon name="arrowLeft" [size]="14" /> {{ i18n.t('Tất cả playbooks') }}
         </a>
 
         <header class="glass fade-up relative mb-8 overflow-hidden rounded-3xl p-6 sm:p-8">
@@ -51,7 +52,7 @@ interface Group {
               ><app-icon [name]="style(t.id).icon" [size]="26"
             /></span>
             <div class="min-w-0">
-              <p class="eyebrow">Lộ trình chủ đề</p>
+              <p class="eyebrow">{{ i18n.t('Lộ trình chủ đề') }}</p>
               <h1 class="topic-text text-3xl font-bold sm:text-4xl">{{ t.name }}</h1>
               <p class="mt-2 max-w-2xl text-muted">{{ t.description }}</p>
             </div>
@@ -59,7 +60,9 @@ interface Group {
           <div class="relative mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
             <div class="min-w-48 flex-1">
               <div class="mb-1.5 flex justify-between text-xs text-muted">
-                <span>{{ readCount() }}/{{ total() }} bài đã đọc</span>
+                <span>{{
+                  i18n.t('{n}/{total} bài đã đọc', { n: readCount(), total: total() })
+                }}</span>
                 <span>{{ percent() }}%</span>
               </div>
               <div class="progress-track">
@@ -70,13 +73,13 @@ interface Group {
               @if (resume(); as r) {
                 <a [routerLink]="['/playbooks', r.id]" class="btn-primary">
                   <app-icon name="arrowRight" [size]="16" />
-                  {{ readCount() ? 'Tiếp tục' : 'Bắt đầu' }}: {{ r.title }}
+                  {{ readCount() ? i18n.t('Tiếp tục') : i18n.t('Bắt đầu') }}: {{ r.title }}
                 </a>
               } @else {
-                <span class="chip !text-emerald-500">✓ Đã đọc hết chủ đề</span>
+                <span class="chip !text-emerald-500">{{ i18n.t('✓ Đã đọc hết chủ đề') }}</span>
               }
               <a routerLink="/practice/drill" [queryParams]="{ topic: t.id }" class="btn-secondary">
-                <app-icon name="lightbulb" [size]="16" /> Luyện chủ đề
+                <app-icon name="lightbulb" [size]="16" /> {{ i18n.t('Luyện chủ đề') }}
               </a>
             </div>
           </div>
@@ -85,8 +88,8 @@ interface Group {
         @if (external().length) {
           <section class="glass mb-8 rounded-2xl p-4">
             <p class="mb-2 flex items-center gap-2 text-sm font-semibold">
-              <app-icon name="lock" [size]="14" class="text-accent-ink" /> Nên nắm trước từ chủ đề
-              khác
+              <app-icon name="lock" [size]="14" class="text-accent-ink" />
+              {{ i18n.t('Nên nắm trước từ chủ đề khác') }}
             </p>
             <div class="flex flex-wrap gap-1.5">
               @for (e of external(); track e.id) {
@@ -106,12 +109,12 @@ interface Group {
             <li>
               <div class="mb-3 flex flex-wrap items-baseline gap-x-3">
                 <h2 class="font-display text-sm font-bold uppercase tracking-wider text-accent-ink">
-                  Cấp {{ g.level }} · {{ name(g.level) }}
+                  {{ i18n.t('Cấp {n} ·', { n: g.level }) }} {{ name(g.level, i18n.lang()) }}
                 </h2>
                 @if (g.rows.length > 1) {
-                  <span class="text-xs text-muted"
-                    >{{ g.rows.length }} bài độc lập — đọc thứ tự nào cũng được</span
-                  >
+                  <span class="text-xs text-muted">{{
+                    i18n.t('{n} bài độc lập — đọc thứ tự nào cũng được', { n: g.rows.length })
+                  }}</span>
                 }
               </div>
               <ul class="space-y-3">
@@ -149,7 +152,7 @@ interface Group {
                         </p>
                         @if (r.prereqs.length) {
                           <p class="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                            Đọc trước:
+                            {{ i18n.t('Đọc trước:') }}
                             @for (x of r.prereqs; track x.p.id) {
                               <span class="chip">
                                 @if (learning.isRead(x.p.id)) {
@@ -167,9 +170,9 @@ interface Group {
                         }
                       </div>
                       @if (r.state === 'ready') {
-                        <span class="chip hidden self-start sm:inline-flex !text-violet-400"
-                          >Sẵn sàng</span
-                        >
+                        <span class="chip hidden self-start sm:inline-flex !text-violet-400">{{
+                          i18n.t('Sẵn sàng')
+                        }}</span>
                       }
                     </a>
                   </li>
@@ -183,6 +186,7 @@ interface Group {
   `,
 })
 export class TopicPage {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly learning = inject(LearningStore);
   private readonly route = inject(ActivatedRoute);

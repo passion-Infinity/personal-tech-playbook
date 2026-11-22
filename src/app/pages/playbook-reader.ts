@@ -24,11 +24,19 @@ import { topicStyle, topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
 import { ExplainBack } from '../shared/explain-back';
 import { KeywordCard } from '../shared/keyword-card';
+import { I18n } from '../core/i18n.service';
 
 type Doc =
   | { state: 'loading' }
   | { state: 'error' }
-  | { state: 'ready'; html: SafeHtml; toc: TocEntry[]; hasMermaid: boolean; minutes: number };
+  | {
+      state: 'ready';
+      html: SafeHtml;
+      toc: TocEntry[];
+      hasMermaid: boolean;
+      minutes: number;
+      fallback: boolean;
+    };
 
 @Component({
   selector: 'app-playbook-reader',
@@ -48,8 +56,8 @@ type Doc =
       <div class="glass h-64 animate-pulse rounded-3xl"></div>
     } @else if (!playbook()) {
       <div class="py-20 text-center">
-        <h1 class="text-2xl font-bold">Playbook not found</h1>
-        <a routerLink="/" class="btn-primary mt-6">Back to all playbooks</a>
+        <h1 class="text-2xl font-bold">{{ i18n.t('Không tìm thấy playbook') }}</h1>
+        <a routerLink="/" class="btn-primary mt-6">{{ i18n.t('Về tất cả playbook') }}</a>
       </div>
     } @else {
       @let p = playbook()!;
@@ -59,11 +67,14 @@ type Doc =
             [routerLink]="['/topics', p.topicId]"
             class="mb-4 inline-flex flex-wrap items-center gap-x-1.5 text-sm text-muted hover:text-ink"
           >
-            <app-icon name="arrowLeft" [size]="14" /> {{ topic()?.name ?? 'All playbooks' }}
+            <app-icon name="arrowLeft" [size]="14" />
+            {{ topic()?.name ?? i18n.t('Tất cả playbook') }}
             <span class="opacity-50">›</span>
-            <span>Bài {{ position() }}/{{ siblings().length }}</span>
+            <span>{{
+              i18n.t('Bài {n}/{total}', { n: position(), total: siblings().length })
+            }}</span>
             <span class="opacity-50">·</span>
-            <span>Cấp {{ localLevel() }} · {{ localLevelLabel() }}</span>
+            <span>{{ i18n.t('Cấp {n} ·', { n: localLevel() }) }} {{ localLevelLabel() }}</span>
           </a>
 
           <header class="glass fade-up relative mb-10 overflow-hidden rounded-3xl p-6 sm:p-8">
@@ -85,7 +96,8 @@ type Doc =
                 </span>
                 @if (minutes()) {
                   <span class="inline-flex items-center gap-1.5 text-muted">
-                    <app-icon name="clock" [size]="14" /> {{ minutes() }} phút đọc
+                    <app-icon name="clock" [size]="14" />
+                    {{ i18n.t('{n} phút đọc', { n: minutes() }) }}
                   </span>
                 }
               </div>
@@ -97,8 +109,8 @@ type Doc =
                   <p
                     class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"
                   >
-                    <app-icon name="map" [size]="13" /> Tầng {{ level() }} trong lộ trình chung —
-                    nên đọc trước
+                    <app-icon name="map" [size]="13" />
+                    {{ i18n.t('Tầng {n} trong lộ trình chung — nên đọc trước', { n: level() }) }}
                   </p>
                   @if (prereqs().length) {
                     <div class="flex flex-wrap gap-1.5">
@@ -114,7 +126,9 @@ type Doc =
                       }
                     </div>
                   } @else {
-                    <p class="text-muted">Không cần kiến thức tiên quyết — có thể đọc ngay.</p>
+                    <p class="text-muted">
+                      {{ i18n.t('Không cần kiến thức tiên quyết — có thể đọc ngay.') }}
+                    </p>
                   }
                 </div>
                 @if (unlocks().length) {
@@ -122,7 +136,7 @@ type Doc =
                     <p
                       class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"
                     >
-                      <app-icon name="target" [size]="13" /> Mở khoá bài tiếp theo
+                      <app-icon name="target" [size]="13" /> {{ i18n.t('Mở khoá bài tiếp theo') }}
                     </p>
                     <div class="flex flex-wrap gap-1.5">
                       @for (r of unlocks(); track r.id) {
@@ -148,7 +162,7 @@ type Doc =
                     [size]="16"
                     [class]="isRead() ? 'text-emerald-500' : ''"
                   />
-                  {{ isRead() ? 'Đã đọc' : 'Đánh dấu đã đọc' }}
+                  {{ isRead() ? i18n.t('Đã đọc') : i18n.t('Đánh dấu đã đọc') }}
                 </button>
                 @if (questionCount()) {
                   <a
@@ -156,17 +170,19 @@ type Doc =
                     [queryParams]="{ playbook: p.id }"
                     class="btn-primary"
                   >
-                    <app-icon name="lightbulb" [size]="16" /> Luyện {{ questionCount() }} câu hỏi
+                    <app-icon name="lightbulb" [size]="16" />
+                    {{ i18n.t('Luyện {n} câu hỏi', { n: questionCount() }) }}
                   </a>
                 }
                 <a routerLink="/flashcards" [queryParams]="{ playbook: p.id }" class="btn-primary">
-                  <app-icon name="cards" [size]="16" /> Ôn {{ hooks().length }} hooks
+                  <app-icon name="cards" [size]="16" />
+                  {{ i18n.t('Ôn {n} hooks', { n: hooks().length }) }}
                 </a>
                 <span
                   class="glass inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted"
                 >
                   <app-icon name="brain" [size]="16" />
-                  Đã nhớ {{ knownHooks() }}/{{ hooks().length }}
+                  {{ i18n.t('Đã nhớ {k}/{h}', { k: knownHooks(), h: hooks().length }) }}
                 </span>
               </div>
             </div>
@@ -182,11 +198,23 @@ type Doc =
             }
             @case ('error') {
               <p class="glass rounded-2xl p-4 text-sm text-red-500">
-                Could not load <code>{{ p.filePath }}</code
-                >. If you are offline, open the app once online so the library can be cached.
+                {{
+                  i18n.t(
+                    'Không tải được {path}. Nếu đang offline, hãy mở ứng dụng một lần khi có mạng để thư viện được lưu offline.',
+                    { path: p.filePath }
+                  )
+                }}
               </p>
             }
             @case ('ready') {
+              @if (untranslated()) {
+                <p
+                  class="glass mb-6 rounded-2xl border-amber-400/40 p-4 text-sm text-amber-500"
+                  role="status"
+                >
+                  {{ i18n.t('Bài này chưa có bản tiếng Anh — đang hiển thị bản tiếng Việt.') }}
+                </p>
+              }
               <div
                 #content
                 class="markdown prose prose-slate max-w-none dark:prose-invert"
@@ -214,7 +242,7 @@ type Doc =
                 <div class="flex gap-2">
                   <button type="button" class="btn-secondary !py-2 text-xs" (click)="copyAll()">
                     <app-icon [name]="copiedAll() ? 'check' : 'copy'" [size]="14" />
-                    {{ copiedAll() ? 'Copied' : 'Copy all' }}
+                    {{ copiedAll() ? i18n.t('Đã sao chép') : i18n.t('Sao chép tất cả') }}
                   </button>
                   <a
                     routerLink="/flashcards"
@@ -235,39 +263,45 @@ type Doc =
 
           <section
             class="glass mt-12 flex flex-wrap items-center gap-3 rounded-2xl p-4 sm:p-5"
-            aria-label="Finish lesson"
+            aria-label="{{ i18n.t('Hoàn thành bài học') }}"
           >
             <div class="min-w-0 flex-1">
               <p class="font-semibold">
-                {{ isRead() ? 'Bạn đã đọc bài này' : 'Đã hiểu bài này?' }}
+                {{ isRead() ? i18n.t('Bạn đã đọc bài này') : i18n.t('Đã hiểu bài này?') }}
               </p>
               <p class="text-sm text-muted">
                 {{
                   isRead()
-                    ? 'Ôn lại bằng câu hỏi để nhớ lâu hơn.'
-                    : 'Đánh dấu đã đọc để mở khoá bài tiếp theo và đưa câu hỏi vào Daily Drill.'
+                    ? i18n.t('Ôn lại bằng câu hỏi để nhớ lâu hơn.')
+                    : i18n.t(
+                        'Đánh dấu đã đọc để mở khoá bài tiếp theo và đưa câu hỏi vào Daily Drill.'
+                      )
                 }}
               </p>
             </div>
             @if (!isRead()) {
               <button type="button" class="btn-secondary" (click)="toggleRead()">
-                <app-icon name="check" [size]="16" /> Đánh dấu đã đọc
+                <app-icon name="check" [size]="16" /> {{ i18n.t('Đánh dấu đã đọc') }}
               </button>
             }
             @if (next(); as nx) {
               <button type="button" class="btn-primary" (click)="finishAndNext(nx.id)">
-                {{ isRead() ? 'Bài tiếp theo' : 'Đã đọc & bài tiếp' }}
+                {{ isRead() ? i18n.t('Bài tiếp theo') : i18n.t('Đã đọc & bài tiếp') }}
                 <app-icon name="arrowRight" [size]="16" />
               </button>
             }
           </section>
 
           @if (prev() || next()) {
-            <nav class="mt-12 grid gap-3 sm:grid-cols-2" aria-label="Playbook navigation">
+            <nav
+              class="mt-12 grid gap-3 sm:grid-cols-2"
+              aria-label="{{ i18n.t('Điều hướng playbook') }}"
+            >
               @if (prev(); as pr) {
                 <a [routerLink]="['/playbooks', pr.id]" class="glass glass-hover rounded-2xl p-4">
                   <span class="flex items-center gap-1 text-xs text-muted">
-                    <app-icon name="chevronLeft" [size]="14" /> Bài trước trong lộ trình
+                    <app-icon name="chevronLeft" [size]="14" />
+                    {{ i18n.t('Bài trước trong lộ trình') }}
                   </span>
                   <span class="mt-1 block font-semibold">{{ pr.title }}</span>
                 </a>
@@ -280,7 +314,8 @@ type Doc =
                   class="glass glass-hover rounded-2xl p-4 text-right"
                 >
                   <span class="flex items-center justify-end gap-1 text-xs text-muted">
-                    Bài tiếp theo trong lộ trình <app-icon name="chevronRight" [size]="14" />
+                    {{ i18n.t('Bài tiếp theo trong lộ trình') }}
+                    <app-icon name="chevronRight" [size]="14" />
                   </span>
                   <span class="mt-1 block font-semibold">{{ nx.title }}</span>
                 </a>
@@ -291,8 +326,11 @@ type Doc =
 
         @if (toc().length) {
           <aside class="hidden xl:block">
-            <nav class="glass sticky top-8 rounded-2xl p-4 text-sm" aria-label="Table of contents">
-              <p class="eyebrow mb-3">On this page</p>
+            <nav
+              class="glass sticky top-8 rounded-2xl p-4 text-sm"
+              aria-label="{{ i18n.t('Mục lục') }}"
+            >
+              <p class="eyebrow mb-3">{{ i18n.t('Trong bài này') }}</p>
               <ul class="space-y-0.5">
                 @for (t of toc(); track t.id) {
                   <li>
@@ -311,7 +349,8 @@ type Doc =
               </ul>
               <div class="mt-4 border-t border-line pt-3">
                 <div class="mb-1 flex justify-between text-xs text-muted">
-                  <span>Tiến độ đọc</span><span>{{ roundedProgress() }}%</span>
+                  <span>{{ i18n.t('Tiến độ đọc') }}</span
+                  ><span>{{ roundedProgress() }}%</span>
                 </div>
                 <div class="progress-track">
                   <div class="progress-fill" [style.width.%]="progress()"></div>
@@ -322,7 +361,7 @@ type Doc =
                 class="mt-3 text-xs text-muted hover:text-ink"
                 (click)="scrollTop()"
               >
-                ↑ Back to top
+                {{ i18n.t('↑ Về đầu trang') }}
               </button>
             </nav>
           </aside>
@@ -332,6 +371,7 @@ type Doc =
   `,
 })
 export class PlaybookReader {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   private readonly md = inject(MarkdownService);
   private readonly theme = inject(ThemeService);
@@ -362,7 +402,7 @@ export class PlaybookReader {
   });
   protected readonly learning = inject(LearningStore);
   protected readonly level = computed(() => this.kb.levels().get(this.id()) ?? 0);
-  protected readonly levelLabel = computed(() => levelName(this.level()));
+  protected readonly levelLabel = computed(() => levelName(this.level(), this.i18n.lang()));
   protected readonly prereqs = computed(() =>
     (this.kb.prereqs().get(this.id()) ?? [])
       .map((i) => this.kb.playbookById().get(i))
@@ -396,7 +436,9 @@ export class PlaybookReader {
     () => this.siblings().findIndex((x) => x.id === this.id()) + 1,
   );
   protected readonly localLevel = computed(() => this.kb.localLevels().get(this.id()) ?? 0);
-  protected readonly localLevelLabel = computed(() => levelName(this.localLevel()));
+  protected readonly localLevelLabel = computed(() =>
+    levelName(this.localLevel(), this.i18n.lang()),
+  );
   protected readonly prev = computed(() => {
     const list = this.siblings();
     const i = list.findIndex((x) => x.id === this.id());
@@ -409,18 +451,19 @@ export class PlaybookReader {
   });
 
   protected readonly doc = toSignal(
-    toObservable(computed(() => this.playbook()?.filePath)).pipe(
-      switchMap((path) => {
-        if (!path) return of<Doc>({ state: 'loading' });
-        return this.kb.getMarkdown(path).pipe(
-          map((text): Doc => {
-            const r = this.md.render(text);
+    toObservable(computed(() => this.playbook())).pipe(
+      switchMap((pb) => {
+        if (!pb) return of<Doc>({ state: 'loading' });
+        return this.kb.getPlaybookMarkdown(pb).pipe(
+          map(({ md, fallback }): Doc => {
+            const r = this.md.render(md);
             return {
               state: 'ready',
               html: this.sanitizer.bypassSecurityTrustHtml(r.html),
               toc: r.toc,
               hasMermaid: r.hasMermaid,
               minutes: r.minutes,
+              fallback,
             };
           }),
           catchError(() => of<Doc>({ state: 'error' })),
@@ -437,6 +480,10 @@ export class PlaybookReader {
   protected readonly toc = computed(() => {
     const d = this.doc();
     return d.state === 'ready' ? d.toc : [];
+  });
+  protected readonly untranslated = computed(() => {
+    const d = this.doc();
+    return d.state === 'ready' && d.fallback;
   });
   protected readonly minutes = computed(() => {
     const d = this.doc();

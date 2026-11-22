@@ -16,6 +16,7 @@ import { LearningStore } from '../core/learning.store';
 import { MarkdownService } from '../core/markdown.service';
 import { topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
 
@@ -28,8 +29,10 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
       <div class="glass h-72 animate-pulse rounded-3xl"></div>
     } @else if (!c()) {
       <div class="py-16 text-center">
-        <h1 class="text-2xl font-bold">Không tìm thấy đề</h1>
-        <a routerLink="/practice/challenges" class="btn-primary mt-5">Xem tất cả đề</a>
+        <h1 class="text-2xl font-bold">{{ i18n.t('Không tìm thấy đề') }}</h1>
+        <a routerLink="/practice/challenges" class="btn-primary mt-5">{{
+          i18n.t('Xem tất cả đề')
+        }}</a>
       </div>
     } @else {
       @let ch = c()!;
@@ -38,7 +41,7 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
           routerLink="/practice/challenges"
           class="mb-3 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
         >
-          <app-icon name="arrowLeft" [size]="14" /> Tất cả đề thiết kế
+          <app-icon name="arrowLeft" [size]="14" /> {{ i18n.t('Tất cả đề thiết kế') }}
         </a>
         <header class="glass fade-up relative mb-6 overflow-hidden rounded-3xl p-6">
           <div
@@ -47,11 +50,11 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
           <div class="relative">
             <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
               <span class="badge">{{ kb.topicById().get(ch.topicId)?.name }}</span>
-              <span class="chip">{{ difficulty[ch.difficulty] }}</span>
+              <span class="chip">{{ i18n.t(difficulty[ch.difficulty]) }}</span>
               @if (state()?.doneOn) {
-                <span class="chip !text-emerald-500"
-                  >✓ {{ state()!.score }}/{{ state()!.max }} điểm</span
-                >
+                <span class="chip !text-emerald-500">{{
+                  i18n.t('✓ {score}/{max} điểm', { score: state()!.score, max: state()!.max })
+                }}</span>
               }
             </div>
             <h1 class="text-2xl font-bold leading-tight sm:text-3xl">{{ ch.title }}</h1>
@@ -61,7 +64,7 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
 
         <section class="mb-5">
           <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold">
-            <app-icon name="target" class="text-accent-ink" /> Yêu cầu
+            <app-icon name="target" class="text-accent-ink" /> {{ i18n.t('Yêu cầu') }}
           </h2>
           <ul class="glass space-y-2 rounded-2xl p-4 text-[0.95rem]">
             @for (r of ch.requirements; track r) {
@@ -74,7 +77,7 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
 
         @if (ch.prerequisites.length) {
           <p class="mb-5 flex flex-wrap items-center gap-2 text-sm text-muted">
-            Nên đọc trước:
+            {{ i18n.t('Nên đọc trước:') }}
             @for (id of ch.prerequisites; track id) {
               <a [routerLink]="['/playbooks', id]" class="chip hover:!text-ink">
                 @if (store.isRead(id)) {
@@ -88,16 +91,20 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
 
         <section class="mb-5">
           <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold">
-            <app-icon name="pencil" class="text-accent-ink" /> Phần trả lời của bạn
+            <app-icon name="pencil" class="text-accent-ink" /> {{ i18n.t('Phần trả lời của bạn') }}
           </h2>
           <p class="mb-2 text-sm text-muted">
-            Viết ra giải pháp (kiến trúc, trade-off, số liệu ước lượng, rủi ro)
-            <b class="text-ink">trước khi</b> xem gợi ý hay đáp án. Bản nháp được lưu trên thiết bị
-            này.
+            {{ i18n.t('Viết ra giải pháp (kiến trúc, trade-off, số liệu ước lượng, rủi ro)') }}
+            <b class="text-ink">{{ i18n.t('trước khi') }}</b>
+            {{ i18n.t('xem gợi ý hay đáp án. Bản nháp được lưu trên thiết bị này.') }}
           </p>
           <textarea
             class="glass min-h-56 w-full resize-y rounded-2xl p-4 font-mono text-[0.88rem] leading-relaxed outline-none placeholder:text-muted focus:border-violet-400"
-            placeholder="Ví dụ: 1) Ước lượng tải… 2) Thành phần chính… 3) Luồng xử lý… 4) Trade-off… 5) Điểm có thể hỏng…"
+            [placeholder]="
+              i18n.t(
+                'Ví dụ: 1) Ước lượng tải… 2) Thành phần chính… 3) Luồng xử lý… 4) Trade-off… 5) Điểm có thể hỏng…'
+              )
+            "
             [value]="draft()"
             (input)="onDraft($event)"
             aria-label="Your answer"
@@ -107,14 +114,17 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
         @if (ch.hints.length) {
           <section class="mb-6">
             <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold">
-              <app-icon name="lightbulb" class="text-accent-ink" /> Gợi ý
-              <span class="text-xs font-normal text-muted">(mở từng cái khi bí)</span>
+              <app-icon name="lightbulb" class="text-accent-ink" /> {{ i18n.t('Gợi ý') }}
+              <span class="text-xs font-normal text-muted">{{
+                i18n.t('(mở từng cái khi bí)')
+              }}</span>
             </h2>
             <div class="space-y-2">
               @for (h of ch.hints; track $index) {
                 @if ($index < hintsShown()) {
                   <p class="glass fade-up rounded-2xl p-3 text-[0.95rem]">
-                    <b class="text-accent-ink">Gợi ý {{ $index + 1 }}.</b> {{ h }}
+                    <b class="text-accent-ink">{{ i18n.t('Gợi ý {n}.', { n: $index + 1 }) }}</b>
+                    {{ h }}
                   </p>
                 }
               }
@@ -124,7 +134,9 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
                   class="btn-secondary"
                   (click)="hintsShown.set(hintsShown() + 1)"
                 >
-                  Mở gợi ý {{ hintsShown() + 1 }}/{{ ch.hints.length }}
+                  {{
+                    i18n.t('Mở gợi ý {n}/{total}', { n: hintsShown() + 1, total: ch.hints.length })
+                  }}
                 </button>
               }
             </div>
@@ -140,18 +152,22 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
               [class.opacity-50]="draft().trim().length < 40"
               (click)="revealed.set(true)"
             >
-              <app-icon name="eye" [size]="16" /> Nộp bài & xem đáp án
+              <app-icon name="eye" [size]="16" /> {{ i18n.t('Nộp bài & xem đáp án') }}
             </button>
           </div>
           @if (draft().trim().length < 40) {
             <p class="mt-2 text-right text-xs text-muted">
-              Hãy viết ít nhất vài câu ({{ draft().trim().length }}/40 ký tự) rồi mới mở đáp án.
+              {{
+                i18n.t('Hãy viết ít nhất vài câu ({n}/40 ký tự) rồi mới mở đáp án.', {
+                  n: draft().trim().length,
+                })
+              }}
             </p>
           }
         } @else {
           <section class="fade-up mb-6">
             <h2 class="mb-2 flex items-center gap-2 text-lg font-semibold">
-              <app-icon name="check" class="text-accent-ink" /> Tự chấm theo rubric
+              <app-icon name="check" class="text-accent-ink" /> {{ i18n.t('Tự chấm theo rubric') }}
             </h2>
             <div class="glass space-y-1 rounded-2xl p-3">
               @for (r of ch.rubric; track $index) {
@@ -165,23 +181,23 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
                     (change)="toggleRubric($index)"
                   />
                   <span class="flex-1 text-[0.95rem] leading-snug">{{ r.item }}</span>
-                  <span class="chip shrink-0">{{ r.points }}đ</span>
+                  <span class="chip shrink-0">{{ i18n.t('{n}đ', { n: r.points }) }}</span>
                 </label>
               }
               <div class="flex items-center justify-between border-t border-line px-2 pt-3">
                 <span class="font-display text-xl font-bold"
                   ><span class="text-gradient">{{ score() }}</span
-                  >/{{ maxScore() }} điểm</span
+                  >{{ i18n.t('/{n} điểm', { n: maxScore() }) }}</span
                 >
                 <button type="button" class="btn-primary" (click)="finish()">
-                  {{ state()?.doneOn ? 'Cập nhật điểm' : 'Hoàn thành' }}
+                  {{ state()?.doneOn ? i18n.t('Cập nhật điểm') : i18n.t('Hoàn thành') }}
                 </button>
               </div>
             </div>
           </section>
 
           <section class="mb-6">
-            <h2 class="mb-2 text-lg font-semibold">Lời giải tham khảo</h2>
+            <h2 class="mb-2 text-lg font-semibold">{{ i18n.t('Lời giải tham khảo') }}</h2>
             <div
               class="glass markdown prose prose-slate max-w-none rounded-2xl p-5 dark:prose-invert"
               [innerHTML]="solutionHtml()"
@@ -189,7 +205,7 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
           </section>
 
           <section class="mb-6">
-            <h2 class="mb-2 text-lg font-semibold">Lỗi hay gặp</h2>
+            <h2 class="mb-2 text-lg font-semibold">{{ i18n.t('Lỗi hay gặp') }}</h2>
             <ul class="glass space-y-2 rounded-2xl p-4 text-[0.95rem]">
               @for (p of ch.pitfalls; track p) {
                 <li class="flex gap-2">
@@ -204,6 +220,7 @@ const DIFFICULTY = ['', 'Cơ bản', 'Trung cấp', 'Nâng cao'];
   `,
 })
 export class Challenge {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   protected readonly store = inject(LearningStore);
   private readonly md = inject(MarkdownService);

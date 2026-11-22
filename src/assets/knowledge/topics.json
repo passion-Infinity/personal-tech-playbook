@@ -7,12 +7,12 @@
   {
     "id": "system-design",
     "name": "System Design",
-    "description": "Distributed systems, scalability, resilience, and architectural patterns."
+    "description": "Hệ phân tán, khả năng mở rộng, khả năng chịu lỗi và các pattern kiến trúc."
   },
   {
     "id": "caching",
     "name": "Caching",
-    "description": "Cache strategies, Redis, invalidation, hot keys, and cache failure modes."
+    "description": "Chiến lược cache, Redis, invalidation, hot key và các kiểu lỗi của cache."
   },
   {
     "id": "backend",
@@ -47,16 +47,16 @@
   {
     "id": "aws",
     "name": "AWS Cloud",
-    "description": "AWS services and architecture for the Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 and beyond."
+    "description": "Dịch vụ và kiến trúc AWS cho Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 và hơn thế nữa."
   },
   {
     "id": "azure",
     "name": "Microsoft Azure",
-    "description": "Azure for AZ-900 / AZ-104: architecture, identity, compute, storage, networking, governance and monitoring."
+    "description": "Azure cho AZ-900 / AZ-104: kiến trúc, danh tính, compute, storage, networking, governance và monitoring."
   },
   {
     "id": "ai-ml",
     "name": "AI & ML",
-    "description": "AI/ML and generative AI for AWS AI Practitioner / ML Engineer and Azure AI-900 / AI-102: concepts, RAG, Bedrock, SageMaker, Azure AI and OpenAI."
+    "description": "AI/ML và generative AI cho AWS AI Practitioner / ML Engineer và Azure AI-900 / AI-102: khái niệm, RAG, Bedrock, SageMaker, Azure AI và OpenAI."
   }
 ]

@@ -17,6 +17,7 @@ import { Playbook } from '../core/models';
 import { PracticeService } from '../core/practice.service';
 import { topicStyle, topicVars } from '../core/topic-style';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 interface Edge {
   from: string;
@@ -34,26 +35,29 @@ type NodeState = 'read' | 'ready' | 'waiting';
     <header class="fade-up mb-6">
       <p class="eyebrow flex items-center gap-2"><app-icon name="map" [size]="14" /> Roadmap</p>
       <h1 class="mt-2 text-3xl font-bold sm:text-4xl">
-        Lộ trình học <span class="text-gradient">từ nền tảng đến chuyên sâu</span>
+        {{ i18n.t('Lộ trình học') }}
+        <span class="text-gradient">{{ i18n.t('từ nền tảng đến chuyên sâu') }}</span>
       </h1>
       <p class="mt-3 max-w-3xl text-muted">
-        Đọc từ <b class="text-ink">trái sang phải</b>: bài ở tầng cao hơn xây trên các bài nối vào
-        nó. Bài không phụ thuộc nhau nằm <b class="text-ink">cùng một tầng</b>. Rê chuột vào một bài
-        để thấy chuỗi tiên quyết và các bài nó mở khoá.
+        {{ i18n.t('Đọc từ') }} <b class="text-ink">{{ i18n.t('trái sang phải') }}</b
+        >:
+        {{ i18n.t('bài ở tầng cao hơn xây trên các bài nối vào nó. Bài không phụ thuộc nhau nằm') }}
+        <b class="text-ink">{{ i18n.t('cùng một tầng') }}</b
+        >. {{ i18n.t('Rê chuột vào một bài để thấy chuỗi tiên quyết và các bài nó mở khoá.') }}
       </p>
       <div class="mt-5 grid max-w-xl grid-cols-3 gap-3">
         <div class="glass rounded-2xl p-3">
-          <p class="text-xs text-muted">Đã đọc</p>
+          <p class="text-xs text-muted">{{ i18n.t('Đã đọc') }}</p>
           <p class="font-display text-2xl font-bold">
             {{ readCount() }}<span class="text-sm text-muted">/{{ kb.playbooks().length }}</span>
           </p>
         </div>
         <div class="glass rounded-2xl p-3">
-          <p class="text-xs text-muted">Số tầng</p>
+          <p class="text-xs text-muted">{{ i18n.t('Số tầng') }}</p>
           <p class="font-display text-2xl font-bold">{{ kb.maxLevel() + 1 }}</p>
         </div>
         <div class="glass rounded-2xl p-3">
-          <p class="text-xs text-muted">Sẵn sàng đọc</p>
+          <p class="text-xs text-muted">{{ i18n.t('Sẵn sàng đọc') }}</p>
           <p class="font-display text-2xl font-bold">{{ readyCount() }}</p>
         </div>
       </div>
@@ -62,7 +66,7 @@ type NodeState = 'read' | 'ready' | 'waiting';
     @if (next().length) {
       <section class="mb-8" aria-labelledby="next-title">
         <h2 id="next-title" class="mb-3 flex items-center gap-2 text-lg font-semibold">
-          <app-icon name="target" class="text-accent-ink" /> Tiếp theo nên học
+          <app-icon name="target" class="text-accent-ink" /> {{ i18n.t('Tiếp theo nên học') }}
         </h2>
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           @for (p of next(); track p.id) {
@@ -73,7 +77,8 @@ type NodeState = 'read' | 'ready' | 'waiting';
             >
               <span class="topic-gradient absolute inset-x-0 top-0 h-1"></span>
               <p class="text-xs text-muted">
-                Tầng {{ kb.levels().get(p.id) }} · {{ kb.topicById().get(p.topicId)?.name }}
+                {{ i18n.t('Tầng {n} ·', { n: kb.levels().get(p.id) }) }}
+                {{ kb.topicById().get(p.topicId)?.name }}
               </p>
               <p class="mt-1 font-semibold leading-snug">{{ p.title }}</p>
             </a>
@@ -83,9 +88,9 @@ type NodeState = 'read' | 'ready' | 'waiting';
     }
 
     <div class="mb-4 flex flex-wrap items-center gap-2">
-      <a routerLink="/roadmap" class="chip-filter" [class.chip-active]="!track()"
-        >Tất cả {{ kb.playbooks().length }}</a
-      >
+      <a routerLink="/roadmap" class="chip-filter" [class.chip-active]="!track()">{{
+        i18n.t('Tất cả {n}', { n: kb.playbooks().length })
+      }}</a>
       @for (t of kb.topics(); track t.id) {
         <a
           routerLink="/roadmap"
@@ -100,14 +105,15 @@ type NodeState = 'read' | 'ready' | 'waiting';
     </div>
     <div class="mb-5 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
       <span class="inline-flex items-center gap-1.5"
-        ><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span> Đã đọc</span
+        ><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span> {{ i18n.t('Đã đọc') }}</span
       >
       <span class="inline-flex items-center gap-1.5"
-        ><span class="h-2.5 w-2.5 rounded-full bg-violet-400"></span> Sẵn sàng (đã đọc các bài tiên
-        quyết)</span
+        ><span class="h-2.5 w-2.5 rounded-full bg-violet-400"></span>
+        {{ i18n.t('Sẵn sàng (đã đọc các bài tiên quyết)') }}</span
       >
       <span class="inline-flex items-center gap-1.5"
-        ><span class="h-2.5 w-2.5 rounded-full bg-slate-500"></span> Nên đọc tiên quyết trước</span
+        ><span class="h-2.5 w-2.5 rounded-full bg-slate-500"></span>
+        {{ i18n.t('Nên đọc tiên quyết trước') }}</span
       >
     </div>
 
@@ -154,13 +160,16 @@ type NodeState = 'read' | 'ready' | 'waiting';
           </svg>
 
           @for (col of columns(); track col.level) {
-            <section class="w-full lg:w-64 lg:shrink-0" [attr.aria-label]="'Tầng ' + col.level">
+            <section
+              class="w-full lg:w-64 lg:shrink-0"
+              [attr.aria-label]="i18n.t('Tầng {n}', { n: col.level })"
+            >
               <h3 class="mb-3 flex items-baseline gap-2">
                 <span
                   class="font-display text-sm font-bold uppercase tracking-wider text-accent-ink"
-                  >Tầng {{ col.level }}</span
+                  >{{ i18n.t('Tầng {n}', { n: col.level }) }}</span
                 >
-                <span class="text-xs text-muted">{{ name(col.level) }}</span>
+                <span class="text-xs text-muted">{{ name(col.level, i18n.lang()) }}</span>
               </h3>
               <div class="flex flex-col gap-3">
                 @for (n of col.nodes; track n.p.id) {
@@ -193,7 +202,9 @@ type NodeState = 'read' | 'ready' | 'waiting';
                     </div>
                     <p class="mt-1 text-[0.95rem] font-semibold leading-snug">{{ n.p.title }}</p>
                     @if (n.pre.length) {
-                      <p class="mt-2 line-clamp-2 text-xs text-muted">Cần: {{ n.preNames }}</p>
+                      <p class="mt-2 line-clamp-2 text-xs text-muted">
+                        {{ i18n.t('Cần: {names}', { names: n.preNames }) }}
+                      </p>
                     }
                   </a>
                 }
@@ -206,6 +217,7 @@ type NodeState = 'read' | 'ready' | 'waiting';
   `,
 })
 export class Roadmap {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   private readonly store = inject(LearningStore);
   private readonly practice = inject(PracticeService);

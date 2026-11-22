@@ -12,6 +12,7 @@ import { map } from 'rxjs';
 import { KnowledgeService } from '../core/knowledge.service';
 import { Exam, Question } from '../core/models';
 import { Icon } from '../shared/icon';
+import { I18n } from '../core/i18n.service';
 
 const BEST_KEY = 'playbook-exams-v1';
 
@@ -63,10 +64,10 @@ function saveBest(best: Record<string, number>): void {
         routerLink="/practice"
         class="mb-3 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
       >
-        <app-icon name="arrowLeft" [size]="14" /> Luyện tập
+        <app-icon name="arrowLeft" [size]="14" /> {{ i18n.t('Luyện tập') }}
       </a>
       <h1 class="text-2xl font-bold sm:text-3xl">
-        {{ exam()?.title ?? 'Thi thử' }}
+        {{ exam()?.title ?? i18n.t('Thi thử') }}
       </h1>
     </header>
 
@@ -74,8 +75,11 @@ function saveBest(best: Record<string, number>): void {
       <div class="glass mx-auto h-72 max-w-2xl animate-pulse rounded-3xl"></div>
     } @else if (!exam()) {
       <p class="mb-4 max-w-2xl text-muted">
-        Đề thi thử đặt giờ, chấm điểm ở cuối và chỉ ra bài cần học lại. Câu hỏi do Playbook tự
-        soạn để luyện tập, không phải đề thi chính thức.
+        {{
+          i18n.t(
+            'Đề thi thử đặt giờ, chấm điểm ở cuối và chỉ ra bài cần học lại. Câu hỏi do Playbook tự soạn để luyện tập, không phải đề thi chính thức.'
+          )
+        }}
       </p>
       <div class="grid gap-4 md:grid-cols-2">
         @for (e of kb.exams(); track e.id) {
@@ -88,31 +92,42 @@ function saveBest(best: Record<string, number>): void {
             <h2 class="mt-3 text-lg font-semibold">{{ e.title }}</h2>
             <p class="mt-1 text-sm text-muted">{{ e.description }}</p>
             <p class="mt-3 text-xs text-muted">
-              {{ e.questionCount }} câu · {{ e.minutes }} phút · đạt {{ e.passPercent }}%
+              {{
+                i18n.t('{q} câu · {m} phút · đạt {p}%', {
+                  q: e.questionCount,
+                  m: e.minutes,
+                  p: e.passPercent,
+                })
+              }}
               @if (best()[e.id] !== undefined) {
-                · điểm cao nhất {{ best()[e.id] }}%
+                {{ i18n.t('· điểm cao nhất {n}%', { n: best()[e.id] }) }}
               }
             </p>
           </a>
         } @empty {
-          <p class="text-muted">Chưa có đề thi.</p>
+          <p class="text-muted">{{ i18n.t('Chưa có đề thi.') }}</p>
         }
       </div>
     } @else if (phase() === 'intro') {
       <div class="glass mx-auto max-w-xl rounded-3xl p-6 text-center sm:p-8">
         <p class="text-muted">{{ exam()!.description }}</p>
         <p class="mt-4 font-semibold">
-          {{ pool().length < exam()!.questionCount ? pool().length : exam()!.questionCount }} câu ·
-          {{ exam()!.minutes }} phút · đạt từ {{ exam()!.passPercent }}%
+          {{
+            i18n.t('{q} câu · {m} phút · đạt từ {p}%', {
+              q: pool().length < exam()!.questionCount ? pool().length : exam()!.questionCount,
+              m: exam()!.minutes,
+              p: exam()!.passPercent,
+            })
+          }}
         </p>
         <ul class="mx-auto mt-4 max-w-sm space-y-1 text-left text-sm text-muted">
-          <li>• Không hiện đáp án trong lúc làm; chấm điểm khi nộp bài.</li>
-          <li>• Hết giờ hệ thống tự nộp. Có thể đánh dấu câu để xem lại.</li>
-          <li>• Câu "chọn tất cả đáp án đúng" phải chọn đủ và đúng.</li>
-          <li>• Đây là đề luyện tập tự soạn, không phải đề thi chính thức.</li>
+          <li>{{ i18n.t('• Không hiện đáp án trong lúc làm; chấm điểm khi nộp bài.') }}</li>
+          <li>{{ i18n.t('• Hết giờ hệ thống tự nộp. Có thể đánh dấu câu để xem lại.') }}</li>
+          <li>{{ i18n.t('• Câu "chọn tất cả đáp án đúng" phải chọn đủ và đúng.') }}</li>
+          <li>{{ i18n.t('• Đây là đề luyện tập tự soạn, không phải đề thi chính thức.') }}</li>
         </ul>
         <button type="button" class="btn-primary mt-6" (click)="start()">
-          <app-icon name="target" [size]="16" /> Bắt đầu
+          <app-icon name="target" [size]="16" /> {{ i18n.t('Bắt đầu') }}
         </button>
       </div>
     } @else if (phase() === 'running') {
@@ -120,7 +135,9 @@ function saveBest(best: Record<string, number>): void {
       <div class="mx-auto max-w-3xl">
         <div class="glass sticky top-2 z-10 mb-4 rounded-2xl p-3">
           <div class="flex items-center justify-between text-sm">
-            <span>Câu {{ index() + 1 }} / {{ questions().length }}</span>
+            <span>{{
+              i18n.t('Câu {n} / {total}', { n: index() + 1, total: questions().length })
+            }}</span>
             <span
               class="font-mono font-semibold"
               [class.text-rose-500]="remaining() < 60"
@@ -128,7 +145,7 @@ function saveBest(best: Record<string, number>): void {
               >{{ clock() }}</span
             >
             <button type="button" class="btn-secondary !py-1 text-xs" (click)="submit(false)">
-              Nộp bài
+              {{ i18n.t('Nộp bài') }}
             </button>
           </div>
           <div class="mt-2 flex flex-wrap gap-1">
@@ -140,7 +157,7 @@ function saveBest(best: Record<string, number>): void {
                 [class.text-white]="answered(x.id)"
                 [class.!border-amber-400]="flags().has(x.id)"
                 [class.ring-2]="i === index()"
-                [attr.aria-label]="'Tới câu ' + (i + 1)"
+                [attr.aria-label]="i18n.t('Tới câu {n}', { n: i + 1 })"
                 (click)="index.set(i)"
               >
                 {{ i + 1 }}
@@ -155,7 +172,9 @@ function saveBest(best: Record<string, number>): void {
           </div>
           <h2 class="text-lg font-semibold leading-snug sm:text-xl">{{ q.question }}</h2>
           @if ((q.answer?.length ?? 0) > 1) {
-            <p class="mt-3 text-xs font-medium text-accent-ink">Chọn tất cả đáp án đúng</p>
+            <p class="mt-3 text-xs font-medium text-accent-ink">
+              {{ i18n.t('Chọn tất cả đáp án đúng') }}
+            </p>
           }
           <div class="mt-4 space-y-2" role="group">
             @for (o of q.options ?? []; track $index) {
@@ -175,15 +194,19 @@ function saveBest(best: Record<string, number>): void {
           </div>
           <div class="mt-5 flex flex-wrap justify-between gap-2">
             <button type="button" class="btn-secondary" [disabled]="index() === 0" (click)="go(-1)">
-              Câu trước
+              {{ i18n.t('Câu trước') }}
             </button>
             <button type="button" class="btn-secondary" (click)="toggleFlag(q.id)">
-              {{ flags().has(q.id) ? 'Bỏ đánh dấu' : 'Đánh dấu xem lại' }}
+              {{ flags().has(q.id) ? i18n.t('Bỏ đánh dấu') : i18n.t('Đánh dấu xem lại') }}
             </button>
             @if (index() < questions().length - 1) {
-              <button type="button" class="btn-primary" (click)="go(1)">Câu sau</button>
+              <button type="button" class="btn-primary" (click)="go(1)">
+                {{ i18n.t('Câu sau') }}
+              </button>
             } @else {
-              <button type="button" class="btn-primary" (click)="submit(false)">Nộp bài</button>
+              <button type="button" class="btn-primary" (click)="submit(false)">
+                {{ i18n.t('Nộp bài') }}
+              </button>
             }
           </div>
         </section>
@@ -194,28 +217,40 @@ function saveBest(best: Record<string, number>): void {
           <h2 class="text-4xl font-bold">
             <span class="text-gradient">{{ score().percent }}%</span>
           </h2>
-          <p class="mt-1 text-lg font-semibold" [class.text-emerald-500]="score().passed" [class.text-rose-500]="!score().passed">
-            {{ score().passed ? 'Đạt' : 'Chưa đạt' }} (mốc {{ exam()!.passPercent }}%)
+          <p
+            class="mt-1 text-lg font-semibold"
+            [class.text-emerald-500]="score().passed"
+            [class.text-rose-500]="!score().passed"
+          >
+            {{ score().passed ? i18n.t('Đạt') : i18n.t('Chưa đạt') }}
+            {{ i18n.t('(mốc {p}%)', { p: exam()!.passPercent }) }}
           </p>
           <p class="mt-1 text-sm text-muted">
-            {{ score().correct }}/{{ questions().length }} câu đúng · thời gian làm
-            {{ usedLabel() }}{{ timedOut() ? ' · hết giờ' : '' }}
+            {{
+              i18n.t('{c}/{t} câu đúng · thời gian làm', {
+                c: score().correct,
+                t: questions().length,
+              })
+            }}
+            {{ usedLabel() }}{{ timedOut() ? ' · ' + i18n.t('hết giờ') : '' }}
           </p>
         </section>
 
-        <h3 class="mb-2 mt-6 font-semibold">Theo bài học (yếu nhất trước)</h3>
+        <h3 class="mb-2 mt-6 font-semibold">{{ i18n.t('Theo bài học (yếu nhất trước)') }}</h3>
         <ul class="space-y-2">
           @for (r of breakdown(); track r.id) {
             <li class="glass flex items-center justify-between gap-3 rounded-2xl p-3 text-sm">
-              <a [routerLink]="['/playbooks', r.id]" class="min-w-0 flex-1 truncate hover:underline">{{
-                r.title
-              }}</a>
+              <a
+                [routerLink]="['/playbooks', r.id]"
+                class="min-w-0 flex-1 truncate hover:underline"
+                >{{ r.title }}</a
+              >
               <span class="shrink-0 text-muted">{{ r.correct }}/{{ r.total }}</span>
             </li>
           }
         </ul>
 
-        <h3 class="mb-2 mt-6 font-semibold">Xem lại từng câu</h3>
+        <h3 class="mb-2 mt-6 font-semibold">{{ i18n.t('Xem lại từng câu') }}</h3>
         <ul class="space-y-3">
           @for (x of questions(); track x.id; let i = $index) {
             <li class="glass rounded-2xl p-4">
@@ -232,11 +267,13 @@ function saveBest(best: Record<string, number>): void {
                   <li
                     class="rounded-lg px-2 py-1"
                     [class.bg-emerald-500/15]="x.answer?.includes($index)"
-                    [class.bg-rose-500/15]="chosen(x.id).includes($index) && !x.answer?.includes($index)"
+                    [class.bg-rose-500/15]="
+                      chosen(x.id).includes($index) && !x.answer?.includes($index)
+                    "
                   >
                     {{ letters[$index] }}. {{ o }}
                     @if (chosen(x.id).includes($index)) {
-                      <span class="text-xs text-muted"> (bạn chọn)</span>
+                      <span class="text-xs text-muted"> {{ i18n.t('(bạn chọn)') }}</span>
                     }
                   </li>
                 }
@@ -248,7 +285,7 @@ function saveBest(best: Record<string, number>): void {
                 [routerLink]="['/playbooks', x.playbookId]"
                 class="mt-2 inline-flex items-center gap-1 text-xs text-accent-ink hover:underline"
               >
-                <app-icon name="book" [size]="12" /> Đọc lại:
+                <app-icon name="book" [size]="12" /> {{ i18n.t('Đọc lại:') }}
                 {{ kb.playbookById().get(x.playbookId)?.title }}
               </a>
             </li>
@@ -256,15 +293,16 @@ function saveBest(best: Record<string, number>): void {
         </ul>
         <div class="mt-6 flex flex-wrap justify-center gap-3">
           <button type="button" class="btn-primary" (click)="start()">
-            <app-icon name="rotate" [size]="16" /> Làm lại với bộ câu mới
+            <app-icon name="rotate" [size]="16" /> {{ i18n.t('Làm lại với bộ câu mới') }}
           </button>
-          <a routerLink="/practice/exam" class="btn-secondary">Chọn đề khác</a>
+          <a routerLink="/practice/exam" class="btn-secondary">{{ i18n.t('Chọn đề khác') }}</a>
         </div>
       </div>
     }
   `,
 })
 export class ExamPage {
+  protected readonly i18n = inject(I18n);
   protected readonly kb = inject(KnowledgeService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
@@ -310,7 +348,7 @@ export class ExamPage {
   });
   protected readonly usedLabel = computed(() => {
     const used = Math.max(0, this.total - this.remaining());
-    return `${Math.floor(used / 60)} phút ${used % 60} giây`;
+    return this.i18n.t('{m} phút {s} giây', { m: Math.floor(used / 60), s: used % 60 });
   });
 
   protected readonly score = computed(() => {
@@ -370,11 +408,7 @@ export class ExamPage {
     const multi = (q.answer?.length ?? 0) > 1;
     this.answers.update((a) => {
       const cur = a[q.id] ?? [];
-      const next = multi
-        ? cur.includes(i)
-          ? cur.filter((x) => x !== i)
-          : [...cur, i]
-        : [i];
+      const next = multi ? (cur.includes(i) ? cur.filter((x) => x !== i) : [...cur, i]) : [i];
       return { ...a, [q.id]: next };
     });
   }

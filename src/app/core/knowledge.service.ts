@@ -1,26 +1,76 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, catchError, forkJoin, of, shareReplay } from 'rxjs';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Observable, catchError, forkJoin, map, of, shareReplay } from 'rxjs';
+import { I18n } from './i18n.service';
 import { Challenge, Exam, Keyword, Playbook, Question, Topic } from './models';
 
 const BASE = 'assets/knowledge';
 
-export const LEVEL_NAMES = ['Nền tảng', 'Cơ bản', 'Trung cấp', 'Nâng cao', 'Chuyên sâu'];
-export const levelName = (level: number): string =>
-  LEVEL_NAMES[Math.min(level, LEVEL_NAMES.length - 1)];
+export const LEVEL_NAMES: Record<'vi' | 'en', string[]> = {
+  vi: ['Nền tảng', 'Cơ bản', 'Trung cấp', 'Nâng cao', 'Chuyên sâu'],
+  en: ['Foundations', 'Basics', 'Intermediate', 'Advanced', 'Expert'],
+};
+export const levelName = (level: number, lang: 'vi' | 'en' = 'vi'): string => {
+  const names = LEVEL_NAMES[lang];
+  return names[Math.min(level, names.length - 1)];
+};
+
+/** English overlay: translated text keyed by the id of the Vietnamese source item. */
+type Overlay<T> = Partial<T> & { id: string };
+const byId = <T extends { id: string }>(list: T[], overlay: Overlay<T>[]): T[] => {
+  if (!overlay.length) return list;
+  const map = new Map(overlay.map((o) => [o.id, o]));
+  return list.map((item) => {
+    const o = map.get(item.id);
+    return o ? ({ ...item, ...o } as T) : item;
+  });
+};
 
 /** Loads the static, version-controlled knowledge index once and exposes it as signals. */
 @Injectable({ providedIn: 'root' })
 export class KnowledgeService {
   private readonly http = inject(HttpClient);
+  private readonly i18n = inject(I18n);
   private readonly markdownCache = new Map<string, Observable<string>>();
 
-  readonly topics = signal<Topic[]>([]);
-  readonly keywords = signal<Keyword[]>([]);
-  readonly playbooks = signal<Playbook[]>([]);
-  readonly questions = signal<Question[]>([]);
-  readonly challenges = signal<Challenge[]>([]);
-  readonly exams = signal<Exam[]>([]);
+  // Vietnamese source of truth + optional English overlay (src/assets/knowledge/en/*.json).
+  private readonly viTopics = signal<Topic[]>([]);
+  private readonly viKeywords = signal<Keyword[]>([]);
+  private readonly viPlaybooks = signal<Playbook[]>([]);
+  private readonly viQuestions = signal<Question[]>([]);
+  private readonly viChallenges = signal<Challenge[]>([]);
+  private readonly viExams = signal<Exam[]>([]);
+  private readonly enTopics = signal<Overlay<Topic>[]>([]);
+  private readonly enKeywords = signal<Overlay<Keyword>[]>([]);
+  private readonly enPlaybooks = signal<Overlay<Playbook>[]>([]);
+  private readonly enQuestions = signal<Overlay<Question>[]>([]);
+  private readonly enChallenges = signal<Overlay<Challenge>[]>([]);
+  private readonly enExams = signal<Overlay<Exam>[]>([]);
+  private enRequested = false;
+  readonly enLoaded = signal(false);
+
+  readonly topics = computed(() =>
+    this.i18n.isEn() ? byId(this.viTopics(), this.enTopics()) : this.viTopics(),
+  );
+  readonly keywords = computed(() =>
+    this.i18n.isEn() ? byId(this.viKeywords(), this.enKeywords()) : this.viKeywords(),
+  );
+  readonly playbooks = computed(() =>
+    this.i18n.isEn() ? byId(this.viPlaybooks(), this.enPlaybooks()) : this.viPlaybooks(),
+  );
+  readonly questions = computed(() =>
+    this.i18n.isEn() ? mergeQuestions(this.viQuestions(), this.enQuestions()) : this.viQuestions(),
+  );
+  readonly challenges = computed(() =>
+    this.i18n.isEn()
+      ? mergeChallenges(this.viChallenges(), this.enChallenges())
+      : this.viChallenges(),
+  );
+  readonly exams = computed(() =>
+    this.i18n.isEn() ? byId(this.viExams(), this.enExams()) : this.viExams(),
+  );
+  /** Ids of playbooks that have an English markdown file. */
+  readonly translatedPlaybooks = computed(() => new Set(this.enPlaybooks().map((p) => p.id)));
   readonly loaded = signal(false);
   readonly error = signal<string | null>(null);
 
@@ -185,6 +235,9 @@ export class KnowledgeService {
   });
 
   constructor() {
+    effect(() => {
+      if (this.i18n.isEn()) this.loadEnglish();
+    });
     // Questions/challenges are optional so older deployments of the index keep working.
     forkJoin({
       topics: this.http.get<Topic[]>(`${BASE}/topics.json`),
@@ -197,12 +250,12 @@ export class KnowledgeService {
       exams: this.http.get<Exam[]>(`${BASE}/exams.json`).pipe(catchError(() => of([]))),
     }).subscribe({
       next: ({ topics, keywords, playbooks, questions, challenges, exams }) => {
-        this.exams.set(exams);
-        this.topics.set(topics);
-        this.keywords.set(keywords);
-        this.playbooks.set(playbooks);
-        this.questions.set(questions);
-        this.challenges.set(challenges);
+        this.viExams.set(exams);
+        this.viTopics.set(topics);
+        this.viKeywords.set(keywords);
+        this.viPlaybooks.set(playbooks);
+        this.viQuestions.set(questions);
+        this.viChallenges.set(challenges);
         this.loaded.set(true);
       },
       error: () => {
@@ -210,6 +263,44 @@ export class KnowledgeService {
         this.loaded.set(true);
       },
     });
+  }
+
+  private loadEnglish(): void {
+    if (this.enRequested) return;
+    this.enRequested = true;
+    const get = <T>(name: string) =>
+      this.http.get<T[]>(`${BASE}/en/${name}.json`).pipe(catchError(() => of([] as T[])));
+    forkJoin({
+      topics: get<Overlay<Topic>>('topics'),
+      keywords: get<Overlay<Keyword>>('keywords'),
+      playbooks: get<Overlay<Playbook>>('playbooks'),
+      questions: get<Overlay<Question>>('questions'),
+      challenges: get<Overlay<Challenge>>('challenges'),
+      exams: get<Overlay<Exam>>('exams'),
+    }).subscribe((r) => {
+      this.enTopics.set(r.topics);
+      this.enKeywords.set(r.keywords);
+      this.enPlaybooks.set(r.playbooks);
+      this.enQuestions.set(r.questions);
+      this.enChallenges.set(r.challenges);
+      this.enExams.set(r.exams);
+      this.enLoaded.set(true);
+    });
+  }
+
+  /** Markdown for the active language; falls back to Vietnamese when no translation exists yet. */
+  getPlaybookMarkdown(p: {
+    id: string;
+    filePath: string;
+  }): Observable<{ md: string; fallback: boolean }> {
+    if (this.i18n.isEn() && this.translatedPlaybooks().has(p.id)) {
+      const en = p.filePath.replace('assets/knowledge/', `${BASE}/en/`);
+      return this.getMarkdown(en).pipe(
+        map((md) => ({ md, fallback: false })),
+        catchError(() => this.getMarkdown(p.filePath).pipe(map((md) => ({ md, fallback: true })))),
+      );
+    }
+    return this.getMarkdown(p.filePath).pipe(map((md) => ({ md, fallback: this.i18n.isEn() })));
   }
 
   getMarkdown(filePath: string): Observable<string> {
@@ -221,4 +312,26 @@ export class KnowledgeService {
     }
     return req;
   }
+}
+
+function mergeQuestions(list: Question[], overlay: Overlay<Question>[]): Question[] {
+  if (!overlay.length) return list;
+  const map = new Map(overlay.map((o) => [o.id, o]));
+  return list.map((q) => {
+    const o = map.get(q.id);
+    if (!o) return q;
+    const { code, ...rest } = o;
+    return { ...q, ...rest, code: code ? { ...q.code!, ...code } : q.code } as Question;
+  });
+}
+
+function mergeChallenges(list: Challenge[], overlay: Overlay<Challenge>[]): Challenge[] {
+  if (!overlay.length) return list;
+  const map = new Map(overlay.map((o) => [o.id, o]));
+  return list.map((c) => {
+    const o = map.get(c.id);
+    if (!o) return c;
+    const rubric = c.rubric.map((r, i) => ({ ...r, item: o.rubric?.[i]?.item ?? r.item }));
+    return { ...c, ...o, rubric } as Challenge;
+  });
 }

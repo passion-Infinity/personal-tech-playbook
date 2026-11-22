@@ -13,6 +13,7 @@ import { KnowledgeService } from '../core/knowledge.service';
 import { SearchResult, search } from '../core/search';
 import { UiService } from '../core/ui.service';
 import { Icon } from './icon';
+import { I18n } from '../core/i18n.service';
 
 @Component({
   selector: 'app-search-palette',
@@ -28,7 +29,7 @@ import { Icon } from './icon';
           class="flex max-h-[75vh] w-full max-w-2xl flex-col overflow-hidden glass-strong rounded-3xl shadow-2xl shadow-violet-950/40"
           role="dialog"
           aria-modal="true"
-          aria-label="Search playbooks and keywords"
+          aria-label="{{ i18n.t('Tìm playbook và từ khoá') }}"
           (click)="$event.stopPropagation()"
         >
           <div class="flex items-center gap-3 border-b border-line px-4">
@@ -37,7 +38,7 @@ import { Icon } from './icon';
               #input
               type="search"
               class="h-14 w-full bg-transparent text-base text-ink outline-none placeholder:text-muted"
-              placeholder="Search playbooks, English terms, nghĩa tiếng Việt…"
+              placeholder="{{ i18n.t('Tìm playbook, term tiếng Anh, nghĩa tiếng Việt…') }}"
               [value]="ui.paletteQuery()"
               (input)="onInput($event)"
               (keydown)="onKey($event)"
@@ -50,7 +51,7 @@ import { Icon } from './icon';
           <ul id="palette-results" class="scroll-soft overflow-y-auto p-2" role="listbox">
             @if (!ui.paletteQuery().trim()) {
               <li class="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted">
-                Recent playbooks
+                {{ i18n.t('Playbook gần đây') }}
               </li>
             }
             @for (r of results(); track r.kind + r.item.id; let i = $index) {
@@ -83,16 +84,16 @@ import { Icon } from './icon';
               </li>
             } @empty {
               <li class="px-3 py-10 text-center text-sm text-muted">
-                No results for “{{ ui.paletteQuery() }}”.
+                {{ i18n.t('Không có kết quả cho “{q}”.', { q: ui.paletteQuery() }) }}
               </li>
             }
           </ul>
           <div
             class="hidden items-center gap-4 border-t border-line px-4 py-2 text-xs text-muted sm:flex"
           >
-            <span><kbd class="kbd">↑</kbd> <kbd class="kbd">↓</kbd> navigate</span>
-            <span><kbd class="kbd">Enter</kbd> open</span>
-            <span class="ml-auto">{{ results().length }} results</span>
+            <span><kbd class="kbd">↑</kbd> <kbd class="kbd">↓</kbd> {{ i18n.t('di chuyển') }}</span>
+            <span><kbd class="kbd">Enter</kbd> {{ i18n.t('mở') }}</span>
+            <span class="ml-auto">{{ i18n.t('{n} kết quả', { n: results().length }) }}</span>
           </div>
         </div>
       </div>
@@ -100,6 +101,7 @@ import { Icon } from './icon';
   `,
 })
 export class SearchPalette {
+  protected readonly i18n = inject(I18n);
   protected readonly ui = inject(UiService);
   private readonly kb = inject(KnowledgeService);
   private readonly router = inject(Router);
