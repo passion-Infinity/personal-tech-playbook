@@ -2098,5 +2098,90 @@
     "id": "bedrock-model-customization",
     "meaning": "Ways to customize foundation models",
     "definition": "Fine-tuning uses labeled data; continued pre-training uses unlabeled data to add domain knowledge."
+  },
+  {
+    "id": "sagemaker-inference-options",
+    "meaning": "Four ways to deploy a model",
+    "definition": "Real-time, serverless, asynchronous and batch transform — choose by latency, payload and load."
+  },
+  {
+    "id": "sagemaker-feature-store",
+    "meaning": "A feature store shared by training and inference",
+    "definition": "Stores features both online and offline to avoid skew between training and prediction."
+  },
+  {
+    "id": "sagemaker-model-monitor",
+    "meaning": "Monitors drift and quality after deployment",
+    "definition": "Compares real data with a baseline built from training data to alert on drift."
+  },
+  {
+    "id": "sagemaker-autopilot",
+    "meaning": "Automatically tries many algorithms and hyperparameters",
+    "definition": "Delivers good models with little code and supports explanations."
+  },
+  {
+    "id": "sagemaker-jumpstart",
+    "meaning": "Pre-trained models and ready-made templates",
+    "definition": "Quickly deploy or fine-tune popular models."
+  },
+  {
+    "id": "sagemaker-pipelines",
+    "meaning": "Automate the training and deployment workflow",
+    "definition": "CI/CD for ML with a Model Registry managing versions and approvals."
+  },
+  {
+    "id": "textract-vs-rekognition",
+    "meaning": "Extracting document structure versus recognizing images",
+    "definition": "Textract reads text, tables and forms in scanned documents; Rekognition recognizes objects, faces and text in images/video."
+  },
+  {
+    "id": "amazon-comprehend",
+    "meaning": "AWS's ready-made NLP service",
+    "definition": "Analyzes sentiment, entities, key phrases, language and detects PII in text."
+  },
+  {
+    "id": "transcribe-vs-polly",
+    "meaning": "Speech to text and the reverse",
+    "definition": "Transcribe is speech-to-text; Polly is text-to-speech."
+  },
+  {
+    "id": "amazon-lex",
+    "meaning": "Build conversational chatbots and voice bots",
+    "definition": "Uses Alexa-like technology to understand intents and fill slots in conversation."
+  },
+  {
+    "id": "amazon-kendra",
+    "meaning": "Enterprise search powered by ML",
+    "definition": "Semantic search across many internal document sources."
+  },
+  {
+    "id": "aws-ai-ml-stack",
+    "meaning": "Three layers: AI services, ML platforms and infrastructure",
+    "definition": "AI services are ready-made APIs; Bedrock/SageMaker build and customize; the bottom layer is GPU, Trainium and Inferentia infrastructure."
+  },
+  {
+    "id": "azure-ai-multi-vs-single-service",
+    "meaning": "Two kinds of AI services resource",
+    "definition": "Multi-service uses one endpoint and key for many services; single-service separates endpoint, key and cost per service."
+  },
+  {
+    "id": "azure-document-intelligence",
+    "meaning": "Extract data from invoices, receipts and forms",
+    "definition": "Formerly Form Recognizer; uses prebuilt or custom models to get text, tables and key-values."
+  },
+  {
+    "id": "azure-ai-language",
+    "meaning": "Azure's NLP capabilities",
+    "definition": "Sentiment analysis, entity recognition, summarization, CLU for conversational intent understanding and question answering."
+  },
+  {
+    "id": "azure-ai-speech",
+    "meaning": "Two-way speech and text conversion",
+    "definition": "Speech-to-text, text-to-speech and speech translation."
+  },
+  {
+    "id": "ai-900-workloads",
+    "meaning": "AI workload types in the AI-900 exam",
+    "definition": "Computer vision, NLP, document intelligence, knowledge mining and generative AI."
   }
 ]

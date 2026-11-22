@@ -4530,5 +4530,134 @@
       "Glue"
     ],
     "explanation": "Bedrock offers models from many providers through a unified API."
+  },
+  {
+    "id": "amazon-sagemaker-01",
+    "question": "A company scores credit for 5 million applications every night and does not need an endpoint running all day. What do they choose?",
+    "options": [
+      "Real-time endpoint",
+      "Batch transform",
+      "Serverless",
+      "Asynchronous"
+    ],
+    "explanation": "Batch transform runs in batches and then stops, so there is no idle endpoint cost."
+  },
+  {
+    "id": "amazon-sagemaker-02",
+    "question": "A model is deployed and the team wants to automatically detect when the input data distribution deviates from training time. What do they use?",
+    "options": [
+      "Ground Truth",
+      "Model Monitor",
+      "Autopilot",
+      "Canvas"
+    ],
+    "explanation": "Model Monitor compares against a baseline to detect drift. Ground Truth is tempting because it relates to data, but it is used for labeling."
+  },
+  {
+    "id": "amazon-sagemaker-03",
+    "question": "A model scored well in training but performs poorly in production because features are computed differently in train and serve. What problem does Feature Store solve?",
+    "modelAnswer": "Feature Store keeps features shared in both offline (training) and online (inference) stores with a single feature definition, avoiding training-serving skew and allowing features to be reused across models.",
+    "keyPoints": [
+      "One definition for train and serve",
+      "Avoid training-serving skew",
+      "Reuse features"
+    ]
+  },
+  {
+    "id": "amazon-sagemaker-04",
+    "question": "You need to train and deploy a custom model at scale on AWS. What do you choose?",
+    "options": [
+      "SageMaker",
+      "Rekognition",
+      "Polly",
+      "Textract"
+    ],
+    "explanation": "SageMaker is the full ML platform. The others are ready-made AI for specific tasks."
+  },
+  {
+    "id": "aws-ai-services-01",
+    "question": "A company wants to extract key–value pairs and tables from thousands of scanned invoices. What do they use?",
+    "options": [
+      "Rekognition",
+      "Textract",
+      "Polly",
+      "Translate"
+    ],
+    "explanation": "Textract understands document structure. Rekognition is tempting because it also processes images, but it focuses on recognizing objects/faces."
+  },
+  {
+    "id": "aws-ai-services-02",
+    "question": "A call center wants to convert recordings to text for analysis. What do they use?",
+    "options": [
+      "Polly",
+      "Transcribe",
+      "Lex",
+      "Kendra"
+    ],
+    "explanation": "Transcribe is speech-to-text. Polly does the reverse (text-to-speech)."
+  },
+  {
+    "id": "aws-ai-services-03",
+    "question": "A team wants to OCR invoices, translate documents and analyze the sentiment of customer reviews. When do you use a ready-made AI service instead of training your own?",
+    "modelAnswer": "When the problem is a common task such as OCR, translation, sentiment analysis or object recognition and no deep customization is needed: it is fast, cheap, needs no ML expertise and is pay-per-use. Train your own (SageMaker) only when the data/business need is very specific or accuracy must exceed what ready-made services can deliver.",
+    "keyPoints": [
+      "Common tasks",
+      "Fast, cheap, no ML needed",
+      "Train your own when very specific"
+    ]
+  },
+  {
+    "id": "aws-ai-services-04",
+    "question": "You need to extract text and tables from scanned documents. What do you use?",
+    "options": [
+      "Textract",
+      "Polly",
+      "Lex",
+      "Personalize"
+    ],
+    "explanation": "Textract provides structured OCR."
+  },
+  {
+    "id": "azure-ai-services-01",
+    "question": "An accounting department wants to extract structured data from invoices using a prebuilt model on Azure. What do they choose?",
+    "options": [
+      "AI Speech",
+      "Document Intelligence",
+      "Translator",
+      "Custom Vision"
+    ],
+    "explanation": "Document Intelligence (formerly Form Recognizer) has a prebuilt invoice model."
+  },
+  {
+    "id": "azure-ai-services-02",
+    "question": "You need to index documents and enrich them with OCR/entity extraction for search (knowledge mining). What do you use?",
+    "options": [
+      "Azure AI Search",
+      "Event Grid",
+      "Logic Apps",
+      "Bastion"
+    ],
+    "explanation": "AI Search indexes and enriches with skillsets."
+  },
+  {
+    "id": "azure-ai-services-03",
+    "question": "A team needs Vision, Speech and Language in the same application. How does a multi-service resource differ from a single-service resource and when should you choose each?",
+    "modelAnswer": "A multi-service resource uses one endpoint and key for many AI services, convenient to manage with a combined bill. A single-service resource has its own endpoint, key and cost per service, easier for permissions and detailed tracking. Choose multi-service for convenience and single-service when you need to separate permissions/cost.",
+    "keyPoints": [
+      "Multi-service: one endpoint/key",
+      "Single-service: separate per service",
+      "Choose by management need"
+    ]
+  },
+  {
+    "id": "azure-ai-services-04",
+    "question": "You need to recognize speech and convert it to text on Azure. What do you use?",
+    "options": [
+      "Azure AI Speech",
+      "Key Vault",
+      "Event Hubs",
+      "Bastion"
+    ],
+    "explanation": "AI Speech provides speech-to-text."
   }
 ]

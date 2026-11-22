@@ -428,5 +428,20 @@
     "id": "amazon-bedrock",
     "title": "Amazon Bedrock",
     "summary": "Use many foundation models through one serverless API and build RAG, agents and guardrails without managing infrastructure."
+  },
+  {
+    "id": "amazon-sagemaker",
+    "title": "Amazon SageMaker AI",
+    "summary": "Build, train, deploy and monitor custom ML models end-to-end with inference options and MLOps."
+  },
+  {
+    "id": "aws-ai-services",
+    "title": "AWS AI Services",
+    "summary": "Solve vision, language, speech and search problems with AWS's ready-made AI APIs, no training required."
+  },
+  {
+    "id": "azure-ai-services",
+    "title": "Azure AI Services",
+    "summary": "Pick the right ready-made Azure AI service for each AI workload: vision, language, speech, documents and search."
   }
 ]
