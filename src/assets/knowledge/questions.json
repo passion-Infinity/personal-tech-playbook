@@ -5311,62 +5311,62 @@
     "playbookId": "api-gateway-step-functions",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Thời gian tích hợp tối đa mặc định của API Gateway?",
+    "question": "Một endpoint gọi backend xử lý khoảng 40 giây và thường trả 504 qua API Gateway. Thời gian tích hợp tối đa mặc định là bao nhiêu và nên làm gì?",
     "options": [
-      "3 giây",
-      "29 giây",
-      "5 phút",
-      "15 phút"
+      "3 giây, tăng RAM",
+      "29 giây, chuyển sang xử lý bất đồng bộ",
+      "5 phút, tăng timeout Lambda",
+      "15 phút, đổi sang HTTP API"
     ],
     "answer": [
       1
     ],
-    "explanation": "Việc dài phải bất đồng bộ."
+    "explanation": "Timeout tích hợp mặc định 29 giây nên việc dài phải bất đồng bộ (SQS/Step Functions). 15 phút dễ nhầm vì là giới hạn của Lambda, không phải của API Gateway."
   },
   {
     "id": "api-gateway-step-functions-02",
     "playbookId": "api-gateway-step-functions",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Workflow đặt hàng nhiều bước có retry và compensation. Chọn?",
+    "question": "Quy trình đặt hàng gồm kiểm tra tồn kho, thanh toán, giao hàng; nếu thanh toán lỗi phải hoàn kho. Chọn gì?",
     "options": [
       "Lambda gọi Lambda",
-      "Step Functions",
+      "Step Functions với Retry và Catch",
       "SNS",
       "CloudFront"
     ],
     "answer": [
       1
     ],
-    "explanation": "Step Functions quản lý trạng thái, retry và Catch."
+    "explanation": "Step Functions quản lý trạng thái, retry và nhánh bù trừ. Lambda gọi Lambda dễ nhầm vì đơn giản, nhưng khó retry/rollback và trả tiền khi chờ."
   },
   {
     "id": "api-gateway-step-functions-03",
     "playbookId": "api-gateway-step-functions",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Express workflow cần chú ý gì?",
+    "question": "Một workflow Express xử lý sự kiện thanh toán và đôi khi tính tiền khách hai lần. Điều gì cần lưu ý?",
     "options": [
-      "Exactly-once",
-      "At-least-once nên cần idempotent",
-      "Chạy tối đa 1 năm",
-      "Không có log"
+      "Express là exactly-once",
+      "Express là at-least-once nên cần thao tác idempotent",
+      "Express chạy tối đa 1 năm",
+      "Express không có log"
     ],
     "answer": [
       1
     ],
-    "explanation": "Express có thể chạy lặp."
+    "explanation": "Express có thể chạy lặp ở chế độ bất đồng bộ. Standard mới là exactly-once cho thực thi workflow, nên dễ nhầm giữa hai chế độ."
   },
   {
     "id": "api-gateway-step-functions-04",
     "playbookId": "api-gateway-step-functions",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao tránh Lambda gọi Lambda đồng bộ?",
-    "modelAnswer": "Hai Lambda cùng bị tính tiền trong lúc một cái chờ cái kia, dễ chạm timeout và khó xử lý lỗi, retry hay rollback. Step Functions hoặc hàng đợi cho phép tách bước, retry có cấu hình và theo dõi trạng thái.",
+    "question": "Một dev chuỗi ba Lambda gọi đồng bộ lẫn nhau để xử lý đơn hàng. Giải thích vì sao nên tránh và thay bằng gì.",
+    "modelAnswer": "Hai Lambda cùng bị tính tiền trong lúc một cái chờ cái kia, dễ chạm timeout và khó xử lý lỗi, retry hay rollback. Step Functions hoặc hàng đợi cho phép tách bước, retry có cấu hình, nhánh Catch bù trừ và theo dõi trạng thái từng bước.",
     "keyPoints": [
       "Trả tiền chờ",
-      "Khó xử lý lỗi",
+      "Khó retry và rollback",
       "Dùng Step Functions hoặc queue"
     ]
   },
@@ -5375,7 +5375,7 @@
     "playbookId": "kinesis-streaming",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần replay dữ liệu 7 ngày và nhiều consumer?",
+    "question": "Hệ thống phân tích cần giữ clickstream 7 ngày để nhiều service đọc và replay khi sửa bug. Chọn gì?",
     "options": [
       "SQS",
       "Kinesis Data Streams",
@@ -5385,14 +5385,14 @@
     "answer": [
       1
     ],
-    "explanation": "Streams giữ retention và nhiều consumer."
+    "explanation": "Streams giữ retention và hỗ trợ nhiều consumer. SQS dễ nhầm vì là queue, nhưng message bị xoá sau khi xử lý và không replay."
   },
   {
     "id": "kinesis-streaming-02",
     "playbookId": "kinesis-streaming",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Nạp log vào S3 định dạng Parquet đơn giản nhất?",
+    "question": "Team cần nạp log vào S3 ở định dạng Parquet với ít code nhất. Chọn gì?",
     "options": [
       "Data Streams + KCL",
       "Firehose",
@@ -5402,14 +5402,14 @@
     "answer": [
       1
     ],
-    "explanation": "Firehose có chuyển đổi định dạng sẵn."
+    "explanation": "Firehose có sẵn chuyển đổi định dạng và giao vào S3. Data Streams dễ nhầm vì cũng nạp dữ liệu, nhưng cần tự viết consumer."
   },
   {
     "id": "kinesis-streaming-03",
     "playbookId": "kinesis-streaming",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Lỗi ProvisionedThroughputExceeded dù tổng shard đủ. Nguyên nhân?",
+    "question": "Stream có 10 shard nhưng liên tục báo ProvisionedThroughputExceeded trong khi tổng throughput chưa đủ 30%. Nguyên nhân?",
     "options": [
       "Hot shard do partition key lệch",
       "Hết retention",
@@ -5419,15 +5419,15 @@
     "answer": [
       0
     ],
-    "explanation": "Một key quá nóng dồn vào một shard."
+    "explanation": "Một key quá nóng dồn vào một shard nên shard đó bị throttle dù tổng còn dư. Hết retention không gây lỗi throughput."
   },
   {
     "id": "kinesis-streaming-04",
     "playbookId": "kinesis-streaming",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích thứ tự bản ghi trong Kinesis.",
-    "modelAnswer": "Thứ tự chỉ được đảm bảo trong từng shard. Partition key băm tới shard, nên các bản ghi cùng key giữ thứ tự. Không có thứ tự toàn cục giữa các shard, và resharding làm thay đổi ánh xạ key.",
+    "question": "Hai bản ghi A và B có cùng partition key và hai bản ghi C, D khác key. Hãy giải thích đảm bảo thứ tự trong Kinesis.",
+    "modelAnswer": "Thứ tự chỉ được đảm bảo trong từng shard. Partition key băm tới shard, nên các bản ghi cùng key giữ thứ tự (A trước B), còn C và D ở shard khác thì không có thứ tự toàn cục so với A/B. Resharding có thể đổi ánh xạ key sang shard khác.",
     "keyPoints": [
       "Thứ tự theo shard",
       "Cùng key cùng shard",
@@ -5439,24 +5439,24 @@
     "playbookId": "aws-data-analytics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Giảm chi phí Athena trên CSV lớn?",
+    "question": "Team chạy Athena trên 2 TB CSV không partition và hoá đơn rất cao. Cách giảm chi phí đúng nhất?",
     "options": [
       "Thêm RAM",
-      "Chuyển Parquet và partition",
-      "Dùng Redshift",
+      "Chuyển Parquet và partition theo cột lọc",
+      "Chuyển sang Redshift",
       "Tăng timeout"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giảm dữ liệu cần quét."
+    "explanation": "Athena tính theo dữ liệu quét nên giảm dữ liệu cần quét. Chuyển sang Redshift dễ nhầm là giải pháp, nhưng không cần thiết nếu chỉ tối ưu định dạng."
   },
   {
     "id": "aws-data-analytics-02",
     "playbookId": "aws-data-analytics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "BI cho nhiều người, join phức tạp, hiệu năng ổn định?",
+    "question": "Hàng trăm analyst chạy dashboard với join phức tạp mỗi ngày và cần hiệu năng ổn định. Chọn?",
     "options": [
       "Athena",
       "Redshift",
@@ -5466,14 +5466,14 @@
     "answer": [
       1
     ],
-    "explanation": "Redshift là warehouse MPP."
+    "explanation": "Redshift là warehouse MPP cho BI thường xuyên. Athena dễ nhầm vì tiện, nhưng trả theo lượng quét và không tối ưu cho tải BI lớn đều đặn."
   },
   {
     "id": "aws-data-analytics-03",
     "playbookId": "aws-data-analytics",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Phân quyền mức cột cho data lake trên nhiều dịch vụ?",
+    "question": "Cần cho phòng marketing chỉ thấy một số cột và dòng của bảng khách hàng trên toàn bộ data lake (Athena, EMR, Redshift Spectrum). Dùng gì?",
     "options": [
       "Bucket policy",
       "Lake Formation",
@@ -5483,17 +5483,17 @@
     "answer": [
       1
     ],
-    "explanation": "Lake Formation quản lý quyền tập trung theo catalog."
+    "explanation": "Lake Formation quản lý quyền cột/dòng tập trung trên catalog. Bucket policy dễ nhầm vì liên quan truy cập, nhưng chỉ ở mức object/prefix."
   },
   {
     "id": "aws-data-analytics-04",
     "playbookId": "aws-data-analytics",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào chọn Athena, khi nào Redshift?",
-    "modelAnswer": "Athena là serverless trả theo dữ liệu quét, hợp truy vấn ad-hoc không thường xuyên trên S3. Redshift là warehouse cluster với storage columnar tối ưu cho workload BI thường xuyên, nhiều người dùng và join phức tạp, chi phí dự đoán được hơn khi tải cao.",
+    "question": "Một công ty có báo cáo ad-hoc cuối tháng và một dashboard BI chạy cả ngày. Khi nào chọn Athena, khi nào Redshift?",
+    "modelAnswer": "Athena là serverless trả theo dữ liệu quét, hợp truy vấn ad-hoc không thường xuyên trên S3. Redshift là warehouse cluster với storage columnar tối ưu cho workload BI thường xuyên, nhiều người dùng và join phức tạp, chi phí dự đoán được hơn khi tải cao. Do đó báo cáo cuối tháng dùng Athena, dashboard chạy cả ngày dùng Redshift.",
     "keyPoints": [
-      "Athena ad-hoc",
+      "Athena ad-hoc, trả theo quét",
       "Redshift BI thường xuyên",
       "Chi phí theo mô hình dùng"
     ]
@@ -5503,7 +5503,7 @@
     "playbookId": "cloudformation-cdk-iac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Giữ lại DB khi xoá stack?",
+    "question": "Team xoá stack ứng dụng nhưng không muốn mất database RDS chứa dữ liệu khách hàng. Cấu hình đúng?",
     "options": [
       "Không thể",
       "DeletionPolicy Retain hoặc Snapshot",
@@ -5513,14 +5513,14 @@
     "answer": [
       1
     ],
-    "explanation": "DeletionPolicy bảo vệ dữ liệu."
+    "explanation": "DeletionPolicy Retain giữ tài nguyên, Snapshot chụp trước khi xoá. Tắt rollback dễ nhầm vì liên quan an toàn, nhưng chỉ ảnh hưởng khi tạo/cập nhật lỗi."
   },
   {
     "id": "cloudformation-cdk-iac-02",
     "playbookId": "cloudformation-cdk-iac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Xem trước tác động trước khi cập nhật production?",
+    "question": "Trước khi cập nhật stack production, team muốn biết tài nguyên nào bị sửa hay bị thay thế. Dùng gì?",
     "options": [
       "Update trực tiếp",
       "Change Set",
@@ -5530,14 +5530,14 @@
     "answer": [
       1
     ],
-    "explanation": "Change set liệt kê thay đổi."
+    "explanation": "Change Set liệt kê thay đổi và cho biết có Replacement không. Drift detection dễ nhầm vì cũng so sánh, nhưng so trạng thái thực với template, không xem trước một lần cập nhật."
   },
   {
     "id": "cloudformation-cdk-iac-03",
     "playbookId": "cloudformation-cdk-iac",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Triển khai cùng template cho 30 account?",
+    "question": "Cần triển khai cùng một template guardrail cho 30 account trong Organizations. Dùng gì?",
     "options": [
       "Chạy tay từng account",
       "StackSets",
@@ -5547,15 +5547,15 @@
     "answer": [
       1
     ],
-    "explanation": "StackSets triển khai đa account."
+    "explanation": "StackSets triển khai một template tới nhiều account và Region. Nested stack dễ nhầm vì chia template, nhưng chạy trong một account."
   },
   {
     "id": "cloudformation-cdk-iac-04",
     "playbookId": "cloudformation-cdk-iac",
     "type": "explain",
     "difficulty": 2,
-    "question": "Drift là gì và xử lý ra sao?",
-    "modelAnswer": "Drift là khi tài nguyên bị sửa ngoài CloudFormation nên khác template. Phát hiện bằng drift detection, xử lý bằng cách cập nhật template cho khớp hoặc khôi phục tài nguyên, và hạn chế sửa tay bằng quyền và quy trình.",
+    "question": "Sau một sự cố, dev phát hiện security group trong production khác với template CloudFormation vì có người sửa tay. Drift là gì và xử lý ra sao?",
+    "modelAnswer": "Drift là khi tài nguyên bị sửa ngoài CloudFormation nên khác template. Phát hiện bằng drift detection, xử lý bằng cách cập nhật template cho khớp hiện trạng hoặc khôi phục tài nguyên về đúng template, đồng thời hạn chế quyền sửa trực tiếp.",
     "keyPoints": [
       "Sửa tay gây lệch",
       "Drift detection",
@@ -5567,24 +5567,24 @@
     "playbookId": "aws-organizations-governance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "SCP có cấp quyền cho IAM user không?",
+    "question": "Một SCP có Allow s3:* gắn vào OU nhưng developer trong OU vẫn bị AccessDenied khi ghi S3. Vì sao?",
     "options": [
-      "Có",
-      "Không, chỉ giới hạn tối đa",
-      "Chỉ cho root",
-      "Chỉ cho S3"
+      "SCP cấp quyền cho IAM user",
+      "SCP chỉ giới hạn tối đa, vẫn cần IAM policy cấp quyền",
+      "SCP chỉ dành cho root",
+      "SCP chỉ dành cho S3"
     ],
     "answer": [
       1
     ],
-    "explanation": "Quyền thực là giao của SCP và IAM policy."
+    "explanation": "Quyền thực là giao của SCP và IAM policy. 'SCP cấp quyền' dễ nhầm vì tên có Allow, nhưng Allow trong SCP chỉ mở trần."
   },
   {
     "id": "aws-organizations-governance-02",
     "playbookId": "aws-organizations-governance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chặn mọi account dùng Region ngoài ap-southeast-1?",
+    "question": "Chính sách yêu cầu mọi account chỉ được dùng Region ap-southeast-1. Cách thực thi tập trung?",
     "options": [
       "IAM của từng user",
       "SCP deny theo aws:RequestedRegion",
@@ -5594,36 +5594,37 @@
     "answer": [
       1
     ],
-    "explanation": "SCP deny theo điều kiện Region."
+    "explanation": "SCP áp cho cả account/OU với điều kiện Region. IAM từng user dễ nhầm nhưng khó nhân rộng và có thể bị sửa."
   },
   {
     "id": "aws-organizations-governance-03",
     "playbookId": "aws-organizations-governance",
     "type": "mcq",
     "difficulty": 3,
-    "question": "SCP không áp dụng cho?",
+    "question": "Admin gắn SCP deny cực chặt vào root của Organization nhưng người dùng trong management account vẫn làm được. Vì sao?",
     "options": [
-      "Member account",
-      "Management account",
-      "OU",
-      "Root user của member"
+      "Member account không bị ảnh hưởng",
+      "SCP không áp dụng cho management account",
+      "OU bị lỗi",
+      "Root user của member bị chặn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Management account không bị SCP giới hạn."
+    "explanation": "Management account không bị SCP giới hạn, vì vậy không nên chạy workload ở đó."
   },
   {
     "id": "aws-organizations-governance-04",
     "playbookId": "aws-organizations-governance",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao tách nhiều account?",
-    "modelAnswer": "Account là ranh giới cô lập mạnh nhất: giới hạn blast radius, tách quyền và chi phí theo môi trường hoặc workload, đặt guardrail bằng SCP và đáp ứng compliance. Đổi lại cần quản lý mạng và truy cập chéo account.",
+    "question": "Công ty đang chạy mọi workload trong một account và cân nhắc tách nhiều account. Giải thích vì sao tách và cái giá phải trả.",
+    "modelAnswer": "Account là ranh giới cô lập mạnh nhất: giới hạn blast radius, tách quyền và chi phí theo môi trường hoặc workload, đặt guardrail bằng SCP và đáp ứng compliance. Cái giá là phải quản lý mạng, truy cập chéo account, tooling và chuẩn hoá bằng Control Tower/Identity Center.",
     "keyPoints": [
       "Cô lập blast radius",
       "Tách quyền và chi phí",
-      "Guardrail SCP"
+      "Guardrail SCP",
+      "Chi phí vận hành đa account"
     ]
   },
   {
@@ -5631,7 +5632,7 @@
     "playbookId": "aws-well-architected-framework",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Trụ cột nào gồm right-sizing và Savings Plans?",
+    "question": "Team áp dụng right-sizing, Savings Plans và Spot để giảm hoá đơn. Họ đang cải thiện trụ cột nào?",
     "options": [
       "Security",
       "Cost Optimization",
@@ -5641,14 +5642,14 @@
     "answer": [
       1
     ],
-    "explanation": "Tối ưu chi phí."
+    "explanation": "Đó là Cost Optimization. Sustainability dễ nhầm vì right-sizing cũng giảm lãng phí tài nguyên, nhưng mục tiêu chính ở đây là chi phí."
   },
   {
     "id": "aws-well-architected-framework-02",
     "playbookId": "aws-well-architected-framework",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Multi-AZ thuộc trụ cột nào?",
+    "question": "Một lead nói 'chúng ta triển khai multi-AZ để chịu lỗi datacenter'. Điều này thuộc trụ cột nào?",
     "options": [
       "Cost",
       "Reliability",
@@ -5658,36 +5659,36 @@
     "answer": [
       1
     ],
-    "explanation": "Chịu lỗi nằm ở Reliability."
+    "explanation": "Chịu lỗi và tự phục hồi thuộc Reliability. Cost dễ nhầm vì multi-AZ tốn thêm tiền, nhưng đó là hệ quả chứ không phải mục tiêu."
   },
   {
     "id": "aws-well-architected-framework-03",
     "playbookId": "aws-well-architected-framework",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Phát biểu đúng về HA và DR?",
+    "question": "Công ty triển khai multi-AZ và cho rằng đã có DR. Phát biểu đúng?",
     "options": [
-      "Giống nhau",
-      "HA là multi-AZ, DR là phục hồi thảm hoạ thường multi-Region",
-      "DR luôn rẻ hơn",
+      "HA và DR giống nhau",
+      "HA là multi-AZ, DR là phục hồi thảm hoạ thường cần multi-Region",
+      "DR luôn rẻ hơn HA",
       "HA cần backup thôi"
     ],
     "answer": [
       1
     ],
-    "explanation": "Nhầm hai khái niệm này rất phổ biến."
+    "explanation": "Multi-AZ chỉ bảo vệ khi một datacenter lỗi. Nhầm HA với DR là lỗi phổ biến vì cả hai đều nói về chịu lỗi."
   },
   {
     "id": "aws-well-architected-framework-04",
     "playbookId": "aws-well-architected-framework",
     "type": "explain",
     "difficulty": 2,
-    "question": "Cách dùng Well-Architected khi chọn đáp án đề thi?",
-    "modelAnswer": "Khi đề không nói khác, chọn đáp án managed, loosely coupled, multi-AZ, least privilege và tối ưu chi phí hợp lý. Đọc kỹ ràng buộc về chi phí, độ trễ hay RTO vì chúng quyết định trụ cột nào được ưu tiên.",
+    "question": "Đề thi yêu cầu một kiến trúc web có độ sẵn sàng cao và chi phí hợp lý mà không nêu thêm. Hãy mô tả cách dùng Well-Architected để chọn đáp án.",
+    "modelAnswer": "Khi đề không nói khác, chọn đáp án managed, loosely coupled, multi-AZ, least privilege và tối ưu chi phí hợp lý. Đọc kỹ ràng buộc về chi phí, độ trễ hay RTO vì chúng quyết định trụ cột nào được ưu tiên, và loại bỏ đáp án vi phạm ràng buộc.",
     "keyPoints": [
       "Managed và loosely coupled",
       "Multi-AZ và least privilege",
-      "Đọc kỹ ràng buộc"
+      "Đọc kỹ ràng buộc và loại đáp án sai"
     ]
   },
   {
@@ -8408,24 +8409,24 @@
     "playbookId": "api-gateway-step-functions",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Lambda sau API Gateway xử lý 40 giây thì?",
+    "question": "Lambda sau API Gateway REST xử lý mất 40 giây trong trường hợp bình thường. Điều gì xảy ra với client?",
     "options": [
       "Chạy bình thường",
-      "Có thể gặp timeout 29 giây của API Gateway",
-      "Tự tăng",
+      "Có thể gặp timeout 29 giây của API Gateway dù Lambda vẫn chạy",
+      "Timeout tự tăng",
       "Không ảnh hưởng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Thiết kế bất đồng bộ."
+    "explanation": "API Gateway cắt sau timeout tích hợp mặc định 29 giây. Tăng timeout của Lambda dễ nhầm là đủ, nhưng giới hạn nằm ở API Gateway."
   },
   {
     "id": "kinesis-streaming-05",
     "playbookId": "kinesis-streaming",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Nhiều consumer mỗi cái cần băng thông 2 MB/s riêng?",
+    "question": "Ba consumer cùng đọc một stream bị chậm vì chia nhau 2 MB/s của shard. Cách giải quyết?",
     "options": [
       "Shared throughput",
       "Enhanced Fan-Out",
@@ -8435,14 +8436,14 @@
     "answer": [
       1
     ],
-    "explanation": "EFO cấp băng thông riêng."
+    "explanation": "Enhanced Fan-Out cấp mỗi consumer 2 MB/s riêng. Shared throughput là nguyên nhân gốc, dễ nhầm là cấu hình mặc định hợp lý."
   },
   {
     "id": "aws-data-analytics-05",
     "playbookId": "aws-data-analytics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy vấn SQL ad-hoc trên log Parquet trong S3, serverless?",
+    "question": "Cần truy vấn SQL ad-hoc trên log Parquet trong S3 mà không dựng hạ tầng. Chọn?",
     "options": [
       "Redshift",
       "Athena",
@@ -8452,31 +8453,31 @@
     "answer": [
       1
     ],
-    "explanation": "Athena trả theo dữ liệu quét."
+    "explanation": "Athena serverless trả theo dữ liệu quét. EMR dễ nhầm vì xử lý được dữ liệu lớn, nhưng phải quản lý cluster."
   },
   {
     "id": "cloudformation-cdk-iac-05",
     "playbookId": "cloudformation-cdk-iac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Xem trước tác động của cập nhật stack?",
+    "question": "Một thay đổi thuộc tính RDS trong template được báo là Replacement trong change set. Điều gì cần làm?",
     "options": [
-      "Update thẳng",
-      "Change Set",
-      "Drift detection",
-      "Delete stack"
+      "Execute ngay vì change set luôn an toàn",
+      "Đặt DeletionPolicy/UpdateReplacePolicy Snapshot và kiểm tra tác động dữ liệu trước khi execute",
+      "Tắt change set",
+      "Xoá stack"
     ],
     "answer": [
       1
     ],
-    "explanation": "Change Set liệt kê thay đổi."
+    "explanation": "Replacement xoá rồi tạo lại nên có thể mất dữ liệu. 'Change set luôn an toàn' sai vì nó chỉ cho bạn thấy, bạn vẫn phải quyết định."
   },
   {
     "id": "aws-organizations-governance-05",
     "playbookId": "aws-organizations-governance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chặn mọi account tắt CloudTrail?",
+    "question": "Cần ngăn mọi account trong tổ chức tắt CloudTrail, kể cả admin của account đó. Dùng gì?",
     "options": [
       "IAM policy từng user",
       "SCP deny cloudtrail:StopLogging",
@@ -8486,14 +8487,14 @@
     "answer": [
       1
     ],
-    "explanation": "SCP áp cho cả account."
+    "explanation": "SCP áp cho cả account và thắng IAM Allow. IAM policy từng user dễ nhầm nhưng admin của account có thể gỡ."
   },
   {
     "id": "aws-well-architected-framework-05",
     "playbookId": "aws-well-architected-framework",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai trụ cột nào của Well-Architected? (chọn 2)",
+    "question": "Hai trụ cột nào thuộc Well-Architected Framework? (chọn 2)",
     "options": [
       "Reliability",
       "Cost Optimization",
@@ -8504,7 +8505,7 @@
       0,
       1
     ],
-    "explanation": "Sáu trụ cột chính thức."
+    "explanation": "Sáu trụ cột chính thức gồm Reliability và Cost Optimization. Marketing và Procurement là phương án gây nhiễu không thuộc framework."
   },
   {
     "id": "aws-security-services-05",
