@@ -218,5 +218,20 @@
     "id": "lambda-serverless",
     "title": "AWS Lambda Serverless",
     "summary": "Run code on events without managing servers, with a clear understanding of Lambda's concurrency, cold starts and limits."
+  },
+  {
+    "id": "disaster-recovery-strategies",
+    "title": "AWS Disaster Recovery Strategies",
+    "summary": "Choose a DR strategy from Backup & Restore to Active/Active based on RTO, RPO and cost."
+  },
+  {
+    "id": "ebs-efs-fsx-storage",
+    "title": "EBS, EFS & FSx Storage",
+    "summary": "Choose block, file or Instance Store for EC2 by AZ, IOPS and shareability."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config",
+    "title": "CloudWatch, CloudTrail & AWS Config",
+    "summary": "Distinguish performance monitoring, API auditing and configuration tracking for investigation and compliance on AWS."
   }
 ]

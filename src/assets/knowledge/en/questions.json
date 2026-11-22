@@ -2359,5 +2359,168 @@
       "Use Reserved concurrency"
     ],
     "explanation": "A failure of the whole batch causes the batch to be retried; per-item failure reporting and idempotency reduce repeated processing. Reserved concurrency is easy to confuse but only limits parallelism."
+  },
+  {
+    "id": "disaster-recovery-strategies-01",
+    "question": "Leadership says the service may be down for at most 30 minutes. Which metric is being described?",
+    "options": [
+      "The amount of data acceptable to lose",
+      "RTO",
+      "Backup cost",
+      "DR capacity"
+    ],
+    "explanation": "RTO is the maximum recovery time. RPO is easy to confuse but measures the data lost, not the downtime."
+  },
+  {
+    "id": "disaster-recovery-strategies-02",
+    "question": "A sales system needs an RTO of a few minutes but only a moderate budget, without running two Regions in full. What do you choose?",
+    "options": [
+      "Backup & Restore",
+      "Warm Standby",
+      "Multi-site Active/Active",
+      "No DR"
+    ],
+    "explanation": "Warm Standby keeps a scaled-down copy running and scales it up on a disaster. Active/Active is tempting because it has the best RTO, but it runs in full so it exceeds the budget."
+  },
+  {
+    "id": "disaster-recovery-strategies-03",
+    "question": "Compare AWS's 4 DR strategies by RTO and cost to advise a company with a medium budget.",
+    "modelAnswer": "Backup & Restore is the cheapest, with an RTO in hours. Pilot Light keeps the core, such as a database replica, running, with an RTO of tens of minutes. Warm Standby runs a fully scaled-down copy, with an RTO of minutes. Active/Active runs several Regions at once, with an RTO near 0 but the highest cost. With a medium budget you usually choose Pilot Light or Warm Standby depending on the required RTO.",
+    "keyPoints": [
+      "Backup & Restore: hours, cheapest",
+      "Pilot Light: tens of minutes",
+      "Warm Standby: minutes",
+      "Active/Active: near 0, most expensive"
+    ]
+  },
+  {
+    "id": "disaster-recovery-strategies-04",
+    "question": "A payment system requires an RPO near 0 and an RTO of minutes, accepting high cost. What do you choose?",
+    "options": [
+      "Backup & Restore",
+      "Pilot Light",
+      "Multi-site Active/Active",
+      "Only daily snapshots"
+    ],
+    "explanation": "Active/Active runs in full across several Regions. Pilot Light is tempting because it has a data replica, but the application tier must be started and scaled so the RTO is longer."
+  },
+  {
+    "id": "disaster-recovery-strategies-05",
+    "question": "A company deploys Multi-AZ for every service and believes DR exists. What happens when a whole Region has a problem?",
+    "options": [
+      "It keeps running normally",
+      "The system goes down because Multi-AZ only protects against a single datacenter failure",
+      "It fails over to another Region automatically",
+      "Only the database is lost"
+    ],
+    "explanation": "Multi-AZ is HA within a Region; DR requires cross-Region. 'Fails over to another Region automatically' is tempting because the name Multi-AZ sounds broad, but it does not cross the Region boundary."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-01",
+    "question": "A web application runs on 6 Linux EC2 instances across 3 AZs and they all need to read and write the same upload directory. Which storage do you choose?",
+    "options": [
+      "EBS gp3",
+      "EFS",
+      "Instance Store",
+      "S3 Glacier"
+    ],
+    "explanation": "EFS is a multi-AZ NFS mounted by many instances at once. EBS gp3 is tempting because it is familiar, but it attaches to one instance in one AZ."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-02",
+    "question": "A 500 GB EBS volume in ap-southeast-1a must move to an instance in ap-southeast-1b. How?",
+    "options": [
+      "Detach and attach to the other AZ",
+      "Create a snapshot and restore it as a volume in the target AZ",
+      "It is impossible",
+      "Change the security group"
+    ],
+    "explanation": "EBS is tied to an AZ and snapshots are stored per Region so you restore in another AZ. Detach/attach is tempting but only attaches to instances in the same AZ."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-03",
+    "question": "A team stores processing data on Instance Store, and after stopping and starting the instance the data is gone. What happened?",
+    "options": [
+      "It is retained",
+      "Instance Store is temporary so it is lost on stop/terminate",
+      "It moved to EBS automatically",
+      "It moved to S3 automatically"
+    ],
+    "explanation": "Instance Store is physically attached to the host and loses data on stop/terminate or hardware failure. A reboot does not lose it, which is easy to confuse with a stop."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-04",
+    "question": "Compare EBS, EFS and S3 to choose where to store data for three situations: a database boot volume, a directory shared across AZs and an image archive.",
+    "modelAnswer": "EBS is block storage attached to one instance in one AZ with low latency, suiting the OS and databases. EFS is an NFS file system shared across many instances and AZs but costs more per GB. S3 is cheap, durable object storage accessed through an API, not a disk. So the database uses EBS, the shared directory uses EFS and the image archive uses S3.",
+    "keyPoints": [
+      "EBS block per AZ",
+      "EFS shared multi-AZ files",
+      "S3 objects through an API"
+    ]
+  },
+  {
+    "id": "ebs-efs-fsx-storage-05",
+    "question": "An OLTP database needs very high, steady IOPS, currently uses gp2 and occasionally sees IOPS dip. What is the approach?",
+    "options": [
+      "Keep gp2",
+      "Switch to io2 (or gp3 if sufficient)",
+      "Switch to st1",
+      "Switch to sc1"
+    ],
+    "explanation": "io2 gives high, steady IOPS. st1/sc1 are tempting because they are cheap, but they are throughput-optimized HDDs unsuitable for OLTP or boot volumes."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-01",
+    "question": "This morning a production EC2 instance was terminated and nobody owns up. Where do you look to find who did it?",
+    "options": [
+      "CloudWatch",
+      "CloudTrail",
+      "Config",
+      "Inspector"
+    ],
+    "explanation": "CloudTrail records API calls and identities. Config is easy to confuse because it records resource changes, but it does not record who called the API."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-02",
+    "question": "A team wants to set an alarm on an EC2 instance's RAM usage but cannot find this metric. What must they do?",
+    "options": [
+      "Nothing",
+      "Install the CloudWatch Agent or send a custom metric",
+      "Enable detailed monitoring",
+      "Use CloudTrail"
+    ],
+    "explanation": "RAM and disk are not among the built-in EC2 metrics. Detailed monitoring is tempting because it raises resolution, but it still does not add a RAM metric."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-03",
+    "question": "You need to detect every S3 bucket switched to public over time and fix it automatically. What do you use?",
+    "options": [
+      "CloudWatch Logs",
+      "An AWS Config rule with remediation",
+      "VPC Flow Logs",
+      "Cost Explorer"
+    ],
+    "explanation": "Config tracks configuration changes and has auto-remediation. CloudTrail is tempting because it records actions, but it does not evaluate compliance state over time."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-04",
+    "question": "Distinguish CloudWatch, CloudTrail and Config using one incident: someone opens a security group to the Internet and latency rises.",
+    "modelAnswer": "CloudWatch shows the rising latency and errors through metrics, logs and alarms. CloudTrail records who called the API that modified the security group, when and from where, for auditing. Config records the security group's configuration before and after and evaluates compliance with rules. The three services complement each other during an investigation.",
+    "keyPoints": [
+      "CloudWatch: performance",
+      "CloudTrail: who called the API",
+      "Config: configuration history and compliance"
+    ]
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-05",
+    "question": "Which two services help investigate 'who changed the security group and what was it before'? (choose 2)",
+    "options": [
+      "CloudTrail",
+      "AWS Config",
+      "CloudWatch CPU metric",
+      "Cost Explorer"
+    ],
+    "explanation": "CloudTrail shows who called the API and Config shows the configuration before and after. A CloudWatch CPU metric is tempting because it is an observability tool but is unrelated to configuration."
   }
 ]

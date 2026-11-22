@@ -1158,5 +1158,80 @@
     "id": "lambda-snapstart",
     "meaning": "Snapshot the environment for fast startup",
     "definition": "Reduces cold starts for supported runtimes by restoring from a snapshot taken after initialization."
+  },
+  {
+    "id": "rto-rpo",
+    "meaning": "Recovery time and acceptable data loss",
+    "definition": "RTO is the maximum time the service may be down; RPO is the span of data that can be lost, determining backup/replication frequency."
+  },
+  {
+    "id": "aws-dr-strategies",
+    "meaning": "Four DR strategies by cost and RTO",
+    "definition": "Backup & Restore, Pilot Light, Warm Standby, Multi-site Active/Active — the smaller the RTO the higher the cost."
+  },
+  {
+    "id": "aws-elastic-disaster-recovery",
+    "meaning": "Continuously replicate servers for fast recovery",
+    "definition": "Block-level replication from source machines to AWS and launching instances during a disaster."
+  },
+  {
+    "id": "aws-backup",
+    "meaning": "A centralized backup service for many AWS services",
+    "definition": "Schedules, retains and copies backups cross-Region/cross-account with a single policy."
+  },
+  {
+    "id": "multi-az-vs-multi-region",
+    "meaning": "Fault tolerance within a Region versus DR across Regions",
+    "definition": "Multi-AZ protects when a datacenter fails; only a cross-Region deployment survives a whole-Region incident."
+  },
+  {
+    "id": "ebs-volume-types",
+    "meaning": "EBS volume types",
+    "definition": "gp3 is the default SSD, io2 is for DBs needing high IOPS, st1/sc1 are HDDs that cannot be boot volumes."
+  },
+  {
+    "id": "ebs-multi-attach",
+    "meaning": "Attach io2 to several instances",
+    "definition": "Only io1/io2 within the same AZ; the application must handle concurrent writes itself."
+  },
+  {
+    "id": "efs-performance-modes",
+    "meaning": "EFS performance modes",
+    "definition": "General Purpose vs Max I/O, Bursting/Provisioned/Elastic throughput."
+  },
+  {
+    "id": "fsx-lustre-s3",
+    "meaning": "An HPC file system linked to S3",
+    "definition": "Very high throughput for HPC and ML, able to load and write back data from S3."
+  },
+  {
+    "id": "ec2-instance-store",
+    "meaning": "A physically attached temporary disk",
+    "definition": "Very high IOPS but data is lost on stop or terminate."
+  },
+  {
+    "id": "cloudwatch-logs-insights",
+    "meaning": "Query logs in CloudWatch",
+    "definition": "A query language for filtering and aggregating a log group."
+  },
+  {
+    "id": "cloudwatch-agent-custom-metrics",
+    "meaning": "Collect RAM and disk",
+    "definition": "EC2 has no RAM metric by default; you need the agent or a custom metric."
+  },
+  {
+    "id": "cloudtrail-events",
+    "meaning": "Two kinds of audit events",
+    "definition": "Management events are on by default; data events such as S3 objects must be enabled separately."
+  },
+  {
+    "id": "aws-config-rules",
+    "meaning": "Evaluate configuration compliance",
+    "definition": "Records configuration history and automatically fixes violations through SSM."
+  },
+  {
+    "id": "cloudwatch-composite-alarms",
+    "meaning": "Combine several alarms",
+    "definition": "Reduces noise with AND/OR conditions across alarms."
   }
 ]
