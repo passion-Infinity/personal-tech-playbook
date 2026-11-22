@@ -1272,5 +1272,113 @@
       "It does not matter"
     ],
     "explanation": "A step that cannot be undone should run when you are sure no compensation will be needed."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-01",
+    "question": "A team needs to know which service is slow in a chain of 8 services. Which signal fits best?",
+    "options": [
+      "Only CPU metrics",
+      "Distributed tracing",
+      "Only error logs",
+      "Commit counts"
+    ],
+    "explanation": "A trace shows the time in each span. Metrics report that there is a problem but do not point to which leg."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-02",
+    "question": "Prometheus runs out of memory after a user_id label is added to a metric. What is the cause?",
+    "options": [
+      "High-cardinality labels create millions of time series",
+      "Grafana",
+      "Compression",
+      "Unrelated"
+    ],
+    "explanation": "Each combination of labels is a series; put high-cardinality data into logs/traces."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-03",
+    "question": "1% head-based sampling makes the team miss almost all error traces. What is the solution?",
+    "options": [
+      "Raise it to 100% outright",
+      "Tail-based sampling keeping error and slow traces",
+      "Turn tracing off",
+      "Use logs only"
+    ],
+    "explanation": "Tail sampling decides after the trace completes."
+  },
+  {
+    "id": "observability-tracing-metrics-logs-04",
+    "question": "What error budget does a 99.9% SLO over 30 days correspond to, and why alert on burn rate?",
+    "modelAnswer": "The error budget is 0.1% of 30 days, about 43.2 minutes of allowed failure. Burn-rate alerts show the budget is being burned too fast, so you react early when real users are affected, instead of raw threshold alerts that are noisy or late.",
+    "keyPoints": [
+      "99.9% ≈ 43.2 minutes per 30 days",
+      "Burn rate",
+      "Alert on symptoms"
+    ]
+  },
+  {
+    "id": "observability-tracing-metrics-logs-05",
+    "question": "What is the standard W3C header for propagating trace context between services?",
+    "options": [
+      "X-Request",
+      "traceparent",
+      "Authorization",
+      "Cache-Control"
+    ],
+    "explanation": "traceparent carries the trace-id and span-id."
+  },
+  {
+    "id": "raft-consensus-01",
+    "question": "A Raft cluster must tolerate 2 node failures. What is the minimum number of nodes?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "explanation": "N = 2f + 1 = 5. 6 nodes still tolerate only 2, so it is no better than 5."
+  },
+  {
+    "id": "raft-consensus-02",
+    "question": "A network partition splits a 5-node cluster into 3 and 2. Which side can commit new writes?",
+    "options": [
+      "The 2-node side",
+      "The 3-node side (a majority)",
+      "Both",
+      "Neither"
+    ],
+    "explanation": "Only the majority side can commit; the minority makes no progress, which avoids split brain."
+  },
+  {
+    "id": "raft-consensus-03",
+    "question": "What does a follower do when it receives no heartbeat within the election timeout?",
+    "options": [
+      "Shut down",
+      "Become a candidate, increment the term and ask for votes",
+      "Wait forever",
+      "Delete its log"
+    ],
+    "explanation": "The random timeout reduces the chance of several simultaneous candidates."
+  },
+  {
+    "id": "raft-consensus-04",
+    "question": "Explain when an entry is considered committed in Raft and why this guarantees safety when the leader changes.",
+    "modelAnswer": "An entry is committed once the leader has stored it on a majority of nodes. When electing a new leader, a candidate gets a vote only if its log is at least as up to date as the voter's log, so the new leader always contains every committed entry and acknowledged data is never lost.",
+    "keyPoints": [
+      "Committed when stored on a majority",
+      "Vote only for sufficiently up-to-date logs",
+      "The new leader has every committed entry"
+    ]
+  },
+  {
+    "id": "raft-consensus-05",
+    "question": "Is Raft CP or AP?",
+    "options": [
+      "CP: it stops writes when a majority is lost",
+      "AP",
+      "Both",
+      "Unrelated to CAP"
+    ],
+    "explanation": "It prioritizes consistency, trading away availability when a majority is missing."
   }
 ]

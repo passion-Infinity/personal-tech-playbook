@@ -633,5 +633,65 @@
     "id": "durable-execution-temporal",
     "meaning": "A platform for durable workflow orchestration",
     "definition": "Stores workflow state so it can resume after failures; suits multi-step sagas."
+  },
+  {
+    "id": "observability-three-pillars",
+    "meaning": "Three kinds of signals for observing a system",
+    "definition": "Metrics show that there is a problem, traces show where, and logs explain why."
+  },
+  {
+    "id": "opentelemetry",
+    "meaning": "An open standard for collecting telemetry",
+    "definition": "A common API, SDK and Collector for logs, metrics and traces, independent of the vendor."
+  },
+  {
+    "id": "distributed-tracing-w3c",
+    "meaning": "Propagating context across services",
+    "definition": "A trace consists of many spans; the trace-id is propagated via the traceparent header, including through message queues."
+  },
+  {
+    "id": "sli-slo-error-budget",
+    "meaning": "Measuring reliability against targets",
+    "definition": "The SLI is the indicator, the SLO the target, and the error budget the allowed deviation that balances feature velocity and stability."
+  },
+  {
+    "id": "tail-based-sampling",
+    "meaning": "Keeping error or slow traces when sampling",
+    "definition": "The decision is made after the trace completes, so rare but important traces are kept."
+  },
+  {
+    "id": "high-cardinality-metrics",
+    "meaning": "The risk of cost explosion from detailed labels",
+    "definition": "Putting user_id or request_id into metric labels makes the number of time series explode."
+  },
+  {
+    "id": "raft-consensus",
+    "meaning": "A leader-based consensus algorithm",
+    "definition": "The leader accepts writes and commits only once a majority of nodes have stored them; the foundation of etcd, Consul and KRaft."
+  },
+  {
+    "id": "raft-leader-election",
+    "meaning": "Electing a leader by term",
+    "definition": "A follower whose random election timeout expires becomes a candidate; with a majority of votes it becomes the leader."
+  },
+  {
+    "id": "replicated-state-machine",
+    "meaning": "The same log in the same order gives the same state",
+    "definition": "Every node applies the same sequence of commands so they reach the same state."
+  },
+  {
+    "id": "quorum-fault-tolerance",
+    "meaning": "How many nodes are needed to tolerate f failures",
+    "definition": "A cluster of 2f+1 nodes tolerates f failed nodes; 3 nodes tolerate 1, 5 nodes tolerate 2."
+  },
+  {
+    "id": "paxos-vs-raft",
+    "meaning": "Comparing two consensus algorithms",
+    "definition": "Equivalent in safety, but Raft was designed to be easier to understand and implement."
+  },
+  {
+    "id": "etcd-zookeeper-coordination",
+    "meaning": "Coordination systems built on consensus",
+    "definition": "Used for configuration, leader election and distributed locks, not for storing large data."
   }
 ]

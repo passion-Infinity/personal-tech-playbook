@@ -118,5 +118,15 @@
     "id": "saga-pattern",
     "title": "Saga Pattern",
     "summary": "Achieve business consistency across services with a chain of local transactions and compensating steps instead of 2PC."
+  },
+  {
+    "id": "observability-tracing-metrics-logs",
+    "title": "Observability: Logs, Metrics & Tracing",
+    "summary": "Understand the state of a distributed system through logs, metrics and distributed tracing, and measure reliability with SLOs."
+  },
+  {
+    "id": "raft-consensus",
+    "title": "Raft Consensus",
+    "summary": "Get many nodes to agree on one replicated log through a leader, quorum and term-based elections."
   }
 ]
