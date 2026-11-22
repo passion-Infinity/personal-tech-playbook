@@ -4991,7 +4991,7 @@
     "playbookId": "orm-data-access-pitfalls",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Danh sách 100 đơn, mỗi đơn truy cập items lazy sinh bao nhiêu truy vấn?",
+    "question": "Trang danh sách 100 đơn hàng, mỗi đơn truy cập items theo lazy loading. Có bao nhiêu truy vấn SQL?",
     "options": [
       "1",
       "2",
@@ -5001,34 +5001,34 @@
     "answer": [
       2
     ],
-    "explanation": "1 truy vấn danh sách + 100 truy vấn items = N+1."
+    "explanation": "1 truy vấn danh sách + 100 truy vấn items = N+1. Chọn 100 dễ nhầm vì quên truy vấn danh sách ban đầu."
   },
   {
     "id": "orm-data-access-pitfalls-02",
     "playbookId": "orm-data-access-pitfalls",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cách khắc phục N+1 phổ biến?",
+    "question": "Cách khắc phục N+1 phổ biến và có chủ đích?",
     "options": [
       "Thêm cache toàn cục",
-      "Dùng JOIN FETCH / prefetch hoặc projection",
-      "Tăng pool",
-      "Tắt lazy hoàn toàn"
+      "JOIN FETCH / prefetch hoặc projection",
+      "Tắt lazy hoàn toàn cho mọi quan hệ",
+      "Tăng connection pool"
     ],
     "answer": [
       1
     ],
-    "explanation": "Nạp quan hệ có chủ đích bằng một vài truy vấn."
+    "explanation": "Nạp quan hệ có chủ đích bằng vài truy vấn. Tắt lazy cho mọi quan hệ dễ nhầm, nhưng làm nạp thừa dữ liệu."
   },
   {
     "id": "orm-data-access-pitfalls-03",
     "playbookId": "orm-data-access-pitfalls",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Vì sao không nên bao cả lời gọi HTTP ngoài trong một transaction DB?",
+    "question": "Vì sao không nên bao cả lời gọi HTTP bên ngoài trong một transaction DB?",
     "options": [
       "Không có vấn đề",
-      "Giữ kết nối DB lâu, cạn pool và kéo dài khoá",
+      "Giữ kết nối DB và khoá lâu, dễ cạn connection pool",
       "Làm HTTP chậm hơn",
       "Tự rollback"
     ],
@@ -5042,7 +5042,7 @@
     "playbookId": "orm-data-access-pitfalls",
     "type": "explain",
     "difficulty": 2,
-    "question": "ORM có chậm không?",
+    "question": "Một người nói 'ORM chậm nên bỏ ORM'. Đánh giá và nêu nguyên nhân thường gặp thực sự khiến truy vấn ORM chậm.",
     "modelAnswer": "ORM không chậm tự thân mà chậm do cách dùng như N+1, nạp thừa dữ liệu, transaction quá rộng hoặc xử lý hàng loạt từng dòng. Cần xem SQL được sinh ra, dùng fetch join và projection, batch khi ghi, và dùng SQL thuần cho báo cáo hoặc bulk lớn.",
     "keyPoints": [
       "Chậm do cách dùng",
@@ -5055,44 +5055,44 @@
     "playbookId": "realtime-websocket-sse",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần đẩy thông báo một chiều từ server, đơn giản và tự reconnect. Chọn?",
+    "question": "Cần đẩy thông báo một chiều từ server xuống trình duyệt, đơn giản và tự reconnect. Chọn?",
     "options": [
       "WebSocket",
       "Server-Sent Events",
       "Short polling mỗi giây",
-      "Không có"
+      "Không có cách"
     ],
     "answer": [
       1
     ],
-    "explanation": "SSE phù hợp đẩy một chiều qua HTTP thường."
+    "explanation": "SSE hợp đẩy một chiều qua HTTP với reconnect tự động. WebSocket dễ nhầm vì mạnh hơn nhưng cần tự lo nhiều thứ."
   },
   {
     "id": "realtime-websocket-sse-02",
     "playbookId": "realtime-websocket-sse",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Kết nối WebSocket rảnh bị đứt sau khoảng 60 giây. Nguyên nhân thường gặp và cách xử lý?",
+    "question": "Kết nối WebSocket rảnh bị đứt sau khoảng 60 giây qua load balancer. Nguyên nhân và cách xử lý?",
     "options": [
       "Server hỏng",
-      "Proxy/LB cắt kết nối rảnh; gửi heartbeat định kỳ",
+      "Proxy/LB cắt kết nối rảnh; gửi heartbeat ping/pong định kỳ",
       "Client sai",
       "DNS"
     ],
     "answer": [
       1
     ],
-    "explanation": "Ping/pong giữ kết nối sống qua các proxy."
+    "explanation": "Heartbeat giữ kết nối sống qua các proxy."
   },
   {
     "id": "realtime-websocket-sse-03",
     "playbookId": "realtime-websocket-sse",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai người dùng kết nối vào hai node khác nhau. Cách gửi tin giữa họ?",
+    "question": "Hai người dùng kết nối vào hai node WebSocket khác nhau và cần nhắn tin cho nhau. Cách làm?",
     "options": [
       "Không thể",
-      "Dùng pub/sub backplane (Redis, Kafka) giữa các node",
+      "Pub/sub backplane (Redis, Kafka) giữa các node",
       "Dùng cookie",
       "Dùng DNS"
     ],
@@ -5106,7 +5106,7 @@
     "playbookId": "realtime-websocket-sse",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao reconnect storm nguy hiểm và cách giảm?",
+    "question": "Sau một đợt deploy, hàng triệu client kết nối lại cùng lúc làm server quá tải. Giải thích reconnect storm và cách giảm.",
     "modelAnswer": "Khi server khởi động lại hoặc sự cố, hàng triệu client mất kết nối và kết nối lại cùng lúc làm quá tải server dù đã hồi phục. Giảm bằng exponential backoff có jitter ở client, giới hạn tốc độ chấp nhận kết nối ở server và drain từ từ khi deploy.",
     "keyPoints": [
       "Hàng loạt client kết nối cùng lúc",
@@ -10293,7 +10293,7 @@
     "playbookId": "nosql-data-models",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Thiết kế NoSQL bắt đầu từ?",
+    "question": "Thiết kế dữ liệu NoSQL nên bắt đầu từ đâu?",
     "options": [
       "Chuẩn hoá dữ liệu",
       "Danh sách truy vấn (access pattern)",
@@ -10303,49 +10303,49 @@
     "answer": [
       1
     ],
-    "explanation": "Truy vấn quyết định khoá và denormalize."
+    "explanation": "Truy vấn quyết định khoá và denormalize. Chuẩn hoá là thói quen SQL, dễ nhầm."
   },
   {
     "id": "nosql-data-models-02",
     "playbookId": "nosql-data-models",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Nhược điểm thường gặp của partition key kém?",
+    "question": "Một bảng NoSQL liên tục bị throttle dù tổng dung lượng còn dư, phần lớn tải dồn vào một khoá. Nguyên nhân?",
     "options": [
       "Hot partition",
       "Thiếu index",
-      "Không scale",
+      "Không scale được",
       "Mất schema"
     ],
     "answer": [
       0
     ],
-    "explanation": "Tải dồn vào một partition."
+    "explanation": "Tải dồn vào một partition do khoá lệch."
   },
   {
     "id": "nosql-data-models-03",
     "playbookId": "nosql-data-models",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cần truy vấn bạn của bạn bè nhiều bước. Chọn?",
+    "question": "Cần truy vấn 'bạn của bạn bè' nhiều bước trên mạng xã hội. Chọn?",
     "options": [
       "Key-value",
-      "Graph",
+      "Graph database",
       "Wide-column",
       "Document nhúng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Graph duyệt quan hệ hiệu quả."
+    "explanation": "Graph duyệt quan hệ nhiều bước hiệu quả."
   },
   {
     "id": "nosql-data-models-04",
     "playbookId": "nosql-data-models",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào KHÔNG nên chọn NoSQL?",
-    "modelAnswer": "Khi cần join phức tạp, báo cáo ad-hoc, ràng buộc toàn vẹn và giao dịch nhiều thực thể, hoặc mẫu truy cập chưa rõ. Khi đó SQL linh hoạt và an toàn hơn.",
+    "question": "Một nhóm định chuyển hệ thống báo cáo nhiều join sang NoSQL. Khi nào KHÔNG nên chọn NoSQL?",
+    "modelAnswer": "Khi cần join phức tạp, báo cáo ad-hoc, ràng buộc toàn vẹn và giao dịch nhiều thực thể, hoặc mẫu truy cập chưa rõ. Khi đó SQL linh hoạt và an toàn hơn; NoSQL hợp khi mẫu truy cập rõ và cần scale ngang với độ trễ dự đoán được.",
     "keyPoints": [
       "Join và ad-hoc",
       "Giao dịch ràng buộc",
@@ -10357,24 +10357,24 @@
     "playbookId": "search-elasticsearch",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Elasticsearch có nên là nguồn dữ liệu chính?",
+    "question": "Team dùng Elasticsearch làm nguồn dữ liệu chính cho đơn hàng. Đánh giá đúng?",
     "options": [
-      "Có",
-      "Không, nên giữ DB làm nguồn sự thật",
-      "Luôn",
-      "Chỉ khi nhỏ"
+      "Tốt",
+      "Không, nên giữ DB làm nguồn sự thật và ES là chỉ mục dẫn xuất",
+      "Chỉ khi nhỏ",
+      "Luôn đúng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chỉ mục dẫn xuất, nhất quán cuối cùng."
+    "explanation": "ES là chỉ mục dẫn xuất, nhất quán cuối cùng, không có giao dịch."
   },
   {
     "id": "search-elasticsearch-02",
     "playbookId": "search-elasticsearch",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Vì sao mới ghi chưa tìm thấy ngay?",
+    "question": "Vừa ghi một tài liệu nhưng tìm ngay chưa thấy. Nguyên nhân?",
     "options": [
       "Lỗi",
       "Chưa refresh (near real-time)",
@@ -10384,14 +10384,14 @@
     "answer": [
       1
     ],
-    "explanation": "Refresh định kỳ."
+    "explanation": "Tài liệu chỉ tìm thấy sau lần refresh (khoảng 1 giây)."
   },
   {
     "id": "search-elasticsearch-03",
     "playbookId": "search-elasticsearch",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Trường dùng để sort và aggregate chính xác?",
+    "question": "Trường nào dùng để sắp xếp và tổng hợp chính xác theo giá trị nguyên văn?",
     "options": [
       "text",
       "keyword",
@@ -10401,19 +10401,19 @@
     "answer": [
       1
     ],
-    "explanation": "Keyword giữ nguyên văn."
+    "explanation": "Keyword giữ nguyên văn; text bị phân tích nên không phù hợp."
   },
   {
     "id": "search-elasticsearch-04",
     "playbookId": "search-elasticsearch",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao quá nhiều shard nhỏ gây hại?",
-    "modelAnswer": "Mỗi shard tốn tài nguyên (bộ nhớ, file handle, overhead điều phối), nhiều shard nhỏ làm cluster chậm và khó quản lý; số primary shard không đổi dễ nên cần thiết kế từ đầu.",
+    "question": "Cluster có hàng nghìn shard rất nhỏ và chậm. Vì sao quá nhiều shard nhỏ gây hại và cách thiết kế?",
+    "modelAnswer": "Mỗi shard tốn tài nguyên (bộ nhnhớ, file handle, overhead điều phối), nhiều shard nhỏ làm cluster chậm và khó quản lý; số primary shard lại khó đổi sau khi tạo. Nên thiết kế số shard theo kích thước mục tiêu (hàng chục GB mỗi shard), gộp index nhỏ và dùng index theo thời gian có ILM cho log.",
     "keyPoints": [
       "Overhead mỗi shard",
       "Cluster chậm",
-      "Khó đổi sau"
+      "Khó đổi số primary shard"
     ]
   },
   {
