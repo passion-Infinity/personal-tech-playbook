@@ -4272,5 +4272,134 @@
       "The total is lower than each",
       "Parallel raises the SLA"
     ]
+  },
+  {
+    "id": "ai-ml-fundamentals-01",
+    "question": "A real-estate company wants to predict apartment sale prices from area, location and building age. What kind of problem is this?",
+    "options": [
+      "Classification",
+      "Regression",
+      "Clustering",
+      "Reinforcement learning"
+    ],
+    "explanation": "Price is a continuous value, so it is regression. Classification is tempting because it is also supervised, but it predicts discrete labels."
+  },
+  {
+    "id": "ai-ml-fundamentals-02",
+    "question": "A model reaches 99% on the train set but only 70% on new data. Which phenomenon is this?",
+    "options": [
+      "Underfitting",
+      "Overfitting",
+      "Data drift",
+      "Low bias"
+    ],
+    "explanation": "It memorized the training data so it generalizes poorly. Underfitting is tempting, but then both train and validation would be poor."
+  },
+  {
+    "id": "ai-ml-fundamentals-03",
+    "question": "A team normalizes the whole dataset using a mean and standard deviation computed over everything, then splits train/test, and sees an unusually good test score. Explain data leakage and how to avoid it.",
+    "modelAnswer": "Data leakage is information from the test set or from the future getting into training, so the evaluation score is artificially high. Here the test set's statistics influenced the normalization step. Avoid it by splitting the data first, fitting preprocessing only on train and then applying it to test, and checking that every feature is available at real prediction time.",
+    "keyPoints": [
+      "Test/future information leaks into train",
+      "Split first, fit preprocessing only on train",
+      "Check features are available at real prediction time"
+    ]
+  },
+  {
+    "id": "ai-ml-fundamentals-04",
+    "question": "A model reaches 99% on train and 70% on validation. What is the phenomenon and the remedy?",
+    "options": [
+      "Underfitting, add layers",
+      "Overfitting, use regularization/more data",
+      "Data leakage for sure",
+      "Good, deploy it"
+    ],
+    "explanation": "A large gap between train and validation is overfitting. Data leakage gives high scores on test as well, so the sign is different."
+  },
+  {
+    "id": "ml-evaluation-metrics-01",
+    "question": "A cancer screening system where missing a case is very dangerous and a false alarm only needs an extra test. Which metric takes priority?",
+    "options": [
+      "Precision",
+      "Recall",
+      "Accuracy",
+      "MAE"
+    ],
+    "explanation": "Recall measures the share of true positive cases caught. Precision is tempting, but it takes priority when false alarms are costly."
+  },
+  {
+    "id": "ml-evaluation-metrics-02",
+    "question": "Fraud is only 1% of the data; a model that always guesses 'not fraud' gets 99% accuracy. What is the problem and which metric should be used?",
+    "options": [
+      "No problem",
+      "Accuracy paradox; use F1/AUC/Recall",
+      "More layers are needed",
+      "The learning rate needs reducing"
+    ],
+    "explanation": "Accuracy misleads under imbalance; this model has recall = 0."
+  },
+  {
+    "id": "ml-evaluation-metrics-03",
+    "question": "A model has TP = 40, FP = 10, FN = 20. Compute precision and recall, explain how the two differ and when to favor each.",
+    "modelAnswer": "Precision = 40/50 = 0.8: of what the model flagged positive, 80% was right; favor it when false alarms are costly (wrongly locking accounts). Recall = 40/60 ≈ 0.67: of the real positives, 67% were caught; favor it when missing a case is costly (cancer). Raising the threshold usually raises precision and lowers recall, while lowering it does the opposite.",
+    "keyPoints": [
+      "Precision: how many positive flags are right",
+      "Recall: how many real positives are caught",
+      "The threshold trades them off"
+    ]
+  },
+  {
+    "id": "ml-evaluation-metrics-04",
+    "question": "In fraud detection, only 0.5% of transactions are fraudulent. What does 99.5% accuracy mean?",
+    "options": [
+      "Very good",
+      "Unreliable, use precision/recall/PR-AUC",
+      "Certainly correct",
+      "Use MSE"
+    ],
+    "explanation": "Class imbalance makes accuracy misleading."
+  },
+  {
+    "id": "generative-ai-llm-concepts-01",
+    "question": "A report-generation application needs stable output with little randomness between runs. Which parameter should be adjusted?",
+    "options": [
+      "Raise the temperature",
+      "Lower the temperature",
+      "Raise max tokens",
+      "Add a stop sequence"
+    ],
+    "explanation": "A low temperature gives consistent results. Raising the temperature is tempting as 'improving quality', but it makes output more diverse."
+  },
+  {
+    "id": "generative-ai-llm-concepts-02",
+    "question": "A chatbot very confidently cites a law that does not exist. What is this phenomenon and how do you reduce it?",
+    "options": [
+      "The model runs slowly",
+      "Hallucination: fabricated information; reduce it with RAG, source citations and verification",
+      "A network error",
+      "Out of tokens"
+    ],
+    "explanation": "An LLM predicts probabilities, it does not look up facts."
+  },
+  {
+    "id": "generative-ai-llm-concepts-03",
+    "question": "A company wants an LLM to answer correctly about internal policy and in the brand's style. State the order for trying LLM customization approaches and why.",
+    "modelAnswer": "Try prompt engineering first, then RAG for private or new data, then fine-tuning for a stable specialized style or task, and only last pre-training. Cost and complexity rise at each step so move on only when the previous is not enough. Internal policy uses RAG; brand style can start with a system prompt before considering fine-tuning.",
+    "keyPoints": [
+      "Prompt → RAG → fine-tuning → pre-training",
+      "Cost rises step by step",
+      "RAG for private data, fine-tuning for style"
+    ]
+  },
+  {
+    "id": "generative-ai-llm-concepts-04",
+    "question": "Which two statements about LLMs are correct? (choose 2)",
+    "options": [
+      "It generates the next token by probability",
+      "It can hallucinate",
+      "It always retrieves facts",
+      "It needs no context"
+    ],
+    "explanation": "It is a probabilistic model, not a database. 'Always retrieves facts' is tempting because answers sound confident."
   }
 ]

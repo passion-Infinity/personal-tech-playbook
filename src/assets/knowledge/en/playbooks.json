@@ -398,5 +398,20 @@
     "id": "azure-certification-roadmap",
     "title": "Azure Certification Roadmap & Exam Technique",
     "summary": "Choose an Azure certification by role and avoid common confusions (RBAC vs Policy, AZ vs Region pair)."
+  },
+  {
+    "id": "ai-ml-fundamentals",
+    "title": "AI & Machine Learning Fundamentals",
+    "summary": "Understand ML as learning a function from data, the ML lifecycle and how to spot overfitting, data leakage and drift."
+  },
+  {
+    "id": "ml-evaluation-metrics",
+    "title": "ML Evaluation Metrics",
+    "summary": "Pick the right metric for classification, regression and generated text based on which error type is most costly for the problem."
+  },
+  {
+    "id": "generative-ai-llm-concepts",
+    "title": "Generative AI & LLM Concepts",
+    "summary": "Grasp tokens, the context window, sampling parameters, embeddings and how to steer an LLM with prompts before reaching for RAG or fine-tuning."
   }
 ]
