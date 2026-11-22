@@ -3171,5 +3171,167 @@
       "Billed per hour"
     ],
     "explanation": "A Gateway endpoint is only for S3/DynamoDB and is free. Using an ENI and hourly billing are characteristics of an interface endpoint."
+  },
+  {
+    "id": "aws-database-portfolio-01",
+    "question": "A social network needs to query 'friends of friends of friends' across several hops with deep relational data. What do you choose?",
+    "options": [
+      "DynamoDB",
+      "Neptune",
+      "S3",
+      "Timestream"
+    ],
+    "explanation": "Neptune is a graph database that traverses multi-hop relationships. DynamoDB is tempting because it scales well, but it does not support deep relationship queries."
+  },
+  {
+    "id": "aws-database-portfolio-02",
+    "question": "A team says 'turn on Multi-AZ to scale reads'. What is RDS Multi-AZ actually for?",
+    "options": [
+      "Scaling reads",
+      "Fault tolerance (HA) with a synchronous standby",
+      "Reducing cost",
+      "Backup"
+    ],
+    "explanation": "Multi-AZ is for HA and the standby does not serve reads. Read scaling is the job of a Read Replica."
+  },
+  {
+    "id": "aws-database-portfolio-03",
+    "question": "A team uses DynamoDB for ad-hoc reports with many joins. What is the most accurate assessment?",
+    "options": [
+      "Good",
+      "The wrong tool, use SQL/a warehouse",
+      "Just add a GSI",
+      "Just add DAX"
+    ],
+    "explanation": "DynamoDB is optimized for key-based access. A GSI is tempting as a solution, but it does not create joins or ad-hoc queries."
+  },
+  {
+    "id": "aws-database-portfolio-04",
+    "question": "An order system has ACID transactions and reports; another system stores shopping carts needing large scale by key. When do you choose Aurora and when DynamoDB?",
+    "modelAnswer": "Aurora when you need relationships, joins, ACID transactions and flexible queries, like the order system. DynamoDB when access is by key with predictable scale and latency, like the cart, at the cost of weak ad-hoc querying.",
+    "keyPoints": [
+      "Aurora: relationships, joins, ACID",
+      "DynamoDB: key-based access, large scale",
+      "Choose by access pattern"
+    ]
+  },
+  {
+    "id": "aws-database-portfolio-05",
+    "question": "Millions of IoT sensors send time-series metrics that must be stored and queried by time range. What do you choose?",
+    "options": [
+      "Neptune",
+      "Timestream",
+      "Redshift",
+      "QLDB"
+    ],
+    "explanation": "Timestream is built for time series. Redshift is tempting because it analyzes well, but it is not optimized for continuous time-series ingest."
+  },
+  {
+    "id": "aws-cost-optimization-billing-01",
+    "question": "A web app has a steady baseline load running 24/7 for the next 3 years. What is the most reasonable way to cut compute cost?",
+    "options": [
+      "Spot",
+      "Savings Plans or RI",
+      "On-Demand forever",
+      "Dedicated Host"
+    ],
+    "explanation": "Steady load suits long-term commitments. Spot is tempting as cheapest, but it can be reclaimed so it is not safe for the main baseline."
+  },
+  {
+    "id": "aws-cost-optimization-billing-02",
+    "question": "A team tagged every resource with CostCenter but Cost Explorer does not let them filter by that tag. What is the cause?",
+    "options": [
+      "A wrong tag name",
+      "The cost allocation tag has not been activated in Billing",
+      "The tag expired",
+      "A Region error"
+    ],
+    "explanation": "User tags must be activated in Billing before they appear in cost reports."
+  },
+  {
+    "id": "aws-cost-optimization-billing-03",
+    "question": "The bill rose 30% even though the instance count is unchanged, and EC2 charges look normal. What is the most easily overlooked item to check?",
+    "options": [
+      "Only EC2",
+      "NAT Gateway and data transfer",
+      "Only S3 storage",
+      "IAM"
+    ],
+    "explanation": "NAT per-GB processing fees and cross-AZ/Internet data transfer are often overlooked. IAM is not charged."
+  },
+  {
+    "id": "aws-cost-optimization-billing-04",
+    "question": "State the steps to cut AWS cost for a company that has optimized nothing.",
+    "modelAnswer": "Measure and attribute cost with tags, analyze with Cost Explorer/CUR, right-size and clean up idle resources, buy Savings Plans for steady load, use Spot for interruption-tolerant load, and set Budgets alerts for continuous control.",
+    "keyPoints": [
+      "Tag and measure",
+      "Right-size and clean up",
+      "Savings Plans, Spot, Budgets"
+    ]
+  },
+  {
+    "id": "aws-cost-optimization-billing-05",
+    "question": "A company runs EC2 and is moving part of it to Fargate, wanting one shared commitment for both. What do you choose?",
+    "options": [
+      "EC2 Instance Savings Plan",
+      "Compute Savings Plans",
+      "Spot",
+      "Dedicated Host"
+    ],
+    "explanation": "Compute Savings Plans apply to EC2, Fargate and Lambda. An EC2 Instance Savings Plan is tempting for its deeper discount but is tied to one family and does not apply to Fargate."
+  },
+  {
+    "id": "aws-developer-toolkit-01",
+    "question": "A Lambda needs to write a file to S3. What is the right way to grant permissions?",
+    "options": [
+      "Embed an access key in the code",
+      "The Lambda's execution role",
+      "Open the bucket publicly",
+      "Use root"
+    ],
+    "explanation": "The execution role provides temporary credentials. Embedding a key is tempting as fast, but it can leak and is hard to revoke."
+  },
+  {
+    "id": "aws-developer-toolkit-02",
+    "question": "You need to let a customer download a report file within 10 minutes without granting credentials. What do you use?",
+    "options": [
+      "Share an access key",
+      "A presigned URL",
+      "Open the bucket publicly",
+      "Email the file"
+    ],
+    "explanation": "A presigned URL has an expiry and carries the signer's permissions. Opening the bucket publicly is tempting as simple but lets anyone access it."
+  },
+  {
+    "id": "aws-developer-toolkit-03",
+    "question": "After a throttling incident, thousands of clients retry at the same moment and clog the system again. What is the cause?",
+    "options": [
+      "Retries help more",
+      "Retries without jitter cause a thundering herd",
+      "It reduces errors",
+      "No effect"
+    ],
+    "explanation": "Retries need exponential backoff with jitter to spread out the retry times."
+  },
+  {
+    "id": "aws-developer-toolkit-04",
+    "question": "A developer uses list_objects_v2 but objects are missing when a bucket has more than 1,000 objects. Why must you iterate pagination?",
+    "modelAnswer": "The API returns pages (up to 1,000 objects at a time); reading only the first page silently misses data. You must iterate with the ContinuationToken or use a paginator until the end.",
+    "keyPoints": [
+      "Results are paged",
+      "Data is silently missing",
+      "Iterate to the end with a paginator"
+    ]
+  },
+  {
+    "id": "aws-developer-toolkit-05",
+    "question": "Which two are correct ways for an application to authenticate with AWS without storing long-term access keys? (choose 2)",
+    "options": [
+      "An IAM role attached to the compute",
+      "Temporary credentials from STS",
+      "An access key in code",
+      "A root key"
+    ],
+    "explanation": "Roles and STS issue temporary credentials. An access key in code and a root key are dangerous options that leak easily."
   }
 ]

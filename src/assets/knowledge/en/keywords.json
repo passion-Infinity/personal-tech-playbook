@@ -1478,5 +1478,60 @@
     "id": "vpc-flow-logs",
     "meaning": "Observe traffic",
     "definition": "Metadata, no payload."
+  },
+  {
+    "id": "amazon-neptune",
+    "meaning": "A managed graph database",
+    "definition": "Multi-hop relationship queries."
+  },
+  {
+    "id": "amazon-timestream",
+    "meaning": "A time-series database",
+    "definition": "IoT and metrics."
+  },
+  {
+    "id": "savings-plans-vs-ri",
+    "meaning": "Two kinds of commitment",
+    "definition": "Compute Savings Plans are more flexible than RIs."
+  },
+  {
+    "id": "aws-cur",
+    "meaning": "Detailed cost data",
+    "definition": "Analyzed with Athena."
+  },
+  {
+    "id": "compute-optimizer",
+    "meaning": "Right-sizing recommendations",
+    "definition": "Based on usage metrics."
+  },
+  {
+    "id": "cost-allocation-tags",
+    "meaning": "Attribute cost by tag",
+    "definition": "Must be activated in Billing."
+  },
+  {
+    "id": "aws-x-ray",
+    "meaning": "Distributed tracing",
+    "definition": "The trace ID travels in a header, with a service map."
+  },
+  {
+    "id": "aws-sdk-retry-backoff",
+    "meaning": "Retry with jitter",
+    "definition": "Avoids a thundering herd."
+  },
+  {
+    "id": "s3-presigned-url",
+    "meaning": "A temporary link",
+    "definition": "Does not expose credentials."
+  },
+  {
+    "id": "aws-sts-assume-role",
+    "meaning": "Temporary credentials",
+    "definition": "Grants cross-account permissions."
+  },
+  {
+    "id": "aws-appsync",
+    "meaning": "Managed GraphQL",
+    "definition": "Resolvers and subscriptions."
   }
 ]

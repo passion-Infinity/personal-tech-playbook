@@ -293,5 +293,20 @@
     "id": "aws-advanced-networking",
     "title": "Advanced AWS Networking (Endpoints, PrivateLink, Global Accelerator)",
     "summary": "Access services privately, accelerate globally and observe traffic with endpoints, PrivateLink, Global Accelerator and Flow Logs."
+  },
+  {
+    "id": "aws-database-portfolio",
+    "title": "AWS Database Portfolio: Choosing a DB by Data Model",
+    "summary": "Choose among RDS/Aurora, DynamoDB, DocumentDB, Neptune, Timestream and MemoryDB by access pattern."
+  },
+  {
+    "id": "aws-cost-optimization-billing",
+    "title": "AWS Cost Optimization & FinOps",
+    "summary": "Observe cost with tags/Cost Explorer, choose Savings Plans/Spot and eliminate waste."
+  },
+  {
+    "id": "aws-developer-toolkit",
+    "title": "AWS for Developers: SDK, X-Ray, STS, Presigned URL",
+    "summary": "Authenticate with roles, retry/paginate correctly and trace distributed requests with X-Ray."
   }
 ]
