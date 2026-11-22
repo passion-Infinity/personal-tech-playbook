@@ -644,63 +644,63 @@
     "playbookId": "cap-consistency-models",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Phát biểu nào đúng về CAP theorem?",
+    "question": "Hệ thống lưu số dư tài khoản gặp phân vùng mạng giữa hai Region. Chọn gì khi phân vùng?",
     "options": [
-      "Luôn có thể chọn cả ba C, A và P",
-      "Khi có network partition, hệ thống phải chọn giữa Consistency và Availability",
-      "Chỉ áp dụng cho SQL",
-      "P là tuỳ chọn, có thể bỏ"
+      "Vẫn cho ghi ở cả hai và đối chiếu sau (AP)",
+      "Từ chối ghi ở phía không đủ quorum để giữ nhất quán (CP)",
+      "Tắt cả hệ thống",
+      "Bỏ qua phân vùng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Partition không phải lựa chọn trong mạng thực tế. CAP nói về hành vi khi partition xảy ra."
+    "explanation": "Với số dư, sai lệch tốn kém nên chọn CP. AP dễ nhầm là luôn phục vụ tốt hơn, nhưng cho phép rút vượt số dư."
   },
   {
     "id": "cap-consistency-models-02",
     "playbookId": "cap-consistency-models",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cluster 3 bản sao (N = 3). Cấu hình quorum nào đảm bảo đọc luôn chạm bản mới nhất?",
+    "question": "Theo PACELC, khi không có phân vùng mạng hệ thống vẫn phải đánh đổi giữa gì?",
     "options": [
-      "W = 1, R = 1",
-      "W = 2, R = 2",
-      "W = 1, R = 2",
-      "W = 2, R = 1"
+      "Latency và Consistency",
+      "CPU và RAM",
+      "Chi phí và bảo mật",
+      "Không có đánh đổi"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Cần R + W > N. 2 + 2 = 4 > 3; các cấu hình còn lại có tổng ≤ 3."
+    "explanation": "Nhất quán mạnh cần chờ đồng bộ nhiều node nên tốn độ trễ. 'Không có đánh đổi' là hiểu CAP một cách hạn hẹp."
   },
   {
     "id": "cap-consistency-models-03",
     "playbookId": "cap-consistency-models",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Chọn mức nhất quán phù hợp cho số dư tài khoản và bộ đếm lượt xem.",
+    "difficulty": 3,
+    "question": "Với N = 3 bản sao, cấu hình nào đảm bảo đọc thấy ghi mới nhất?",
     "options": [
-      "Cả hai dùng eventual",
-      "Số dư: nhất quán mạnh; lượt xem: eventual",
-      "Số dư: eventual; lượt xem: mạnh",
-      "Cả hai dùng mạnh"
+      "W = 1, R = 1",
+      "W = 2, R = 2",
+      "W = 1, R = 2",
+      "W = 3, R = 0"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chọn theo use case: tiền bạc cần đúng ngay; bộ đếm chấp nhận lệch tạm thời để ưu tiên sẵn sàng và tốc độ."
+    "explanation": "R + W > N nên tập đọc và tập ghi giao nhau (2 + 2 > 3). W = 1, R = 2 cũng cho tổng bằng 3, không lớn hơn N nên không đảm bảo."
   },
   {
     "id": "cap-consistency-models-04",
     "playbookId": "cap-consistency-models",
     "type": "explain",
     "difficulty": 3,
-    "question": "Vì sao nói \"chọn 2 trong 3\" của CAP là cách hiểu sai?",
-    "modelAnswer": "Partition tolerance không phải thứ có thể bỏ vì mạng luôn có thể lỗi, nên không có hệ thống phân tán \"CA\" thực sự. CAP chỉ nói rằng khi partition xảy ra phải chọn Consistency (từ chối hoặc chờ) hay Availability (trả lời có thể cũ). Thêm vào đó, PACELC nhắc rằng ngay khi bình thường vẫn đánh đổi latency với consistency.",
+    "question": "Người dùng đăng bài nhưng tải lại trang không thấy bài vừa đăng của mình, trong khi bạn bè thấy sau vài giây. Giải thích hiện tượng theo mô hình nhất quán và cách sửa.",
+    "modelAnswer": "Đây là vi phạm read-your-writes do đọc từ replica chưa nhận được ghi (eventual consistency). Có thể sửa bằng cách đọc từ leader hoặc từ replica đã theo kịp trong một khoảng thời gian sau khi ghi, hoặc gắn người dùng với một replica (sticky) và theo dõi vị trí log đã ghi.",
     "keyPoints": [
-      "P không tuỳ chọn",
-      "Chỉ chọn C hay A khi có partition",
-      "PACELC: bình thường vẫn latency vs consistency"
+      "Read-your-writes bị vi phạm",
+      "Replica chưa theo kịp",
+      "Đọc leader/sticky replica sau khi ghi"
     ]
   },
   {
@@ -708,63 +708,63 @@
     "playbookId": "load-balancing-reverse-proxy",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Dịch vụ gRPC (HTTP/2, kết nối dài) đứng sau L4 load balancer và một vài backend bị quá tải. Nguyên nhân và cách khắc phục?",
+    "question": "Cần định tuyến /api tới service A và /img tới service B trên cùng domain, kèm kết thúc TLS. Dùng gì?",
     "options": [
-      "gRPC không thể cân bằng tải",
-      "L4 cân bằng theo kết nối nên mọi request trên kết nối dài dồn vào một backend; dùng L7 LB hoặc client-side balancing",
-      "Cần tăng TTL DNS",
-      "Cần đổi sang UDP"
+      "L4 load balancer",
+      "L7 load balancer / reverse proxy",
+      "DNS round robin",
+      "Chỉ firewall"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cân bằng theo kết nối không phải theo request. L7 hoặc client-side load balancing phân phối từng request."
+    "explanation": "L7 hiểu path/host nên định tuyến theo nội dung. L4 dễ nhầm vì nhanh, nhưng chỉ nhìn IP/port."
   },
   {
     "id": "load-balancing-reverse-proxy-02",
     "playbookId": "load-balancing-reverse-proxy",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Request có thời gian xử lý rất chênh lệch. Thuật toán nào hợp lý?",
+    "difficulty": 3,
+    "question": "Các request có thời gian xử lý rất không đều và round robin làm một số node quá tải. Thuật toán tốt hơn?",
     "options": [
-      "Round robin thuần tuý",
-      "Least connections",
-      "Luôn chọn backend đầu tiên",
-      "Random mù"
+      "Random thuần",
+      "Least connections hoặc power of two choices",
+      "IP hash",
+      "Tăng timeout"
     ],
     "answer": [
       1
     ],
-    "explanation": "Least connections dồn thêm tải vào backend đang rảnh, tốt hơn khi độ dài request không đồng đều."
+    "explanation": "Chọn node ít tải hơn thay vì xoay vòng mù. IP hash dễ nhầm là cân bằng, nhưng phân phối theo client chứ không theo tải."
   },
   {
     "id": "load-balancing-reverse-proxy-03",
     "playbookId": "load-balancing-reverse-proxy",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Health check gọi cả database và dịch vụ ngoài. Rủi ro lớn nhất là gì?",
+    "question": "Pod khởi động xong process nhưng chưa kết nối DB, và LB đã gửi traffic vào làm lỗi. Cần gì?",
     "options": [
-      "Không có rủi ro",
-      "Khi dependency chậm, mọi backend bị đánh dấu unhealthy cùng lúc nên cả cụm bị loại khỏi LB",
-      "LB không thể cân bằng tải",
-      "Chỉ làm tốn CPU"
+      "Chỉ liveness probe",
+      "Readiness probe để gỡ khỏi pool tới khi sẵn sàng",
+      "Restart liên tục",
+      "Tăng replicas"
     ],
     "answer": [
       1
     ],
-    "explanation": "Health check quá sâu biến sự cố cục bộ thành sự cố toàn cụm. Tách liveness và readiness hợp lý."
+    "explanation": "Readiness quyết định có nhận traffic không; liveness quyết định restart. Chỉ liveness dễ nhầm là đủ, nhưng process sống không có nghĩa là sẵn sàng."
   },
   {
     "id": "load-balancing-reverse-proxy-04",
     "playbookId": "load-balancing-reverse-proxy",
     "type": "explain",
     "difficulty": 2,
-    "question": "L4 và L7 load balancer khác nhau thế nào, và chọn ra sao?",
-    "modelAnswer": "L4 chuyển tiếp TCP/UDP dựa trên IP/port, rất nhanh và không hiểu giao thức ứng dụng. L7 hiểu HTTP nên định tuyến theo host, path, header, kết thúc TLS, rewrite, tích hợp WAF nhưng tốn CPU và độ trễ hơn. Chọn L7 cho web/API cần routing và observability, L4 cho TCP/UDP đòi hỏi hiệu năng cực cao hoặc giao thức tuỳ ý.",
+    "question": "Một team dùng sticky session vì app lưu giỏ hàng trong bộ nhớ của từng server. Vì sao nên tránh sticky session và thay bằng gì?",
+    "modelAnswer": "Sticky session làm tải không đều, mất phiên khi node chết và gây khó scale hoặc triển khai. Nên đưa state ra ngoài (Redis hoặc DB) để backend stateless, khi đó LB phân phối tự do và node nào chết cũng không mất phiên.",
     "keyPoints": [
-      "L4: IP/port, nhanh",
-      "L7: hiểu HTTP, routing, TLS termination",
-      "Chọn theo nhu cầu routing và hiệu năng"
+      "Tải không đều",
+      "Mất phiên khi node chết",
+      "State ra ngoài, backend stateless"
     ]
   },
   {
@@ -772,63 +772,63 @@
     "playbookId": "message-queues-streaming-basics",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Khác biệt cốt lõi giữa queue truyền thống và event log (như Kafka)?",
+    "question": "Cần để ba hệ thống (thanh toán, phân tích, thông báo) cùng đọc một dòng sự kiện đơn hàng và có thể đọc lại dữ liệu cũ khi sửa bug. Chọn?",
     "options": [
-      "Không có khác biệt",
-      "Queue xoá message sau khi tiêu thụ, một consumer mỗi message; log giữ lại, nhiều consumer group đọc độc lập và replay được",
-      "Log không có thứ tự",
-      "Queue luôn nhanh hơn log"
+      "Một message queue thông thường",
+      "Event log như Kafka với mỗi hệ thống một consumer group",
+      "Cron job",
+      "Cache"
     ],
     "answer": [
       1
     ],
-    "explanation": "Hai mô hình khác nhau về giữ dữ liệu và cách tiêu thụ."
+    "explanation": "Log giữ theo retention và cho mỗi consumer group đọc độc lập, replay được. Queue thông thường xoá message sau ack nên không replay."
   },
   {
     "id": "message-queues-streaming-basics-02",
     "playbookId": "message-queues-streaming-basics",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Consumer ack message TRƯỚC khi xử lý rồi crash giữa chừng. Ngữ nghĩa giao nhận là gì?",
+    "difficulty": 3,
+    "question": "Một consumer Kafka xử lý xong tác vụ trừ tiền rồi chết trước khi commit offset. Khi khởi động lại điều gì xảy ra và cách giảm hậu quả?",
     "options": [
-      "At-least-once",
-      "At-most-once: message có thể bị mất",
-      "Exactly-once",
-      "Không xác định"
+      "Không xử lý lại",
+      "Message được giao lại (at-least-once), cần consumer idempotent",
+      "Kafka tự bù trừ",
+      "Mất message"
     ],
     "answer": [
       1
     ],
-    "explanation": "Ack trước khi xử lý nghĩa là crash sẽ mất message. Muốn at-least-once thì ack sau khi xử lý xong."
+    "explanation": "At-least-once có thể giao trùng. 'Kafka tự bù trừ' dễ nhầm với exactly-once, nhưng bạn vẫn cần idempotent ở biên hệ thống."
   },
   {
     "id": "message-queues-streaming-basics-03",
     "playbookId": "message-queues-streaming-basics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Một poison message làm consumer crash lặp mãi. Cách xử lý chuẩn?",
+    "question": "Topic Kafka có 6 partition và một consumer group có 10 consumer. Điều gì xảy ra?",
     "options": [
-      "Bỏ qua mọi lỗi",
-      "Giới hạn số lần retry rồi chuyển sang dead-letter queue kèm cảnh báo",
-      "Tăng số consumer",
-      "Xoá toàn bộ hàng đợi"
+      "Cả 10 đều xử lý",
+      "Chỉ tối đa 6 consumer hoạt động, 4 consumer rảnh",
+      "Kafka tự tăng partition",
+      "Tăng throughput gấp đôi"
     ],
     "answer": [
       1
     ],
-    "explanation": "DLQ cách ly message hỏng để không chặn luồng chính và cho phép điều tra."
+    "explanation": "Độ song song trong một group bị chặn bởi số partition. Thêm consumer không giúp khi đã vượt số partition."
   },
   {
     "id": "message-queues-streaming-basics-04",
     "playbookId": "message-queues-streaming-basics",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao nên thiết kế at-least-once cộng consumer idempotent thay vì dựa vào exactly-once của broker?",
-    "modelAnswer": "Giao nhận exactly-once đầu-cuối trên mạng không đạt được nếu không có hỗ trợ ở phía xử lý, và tác dụng phụ ra hệ thống ngoài vẫn có thể lặp. At-least-once không mất dữ liệu; consumer idempotent biến trùng lặp thành vô hại, đơn giản và bền hơn.",
+    "question": "Hãy so sánh message queue và event log về cách giao, lưu, replay và nêu ví dụ chọn mỗi loại.",
+    "modelAnswer": "Queue giao mỗi message cho một consumer, xoá sau ack, không replay, hợp task queue và retry. Event log là nhật ký append-only chia partition, giữ theo retention, nhiều consumer group đọc độc lập bằng offset riêng và replay được, hợp event streaming và pipeline dữ liệu. Tách tải xử lý ảnh dùng queue, phát sự kiện cho nhiều hệ thống dùng log.",
     "keyPoints": [
-      "Exactly-once chỉ trong phạm vi broker",
-      "At-least-once không mất dữ liệu",
-      "Idempotent consumer xử lý trùng an toàn"
+      "Queue: xoá sau ack, không replay",
+      "Log: giữ retention, nhiều group, replay",
+      "Chọn theo nhu cầu"
     ]
   },
   {
@@ -836,63 +836,63 @@
     "playbookId": "caching-strategies",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Trong cache-aside, A đọc DB (giá trị cũ), B ghi DB rồi xoá cache, sau đó A ghi giá trị cũ vào cache. Kết quả?",
+    "question": "Một API đọc user profile: kiểm tra cache, miss thì đọc DB rồi lưu vào cache với TTL; khi cập nhật thì ghi DB rồi xoá key. Đây là chiến lược nào?",
     "options": [
-      "Cache luôn đúng",
-      "Cache chứa giá trị cũ cho tới khi hết TTL hoặc bị xoá lần nữa",
-      "DB bị lỗi",
-      "B bị rollback"
+      "Write-through",
+      "Cache-aside",
+      "Write-behind",
+      "Read-through"
     ],
     "answer": [
       1
     ],
-    "explanation": "Race giữa đọc-miss và ghi/xoá. Giảm bằng TTL ngắn, xoá sau ghi hoặc versioning."
+    "explanation": "Ứng dụng tự quản lý đọc/ghi cache là cache-aside. Read-through dễ nhầm vì cũng nạp khi miss, nhưng chính lớp cache thực hiện việc nạp."
   },
   {
     "id": "caching-strategies-02",
     "playbookId": "caching-strategies",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Truy vấn liên tục cho key không tồn tại làm mọi request đập vào DB. Biện pháp phù hợp?",
+    "difficulty": 3,
+    "question": "Kẻ tấn công liên tục truy vấn các id không tồn tại và DB bị đập dù cache chạy tốt. Hiện tượng và cách phòng?",
     "options": [
-      "Tăng TTL cho mọi key",
-      "Cache kết quả rỗng (negative caching) với TTL ngắn hoặc dùng Bloom filter",
-      "Tắt cache",
-      "Thêm index"
+      "Cache avalanche; tăng TTL",
+      "Cache penetration; negative caching hoặc Bloom filter",
+      "Cache stampede; thêm node",
+      "Replication lag"
     ],
     "answer": [
       1
     ],
-    "explanation": "Đây là cache penetration: key không tồn tại luôn miss. Negative caching hoặc Bloom filter chặn truy vấn vô ích."
+    "explanation": "Key không tồn tại luôn miss nên xuyên cache. Avalanche là hết hạn đồng loạt, dễ nhầm."
   },
   {
     "id": "caching-strategies-03",
     "playbookId": "caching-strategies",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Khi dữ liệu trong DB thay đổi, thường nên làm gì với cache-aside?",
+    "question": "Hit ratio 95%, cache 1 ms, DB 50 ms. Độ trễ trung bình gần nhất là?",
     "options": [
-      "Cập nhật cache trước DB",
-      "Xoá (invalidate) key rồi nạp lại ở lần đọc kế tiếp",
-      "Không làm gì",
-      "Khởi động lại Redis"
+      "1 ms",
+      "3,45 ms",
+      "25 ms",
+      "50 ms"
     ],
     "answer": [
       1
     ],
-    "explanation": "Xoá key tránh ghi đè sai thứ tự giữa các tiến trình đồng thời."
+    "explanation": "0,95×1 + 0,05×50 = 3,45 ms. Nhầm là 1 ms do bỏ qua phần miss."
   },
   {
     "id": "caching-strategies-04",
     "playbookId": "caching-strategies",
     "type": "explain",
     "difficulty": 2,
-    "question": "Write-through và write-behind khác cache-aside thế nào, kèm rủi ro?",
-    "modelAnswer": "Cache-aside do ứng dụng tự nạp khi miss và tự invalidate. Write-through ghi đồng thời cache và DB nên nhất quán hơn nhưng ghi chậm hơn. Write-behind ghi cache trước rồi ghi DB bất đồng bộ nên nhanh nhưng có thể mất dữ liệu nếu cache hỏng trước khi flush.",
+    "question": "Một team thấy dữ liệu cũ xuất hiện sau khi cập nhật dù đã có cache-aside. Hãy nêu các chiến lược invalidation, thứ tự đúng khi ghi và vì sao nên có TTL.",
+    "modelAnswer": "Các cách gồm TTL, xoá hoặc cập nhật key khi ghi, sự kiện/CDC và key có phiên bản. Khi ghi nên ghi DB trước rồi xoá cache, không cập nhật cache trực tiếp vì dễ race. TTL luôn nên có như lưới an toàn để dữ liệu cũ cuối cùng cũng hết hạn dù invalidation chủ động có sót.",
     "keyPoints": [
-      "Cache-aside: app điều khiển",
-      "Write-through: nhất quán, ghi chậm",
-      "Write-behind: nhanh, có thể mất dữ liệu"
+      "TTL, xoá khi ghi, CDC, key phiên bản",
+      "Ghi DB rồi xoá cache",
+      "TTL là lưới an toàn"
     ]
   },
   {
@@ -1284,102 +1284,102 @@
     "playbookId": "outbox-pattern",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Transactional Outbox giải quyết vấn đề nào?",
+    "question": "Service đơn hàng muốn lưu đơn vào DB và phát sự kiện OrderPlaced lên Kafka mà không bao giờ mất hay sinh sự kiện 'ma'. Pattern phù hợp?",
     "options": [
-      "Tăng tốc truy vấn",
-      "Dual-write: ghi DB và publish event nguyên tử mà không cần 2PC",
-      "Mã hoá message",
-      "Tự động scale consumer"
+      "Ghi DB rồi publish Kafka ngay trong transaction",
+      "Transactional Outbox: ghi sự kiện vào bảng outbox cùng transaction rồi relay publish",
+      "Publish Kafka trước rồi ghi DB",
+      "Dùng cron job quét DB"
     ],
     "answer": [
       1
     ],
-    "explanation": "Event được ghi cùng transaction với dữ liệu nghiệp vụ, relay publish sau đó nên không mất hoặc phát sai event."
+    "explanation": "Outbox làm dữ liệu và sự kiện cùng commit/rollback. Publish trực tiếp trong transaction dễ nhầm là đơn giản nhưng là dual-write nên có thể mất hoặc sinh sự kiện ma."
   },
   {
     "id": "outbox-pattern-02",
     "playbookId": "outbox-pattern",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Vì sao consumer của event từ outbox phải idempotent?",
+    "difficulty": 3,
+    "question": "Relay publish một sự kiện lên Kafka thành công nhưng chết trước khi đánh dấu đã gửi, khi khởi động lại nó gửi lại. Hệ quả và cách xử lý?",
     "options": [
-      "Relay có thể publish trùng (at-least-once) khi crash sau publish trước khi đánh dấu",
-      "Vì outbox luôn exactly-once",
-      "Vì DB không có transaction",
-      "Không cần"
+      "Không ảnh hưởng",
+      "Consumer có thể nhận sự kiện trùng, cần consumer idempotent",
+      "Kafka tự khử trùng mọi trường hợp",
+      "Sự kiện bị mất"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "Relay crash giữa publish và đánh dấu đã gửi sẽ gửi lại."
+    "explanation": "Outbox bảo đảm at-least-once, không exactly-once. Kafka tự khử trùng mọi trường hợp dễ nhầm với idempotent producer, nhưng không chặn việc relay gửi lại."
   },
   {
     "id": "circuit-breaker-01",
     "playbookId": "circuit-breaker",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Khi circuit breaker ở trạng thái OPEN, request mới được xử lý thế nào?",
+    "question": "Service A gọi B; B bắt đầu trả lời sau 30 giây và thread pool của A cạn dần. Circuit Breaker giúp thế nào?",
     "options": [
-      "Vẫn gọi dependency như bình thường",
-      "Bị từ chối ngay (fail-fast) hoặc chuyển sang fallback",
-      "Được xếp hàng vô hạn",
-      "Tự động retry 100 lần"
+      "Làm B nhanh hơn",
+      "Ngắt mạch sau khi lỗi/chậm vượt ngưỡng và fail fast để A không treo thread",
+      "Tự scale B",
+      "Tăng timeout"
     ],
     "answer": [
       1
     ],
-    "explanation": "OPEN chặn gọi dependency đang lỗi để tránh cạn tài nguyên và cho nó thời gian hồi phục."
+    "explanation": "Breaker ngăn dồn thread vào dependency đang lỗi. Tăng timeout dễ nhầm là cho B thêm thời gian, nhưng làm cạn thread nhanh hơn."
   },
   {
     "id": "circuit-breaker-02",
     "playbookId": "circuit-breaker",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Trạng thái Half-Open dùng để làm gì?",
+    "question": "Mạch đang Open và hết thời gian chờ. Trạng thái Half-Open dùng để làm gì?",
     "options": [
-      "Tắt hẳn breaker",
-      "Cho một số request thử nghiệm đi qua để kiểm tra dependency đã hồi phục chưa",
+      "Chặn mọi request",
+      "Cho một vài lời gọi thử để kiểm tra dịch vụ đã hồi phục chưa",
       "Tăng timeout",
-      "Ghi log"
+      "Xoá cache"
     ],
     "answer": [
       1
     ],
-    "explanation": "Thành công thì quay về CLOSED, thất bại thì trở lại OPEN."
+    "explanation": "Thành công thì về Closed, thất bại thì về Open lại. Mở hoàn toàn lại ngay dễ nhầm nhưng gây quá tải dependency đang hồi phục."
   },
   {
     "id": "redis-cache-stampede-01",
     "playbookId": "redis-cache-stampede",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cách nào giảm cache stampede cho hot key?",
+    "question": "Một sản phẩm hot nhận hàng nghìn request/giây và DB sập đúng lúc cache của sản phẩm hết hạn. Hiện tượng này là gì?",
     "options": [
-      "Tăng TTL lên vô hạn",
-      "Chỉ cho một request rebuild (lock/single-flight), làm mới sớm theo xác suất, hoặc trả stale kèm refresh nền",
-      "Tắt cache",
-      "Thêm nhiều DB replica"
+      "Cache penetration",
+      "Cache stampede (thundering herd)",
+      "Replication lag",
+      "Eviction"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mục tiêu là tránh hàng nghìn request cùng tính lại giá trị khi key hết hạn."
+    "explanation": "Nhiều request cùng miss và cùng dựng lại. Penetration dễ nhầm vì cũng đập DB, nhưng xảy ra với key không tồn tại."
   },
   {
     "id": "redis-cache-stampede-02",
     "playbookId": "redis-cache-stampede",
     "type": "mcq",
-    "difficulty": 1,
-    "question": "TTL jitter nhằm mục đích gì?",
+    "difficulty": 3,
+    "question": "Team dùng lock SET NX PX nhưng thỉnh thoảng một request xoá nhầm khoá của request khác. Cách đúng?",
     "options": [
-      "Tăng độ chính xác",
-      "Phân tán thời điểm hết hạn để nhiều key không hết hạn cùng lúc",
-      "Mã hoá key",
-      "Giảm RAM"
+      "Bỏ lock",
+      "Giá trị khoá là token duy nhất và chỉ xoá khi khớp (Lua compare-and-delete)",
+      "Tăng TTL khoá thật dài",
+      "Dùng KEYS"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cộng thêm độ lệch ngẫu nhiên vào TTL tránh mass expiration (cache avalanche)."
+    "explanation": "Token ngăn xoá nhầm. Tăng TTL thật dài dễ nhầm là an toàn nhưng khiến khoá kẹt lâu khi crash."
   },
   {
     "id": "concurrency-fundamentals-05",
@@ -1485,7 +1485,7 @@
     "answer": [
       1
     ],
-    "explanation": "Không có cơ chế chỉ một request rebuild. Thêm lock/single-flight, làm mới sớm theo xác suất hoặc stale-while-revalidate, và TTL jitter."
+    "explanation": "Không có cơ chế chỉ một request rebuild. Thêm lock/single-flight, làm mới sớm theo xác suất hoặc stale-while-revalidate, và TTL jitter. Phương án nhiễu hấp dẫn là 'TTL 60 giây quá dài', nhưng rút ngắn TTL còn làm key hết hạn thường xuyên hơn và tăng nguy cơ stampede."
   },
   {
     "id": "outbox-pattern-03",
@@ -1506,7 +1506,7 @@
     "answer": [
       1
     ],
-    "explanation": "DB và Kafka không chung transaction. Dùng transactional outbox: ghi event vào bảng outbox cùng transaction rồi để relay publish."
+    "explanation": "DB và Kafka không chung transaction nên đây là dual-write. Dùng transactional outbox: ghi event vào bảng outbox cùng transaction rồi để relay publish. Phương án nhiễu hấp dẫn là 'thiếu @Async', nhưng chạy bất đồng bộ không giải quyết vấn đề nguyên tử giữa hai hệ thống."
   },
   {
     "id": "db-transactions-isolation-05",
@@ -1534,63 +1534,63 @@
     "playbookId": "consistent-hashing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cụm 4 cache node dùng hash(key) mod 4. Thêm node thứ 5 (mod 5). Khoảng bao nhiêu key bị chuyển sang node khác?",
+    "question": "Cụm cache 4 node dùng hash mod N và team thêm node thứ 5; DB bị quá tải vì cache miss hàng loạt. Vì sao và cách tốt hơn?",
     "options": [
-      "Khoảng 1/5",
-      "Khoảng 20%",
-      "Gần như toàn bộ (khoảng 80%)",
-      "Không key nào"
+      "Thêm node không ảnh hưởng",
+      "Hash mod N làm gần như mọi key đổi node; dùng consistent hashing",
+      "DB lỗi",
+      "Cần tăng TTL"
     ],
     "answer": [
-      2
+      1
     ],
-    "explanation": "Với hash mod N, đổi N làm khoảng (N−1)/N key đổi vị trí. Consistent hashing chỉ chuyển khoảng 1/N."
+    "explanation": "Đổi N làm khoảng 80% key đổi node. Tăng TTL dễ nhầm là giảm miss nhưng không giải quyết việc key đổi chỗ."
   },
   {
     "id": "consistent-hashing-02",
     "playbookId": "consistent-hashing",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Vì sao nên dùng virtual nodes trong consistent hashing?",
+    "difficulty": 3,
+    "question": "Một cụm dùng consistent hashing nhưng một node nhận nhiều tải hơn hẳn các node khác. Nguyên nhân khả dĩ và cách xử lý?",
     "options": [
-      "Để tăng độ dài khoá",
-      "Để phân bố key đều hơn và gán nhiều tải hơn cho node mạnh",
-      "Để loại bỏ cần replication",
-      "Để mã hoá dữ liệu"
+      "Không có cách",
+      "Ít virtual node nên phân phối lệch; tăng vnode hoặc trọng số",
+      "Thêm RAM",
+      "Tắt hash"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mỗi node vật lý chiếm nhiều điểm trên vòng nên giảm lệch tải và cho phép trọng số theo năng lực."
+    "explanation": "Vnode rải đều và cho phép node mạnh nhận nhiều hơn. Thêm RAM dễ nhầm nhưng không sửa phân phối key."
   },
   {
     "id": "consistent-hashing-03",
     "playbookId": "consistent-hashing",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Consistent hashing KHÔNG giải quyết được vấn đề nào sau đây?",
+    "difficulty": 2,
+    "question": "Redis Cluster phân phối key bằng cách nào?",
     "options": [
-      "Di chuyển nhiều key khi thêm node",
-      "Một hot key làm quá tải đúng một node",
-      "Phân bố key lên nhiều node",
-      "Xoá node khỏi cụm"
+      "Vòng băm với virtual node",
+      "16.384 hash slot: CRC16(key) mod 16384",
+      "hash mod N",
+      "Random"
     ],
     "answer": [
       1
     ],
-    "explanation": "Một key quá nóng vẫn nằm ở một node; cần cache cục bộ hoặc nhân bản key."
+    "explanation": "Redis Cluster dùng hash slot, không dùng vòng băm; slot được di chuyển khi resharding."
   },
   {
     "id": "consistent-hashing-04",
     "playbookId": "consistent-hashing",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích consistent hashing và vì sao nó tốt hơn hash mod N khi cluster thay đổi.",
-    "modelAnswer": "Node và key được băm lên cùng một vòng; mỗi key thuộc node đầu tiên theo chiều kim đồng hồ. Thêm hoặc bớt node chỉ ảnh hưởng key nằm giữa node đó và node đứng trước, tức khoảng 1/N số key, trong khi hash mod N làm gần như mọi key đổi node và làm cache nguội hàng loạt. Virtual nodes giúp phân bố đều.",
+    "question": "Giải thích vì sao consistent hashing chỉ di chuyển khoảng 1/N số key khi thêm node, và virtual node giúp gì.",
+    "modelAnswer": "Key và node cùng được băm lên một vòng; key thuộc node đầu tiên theo chiều kim đồng hồ nên thêm node mới chỉ lấy lại các key trong cung liền kề, khoảng 1/N tổng số. Virtual node đặt mỗi node vật lý ở nhiều điểm giúp phân phối đều, node mạnh nhận nhiều hơn và tải của node chết rải đều cho nhiều node.",
     "keyPoints": [
-      "Vòng băm, đi theo chiều kim đồng hồ",
-      "Chỉ khoảng 1/N key di chuyển",
-      "Virtual nodes cân bằng tải"
+      "Key thuộc node kế tiếp theo vòng",
+      "Chỉ cung liền kề bị ảnh hưởng",
+      "Vnode cân bằng và rải tải"
     ]
   },
   {
@@ -1598,63 +1598,63 @@
     "playbookId": "db-replication-sharding",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Người dùng cập nhật hồ sơ rồi tải lại trang nhưng vẫn thấy dữ liệu cũ vì đọc từ replica. Cách khắc phục hợp lý?",
+    "question": "Ứng dụng đọc nhiều, DB chính quá tải đọc nhưng ghi vẫn ổn. Giải pháp phù hợp nhất trước khi cân nhắc sharding?",
     "options": [
-      "Tăng số replica",
-      "Đọc từ leader (hoặc replica đã theo kịp) ngay sau khi ghi",
-      "Chuyển toàn bộ sang sharding",
-      "Tắt replication"
+      "Sharding ngay",
+      "Thêm read replica (replication) và cache",
+      "Xoá index",
+      "Tăng timeout"
     ],
     "answer": [
       1
     ],
-    "explanation": "Đây là vi phạm read-your-writes do replication lag. Đọc từ leader sau ghi hoặc dùng token vị trí log."
+    "explanation": "Replication scale đọc. Sharding dễ nhầm là mạnh hơn, nhưng thêm phức tạp không cần thiết khi vấn đề chỉ là đọc."
   },
   {
     "id": "db-replication-sharding-02",
     "playbookId": "db-replication-sharding",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Chọn shard key nào tệ nhất cho bảng events ghi liên tục theo thời gian khi dùng range sharding?",
+    "question": "Người dùng cập nhật hồ sơ rồi tải lại trang và thấy dữ liệu cũ do đọc từ replica trễ. Đây là bất thường nào và cách giảm?",
     "options": [
-      "user_id đã băm",
-      "Timestamp tăng dần",
-      "Tổ hợp tenant_id + id",
-      "Hash của event_id"
+      "Không phải lỗi",
+      "Vi phạm read-your-writes; đọc leader sau ghi hoặc sticky replica",
+      "Do cache trình duyệt",
+      "Do sharding"
     ],
     "answer": [
       1
     ],
-    "explanation": "Timestamp đơn điệu tăng dồn mọi ghi mới vào shard cuối (hot shard)."
+    "explanation": "Replica bất đồng bộ trễ so với leader. Sharding không liên quan tới hiện tượng này."
   },
   {
     "id": "db-replication-sharding-03",
     "playbookId": "db-replication-sharding",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Thêm nhiều read replica sẽ cải thiện điều gì?",
+    "difficulty": 3,
+    "question": "Một cụm có shard key là user_id nhưng một khách hàng doanh nghiệp tạo 40% lưu lượng và một shard quá tải. Hiện tượng gì và hướng xử lý?",
     "options": [
-      "Throughput ghi",
-      "Throughput đọc và khả năng chịu lỗi",
-      "Dung lượng lưu trữ tối đa",
-      "Mọi truy vấn xuyên shard"
+      "Hot shard; thêm hậu tố/tách khoá nóng hoặc shard con",
+      "Replication lag",
+      "Split brain",
+      "Hết đĩa"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Mọi ghi vẫn đi qua leader nên replica chỉ scale đọc và chịu lỗi. Scale ghi và dung lượng cần sharding."
+    "explanation": "Tải dồn vào một shard do khoá lệch. Thêm replica không giúp vì vấn đề là ghi/khoá lệch."
   },
   {
     "id": "db-replication-sharding-04",
     "playbookId": "db-replication-sharding",
     "type": "explain",
     "difficulty": 3,
-    "question": "Phân biệt replication và sharding, và nêu một rủi ro điển hình của mỗi loại.",
-    "modelAnswer": "Replication nhân bản cùng dữ liệu qua nhiều node để chịu lỗi và scale đọc; rủi ro là replication lag làm đọc dữ liệu cũ và split brain khi failover. Sharding chia dữ liệu thành các mảnh ở nhiều node để scale ghi và dung lượng; rủi ro là hot shard và các truy vấn hoặc transaction xuyên shard rất đắt.",
+    "question": "Hãy phân biệt replication và sharding, nêu vấn đề mỗi cái giải quyết và cái giá phải trả.",
+    "modelAnswer": "Replication nhân bản dữ liệu qua nhiều node để tăng sẵn sàng và scale đọc, cái giá là replication lag và rủi ro mất dữ liệu gần nhất khi failover bất đồng bộ. Sharding chia dữ liệu theo shard key để scale ghi và dung lượng, cái giá là truy vấn/giao dịch chéo shard phức tạp, hot shard và vận hành khó hơn. Hai kỹ thuật trực giao và thường dùng cùng nhau.",
     "keyPoints": [
-      "Replication: cùng dữ liệu, chịu lỗi/scale đọc",
-      "Sharding: chia dữ liệu, scale ghi/dung lượng",
-      "Rủi ro: lag/split brain và hot shard/cross-shard"
+      "Replication: HA và scale đọc, có lag",
+      "Sharding: scale ghi và dung lượng, khó truy vấn chéo shard",
+      "Dùng kết hợp"
     ]
   },
   {
@@ -1662,63 +1662,63 @@
     "playbookId": "rate-limiting-algorithms",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Fixed window counter có vấn đề đặc trưng nào?",
+    "question": "API cần cho phép khách bùng nổ ngắn 20 request liên tiếp nhưng giữ trung bình 10 request/giây. Thuật toán nào?",
     "options": [
-      "Tốn nhiều bộ nhớ nhất",
-      "Có thể cho phép burst gấp đôi hạn mức ở ranh giới hai cửa sổ",
-      "Không đếm được request",
-      "Không dùng được với Redis"
+      "Fixed window",
+      "Token bucket với r = 10/s, b = 20",
+      "Leaky bucket",
+      "Không giới hạn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Một client có thể gửi đủ hạn mức cuối cửa sổ này và đủ hạn mức đầu cửa sổ kế tiếp."
+    "explanation": "Token bucket cho bùng nổ tới dung lượng. Leaky bucket dễ nhầm nhưng làm mượt, không cho bùng nổ."
   },
   {
     "id": "rate-limiting-algorithms-02",
     "playbookId": "rate-limiting-algorithms",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Muốn cho phép burst ngắn nhưng giữ tốc độ trung bình, nên chọn thuật toán nào?",
+    "question": "Fixed window 100 request/phút nhưng khách gửi 100 ở giây cuối phút và 100 ở giây đầu phút sau. Vấn đề?",
     "options": [
-      "Fixed window",
-      "Token bucket",
-      "Không giới hạn",
-      "Random drop"
+      "Không vấn đề",
+      "Lỗi biên: 200 request trong khoảng 2 giây",
+      "Thuật toán chặn nhầm",
+      "Redis lỗi"
     ],
     "answer": [
       1
     ],
-    "explanation": "Token bucket cho phép burst tới dung lượng xô rồi nạp token theo tốc độ cố định."
+    "explanation": "Fixed window có lỗi biên; dùng sliding window hoặc token bucket."
   },
   {
     "id": "rate-limiting-algorithms-03",
     "playbookId": "rate-limiting-algorithms",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Rate limiter dùng Redis bị lỗi kết nối. Hành vi nào cần được quyết định có chủ đích?",
+    "question": "Hạn mức 100 nhưng thực tế nhiều instance cho qua hơn 100 khi tải cao. Nguyên nhân thường gặp?",
     "options": [
-      "Chỉ cần ghi log",
-      "Fail-open (cho qua) hay fail-closed (chặn) tuỳ mức rủi ro",
-      "Tắt Redis",
-      "Tăng hạn mức gấp đôi"
+      "Thiếu RAM",
+      "Đọc rồi ghi không nguyên tử nên nhiều request cùng qua",
+      "Redis chậm",
+      "Hạn mức quá thấp"
     ],
     "answer": [
       1
     ],
-    "explanation": "Limiter là điểm lỗi tiềm tàng; chọn ưu tiên sẵn sàng hay bảo vệ phải có chủ đích."
+    "explanation": "Dùng INCR/Lua để thao tác nguyên tử."
   },
   {
     "id": "rate-limiting-algorithms-04",
     "playbookId": "rate-limiting-algorithms",
     "type": "explain",
     "difficulty": 3,
-    "question": "Vì sao bộ đếm rate limit phân tán phải nguyên tử, và làm sao đạt được trên Redis?",
-    "modelAnswer": "Nếu đọc bộ đếm rồi mới ghi, hai request đồng thời cùng thấy còn hạn mức và cùng được qua, làm vượt giới hạn. Phải thực hiện kiểm tra và cập nhật trong một thao tác nguyên tử, ví dụ INCR kèm EXPIRE hoặc một Lua script chạy nguyên khối trong Redis.",
+    "question": "So sánh rate limiting và load shedding và nêu hành vi nên chọn khi kho đếm Redis chết.",
+    "modelAnswer": "Rate limiting ép công bằng theo từng client; load shedding bỏ bớt request khi cả hệ thống quá tải bất kể client nào. Khi Redis chết phải quyết định fail open (cho qua, ưu tiên khả dụng) hay fail closed (chặn, ưu tiên an toàn); thường fail open có giới hạn cục bộ cho API thường và fail closed cho thao tác nhạy cảm.",
     "keyPoints": [
-      "Check-then-set không nguyên tử gây vượt hạn mức",
-      "INCR+EXPIRE hoặc Lua script",
-      "Dùng thời gian của Redis, không dùng đồng hồ client"
+      "Công bằng theo client vs bảo vệ chung",
+      "Fail open vs fail closed",
+      "Chọn theo mức nhạy cảm"
     ]
   },
   {
@@ -1740,7 +1740,7 @@
     "answer": [
       1
     ],
-    "explanation": "Hai request cùng đọc count = 99 rồi cùng ghi 100. Dùng INCR (nguyên tử) rồi EXPIRE khi key mới tạo, hoặc Lua script; set lại ex=60 mỗi lần còn kéo dài cửa sổ vô hạn."
+    "explanation": "Hai request cùng đọc count = 99 rồi cùng ghi 100. Dùng INCR (nguyên tử) rồi EXPIRE khi key mới tạo, hoặc Lua script; set lại ex=60 mỗi lần còn kéo dài cửa sổ vô hạn. Phương án nhiễu hấp dẫn là 'dùng Redis thay vì bộ nhớ cục bộ', nhưng dùng Redis là đúng hướng cho nhiều instance; lỗi nằm ở cách cài đặt không nguyên tử."
   },
   {
     "id": "backend-performance-profiling-01",
@@ -9606,175 +9606,177 @@
     "id": "outbox-pattern-04",
     "playbookId": "outbox-pattern",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Hai lý do dùng Transactional Outbox? (chọn 2)",
+    "difficulty": 2,
+    "question": "Team cân nhắc hai cách chuyển sự kiện từ bảng outbox ra Kafka. Khi nào chọn polling publisher và khi nào chọn CDC như Debezium?",
     "options": [
-      "Tránh dual-write mất đồng bộ",
-      "Phát sự kiện cùng giao dịch DB",
-      "Bỏ qua idempotency",
-      "Thay thế message broker"
+      "Luôn chọn CDC",
+      "Polling đơn giản nhưng có độ trễ và tải lên DB; CDC độ trễ thấp nhưng thêm hạ tầng",
+      "Luôn chọn polling",
+      "Hai cách giống hệt"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Ghi sự kiện cùng transaction."
+    "explanation": "Chọn theo yêu cầu độ trễ và khả năng vận hành. 'Luôn chọn CDC' dễ nhầm là hiện đại hơn, nhưng thêm hạ tầng cần vận hành."
   },
   {
     "id": "circuit-breaker-03",
     "playbookId": "circuit-breaker",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Trạng thái Half-Open dùng để?",
+    "difficulty": 3,
+    "question": "Một service dùng chung một Circuit Breaker toàn cục cho 5 dependency khác nhau, và khi một dependency lỗi thì cả 5 bị chặn. Cách đúng?",
     "options": [
-      "Chặn mọi request",
-      "Thử một vài request để kiểm tra dịch vụ đã hồi phục",
-      "Tăng timeout",
-      "Xoá cache"
+      "Giữ nguyên",
+      "Breaker riêng cho từng dependency kèm bulkhead cô lập tài nguyên",
+      "Tăng timeout toàn cục",
+      "Bỏ breaker"
     ],
     "answer": [
       1
     ],
-    "explanation": "Thử có kiểm soát."
+    "explanation": "Mỗi dependency một breaker và pool riêng để lỗi không lan sang nơi khác."
   },
   {
     "id": "cap-consistency-models-05",
     "playbookId": "cap-consistency-models",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Khi mạng phân vùng, hệ CP ưu tiên?",
+    "question": "Hai nhận định nào đúng về CAP? (chọn 2)",
     "options": [
-      "Khả dụng",
-      "Nhất quán, có thể từ chối request",
-      "Độ trễ thấp",
-      "Throughput"
+      "Phân vùng mạng là điều không thể loại bỏ nên lựa chọn thực tế là C hay A khi phân vùng",
+      "'C' trong CAP là linearizability, khác 'C' trong ACID",
+      "Có thể đạt cả C, A, P cùng lúc mọi trường hợp",
+      "CAP chỉ áp dụng cho một máy đơn"
     ],
     "answer": [
+      0,
       1
     ],
-    "explanation": "CP hy sinh availability."
+    "explanation": "Hai nhận định đúng. Hai phương án còn lại sai và dễ gây nhiễu."
   },
   {
     "id": "load-balancing-reverse-proxy-05",
     "playbookId": "load-balancing-reverse-proxy",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai lợi ích của reverse proxy? (chọn 2)",
+    "question": "Hai điều nào đúng về reverse proxy? (chọn 2)",
     "options": [
-      "Kết thúc TLS",
-      "Cân bằng tải",
-      "Thay thế database",
-      "Tự sửa bug"
+      "Có thể kết thúc TLS",
+      "Có thể nén, cache và giới hạn tốc độ",
+      "Chỉ hoạt động ở L3",
+      "Không hỗ trợ health check"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "Terminate TLS và phân phối tải."
+    "explanation": "Reverse proxy làm các việc ở tầng ứng dụng. Hai phương án còn lại sai."
   },
   {
     "id": "message-queues-streaming-basics-05",
     "playbookId": "message-queues-streaming-basics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần replay sự kiện nhiều lần cho nhiều consumer?",
+    "question": "Consumer chậm hơn producer làm hàng đợi phình. Hai biện pháp hợp lý? (chọn 2)",
     "options": [
-      "Queue xoá khi tiêu thụ",
-      "Log streaming như Kafka",
-      "Cache",
-      "Cookie"
+      "Giới hạn kích thước hàng đợi/áp backpressure",
+      "Thêm consumer hoặc giảm tốc producer",
+      "Để hàng đợi vô hạn trong bộ nhớ",
+      "Tắt giám sát lag"
     ],
     "answer": [
+      0,
       1
     ],
-    "explanation": "Log giữ lại để replay."
+    "explanation": "Backpressure và scale consumer. Hàng đợi vô hạn dễ nhầm là an toàn, nhưng cuối cùng cạn bộ nhớ."
   },
   {
     "id": "consistent-hashing-05",
     "playbookId": "consistent-hashing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Lợi ích khi thêm node với consistent hashing?",
+    "question": "Hai điều nào đúng? (chọn 2)",
     "options": [
-      "Phải dời toàn bộ key",
-      "Chỉ dời một phần nhỏ key",
-      "Không ảnh hưởng",
-      "Xoá dữ liệu"
+      "Consistent hashing không giải quyết hot key",
+      "Rendezvous hashing chọn node có hash(key, node) cao nhất",
+      "Consistent hashing đảm bảo mọi key phân bố hoàn toàn đều",
+      "Jump hash cho phép xoá node tuỳ ý"
     ],
     "answer": [
+      0,
       1
     ],
-    "explanation": "Tối thiểu hoá di chuyển."
+    "explanation": "Hot key vẫn dồn vào một node; HRW chọn node điểm cao nhất. Hai phương án còn lại sai."
   },
   {
     "id": "db-replication-sharding-05",
     "playbookId": "db-replication-sharding",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai vấn đề khi sharding? (chọn 2)",
+    "question": "Hai biện pháp phòng split brain khi failover? (chọn 2)",
     "options": [
-      "Hot shard",
-      "Truy vấn và giao dịch chéo shard phức tạp",
-      "Không thể scale",
-      "Mất index"
+      "Quorum/consensus",
+      "Fencing token/epoch",
+      "Tăng RAM",
+      "Tắt replication"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "Chọn shard key cẩn thận."
+    "explanation": "Quorum và fencing ngăn leader cũ tiếp tục ghi. Hai phương án còn lại không liên quan."
   },
   {
     "id": "rate-limiting-algorithms-06",
     "playbookId": "rate-limiting-algorithms",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cho phép burst ngắn nhưng giữ tốc độ trung bình?",
+    "question": "Server trả 429 nhưng không kèm hướng dẫn và client retry ngay liên tục. Nên làm gì?",
     "options": [
-      "Fixed window",
-      "Token bucket",
-      "Không giới hạn",
-      "Leaky bucket nghiêm"
+      "Bỏ rate limit",
+      "Trả Retry-After và client dùng backoff + jitter",
+      "Tăng limit",
+      "Đổi sang UDP"
     ],
     "answer": [
       1
     ],
-    "explanation": "Token bucket cho burst."
+    "explanation": "Retry-After cho client biết khi nào thử lại. Tăng limit chỉ che vấn đề."
   },
   {
     "id": "redis-cache-stampede-04",
     "playbookId": "redis-cache-stampede",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai cách giảm cache stampede? (chọn 2)",
+    "question": "Hàng loạt key được nạp cùng lúc với cùng TTL 300 giây và cùng hết hạn một lượt. Cách giảm rủi ro?",
     "options": [
-      "TTL ngẫu nhiên (jitter)",
-      "Khoá nạp một request",
-      "Xoá toàn bộ cache cùng lúc",
-      "Giảm TTL về 0"
+      "Giảm TTL xuống 10 giây",
+      "Thêm TTL ngẫu nhiên (jitter)",
+      "Tắt cache",
+      "Dùng KEYS để dọn"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Tránh hết hạn đồng loạt."
+    "explanation": "Jitter rải thời điểm hết hạn. Giảm TTL xuống rất ngắn làm miss nhiều hơn."
   },
   {
     "id": "caching-strategies-05",
     "playbookId": "caching-strategies",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Write-through khác cache-aside ở?",
+    "question": "Hai biện pháp giảm cache avalanche? (chọn 2)",
     "options": [
-      "Ghi cache và DB cùng lúc khi ghi",
-      "Không dùng cache",
-      "Chỉ đọc",
-      "Không cần TTL"
+      "TTL ngẫu nhiên (jitter)",
+      "Warm up/nhiều tầng cache",
+      "Cùng TTL cho mọi key",
+      "Tắt cache"
     ],
     "answer": [
-      0
+      0,
+      1
     ],
-    "explanation": "Cache luôn mới nhưng ghi chậm hơn."
+    "explanation": "Jitter và warm up tránh hết hạn đồng loạt. Cùng TTL cho mọi key chính là nguyên nhân gây avalanche."
   },
   {
     "id": "db-indexing-storage-engines-06",

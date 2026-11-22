@@ -1,54 +1,92 @@
 ## 1. Core Concept
 
-**Cache** lưu bản sao dữ liệu đắt-để-lấy ở nơi nhanh hơn (RAM, gần người dùng) để giảm **latency** và tải backend. Bài toán thật sự không phải "lưu" mà là **khi nào dữ liệu trong cache còn đúng** — hay **cache invalidation**. Mental model: *cache là một **lời đánh cược** rằng dữ liệu chưa đổi; bạn chọn mức rủi ro dữ liệu cũ đổi lấy tốc độ.*
+**Cache** là bộ nhớ nhanh đặt trước nguồn dữ liệu chậm/đắt (database, API) để **giảm độ trễ và tải** cho nguồn đó. Độ khó không nằm ở việc "thêm Redis" mà ở **chiến lược**: khi nào đọc/ghi cache, khi nào **vô hiệu hoá (invalidate)**, xoá gì khi đầy và xử lý các sự cố đặc trưng (stampede, penetration, avalanche). Câu nói nổi tiếng: *"chỉ có hai việc khó trong khoa học máy tính: cache invalidation và đặt tên"*.
+
+**Mental model:** cache là **kệ đồ dùng hay xài ngay cạnh bàn làm việc**: lấy cực nhanh so với chạy xuống kho (DB). Nhưng đồ trên kệ có thể **đã cũ** khi kho đã đổi, kệ nhỏ nên phải có luật dọn đồ (eviction), và nếu cả nhóm cùng chạy xuống kho khi kệ trống thì kho kẹt cứng.
 
 ## 2. How It Works
 
-- **Các tầng cache**: browser → **CDN** → API gateway → **application cache** (local như Caffeine, hoặc phân tán như **Redis/Memcached**) → buffer pool của DB.
-- **Chiến lược đọc/ghi**:
-  - **Cache-aside (lazy loading)**: app đọc cache → miss thì đọc DB rồi ghi vào cache. Phổ biến nhất, app kiểm soát.
-  - **Read-through**: cache tự nạp từ DB khi miss.
-  - **Write-through**: ghi đồng thời cache và DB → nhất quán hơn, ghi chậm hơn.
-  - **Write-behind (write-back)**: ghi cache trước, DB ghi bất đồng bộ → nhanh nhưng **có thể mất dữ liệu**.
-  - **Refresh-ahead**: làm mới trước khi hết hạn cho key nóng.
-- **Eviction** khi đầy: **LRU** (ít dùng gần đây nhất), **LFU** (ít dùng nhất), FIFO, **TTL** (hết hạn theo thời gian).
-- **Invalidation**: theo **TTL**, **xoá/cập nhật tường minh** khi ghi, hoặc theo **sự kiện** (CDC) — phổ biến là kết hợp TTL làm lưới an toàn.
-- **Chỉ số**: **hit ratio** (hit/(hit+miss)); thấp hơn ~80–90% thường cho thấy cache chưa đáng giá hoặc thiết kế key sai.
+**Chiến lược đọc/ghi**
+- **Cache-aside (lazy loading)**: ứng dụng tự đọc cache; **miss** thì đọc DB rồi **nạp cache** kèm TTL. Phổ biến nhất, dễ cài; lần đầu chậm, có thể cũ.
+- **Read-through**: cache layer tự nạp từ DB khi miss (ứng dụng chỉ nói chuyện với cache).
+- **Write-through**: ghi **cả DB và cache đồng bộ** → cache luôn mới, ghi chậm hơn.
+- **Write-behind (write-back)**: ghi cache trước, **ghi DB bất đồng bộ sau** → ghi nhanh, nhưng **mất dữ liệu nếu cache chết trước khi flush**.
+- **Write-around**: ghi thẳng DB, bỏ qua cache (tránh làm bẩn cache bằng dữ liệu ít đọc).
+
+**Vô hiệu hoá (invalidation)**
+- **TTL** (đơn giản, chấp nhận cũ trong thời hạn), **xoá/cập nhật key khi ghi** (chính xác hơn nhưng dễ sót), **sự kiện/CDC** (xoá cache khi DB đổi, kể cả từ service khác), **key có phiên bản** (`user:42:v7`). **TTL luôn nên có như lưới an toàn** dù đã invalidate chủ động.
+- **Race kinh điển** ở cache-aside khi ghi: thứ tự nên là **ghi DB rồi xoá cache** (không "cập nhật cache"); vẫn có race hiếm (đọc cũ ghi đè cache mới), giảm bằng TTL ngắn hoặc xoá lần hai trễ.
+
+**Eviction → Khi cache đầy**
+- **LRU** (bỏ cái lâu không dùng nhất), **LFU** (bỏ cái ít dùng nhất; hợp phân phối lệch), **TTL/FIFO/random**. Redis: `maxmemory-policy` như `allkeys-lru`, `volatile-ttl`; **TinyLFU** (Caffeine) tốt cho hit ratio.
+
+**Sự cố đặc trưng**
+- **Cache penetration**: truy vấn **key không tồn tại** liên tục chọc xuyên cache xuống DB → **negative caching** (cache cả kết quả "không có" với TTL ngắn) hoặc **Bloom filter**.
+- **Cache avalanche**: **nhiều key hết hạn cùng lúc** (cùng TTL) hoặc cache sập → DB quá tải → **TTL ngẫu nhiên (jitter)**, nhiều tầng cache, giới hạn tốc độ xuống DB.
+- **Cache stampede**: một **key nóng hết hạn**, hàng nghìn request cùng miss → single-flight, lock, làm mới sớm (xem bài Redis Cache Stampede).
+
+**Hit ratio → Thước đo giá trị**
+- **Hit ratio = hits/(hits + misses)**; độ trễ trung bình = `h·t_cache + (1−h)·t_db`. Ví dụ `h = 95%`, cache 1 ms, DB 50 ms → `0,95·1 + 0,05·50 = 3,45 ms` (so với 50 ms không có cache); nếu `h` giảm còn 80% thì thành `10,8 ms`.
+
+**Nhiều tầng**
+- **L1 (trong tiến trình)** + **L2 (Redis)** + **CDN**; tăng tốc nhưng thêm vấn đề nhất quán giữa các tầng.
+
+```python
+def get_user(uid):
+    v = redis.get(f"u:{uid}")
+    if v is not None:
+        return None if v == "NULL" else json.loads(v)          # negative cache
+    row = db.fetch(uid)
+    redis.setex(f"u:{uid}", 300 + random.randint(0, 60),       # TTL + jitter
+                json.dumps(row) if row else "NULL")
+    return row
+
+def update_user(uid, data):
+    db.update(uid, data)           # ghi DB trước
+    redis.delete(f"u:{uid}")       # rồi xoá cache
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
-flowchart TD
-    R[Read request] --> C{In cache?}
-    C -->|hit| V[Return value]
-    C -->|miss| DB[(Database)]
-    DB --> S[Store in cache with TTL]
-    S --> V
-    W[Write request] --> DB
-    W -->|invalidate or update| C
+flowchart LR
+    APP[App] -->|"1 đọc"| C[("Cache")]
+    C -->|hit| APP
+    APP -->|"2 miss: đọc DB"| DB[("DB")]
+    APP -->|"3 nạp cache + TTL jitter"| C
+    W["Ghi"] --> DB
+    W -->|"xoá key"| C
+    X["Key không tồn tại"] -.->|"negative cache / Bloom filter"| C
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Mặc định **cache-aside + TTL + xoá key khi ghi**; chỉ phức tạp hơn khi có lý do đo được.
-- Cache dữ liệu **đọc nhiều, ít đổi, tính toán đắt**; **không** cache thứ cần tính nhất quán tuyệt đối (số dư thời gian thực).
-- Đặt **TTL theo độ chấp nhận stale** của nghiệp vụ, thêm **jitter** để key không hết hạn cùng lúc.
-- Trade-off: **Latency/Throughput vs Freshness/Consistency** (và thêm độ phức tạp vận hành).
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Đọc nhiều, chấp nhận hơi cũ | Cache-aside + TTL |
+| Cần cache luôn mới sau ghi | Write-through |
+| Ghi rất nhiều, chấp nhận rủi ro mất | Write-behind |
+| Dữ liệu ghi nhiều, ít đọc lại | Write-around |
+| Truy vấn key không tồn tại liên tục | Negative caching / Bloom filter |
+| Mass expiry | TTL jitter |
+| Phân phối truy cập lệch mạnh | LFU/TinyLFU |
+
+- **Được gì:** độ trễ và tải DB giảm mạnh. **Mất gì:** dữ liệu có thể cũ, độ phức tạp invalidation, tốn bộ nhớ, thêm điểm lỗi; **cache chỉ là bản sao, DB mới là nguồn sự thật**.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Race của cache-aside**: A đọc DB (giá trị cũ) → B ghi DB và xoá cache → A ghi giá trị cũ vào cache → **cache cũ đến khi hết TTL**. Giảm bằng TTL ngắn, xoá-sau-ghi, hoặc versioning.
-- **Cache stampede** (hot key hết hạn, nghìn request cùng đập DB), **penetration** (key không tồn tại luôn miss → **cache negative result/Bloom filter**), **avalanche** (nhiều key hết hạn cùng lúc → TTL jitter).
-- **Hot key** làm nóng một node Redis → local cache hoặc nhân bản key.
-- **Không coi cache là nguồn sự thật**: mất cache phải còn chạy được (kể cả khi chậm); hệ thống không chịu nổi **cache lạnh** là rủi ro.
-- Value quá lớn, key không giới hạn → tốn RAM và chậm.
-- Interview trap: "Cập nhật DB rồi cập nhật cache hay xoá cache?" → thường **xoá** (tránh ghi đè sai thứ tự), ghi lại ở lần đọc kế tiếp.
+- **Người dùng thấy dữ liệu cũ → ghi DB mà không xoá/cập nhật cache → xoá key khi ghi hoặc CDC, kèm TTL an toàn**.
+- **DB bị đập bởi truy vấn key không tồn tại → penetration → negative cache hoặc Bloom filter, validate đầu vào**.
+- **Cùng lúc hàng loạt key hết hạn làm DB sập → avalanche (cùng TTL) → TTL ngẫu nhiên, khởi động ấm (warm up), nhiều tầng**.
+- **Mất dữ liệu khi cache chết (write-behind) → chưa flush → chỉ dùng cho dữ liệu chấp nhận mất, hoặc có log/hàng đợi bền**.
+- **Cập nhật cache thay vì xoá gây ghi đè thứ tự sai (race) → hai ghi đồng thời → ghi DB rồi xoá cache, TTL ngắn**.
+- Interview trap: "cache-aside hay write-through?" → **cache-aside đọc lazy, write-through ghi đồng bộ cả hai**; "penetration, avalanche, stampede khác gì?" → **key không tồn tại / nhiều key hết hạn cùng lúc / một key nóng hết hạn**; "tính độ trễ trung bình?" → **h·t_cache + (1−h)·t_db**.
 
 ## 6. Search Hooks
 
-- `cache-aside vs write-through vs write-behind` — các chiến lược đọc/ghi cache.
-- `cache invalidation strategies` — TTL, xoá tường minh, theo sự kiện.
-- `LRU LFU eviction policy` — chính sách loại bỏ khi cache đầy.
-- `cache penetration avalanche stampede` — ba kiểu sự cố cache cổ điển.
-- `cache hit ratio` — thước đo hiệu quả cache.
-- `CDN caching Cache-Control` — cache ở rìa và qua header HTTP.
+- `cache-aside write-through write-behind` — các chiến lược đọc/ghi cache.
+- `cache invalidation strategies` — TTL, xoá khi ghi, CDC, key có phiên bản.
+- `LRU LFU eviction policy` — luật dọn cache khi đầy.
+- `cache penetration avalanche` — hai sự cố đặc trưng của cache.
+- `cache hit ratio` — đo hiệu quả của cache.
+- `cache stampede` — nhiều request cùng nạp lại khi key nóng hết hạn.

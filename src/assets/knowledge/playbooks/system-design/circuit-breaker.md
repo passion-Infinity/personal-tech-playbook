@@ -1,25 +1,35 @@
 ## 1. Core Concept
 
-**Circuit Breaker** bọc lời gọi tới một remote dependency và **fail-fast** khi dependency đó đang lỗi, thay vì để từng request chờ timeout. Nó chặn **Cascading Failure**: một service chậm làm caller cạn thread/connection rồi kéo sập cả chuỗi upstream. Mental model: *cầu dao điện — ngắt mạch để bảo vệ hệ thống, rồi thử đóng lại khi an toàn.*
+**Circuit Breaker** là cơ chế bảo vệ ứng dụng khi một dependency (service khác, DB, API ngoài) bắt đầu lỗi hoặc chậm: thay vì tiếp tục gọi và **dồn thread vào chờ**, nó **ngắt mạch** và **fail fast** trong một khoảng thời gian, cho dependency có thời gian hồi phục. Nó giải quyết **cascading failure** — một service chậm kéo sập cả chuỗi service phụ thuộc vào nó.
+
+**Mental model:** như **cầu dao điện trong nhà**: khi quá tải, cầu dao **tự ngắt** để bảo vệ cả hệ thống dây; sau một lúc bạn **thử đóng lại** (half-open) và nếu ổn thì dòng điện chảy tiếp, nếu vẫn chập thì ngắt lại. Không có cầu dao, một thiết bị chập có thể cháy cả nhà.
 
 ## 2. How It Works
 
-- **CLOSED**: request đi qua bình thường; breaker ghi nhận kết quả vào **sliding window** (count-based hoặc time-based).
-- Khi **failure rate** hoặc **slow call rate** vượt ngưỡng (ví dụ ≥ 50% trên tối thiểu 20 calls) → chuyển **OPEN**.
-- **OPEN**: mọi request bị từ chối ngay (`CallNotPermittedException`) và đi vào **fallback**; không có traffic nào chạm dependency trong `waitDurationInOpenState`.
-- Hết thời gian chờ → **HALF-OPEN**: cho phép N **trial request**. Đạt ngưỡng thành công → CLOSED; lỗi → quay lại OPEN.
-- Breaker nên được tách **theo từng dependency/endpoint**, không dùng chung một breaker cho cả service.
+**Ba trạng thái → Closed, Open, Half-Open**
+- **Closed**: gọi bình thường và **đếm lỗi** trong cửa sổ trượt (ví dụ 20 lời gọi gần nhất hoặc 60 giây).
+- **Open**: khi vượt ngưỡng (ví dụ **tỷ lệ lỗi ≥ 50%** hoặc **tỷ lệ gọi chậm cao**), mạch **mở**: mọi lời gọi **thất bại ngay lập tức** (hoặc trả **fallback**) mà không chạm dependency, trong **thời gian chờ** (ví dụ 30 giây).
+- **Half-Open**: sau thời gian chờ cho phép **một vài lời gọi thử** (ví dụ 3); nếu **thành công** thì về **Closed**, nếu **thất bại** thì về **Open** lại.
+
+**Vì sao cần → Cạn thread**
+- Ví dụ: service A có 200 thread, dependency B bắt đầu trả lời sau **30 giây**; chỉ cần **7 request mỗi giây** là 200 thread bị treo hết trong vài chục giây, A không phục vụ được cả những request không liên quan đến B. Timeout ngắn + circuit breaker + bulkhead ngăn việc này.
+
+**Các cơ chế đi kèm → Khả năng chịu lỗi theo lớp**
+- **Timeout**: bắt buộc, vì breaker chỉ biết lỗi khi lời gọi **kết thúc** (kể cả bị timeout).
+- **Bulkhead**: **cô lập tài nguyên** (pool thread/semaphore riêng cho từng dependency) để một dependency lỗi không ăn hết tài nguyên chung.
+- **Retry với backoff + jitter**: chỉ retry lỗi **tạm thời và idempotent**; retry không kiểm soát **khuếch đại tải** khi dependency đang yếu (**retry storm**).
+- **Fallback**: trả dữ liệu cache, giá trị mặc định hoặc chức năng suy giảm (**graceful degradation**).
+
+**Cấu hình thực tế → Mỗi dependency một breaker**
+- Breaker **theo từng dependency** (không dùng một breaker toàn cục), ngưỡng dựa trên **tỷ lệ lỗi và gọi chậm** thay vì số lỗi tuyệt đối, **số lời gọi tối thiểu** trước khi đánh giá (tránh mở mạch vì 1/2 lời gọi lỗi). Thư viện: **Resilience4j**, **Polly**, hoặc **service mesh** (outlier detection ở Istio/Envoy).
 
 ```java
-CircuitBreakerConfig config = CircuitBreakerConfig.custom()
-    .slidingWindowType(SlidingWindowType.COUNT_BASED)
-    .slidingWindowSize(50)
-    .minimumNumberOfCalls(20)
-    .failureRateThreshold(50)
-    .slowCallDurationThreshold(Duration.ofMillis(800))
-    .waitDurationInOpenState(Duration.ofSeconds(10))
-    .permittedNumberOfCallsInHalfOpenState(5)
-    .build();
+CircuitBreakerConfig cfg = CircuitBreakerConfig.custom()
+    .failureRateThreshold(50)                  // % lỗi để mở mạch
+    .slowCallDurationThreshold(Duration.ofSeconds(2))
+    .slidingWindowSize(20).minimumNumberOfCalls(10)
+    .waitDurationInOpenState(Duration.ofSeconds(30))
+    .permittedNumberOfCallsInHalfOpenState(3).build();
 ```
 
 ## 3. Visual Diagram
@@ -27,33 +37,37 @@ CircuitBreakerConfig config = CircuitBreakerConfig.custom()
 ```mermaid
 stateDiagram-v2
     [*] --> Closed
-    Closed --> Open: failure rate >= threshold
-    Open --> HalfOpen: wait duration elapsed
-    HalfOpen --> Closed: trial calls succeed
-    HalfOpen --> Open: trial call fails
+    Closed --> Open: tỷ lệ lỗi hoặc gọi chậm vượt ngưỡng
+    Open --> HalfOpen: hết thời gian chờ
+    HalfOpen --> Closed: các lời gọi thử thành công
+    HalfOpen --> Open: có lời gọi thử thất bại
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- **Dùng khi**: gọi synchronous qua network tới dependency có thể chậm/chết (HTTP, gRPC, DB của service khác, 3rd-party API).
-- **Không dùng khi**: lỗi là lỗi nghiệp vụ (4xx, validation) — không được tính vào failure rate; hoặc gọi in-process.
-- **Kết hợp đúng thứ tự**: `Bulkhead → TimeLimiter → CircuitBreaker → Retry` (tuỳ thư viện); Retry không có breaker sẽ khuếch đại tải lên dependency đang chết (**retry storm**).
-- **Trade-off**: đổi *availability của tính năng* (trả fallback/degraded response) lấy *stability của toàn hệ thống*. Ngưỡng quá nhạy → flapping; quá lỏng → breaker mở muộn.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Dependency chậm/lỗi làm cạn thread | Timeout + Circuit Breaker |
+| Một dependency lỗi không được ảnh hưởng dependency khác | Bulkhead (pool riêng) |
+| Lỗi tạm thời, thao tác idempotent | Retry backoff + jitter |
+| Cần trả lời dù dependency lỗi | Fallback (cache/mặc định) |
+| Cần fail fast ở tầng mạng | Outlier detection của mesh |
+
+- **Được gì:** ngăn lan truyền lỗi, giữ hệ thống phản hồi, cho dependency thời gian hồi phục. **Mất gì:** có thể **từ chối nhầm** khi dependency đã khoẻ trở lại, thêm tham số cần tinh chỉnh và phải thiết kế fallback.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Timeout là bắt buộc**: không có timeout, breaker không bao giờ thấy lỗi — request chỉ treo.
-- **Fallback phải rẻ và an toàn**: cache cũ, default value, hoặc lỗi rõ ràng; fallback gọi một remote service khác có thể tạo thêm một điểm lỗi.
-- **minimumNumberOfCalls** quá thấp → breaker mở chỉ vì 2/3 request lỗi lúc traffic thấp.
-- **Breaker per instance**: mỗi pod có state riêng; 50 pod nghĩa là 50 breaker mở/đóng không đồng thời — chấp nhận được, đừng cố đồng bộ state qua Redis.
-- **Observability**: export metrics state transition, alert khi breaker OPEN kéo dài.
-- **Interview trap**: Circuit Breaker không thay thế Retry hay Rate Limiter — nó bảo vệ *caller*, còn Rate Limiter bảo vệ *callee*.
+- **Service A treo theo B chậm → timeout dài hoặc không có timeout → đặt timeout ngắn cho mọi lời gọi ra ngoài**.
+- **Mạch mở rồi đóng liên tục (flapping) → ngưỡng quá nhạy hoặc thiếu số lời gọi tối thiểu → tăng cửa sổ, `minimumNumberOfCalls`, thời gian chờ**.
+- **Dependency hồi phục chậm dù đã khoẻ → retry storm từ nhiều client → backoff có jitter, retry budget, breaker ở mọi client**.
+- **Một breaker dùng chung cho nhiều dependency → một nơi lỗi chặn cả nơi khác → breaker theo từng dependency**.
+- **Fallback gây hiệu ứng phụ sai (trả dữ liệu cũ cho thanh toán) → không phân biệt thao tác → chỉ fallback an toàn, thao tác quan trọng thì fail rõ ràng**.
+- Interview trap: "Half-Open dùng để làm gì?" → **thử vài lời gọi để kiểm tra dịch vụ đã hồi phục chưa**; "circuit breaker khác retry thế nào?" → **retry thử lại, breaker ngừng gọi khi dependency lỗi**; "vì sao cần bulkhead?" → **cô lập tài nguyên, một dependency lỗi không ăn hết pool chung**.
 
 ## 6. Search Hooks
 
-- `Circuit Breaker Pattern` — fail-fast khi dependency lỗi để chặn lỗi dây chuyền.
-- `Resilience4j CircuitBreaker sliding window` — cấu hình ngưỡng theo count/time window.
-- `Half-Open State` — trạng thái thử nghiệm trước khi đóng lại breaker.
-- `Bulkhead Pattern` — cô lập thread pool/connection theo dependency.
-- `Retry Storm exponential backoff jitter` — tránh retry đồng loạt làm sập dependency.
-- `Cascading Failure` — lỗi lan truyền do cạn tài nguyên ở caller.
+- `circuit breaker pattern Resilience4j` — ngắt mạch khi dependency lỗi.
+- `half-open state circuit breaker` — trạng thái thử hồi phục.
+- `bulkhead pattern` — cô lập tài nguyên theo dependency.
+- `cascading failure` — lỗi lan truyền dọc chuỗi service.
+- `retry storm backoff jitter` — retry khuếch đại tải khi hệ thống yếu.

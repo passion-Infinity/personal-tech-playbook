@@ -1,58 +1,79 @@
 ## 1. Core Concept
 
-**Rate limiting** giới hạn số request một client được gửi trong một khoảng thời gian để **bảo vệ hệ thống khỏi quá tải, lạm dụng và chi phí**, đồng thời đảm bảo công bằng giữa các client. Nó trả lời "ai được dùng bao nhiêu" chứ không phải "hệ thống còn chịu được bao nhiêu" (đó là load shedding/backpressure). Mental model: *một cái cổng có số lượt cho phép — thuật toán quyết định cổng mở thế nào theo thời gian.*
+**Rate limiting** giới hạn số request một client (người dùng, IP, API key, tenant) được phép gửi trong một khoảng thời gian, để **bảo vệ hệ thống khỏi quá tải và lạm dụng**, bảo đảm **công bằng** giữa các client và **kiểm soát chi phí**. Quan trọng là chọn đúng **thuật toán** (cho phép bùng nổ hay làm mượt, chính xác hay xấp xỉ) và cài đặt **đúng khi phân tán** (nguyên tử, không thành điểm lỗi đơn).
+
+**Mental model:** **token bucket** giống **cái ví đựng vé vào cửa**: mỗi giây có thêm vài vé nhưng ví chỉ chứa tối đa một số vé; mỗi request tiêu một vé. Bạn có thể **tiêu dồn** khi ví đầy (bùng nổ có kiểm soát) nhưng về lâu dài không vượt tốc độ nạp vé.
 
 ## 2. How It Works
 
-- **Fixed window counter**: đếm theo cửa sổ cố định (ví dụ mỗi phút). Đơn giản, nhưng **burst gấp đôi ở ranh giới** cửa sổ (100 request cuối phút + 100 đầu phút kế tiếp).
-- **Sliding window log**: lưu timestamp từng request, đếm trong cửa sổ trượt — chính xác nhưng tốn bộ nhớ.
-- **Sliding window counter**: ước lượng bằng cách kết hợp cửa sổ hiện tại và trước đó theo tỉ lệ — gần đúng, rất nhẹ.
-- **Token bucket**: xô chứa tối đa `B` token, nạp `r` token/giây, mỗi request lấy một token. **Cho phép burst tới `B`** rồi giữ tốc độ trung bình `r`. Rất phổ biến (API gateway, AWS, Stripe).
-- **Leaky bucket**: request vào hàng đợi và "rỉ" ra với tốc độ cố định — làm **mượt đầu ra**, hợp khi cần tốc độ đều tới backend.
-- **Phân tán**: lưu bộ đếm ở **Redis**; thao tác kiểm tra-và-trừ phải **nguyên tử** (lệnh `INCR` + `EXPIRE`, hoặc **Lua script**).
-- **Khoá theo**: API key/user (công bằng nhất), IP (dễ giả mạo, sai với NAT), endpoint hoặc tenant; có thể nhiều tầng giới hạn.
-- **Phản hồi**: `429 Too Many Requests` kèm `Retry-After` và header cho biết hạn mức còn lại.
+**Các thuật toán**
+- **Fixed window counter**: đếm theo cửa sổ cố định (ví dụ 100/phút). Đơn giản nhưng có **lỗi biên**: 100 request ở giây cuối phút trước + 100 ở giây đầu phút sau = **200 trong ~2 giây**.
+- **Sliding window log**: lưu timestamp từng request, **chính xác** nhưng tốn bộ nhớ (O(số request)).
+- **Sliding window counter**: kết hợp hai cửa sổ liền kề với **trọng số theo vị trí** (xấp xỉ, rẻ, thực dụng).
+- **Token bucket**: tốc độ nạp `r` token/giây, **dung lượng tối đa `b`**; mỗi request lấy 1 token; **cho phép bùng nổ tối đa `b`**. Ví dụ `r = 10/s, b = 20`: có thể gửi 20 request liên tiếp, rồi bị giới hạn ở 10/s.
+- **Leaky bucket**: request vào hàng đợi, **chảy ra với tốc độ cố định** (làm mượt); hàng đầy thì từ chối. Hợp bảo vệ backend cần tải đều.
 
-```lua
--- Token bucket nguyên tử trong Redis (KEYS[1]=bucket, ARGV=rate, burst, now, cost)
-local d = redis.call('HMGET', KEYS[1], 'tokens', 'ts')
-local tokens = tonumber(d[1]) or tonumber(ARGV[2]); local ts = tonumber(d[2]) or tonumber(ARGV[3])
-tokens = math.min(tonumber(ARGV[2]), tokens + (tonumber(ARGV[3]) - ts) * tonumber(ARGV[1]))
-if tokens >= tonumber(ARGV[4]) then tokens = tokens - tonumber(ARGV[4]); allowed = 1 else allowed = 0 end
-redis.call('HSET', KEYS[1], 'tokens', tokens, 'ts', ARGV[3]); redis.call('EXPIRE', KEYS[1], 60)
-return allowed
+**Cài đặt phân tán với Redis → Phải nguyên tử**
+- Mẫu "đọc rồi ghi" `GET` → so sánh → `SET` **không nguyên tử**: nhiều request đồng thời cùng đọc `99` rồi cùng ghi `100`, **vượt hạn mức**. Dùng **`INCR` (nguyên tử) + `EXPIRE` khi key mới tạo**, hoặc **Lua script** để token bucket/sliding window chạy trọn vẹn trong Redis. Lưu ý `SET ... EX` mỗi lần còn **làm mới TTL** và kéo dài cửa sổ vô hạn.
+
+```python
+def allow(user_id, limit=100, window=60):
+    key = f"rl:{user_id}:{int(time.time()) // window}"
+    pipe = redis.pipeline()
+    pipe.incr(key); pipe.expire(key, window + 1)     # INCR nguyên tử, TTL khi cần
+    count, _ = pipe.execute()
+    return count <= limit
 ```
+
+**Giao thức HTTP và vị trí**
+- Trả **`429 Too Many Requests`** kèm **`Retry-After`** (và header `RateLimit-*`) để client lùi lại hợp lý. Đặt ở **edge/API gateway** (chặn sớm, rẻ) và/hoặc ứng dụng (theo ngữ cảnh nghiệp vụ); phân tầng theo **gói khách hàng**.
+
+**Load shedding vs rate limiting**
+- **Rate limiting**: ép **công bằng theo từng client**. **Load shedding**: khi **cả hệ thống quá tải**, chủ động **bỏ bớt request** (ưu tiên request quan trọng) bất kể client nào. Cần cả hai.
+
+**Fail open vs fail closed**
+- Khi kho đếm (Redis) **chết**: **fail open** (cho qua, ưu tiên khả dụng, rủi ro quá tải) hay **fail closed** (chặn, ưu tiên an toàn, rủi ro tự gây downtime). Thường chọn **fail open có giới hạn cục bộ** cho API thường và **fail closed** cho thao tác nhạy cảm.
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    C[Client] --> G[API gateway]
-    G --> L{Rate limiter: token available?}
-    L -->|yes| B[Backend]
-    L -->|no| R["429 + Retry-After"]
-    L -.->|atomic check| RD[(Redis)]
+    R[Request] --> K["Khoá: user / IP / API key"]
+    K --> RL{"Rate limiter: token bucket, Redis"}
+    RL -->|"còn token"| API["Backend"]
+    RL -->|"hết token"| X["429 + Retry-After"]
+    RL -.->|"Redis lỗi"| FO{"Fail open hay closed?"}
+    API -.->|"quá tải toàn hệ thống"| LS["Load shedding"]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Cho phép burst hợp lý (đa số API) → **token bucket**; cần đầu ra đều → **leaky bucket**; đơn giản, chấp nhận burst biên → fixed window.
-- Đặt limiter ở **biên** (gateway/edge) để chặn sớm, và thêm giới hạn **theo dịch vụ** cho tài nguyên đắt.
-- Trade-off: **Độ chính xác vs. chi phí/độ trễ** (sliding log chính xác nhất nhưng tốn nhất); **fail-open** (khi limiter hỏng vẫn cho qua) ưu tiên sẵn sàng, **fail-closed** ưu tiên bảo vệ.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Cho phép bùng nổ ngắn, giữ tốc độ trung bình | Token bucket |
+| Làm mượt tải ra backend | Leaky bucket |
+| Giới hạn đơn giản, chấp nhận lỗi biên | Fixed window |
+| Chính xác cao, bộ nhớ không quan trọng | Sliding window log |
+| Cân bằng độ chính xác và chi phí | Sliding window counter |
+| Nhiều instance dùng chung hạn mức | Redis (INCR/Lua) |
+| Hệ thống quá tải chung | Load shedding |
+
+- **Được gì:** bảo vệ hệ thống, công bằng, kiểm soát chi phí. **Mất gì:** thêm độ trễ một lần gọi kho đếm (có thể cache token cục bộ), độ phức tạp phân tán, rủi ro chặn nhầm khách hợp lệ.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Race condition**: `GET` bộ đếm rồi `SET` không nguyên tử cho phép vượt hạn mức khi đồng thời → Lua/atomic.
-- **Limiter là điểm lỗi duy nhất**: Redis chết thì sao? Quyết định fail-open/closed có chủ đích và có fallback cục bộ.
-- Giới hạn theo **IP** sai với người dùng sau NAT/CGNAT; kẻ tấn công xoay IP.
-- Client **retry ngay** khi bị 429 làm tình hình tệ hơn → backoff + jitter, tôn trọng `Retry-After`.
-- Interview trap: "Fixed window có vấn đề gì?" → **burst gấp đôi tại ranh giới cửa sổ**.
+- **Vượt hạn mức khi nhiều instance → đọc rồi ghi không nguyên tử → `INCR` + `EXPIRE` hoặc Lua script**.
+- **Gấp đôi hạn mức quanh ranh giới cửa sổ → fixed window → sliding window counter hoặc token bucket**.
+- **Cửa sổ không bao giờ reset → set lại TTL mỗi request → đặt TTL một lần khi tạo key**.
+- **Redis chết kéo cả API chết (hoặc mở toang) → chưa chọn fail open/closed → quyết định có chủ đích, dự phòng giới hạn cục bộ**.
+- **Client retry dồn dập sau 429 → thiếu `Retry-After`/backoff → trả `Retry-After`, client backoff + jitter**.
+- Interview trap: "token bucket khác leaky bucket?" → **token bucket cho bùng nổ tới dung lượng, leaky bucket làm mượt đầu ra**; "vì sao `GET` rồi `SET` sai?" → **không nguyên tử, nhiều request cùng qua**; "rate limiting khác load shedding?" → **công bằng theo client vs bảo vệ khi quá tải toàn hệ thống**.
 
 ## 6. Search Hooks
 
-- `rate limiting algorithms token bucket leaky bucket` — các thuật toán giới hạn tốc độ.
-- `sliding window counter rate limiter` — xấp xỉ cửa sổ trượt tiết kiệm bộ nhớ.
-- `distributed rate limiter Redis Lua` — giới hạn phân tán với thao tác nguyên tử.
-- `HTTP 429 Retry-After RateLimit headers` — cách báo hạn mức cho client.
-- `load shedding vs rate limiting` — phân biệt bảo vệ hệ thống và công bằng giữa client.
-- `fail open vs fail closed` — hành vi khi limiter gặp sự cố.
+- `token bucket vs leaky bucket` — hai thuật toán làm mượt/cho bùng nổ.
+- `sliding window counter rate limiting` — xấp xỉ cửa sổ trượt rẻ và chính xác.
+- `distributed rate limiter Redis Lua` — giới hạn nguyên tử qua nhiều instance.
+- `HTTP 429 Retry-After` — chuẩn báo vượt hạn mức.
+- `load shedding vs rate limiting` — hai cơ chế bảo vệ khác nhau.
+- `fail open vs fail closed` — hành vi khi kho đếm lỗi.

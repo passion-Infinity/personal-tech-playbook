@@ -1,55 +1,79 @@
 ## 1. Core Concept
 
-**Message broker** đứng giữa producer và consumer để **tách rời về thời gian và tốc độ**: producer gửi rồi đi, consumer xử lý khi sẵn sàng. Có hai mô hình: **queue** (mỗi message được xử lý bởi **một** consumer rồi bị xoá) và **log/stream** (message được **giữ lại**, nhiều consumer đọc độc lập và có thể **replay**). Mental model: *queue là "hàng đợi công việc", log là "cuốn sổ cái ghi sự kiện" ai cũng đọc lại được.*
+**Message queue** và **event log (streaming)** đều giúp **tách rời (decouple)** bên gửi và bên nhận, chịu được đột biến tải và cho phép xử lý bất đồng bộ — nhưng chúng là **hai mô hình khác nhau**: queue là **danh sách việc cần làm** (xử lý xong là xoá), log là **cuốn nhật ký chỉ ghi thêm** mà nhiều người có thể đọc đi đọc lại theo tốc độ riêng. Chọn sai mô hình là nguồn gốc của nhiều lỗi thiết kế (mất sự kiện, không replay được, thứ tự sai).
+
+**Mental model:** queue giống **bảng phân việc ở quầy bếp**: mỗi phiếu được **một đầu bếp** nhận, làm xong thì xé đi. Log giống **cuốn sổ ghi chép chung ở phòng họp**: mọi người có thể đọc từ trang nào cũng được, sổ vẫn còn đó sau khi đọc (cho đến khi hết hạn lưu).
 
 ## 2. How It Works
 
-- **Queue (competing consumers)**: nhiều worker cùng lấy từ một hàng đợi để chia việc; broker xoá message sau khi **ack**. Ví dụ **RabbitMQ, Amazon SQS**.
-- **Log/stream**: message được **append vào partition**, giữ theo thời gian/dung lượng; consumer theo dõi **offset** của riêng mình; nhiều **consumer group** đọc độc lập. Ví dụ **Kafka, Kinesis, Pulsar**.
-- **Pub/Sub**: một message phát tới **nhiều subscriber** (SNS, Redis Pub/Sub, topic RabbitMQ).
-- **Ngữ nghĩa giao nhận**: **at-most-once** (ack trước khi xử lý → có thể mất), **at-least-once** (ack sau khi xử lý → có thể trùng), **exactly-once** (thực tế = at-least-once + consumer idempotent).
-- **Ack/nack + redelivery**: không ack trong **visibility timeout** thì message được giao lại; vượt số lần thử → **dead-letter queue (DLQ)**.
-- **Thứ tự**: thường chỉ đảm bảo **trong một partition/message group**; dùng **key** (ví dụ `orderId`) để cùng key vào cùng partition.
-- **Backpressure**: khi consumer chậm hơn producer, hàng đợi dài ra — cần giới hạn, scale consumer hoặc chặn producer.
-- **Pull vs push**: pull cho consumer tự điều tốc; push độ trễ thấp nhưng dễ làm tràn consumer.
+**Queue vs Log → Khác nhau cốt lõi**
+- **Message queue** (RabbitMQ, SQS, ActiveMQ): message được **giao cho một consumer** (competing consumers), **xác nhận (ack)** từng message rồi **xoá**; hợp **task queue**, tách tải, retry. **Không replay** sau khi đã xoá.
+- **Event log** (Kafka, Kinesis, Pulsar): **append-only log chia partition**, **giữ theo retention** (giờ đến ngày), consumer tự quản **offset**; **nhiều consumer group** đọc độc lập, **replay** được; hợp **event streaming**, event sourcing, pipeline dữ liệu.
+
+**Partition, consumer group và thứ tự**
+- Thứ tự chỉ đảm bảo **trong một partition**; dùng **partition key** (ví dụ `order_id`) để các sự kiện của một thực thể vào cùng partition. Trong một **consumer group**, mỗi partition do **tối đa một consumer** đọc ⇒ **độ song song bị chặn bởi số partition** (10 partition → tối đa 10 consumer hoạt động).
+
+**Ngữ nghĩa giao hàng**
+- **At-most-once** (có thể mất), **at-least-once** (không mất, **có thể trùng**), **exactly-once** (thực tế đạt được bằng **idempotent producer + transaction** trong phạm vi Kafka, hoặc **at-least-once + consumer idempotent** ở biên hệ thống). Mặc định hợp lý: **at-least-once + xử lý idempotent**.
+
+**Dead-letter queue (DLQ)**
+- Message vượt số lần thử (**poison message**) được chuyển sang DLQ để điều tra, tránh chặn hàng đợi chính.
+
+**Backpressure → Khi consumer chậm hơn producer**
+- Hàng đợi phình, bộ nhớ đầy, độ trễ tăng. Cách xử lý: **queue có giới hạn (bounded)**, **kéo (pull) theo tốc độ consumer**, **rate limit producer**, **thêm consumer**, **giám sát consumer lag**; tuyệt đối không để hàng đợi vô hạn trong bộ nhớ.
+
+**Competing consumers**
+- Nhiều consumer cùng đọc một queue để **scale ngang** xử lý; thứ tự giữa các message không được đảm bảo nếu không có phân nhóm.
+
+```python
+# Consumer Kafka: at-least-once, idempotent, commit offset sau khi xử lý
+for msg in consumer:                         # group.id = "billing"
+    if already_processed(msg.key, msg.offset):
+        continue                             # khử trùng
+    handle(msg)                              # tác dụng phụ
+    consumer.commit()                        # chỉ commit sau khi xong
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    P1[Producer] --> B[(Broker topic)]
-    P2[Producer] --> B
-    B -->|queue: one consumer per message| W1[Worker 1]
-    B --> W2[Worker 2]
-    B -->|log: group A reads all| GA[Analytics group]
-    B -->|log: group B reads all| GB[Search indexer group]
+    P[Producer] --> Q["Queue: giao 1 consumer, ack rồi xoá"]
+    Q --> C1["Consumer A"]
+    Q --> C2["Consumer B"]
+    Q -->|"quá số lần thử"| DLQ[DLQ]
+    P2[Producer] --> L["Log: partition 0..N, giữ theo retention"]
+    L --> G1["Group billing: offset riêng"]
+    L --> G2["Group analytics: offset riêng"]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Cần | Chọn |
+| Tình huống / Nhu cầu | Chọn gì |
 | --- | --- |
-| Chia việc nền (gửi email, xử lý ảnh), xoá khi xong | **Queue** |
-| Nhiều hệ thống cùng nhận một sự kiện, replay, event-driven | **Log/stream** |
-| Thông báo nhẹ, mất cũng được | **Pub/Sub đơn giản** |
+| Tách tải, mỗi tác vụ một worker, retry | Message queue |
+| Nhiều hệ thống cùng đọc một dòng sự kiện, cần replay | Event log (Kafka) |
+| Thứ tự theo thực thể | Partition key = id thực thể |
+| Message lỗi lặp | DLQ |
+| Consumer chậm hơn producer | Backpressure, bounded queue, thêm consumer |
+| Không được mất message | At-least-once + idempotent consumer |
 
-- Mặc định **at-least-once + consumer idempotent**; đừng dựa vào "exactly-once" của broker.
-- Trade-off: broker **tách rời và làm dịu đỉnh tải**, đổi lại **thêm độ trễ, thêm hạ tầng và eventual consistency**.
+- **Được gì:** decoupling, chịu đột biến, xử lý bất đồng bộ. **Mất gì:** eventual consistency, phải xử lý trùng/thứ tự, thêm hạ tầng; log đánh đổi **độ phức tạp vận hành** lấy khả năng replay và nhiều consumer.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Poison message** làm consumer crash lặp mãi → giới hạn retry và đẩy sang **DLQ**, có cảnh báo.
-- **Dual write** (ghi DB rồi publish) có thể mất event — dùng **outbox pattern**.
-- Hàng đợi **tăng không kiểm soát** là dấu hiệu consumer chậm: theo dõi **queue depth / consumer lag** và cảnh báo.
-- **Xử lý song song làm mất thứ tự**; nếu thứ tự quan trọng, chia theo key và giữ một consumer/partition.
-- **Schema message** là hợp đồng: đổi tuỳ tiện làm vỡ consumer (dùng schema registry, tương thích ngược).
-- Interview trap: "Queue và Kafka khác gì?" → queue **xoá sau khi tiêu thụ**, một message một consumer; Kafka **giữ log**, nhiều consumer group, replay được.
+- **Xử lý trùng gây tác dụng phụ lặp (trừ tiền hai lần) → at-least-once → consumer idempotent theo id/business key**.
+- **Thêm consumer mà không nhanh hơn → vượt số partition → tăng partition (cẩn thận thứ tự) hoặc xử lý song song trong consumer**.
+- **Thứ tự bị lẫn giữa các sự kiện của một đơn → không có partition key → key theo id thực thể**.
+- **Một message lỗi chặn cả hàng đợi → poison message → DLQ, giới hạn retry, cảnh báo DLQ**.
+- **Hàng đợi/lag tăng dần rồi sập → không có backpressure → giám sát consumer lag, giới hạn tốc độ producer, scale consumer**.
+- Interview trap: "queue khác log thế nào?" → **queue xoá sau ack và không replay; log giữ theo retention, nhiều consumer group và replay được**; "exactly-once có thật không?" → **thực tế là at-least-once + idempotent (hoặc transaction trong Kafka)**; "thứ tự được đảm bảo ở đâu?" → **trong một partition**.
 
 ## 6. Search Hooks
 
-- `message queue vs event streaming` — hai mô hình broker và khi nào dùng.
-- `at-least-once at-most-once exactly-once semantics` — ngữ nghĩa giao nhận message.
-- `dead letter queue` — nơi chứa message xử lý thất bại nhiều lần.
-- `consumer groups partitions ordering` — cách thứ tự và song song được cân bằng.
-- `backpressure in distributed systems` — xử lý khi consumer chậm hơn producer.
-- `competing consumers pattern` — nhiều worker chia việc từ một hàng đợi.
+- `message queue vs event log Kafka` — hai mô hình messaging.
+- `at-least-once vs exactly-once delivery` — ngữ nghĩa giao hàng.
+- `dead-letter queue` — nơi chứa message không xử lý được.
+- `Kafka consumer groups partitions ordering` — song song và thứ tự.
+- `backpressure` — xử lý khi consumer chậm hơn producer.
+- `competing consumers pattern` — nhiều worker cùng xử lý một queue.
