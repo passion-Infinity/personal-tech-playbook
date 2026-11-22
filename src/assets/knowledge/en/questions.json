@@ -5524,5 +5524,156 @@
       "Cache aside"
     ],
     "explanation": "They handle late-arriving data."
+  },
+  {
+    "id": "change-data-capture-01",
+    "question": "You need to sync delete operations to the analytics warehouse in near real time. What is a suitable approach?",
+    "options": [
+      "Polling updated_at",
+      "Log-based CDC (Debezium)",
+      "A nightly dump",
+      "Dual-write"
+    ],
+    "explanation": "Polling cannot see hard deletes; log-based CDC captures them completely."
+  },
+  {
+    "id": "change-data-capture-02",
+    "question": "A PostgreSQL DB's disk fills up gradually after the Debezium connector stops. What is the cause?",
+    "options": [
+      "Binlog",
+      "A replication slot retaining unconsumed WAL",
+      "An index",
+      "Autovacuum"
+    ],
+    "explanation": "The slot retains WAL until the connector acknowledges it; you must monitor slot lag."
+  },
+  {
+    "id": "change-data-capture-03",
+    "question": "A consumer receives duplicate CDC events. How do you handle it?",
+    "options": [
+      "Disable retries",
+      "An idempotent upsert by primary key",
+      "Add partitions",
+      "Reduce replication"
+    ],
+    "explanation": "CDC is usually at-least-once so consumers must be idempotent."
+  },
+  {
+    "id": "change-data-capture-04",
+    "question": "Compare polling and log-based CDC.",
+    "modelAnswer": "Polling queries updated_at periodically, so it misses hard deletes and changes between two polls, and adds load to the DB. Log-based CDC reads the WAL/binlog, so it captures complete insert/update/delete in commit order, with low latency and little load.",
+    "keyPoints": [
+      "Polling misses deletes",
+      "Log-based is complete and ordered",
+      "Lower DB load"
+    ]
+  },
+  {
+    "id": "change-data-capture-05",
+    "question": "What is an advantage of log-based CDC?",
+    "options": [
+      "Little load on the source and it captures every change",
+      "It must scan tables",
+      "It does not guarantee ordering",
+      "Inserts only"
+    ],
+    "explanation": "It reads the transaction log."
+  },
+  {
+    "id": "data-quality-governance-01",
+    "question": "Reports are silently wrong although the pipeline succeeds. What is the first measure?",
+    "options": [
+      "Add tests (unique, not_null, freshness) to the pipeline",
+      "Add RAM",
+      "Change the BI tool",
+      "Delete the report"
+    ],
+    "explanation": "A green job is not the same as correct data; quality checks are needed."
+  },
+  {
+    "id": "data-quality-governance-02",
+    "question": "The source renames a column and downstream breaks. What is the organizational solution?",
+    "options": [
+      "A data contract and review of breaking changes",
+      "More retries",
+      "Drop the schema",
+      "Cache"
+    ],
+    "explanation": "A contract binds producer and consumer."
+  },
+  {
+    "id": "data-quality-governance-03",
+    "question": "Only a few records in a large batch are bad. What is a reasonable handling?",
+    "options": [
+      "Stop everything",
+      "Quarantine the bad records and alert",
+      "Ignore them",
+      "Delete the table"
+    ],
+    "explanation": "Fail fast is for severe errors; local errors should be quarantined."
+  },
+  {
+    "id": "data-quality-governance-04",
+    "question": "How does lineage help data governance?",
+    "modelAnswer": "Lineage shows where data comes from and goes to, helping assess the impact of changing or fixing a table and trace the cause when figures are wrong.",
+    "keyPoints": [
+      "Impact assessment",
+      "Tracing errors",
+      "Supports audit"
+    ]
+  },
+  {
+    "id": "data-quality-governance-05",
+    "question": "Which two measures improve data quality? (choose 2)",
+    "options": [
+      "Check schema and values at ingest",
+      "Data lineage",
+      "Ignore errors",
+      "Delete logs"
+    ],
+    "explanation": "Detect early and trace."
+  },
+  {
+    "id": "spark-fundamentals-01",
+    "question": "Join a 50 GB table with a 5 MB table. What is the optimization?",
+    "options": [
+      "Sort-merge join",
+      "Broadcast join",
+      "Repartition 1",
+      "Cache both"
+    ],
+    "explanation": "Broadcast avoids shuffling the large table."
+  },
+  {
+    "id": "spark-fundamentals-02",
+    "question": "One task runs very long while the others finish early. What is the cause?",
+    "options": [
+      "Data skew",
+      "Not enough driver RAM",
+      "Parquet",
+      "Catalyst"
+    ],
+    "explanation": "A few hot keys pile into one partition."
+  },
+  {
+    "id": "spark-fundamentals-03",
+    "question": "Which transformation causes a shuffle?",
+    "options": [
+      "filter",
+      "groupBy",
+      "select",
+      "map"
+    ],
+    "explanation": "groupBy is a wide transformation that must gather by key."
+  },
+  {
+    "id": "spark-fundamentals-04",
+    "question": "Explain lazy evaluation and why it is beneficial.",
+    "modelAnswer": "Transformations only build the plan; only an action runs it. This gives Catalyst the whole plan to optimize, such as pushdown, reordering joins and avoiding redundant computation.",
+    "keyPoints": [
+      "Only actions run",
+      "Catalyst optimizes",
+      "Avoid redundant computation"
+    ]
   }
 ]

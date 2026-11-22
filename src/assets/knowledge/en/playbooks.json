@@ -533,5 +533,20 @@
     "id": "stream-processing-flink",
     "title": "Stream Processing with Flink",
     "summary": "Stateful computation over event streams with event time, checkpoints and exactly-once within the framework."
+  },
+  {
+    "id": "change-data-capture",
+    "title": "Change Data Capture (CDC)",
+    "summary": "Synchronize data in real time by reading the database transaction log instead of polling."
+  },
+  {
+    "id": "data-quality-governance",
+    "title": "Data Quality & Governance",
+    "summary": "Turn data into a trustworthy product with tests, data contracts, lineage and PII protection."
+  },
+  {
+    "id": "spark-fundamentals",
+    "title": "Apache Spark Fundamentals",
+    "summary": "Understand the DAG, shuffle, joins and skew to write fast Spark jobs that do not OOM."
   }
 ]

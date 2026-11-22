@@ -2683,5 +2683,90 @@
     "id": "stream-engines-comparison",
     "meaning": "Choosing a stream processing engine",
     "definition": "Kafka Streams is an embedded library, Flink is true streaming with large state, Spark is micro-batch."
+  },
+  {
+    "id": "cdc-log-based",
+    "meaning": "Capture changes through the transaction log",
+    "definition": "Reads the WAL or binlog so it is complete, sees deletes, has low latency and puts little load on the DB."
+  },
+  {
+    "id": "debezium-kafka-connect",
+    "meaning": "A CDC tool that emits changes into Kafka",
+    "definition": "A connector reads the DB log and emits each change as a message with before, after and log position."
+  },
+  {
+    "id": "postgres-logical-decoding-slot",
+    "meaning": "The WAL-reading mechanism and the disk-fill risk",
+    "definition": "A slot retains WAL until the consumer acknowledges it; if the consumer dies, WAL accumulates."
+  },
+  {
+    "id": "outbox-with-cdc",
+    "meaning": "Combine outbox and CDC to emit reliable events",
+    "definition": "Read the outbox table through CDC instead of polling to publish events written in the same transaction."
+  },
+  {
+    "id": "cdc-snapshot-streaming",
+    "meaning": "From snapshot to streaming without losing changes",
+    "definition": "Snapshot the current state then stream the log from exactly the snapshot position."
+  },
+  {
+    "id": "tombstone-compaction",
+    "meaning": "How deletes are represented in Kafka",
+    "definition": "A null-value message makes log compaction remove the key from the topic."
+  },
+  {
+    "id": "data-quality-dimensions",
+    "meaning": "Dimensions for assessing data quality",
+    "definition": "Completeness, accuracy, consistency, timeliness, uniqueness, validity."
+  },
+  {
+    "id": "data-testing-tools",
+    "meaning": "Data testing tools",
+    "definition": "Automatically check schema, nulls, uniqueness, freshness and drift in the pipeline."
+  },
+  {
+    "id": "data-contracts",
+    "meaning": "A data agreement between producer and consumer",
+    "definition": "An agreement on schema, semantics and SLA, verified in CI."
+  },
+  {
+    "id": "data-lineage-catalog",
+    "meaning": "Trace provenance and understand data",
+    "definition": "Lineage shows where data goes from and to, to assess impact when things change."
+  },
+  {
+    "id": "data-observability",
+    "meaning": "Continuously monitor data health",
+    "definition": "Track freshness, volume, schema and distribution to detect incidents before users do."
+  },
+  {
+    "id": "pii-masking-gdpr",
+    "meaning": "Protecting personal data and the right to erasure",
+    "definition": "Mask or encrypt PII, limit copying and support deletion on request."
+  },
+  {
+    "id": "spark-shuffle-skew",
+    "meaning": "Moving data and key skew",
+    "definition": "A shuffle costs network and disk; skew makes one task run very long."
+  },
+  {
+    "id": "spark-broadcast-join",
+    "meaning": "Choosing the join algorithm",
+    "definition": "The small table is sent to every executor."
+  },
+  {
+    "id": "spark-catalyst",
+    "meaning": "Query plan optimization",
+    "definition": "Predicate pushdown, join selection."
+  },
+  {
+    "id": "spark-aqe",
+    "meaning": "Self-optimizing at runtime",
+    "definition": "Adjusts partitions and joins using real statistics."
+  },
+  {
+    "id": "spark-partitioning",
+    "meaning": "Splitting data for parallelism",
+    "definition": "The partition count determines parallelism."
   }
 ]
