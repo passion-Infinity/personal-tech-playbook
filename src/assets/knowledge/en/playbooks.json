@@ -613,5 +613,20 @@
     "id": "prompt-engineering-for-engineers",
     "title": "Prompt Engineering for Engineers",
     "summary": "Write prompts like a specification: context, constraints, examples, an output schema and measure with evals."
+  },
+  {
+    "id": "context-engineering-memory",
+    "title": "Context Engineering & Memory for AI",
+    "summary": "Manage the context window, short/long-term memory, compaction and prompt caching so agents neither drift nor burn tokens."
+  },
+  {
+    "id": "tool-use-function-calling-mcp",
+    "title": "Tool Use, Function Calling & MCP",
+    "summary": "Let an LLM call external tools through function calling and standardize connections with the Model Context Protocol."
+  },
+  {
+    "id": "ai-agents-agentic-loop",
+    "title": "AI Agents & the Agentic Loop",
+    "summary": "Distinguish workflows from agents, understand the ReAct loop, planning and the limits that make agents trustworthy."
   }
 ]

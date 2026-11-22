@@ -3073,5 +3073,70 @@
     "id": "system-prompt",
     "meaning": "Fixed behavior instructions",
     "definition": "Sets the role, rules and constraints."
+  },
+  {
+    "id": "context-engineering",
+    "meaning": "Choosing what information goes into context",
+    "definition": "Systematically managing what the model sees at each step."
+  },
+  {
+    "id": "lost-in-the-middle",
+    "meaning": "Information in the middle of context gets missed",
+    "definition": "Quality drops when the context is long."
+  },
+  {
+    "id": "prompt-caching",
+    "meaning": "Cache the start of the prompt",
+    "definition": "Reduces cost and latency for repeated prefixes."
+  },
+  {
+    "id": "agent-memory-types",
+    "meaning": "Types of agent memory",
+    "definition": "Events, facts and how-to."
+  },
+  {
+    "id": "context-compaction",
+    "meaning": "Compress history when full",
+    "definition": "A summary keeps the important decisions."
+  },
+  {
+    "id": "function-calling",
+    "meaning": "The model requests a function call",
+    "definition": "The model proposes a tool call and the application executes it."
+  },
+  {
+    "id": "model-context-protocol",
+    "meaning": "The standard protocol connecting AI and tools",
+    "definition": "Client-server with tools, resources and prompts."
+  },
+  {
+    "id": "mcp-transports",
+    "meaning": "MCP's two transports",
+    "definition": "stdio for local, HTTP for remote."
+  },
+  {
+    "id": "tool-poisoning",
+    "meaning": "The risk from third-party tools",
+    "definition": "A tool's description or result contains malicious instructions."
+  },
+  {
+    "id": "agentic-ai",
+    "meaning": "AI systems with autonomy",
+    "definition": "The LLM decides the next step in a loop."
+  },
+  {
+    "id": "react-pattern",
+    "meaning": "The reasoning-and-acting pattern",
+    "definition": "Alternate thinking and calling tools."
+  },
+  {
+    "id": "agentic-workflow-patterns",
+    "meaning": "Workflow patterns using LLMs",
+    "definition": "Chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer."
+  },
+  {
+    "id": "human-in-the-loop",
+    "meaning": "Humans approve at risky steps",
+    "definition": "Pause for confirmation before sensitive actions."
   }
 ]
