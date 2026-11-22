@@ -3484,24 +3484,24 @@
     "playbookId": "azure-governance-cost",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Bắt buộc mọi tài nguyên phải có tag. Dùng?",
+    "question": "Ban giám đốc yêu cầu mọi tài nguyên mới phải có tag CostCenter, kể cả khi do Owner tạo. Dùng gì?",
     "options": [
       "RBAC",
       "Azure Policy",
-      "Lock",
+      "Resource lock",
       "Budget"
     ],
     "answer": [
       1
     ],
-    "explanation": "Policy kiểm soát cấu hình tài nguyên."
+    "explanation": "Policy ép cấu hình tài nguyên bất kể quyền. RBAC dễ nhầm vì liên quan quyền, nhưng chỉ nói ai làm được gì, không ép tài nguyên có tag."
   },
   {
     "id": "azure-governance-cost-02",
     "playbookId": "azure-governance-cost",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ngăn xoá nhầm database production. Dùng?",
+    "question": "Team muốn đảm bảo database production không bị xoá nhầm, kể cả bởi Owner. Dùng gì?",
     "options": [
       "Policy Audit",
       "CanNotDelete lock",
@@ -3511,19 +3511,19 @@
     "answer": [
       1
     ],
-    "explanation": "Lock chặn xoá ngay cả với Owner."
+    "explanation": "Lock áp dụng cả với Owner. Policy Audit dễ nhầm vì có vẻ bảo vệ, nhưng chỉ đánh dấu không tuân thủ, không chặn xoá."
   },
   {
     "id": "azure-governance-cost-03",
     "playbookId": "azure-governance-cost",
     "type": "explain",
     "difficulty": 2,
-    "question": "Azure Policy khác RBAC thế nào?",
-    "modelAnswer": "RBAC kiểm soát người dùng được làm gì. Policy kiểm soát tài nguyên được phép trông thế nào, có thể Deny, Audit, Modify hoặc DeployIfNotExists; Owner vẫn bị Policy Deny chặn.",
+    "question": "Một Owner tạo VM ở Region không được phép và bị từ chối dù có đủ quyền. Giải thích Azure Policy khác RBAC thế nào.",
+    "modelAnswer": "RBAC kiểm soát người dùng được làm gì trên tài nguyên theo scope. Policy kiểm soát tài nguyên được phép trông thế nào (Region, SKU, tag) và có hiệu lực kể cả với Owner. Vì vậy Owner có quyền tạo VM nhưng Policy Deny vẫn chặn vì Region sai; Policy không cấp thêm quyền cho ai.",
     "keyPoints": [
-      "RBAC: quyền người dùng",
-      "Policy: cấu hình tài nguyên",
-      "Owner vẫn bị Policy chặn"
+      "RBAC: người dùng được làm gì",
+      "Policy: tài nguyên được phép trông thế nào",
+      "Policy áp cả với Owner"
     ]
   },
   {
@@ -3531,7 +3531,7 @@
     "playbookId": "azure-compute-serverless-containers",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chạy code khi có blob mới và trả tiền theo lần chạy?",
+    "question": "Cần chạy một đoạn code mỗi khi có file mới trong Blob và chỉ trả tiền theo số lần chạy. Chọn?",
     "options": [
       "App Service",
       "Azure Functions",
@@ -3541,14 +3541,14 @@
     "answer": [
       1
     ],
-    "explanation": "Functions theo sự kiện với Consumption plan."
+    "explanation": "Functions chạy theo sự kiện với trigger blob và tính theo thực thi. App Service dễ nhầm vì chạy code, nhưng tính tiền theo plan cố định."
   },
   {
     "id": "azure-compute-serverless-containers-02",
     "playbookId": "azure-compute-serverless-containers",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Triển khai web app không downtime với staging?",
+    "question": "Team muốn deploy phiên bản mới lên môi trường staging, kiểm tra rồi chuyển sang production không downtime. Dùng gì?",
     "options": [
       "Deployment slots",
       "Resource lock",
@@ -3558,19 +3558,19 @@
     "answer": [
       0
     ],
-    "explanation": "Swap slot staging sang production."
+    "explanation": "Slot swap chuyển staging sang production. Availability Set dễ nhầm vì liên quan HA, nhưng không phục vụ triển khai."
   },
   {
     "id": "azure-compute-serverless-containers-03",
     "playbookId": "azure-compute-serverless-containers",
     "type": "explain",
     "difficulty": 2,
-    "question": "Container Apps khác AKS thế nào?",
-    "modelAnswer": "Container Apps là nền tảng container serverless ẩn Kubernetes, scale theo sự kiện. AKS cho toàn quyền Kubernetes nhưng bạn quản lý node pool và vận hành nhiều hơn.",
+    "question": "Một đội cần chạy 12 microservice container, scale theo hàng đợi, nhưng không có kỹ sư Kubernetes. So sánh Container Apps và AKS và chọn.",
+    "modelAnswer": "Container Apps là nền tảng container serverless ẩn Kubernetes, scale theo sự kiện bằng KEDA và scale về 0, ít vận hành. AKS cho toàn quyền Kubernetes (operator, mạng tuỳ biến) nhưng bạn quản node pool, nâng cấp và vá lỗi. Với đội không có kỹ sư Kubernetes nên chọn Container Apps.",
     "keyPoints": [
-      "Container Apps ẩn Kubernetes",
-      "AKS toàn quyền, tốn vận hành",
-      "Chọn theo mức kiểm soát cần"
+      "Container Apps ẩn Kubernetes, KEDA, scale về 0",
+      "AKS toàn quyền nhưng tốn vận hành",
+      "Chọn theo năng lực đội"
     ]
   },
   {
@@ -3578,7 +3578,7 @@
     "playbookId": "azure-monitor-security",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Ngôn ngữ truy vấn của Log Analytics?",
+    "question": "Team cần viết truy vấn tìm các request lỗi trong Log Analytics. Ngôn ngữ truy vấn là gì?",
     "options": [
       "SQL",
       "KQL",
@@ -3588,36 +3588,36 @@
     "answer": [
       1
     ],
-    "explanation": "Kusto Query Language."
+    "explanation": "Log Analytics dùng Kusto Query Language. SQL dễ nhầm vì cú pháp tương tự ở mức cơ bản."
   },
   {
     "id": "azure-monitor-security-02",
     "playbookId": "azure-monitor-security",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Quản lý secret an toàn trong Azure?",
+    "question": "Ứng dụng cần lưu connection string và API key, team đang để trong app settings plaintext. Cách quản lý đúng?",
     "options": [
-      "Lưu trong app settings plaintext",
-      "Azure Key Vault",
-      "Trong repo",
-      "Trong tag"
+      "Giữ nguyên plaintext",
+      "Azure Key Vault kèm managed identity",
+      "Đưa vào repo",
+      "Lưu trong tag"
     ],
     "answer": [
       1
     ],
-    "explanation": "Dùng Key Vault kèm managed identity."
+    "explanation": "Key Vault giữ bí mật và managed identity lấy mà không cần secret. Tag dễ nhầm vì là metadata, nhưng hiển thị rộng rãi."
   },
   {
     "id": "azure-monitor-security-03",
     "playbookId": "azure-monitor-security",
     "type": "explain",
     "difficulty": 2,
-    "question": "Metrics và logs của Azure Monitor khác nhau thế nào?",
-    "modelAnswer": "Metrics là số liệu nhẹ gần thời gian thực dùng cho dashboard và cảnh báo nhanh. Logs chi tiết hơn lưu trong Log Analytics và truy vấn bằng KQL để điều tra nguyên nhân.",
+    "question": "Khi có sự cố chậm, team cần cảnh báo nhanh theo CPU và cũng cần điều tra chi tiết từng request. So sánh metrics và logs của Azure Monitor.",
+    "modelAnswer": "Metrics là số liệu nhẹ, gần real-time, lưu khoảng 93 ngày, dùng cho dashboard và cảnh báo theo ngưỡng như CPU. Logs là dữ liệu chi tiết trong Log Analytics, truy vấn bằng KQL để điều tra từng request, tốn chi phí lưu trữ hơn. Dùng metrics cho phát hiện nhanh và logs cho điều tra.",
     "keyPoints": [
-      "Metrics: nhẹ, thời gian thực",
-      "Logs: chi tiết, KQL",
-      "Alert cần action group"
+      "Metrics: nhẹ, gần real-time, cảnh báo ngưỡng",
+      "Logs: chi tiết, KQL, điều tra",
+      "Chi phí ingestion cho logs"
     ]
   },
   {
@@ -8840,41 +8840,41 @@
     "playbookId": "azure-governance-cost",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ép mọi tài nguyên phải có tag CostCenter?",
+    "question": "Báo cáo chi phí không lọc được theo tag CostCenter dù resource group đã có tag này. Nguyên nhân và cách khắc phục?",
     "options": [
-      "RBAC",
-      "Azure Policy",
-      "Lock",
-      "Defender"
+      "Tag đã tự kế thừa",
+      "Tag không tự kế thừa xuống resource, dùng Policy Modify/Append để ép",
+      "Budget chưa tạo",
+      "Chưa có lock"
     ],
     "answer": [
       1
     ],
-    "explanation": "Policy ép quy tắc."
+    "explanation": "Tag không kế thừa từ resource group. Budget dễ nhầm vì liên quan chi phí, nhưng không phân loại tài nguyên."
   },
   {
     "id": "azure-governance-cost-05",
     "playbookId": "azure-governance-cost",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Ngăn xoá nhầm tài nguyên quan trọng?",
+    "question": "Admin đặt lock ReadOnly lên resource group chứa VM và không thể stop VM. Vì sao và nên dùng loại lock nào?",
     "options": [
-      "Resource lock (CanNotDelete)",
-      "Tag",
-      "Budget",
-      "Reader"
+      "Lock không ảnh hưởng",
+      "ReadOnly chặn cả thao tác cần ghi như stop; dùng CanNotDelete nếu chỉ cần chặn xoá",
+      "Policy chặn",
+      "Thiếu role Reader"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "Lock chặn xoá/sửa."
+    "explanation": "ReadOnly cấm mọi thao tác ghi, kể cả stop VM. CanNotDelete đủ cho mục tiêu chống xoá nhầm."
   },
   {
     "id": "azure-compute-serverless-containers-04",
     "playbookId": "azure-compute-serverless-containers",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chạy container không quản cluster?",
+    "question": "Cần chạy container mà không quản cluster hay node. Chọn?",
     "options": [
       "AKS tự quản node",
       "Azure Container Apps",
@@ -8884,14 +8884,14 @@
     "answer": [
       1
     ],
-    "explanation": "Container Apps là serverless containers."
+    "explanation": "Container Apps là serverless container. AKS dễ nhầm vì là dịch vụ container, nhưng bạn vẫn quản node pool."
   },
   {
     "id": "azure-compute-serverless-containers-05",
     "playbookId": "azure-compute-serverless-containers",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hàm chạy theo sự kiện, trả theo thực thi?",
+    "question": "Một hàm chạy theo sự kiện thưa thớt và team muốn trả theo thực thi, chấp nhận cold start. Chọn plan nào?",
     "options": [
       "App Service Plan cố định",
       "Azure Functions Consumption",
@@ -8901,14 +8901,14 @@
     "answer": [
       1
     ],
-    "explanation": "Consumption tính theo thực thi."
+    "explanation": "Consumption trả theo lần chạy và scale về 0. Premium dễ nhầm vì tránh cold start, nhưng giữ instance nóng nên tốn chi phí cố định."
   },
   {
     "id": "azure-monitor-security-04",
     "playbookId": "azure-monitor-security",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy vấn log tập trung bằng KQL?",
+    "question": "Cần truy vấn tập trung log của nhiều tài nguyên bằng KQL. Dịch vụ nào chứa dữ liệu đó?",
     "options": [
       "Log Analytics workspace",
       "Blob",
@@ -8918,7 +8918,7 @@
     "answer": [
       0
     ],
-    "explanation": "KQL chạy trên Log Analytics."
+    "explanation": "KQL chạy trên Log Analytics. Blob dễ nhầm vì có thể lưu log, nhưng không truy vấn bằng KQL trực tiếp."
   },
   {
     "id": "azure-databases-cosmos-sql-05",
