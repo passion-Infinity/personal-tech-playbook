@@ -1960,63 +1960,63 @@
     "playbookId": "kubernetes-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Rolling update khiến người dùng thấy lỗi vì traffic đổ vào Pod chưa sẵn sàng. Thiếu cấu hình nào?",
+    "question": "Ứng dụng khởi động mất 90 giây và liên tục bị restart ngay sau khi bắt đầu. Cấu hình nào thường là nguyên nhân và cách sửa?",
     "options": [
-      "Liveness probe",
-      "Readiness probe",
-      "Thêm namespace",
-      "Tăng limits CPU"
+      "Thiếu replicas",
+      "Liveness probe quá khắt khe; dùng startup probe hoặc initialDelaySeconds",
+      "Thiếu Service",
+      "Thiếu Ingress"
     ],
     "answer": [
       1
     ],
-    "explanation": "Readiness probe quyết định Pod có được nhận traffic hay chưa."
+    "explanation": "Liveness thất bại sớm giết app đang khởi động. Startup probe bảo vệ giai đoạn này."
   },
   {
     "id": "kubernetes-fundamentals-02",
     "playbookId": "kubernetes-fundamentals",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Service trong Kubernetes khác Ingress ở điểm nào?",
+    "difficulty": 3,
+    "question": "HPA cấu hình theo CPU 60% nhưng không scale dù CPU cao. Nguyên nhân khả dĩ?",
     "options": [
-      "Không khác nhau",
-      "Service cân bằng tải L4 ổn định nội bộ; Ingress định tuyến HTTP L7 từ ngoài vào",
-      "Ingress chỉ dùng cho database",
-      "Service chỉ hoạt động bên ngoài"
+      "Thiếu resource requests nên không tính được %",
+      "Thiếu Ingress",
+      "Thiếu ConfigMap",
+      "Do etcd"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Ingress thường đứng trước nhiều Service để định tuyến theo host hoặc path."
+    "explanation": "HPA tính phần trăm so với requests."
   },
   {
     "id": "kubernetes-fundamentals-03",
     "playbookId": "kubernetes-fundamentals",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Pod bị OOMKilled dù ứng dụng không rò rỉ bộ nhớ. Nguyên nhân khả dĩ?",
+    "difficulty": 2,
+    "question": "Container bị OOMKilled dù node còn nhiều RAM. Nguyên nhân?",
     "options": [
-      "CPU limit quá cao",
-      "Memory limit thấp hơn tổng nhu cầu thực (heap, non-heap, stack, native)",
-      "Thiếu Ingress",
-      "Dùng quá nhiều replica"
+      "Node hỏng",
+      "Vượt memory limit của container",
+      "Thiếu CPU",
+      "Mạng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Vượt memory limit bị kernel giết; cần chừa dư địa cho phần ngoài heap."
+    "explanation": "Vượt limit bộ nhớ thì bị kill; CPU limit chỉ gây throttle."
   },
   {
     "id": "kubernetes-fundamentals-04",
     "playbookId": "kubernetes-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích mô hình khai báo và vòng reconciliation của Kubernetes.",
-    "modelAnswer": "Bạn khai báo trạng thái mong muốn (ví dụ 3 replica của một Deployment) và lưu vào API server/etcd. Các controller liên tục so sánh trạng thái thực với mong muốn rồi hành động để khớp, như tạo lại Pod bị chết hay scale. Nhờ vậy hệ thống tự phục hồi và triển khai lặp lại được.",
+    "question": "Phân biệt requests và limits trong Kubernetes và hậu quả khi vượt limit CPU và memory.",
+    "modelAnswer": "Requests là lượng tài nguyên đảm bảo và dùng để lập lịch; limits là trần. Vượt limit CPU thì container bị throttle (chậm), vượt limit memory thì bị OOMKilled. Pod có requests bằng limits thuộc QoS Guaranteed, thiếu cả hai là BestEffort và bị đuổi đầu tiên khi thiếu tài nguyên.",
     "keyPoints": [
-      "Khai báo desired state",
-      "Controller so sánh và sửa liên tục",
-      "Tự phục hồi và lặp lại được"
+      "Requests: lập lịch/đảm bảo",
+      "Limits: trần",
+      "CPU throttle, memory OOMKilled"
     ]
   },
   {
@@ -2024,63 +2024,63 @@
     "playbookId": "service-mesh-api-gateway",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Traffic giữa client bên ngoài và hệ thống thường được xử lý bởi thành phần nào?",
+    "question": "Cần xác thực JWT, rate limit và định tuyến cho client bên ngoài gọi vào hệ thống. Thành phần nào?",
     "options": [
       "Service mesh",
-      "API gateway",
-      "Sidecar của DB",
-      "DNS nội bộ"
+      "API Gateway",
+      "Sidecar",
+      "Database"
     ],
     "answer": [
       1
     ],
-    "explanation": "Gateway lo north-south; mesh lo east-west giữa các service."
+    "explanation": "Gateway lo traffic bắc–nam. Mesh chủ yếu lo đông–tây giữa dịch vụ."
   },
   {
     "id": "service-mesh-api-gateway-02",
     "playbookId": "service-mesh-api-gateway",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Mesh retry 3 lần, ứng dụng retry 3 lần, gateway retry 3 lần. Rủi ro lớn nhất là gì?",
+    "difficulty": 2,
+    "question": "Cần mã hoá và xác thực lẫn nhau giữa các dịch vụ nội bộ mà không sửa code. Chọn?",
     "options": [
-      "Không có rủi ro",
-      "Retry nhân lên (đến 27 lần) gây bão retry làm quá tải dependency",
-      "Mất mTLS",
-      "Tăng bảo mật"
+      "API Gateway",
+      "Service mesh với mTLS tự động",
+      "Tăng RAM",
+      "Dùng HTTP thuần"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chọn một tầng retry và đặt giới hạn tổng."
+    "explanation": "Sidecar proxy làm mTLS trong suốt."
   },
   {
     "id": "service-mesh-api-gateway-03",
     "playbookId": "service-mesh-api-gateway",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Khi nào service mesh chưa đáng đưa vào?",
+    "difficulty": 3,
+    "question": "Một công ty chỉ có 5 dịch vụ và đội nhỏ cân nhắc triển khai service mesh. Đánh giá hợp lý?",
     "options": [
-      "Hàng trăm service cần mTLS và canary",
-      "Hệ thống vài service và đội chưa đủ năng lực vận hành",
-      "Cần zero-trust",
-      "Cần observability đồng nhất"
+      "Luôn nên",
+      "Chi phí và phức tạp có thể vượt lợi ích; thư viện resilience + gateway thường đủ",
+      "Bắt buộc",
+      "Không bao giờ"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mesh thêm hop, tài nguyên sidecar và độ phức tạp; ít service thường chỉ cần thư viện và gateway."
+    "explanation": "Mesh thêm hop, tài nguyên và vận hành."
   },
   {
     "id": "service-mesh-api-gateway-04",
     "playbookId": "service-mesh-api-gateway",
     "type": "explain",
     "difficulty": 2,
-    "question": "API gateway và service mesh khác nhau thế nào và có dùng chung được không?",
-    "modelAnswer": "API gateway xử lý traffic bắc-nam từ client bên ngoài vào: xác thực, rate limit, định tuyến. Service mesh xử lý traffic đông-tây giữa các service bên trong bằng sidecar: mTLS, retry, timeout, traffic shifting, telemetry mà không sửa code. Hai thành phần giải quyết bài toán khác nhau nên thường dùng cùng nhau.",
+    "question": "Nêu sự khác biệt giữa API Gateway và service mesh về hướng lưu lượng và trách nhiệm.",
+    "modelAnswer": "API Gateway xử lý lưu lượng bắc–nam từ client bên ngoài vào hệ thống: xác thực, rate limit, routing, TLS, aggregation. Service mesh xử lý lưu lượng đông–tây giữa các dịch vụ qua sidecar proxy: mTLS, retry, timeout, circuit breaking, traffic shifting, telemetry mà không đổi code. Hai thành phần bổ trợ nhau.",
     "keyPoints": [
-      "Gateway: bắc-nam",
-      "Mesh: đông-tây, sidecar",
-      "Thường dùng cùng nhau"
+      "Gateway: bắc–nam",
+      "Mesh: đông–tây qua sidecar",
+      "Bổ trợ nhau"
     ]
   },
   {
@@ -2088,63 +2088,63 @@
     "playbookId": "cqrs-event-sourcing",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Phát biểu nào đúng?",
+    "question": "Một hệ thống cần xem lại mọi thay đổi số dư theo thời gian và dựng lại trạng thái tại một thời điểm bất kỳ. Kỹ thuật phù hợp?",
     "options": [
-      "CQRS bắt buộc phải dùng event sourcing",
-      "CQRS và event sourcing độc lập, có thể dùng riêng",
-      "Event sourcing chỉ lưu trạng thái hiện tại",
-      "CQRS luôn nhất quán tức thì"
+      "CRUD thông thường",
+      "Event sourcing",
+      "Cache",
+      "Sharding"
     ],
     "answer": [
       1
     ],
-    "explanation": "Có thể dùng CQRS với DB thông thường; event sourcing là lựa chọn riêng."
+    "explanation": "Event sourcing lưu chuỗi sự kiện bất biến nên replay được."
   },
   {
     "id": "cqrs-event-sourcing-02",
     "playbookId": "cqrs-event-sourcing",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Vì sao khó xoá dữ liệu cá nhân trong hệ event sourcing?",
+    "difficulty": 2,
+    "question": "Người dùng đặt đơn xong nhưng danh sách đơn chưa hiển thị ngay. Giải thích trong CQRS?",
     "options": [
-      "Vì event store không hỗ trợ xoá bảng",
-      "Vì event bất biến; cần cách như crypto-shredding hoặc không đưa PII vào event",
-      "Vì read model luôn bị khoá",
-      "Vì có snapshot"
+      "Lỗi",
+      "Read model được cập nhật bất đồng bộ nên eventual consistency",
+      "Do cache trình duyệt",
+      "Do sharding"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mã hoá PII bằng khoá riêng rồi xoá khoá khi có yêu cầu xoá."
+    "explanation": "Query side cập nhật sau từ sự kiện."
   },
   {
     "id": "cqrs-event-sourcing-03",
     "playbookId": "cqrs-event-sourcing",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai request cùng ghi vào một aggregate. Cách xử lý đồng thời điển hình trong event sourcing?",
+    "question": "Hai command cùng ghi vào một aggregate và không được ghi đè nhau. Cơ chế?",
     "options": [
-      "Khoá toàn bảng",
-      "Optimistic concurrency với expected version: ghi trùng version thì bị từ chối",
-      "Bỏ qua request thứ hai",
-      "Dùng cache"
+      "Khoá bảng",
+      "Expected version khi append (optimistic concurrency)",
+      "Bỏ qua",
+      "Tăng tốc"
     ],
     "answer": [
       1
     ],
-    "explanation": "Khoá chính (aggregate_id, version) làm cổng nguyên tử."
+    "explanation": "Append bị từ chối nếu version đã đổi."
   },
   {
     "id": "cqrs-event-sourcing-04",
     "playbookId": "cqrs-event-sourcing",
     "type": "explain",
     "difficulty": 3,
-    "question": "Khi nào KHÔNG nên dùng event sourcing?",
-    "modelAnswer": "Khi hệ thống chỉ là CRUD đơn giản, không cần audit đầy đủ hay truy vấn theo thời điểm, hoặc đội chưa sẵn sàng với độ phức tạp: tiến hoá schema event, dựng lại projection, eventual consistency của read model và xoá dữ liệu cá nhân. Chỉ áp dụng cho aggregate thật sự cần lịch sử đầy đủ.",
+    "question": "Hệ thống event sourcing nhận yêu cầu xoá dữ liệu cá nhân theo GDPR nhưng log bất biến. Giải quyết thế nào?",
+    "modelAnswer": "Dùng crypto-shredding: mã hoá dữ liệu cá nhân bằng khoá riêng của từng chủ thể trong sự kiện; khi cần xoá thì xoá khoá nên dữ liệu không còn đọc được dù sự kiện vẫn tồn tại. Hoặc không đưa PII thô vào sự kiện mà chỉ tham chiếu.",
     "keyPoints": [
-      "CRUD đơn giản không cần",
-      "Độ phức tạp: schema evolution, projection, eventual consistency",
-      "Chỉ áp dụng cho aggregate cần nó"
+      "Khoá riêng cho mỗi chủ thể",
+      "Xoá khoá để xoá dữ liệu",
+      "Tránh đưa PII thô vào sự kiện"
     ]
   },
   {
@@ -9970,52 +9970,51 @@
     "playbookId": "kubernetes-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai điều nào đúng về Pod? (chọn 2)",
+    "question": "Readiness probe thất bại thì điều gì xảy ra?",
     "options": [
-      "Đơn vị triển khai nhỏ nhất",
-      "Container trong Pod chia sẻ mạng",
-      "Một Pod luôn một node cứng vĩnh viễn",
-      "Pod bền vững mãi"
+      "Container bị restart",
+      "Pod bị gỡ khỏi Service (không nhận traffic) nhưng không restart",
+      "Pod bị xoá",
+      "Không gì"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Pod là đơn vị nhỏ nhất và chia sẻ network namespace."
+    "explanation": "Readiness quyết định nhận traffic; liveness mới restart."
   },
   {
     "id": "service-mesh-api-gateway-05",
     "playbookId": "service-mesh-api-gateway",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Mutual TLS giữa service thường do?",
+    "question": "BFF (Backend for Frontend) giải quyết vấn đề gì?",
     "options": [
-      "Sidecar proxy của service mesh",
-      "Browser",
-      "CDN",
-      "DNS"
+      "Một gateway chung cho mọi client",
+      "Backend riêng cho từng loại client, trả dữ liệu đúng nhu cầu",
+      "Thay database",
+      "Thay mesh"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "Mesh tự động mTLS."
+    "explanation": "Mỗi loại frontend có nhu cầu dữ liệu khác nhau."
   },
   {
     "id": "cqrs-event-sourcing-05",
     "playbookId": "cqrs-event-sourcing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Event sourcing lưu gì?",
+    "question": "CQRS có bắt buộc phải dùng event sourcing không?",
     "options": [
-      "Trạng thái hiện tại",
-      "Chuỗi sự kiện bất biến",
-      "Chỉ log lỗi",
-      "Cache"
+      "Có",
+      "Không, hai kỹ thuật độc lập",
+      "Chỉ trên cloud",
+      "Chỉ với NoSQL"
     ],
     "answer": [
       1
     ],
-    "explanation": "Trạng thái suy ra từ sự kiện."
+    "explanation": "CQRS tách mô hình đọc/ghi; ES là cách lưu trạng thái."
   },
   {
     "id": "oltp-olap-data-modeling-05",

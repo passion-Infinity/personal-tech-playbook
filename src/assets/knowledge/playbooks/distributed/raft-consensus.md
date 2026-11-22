@@ -35,14 +35,12 @@ etcdctl member list
 sequenceDiagram
     participant C as Client
     participant L as Leader
-    participant F1 as Follower 1
-    participant F2 as Follower 2
+    participant F as Followers
     C->>L: lệnh SET x=1
     L->>L: thêm vào log
-    L->>F1: AppendEntries
-    L->>F2: AppendEntries
-    F1-->>L: ack
-    Note over L: đa số (2/3) đã lưu: commit và áp dụng
+    L->>F: AppendEntries
+    F-->>L: ack từ đa số
+    Note over L: đa số đã lưu: commit và áp dụng
     L-->>C: OK
 ```
 
