@@ -248,5 +248,20 @@
     "id": "kinesis-streaming",
     "title": "Amazon Kinesis (Streams, Firehose, Flink)",
     "summary": "Choose Kinesis Data Streams, Firehose or Flink for ingesting and processing streaming data."
+  },
+  {
+    "id": "aws-data-analytics",
+    "title": "AWS Data Analytics (Glue, Athena, Redshift, EMR)",
+    "summary": "Build a data lake on S3 and choose Athena, Redshift or EMR for each querying need."
+  },
+  {
+    "id": "cloudformation-cdk-iac",
+    "title": "CloudFormation & CDK (IaC)",
+    "summary": "Manage AWS infrastructure with templates and CDK using change sets, drift detection and DeletionPolicy."
+  },
+  {
+    "id": "aws-organizations-governance",
+    "title": "AWS Organizations, SCP & Control Tower",
+    "summary": "Govern multiple accounts with OUs, SCP guardrails, Control Tower and IAM Identity Center."
   }
 ]

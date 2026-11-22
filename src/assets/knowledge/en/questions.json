@@ -2684,5 +2684,168 @@
       "SQS"
     ],
     "explanation": "Enhanced Fan-Out gives each consumer its own 2 MB/s. Shared throughput is the root cause, easy to mistake as a reasonable default configuration."
+  },
+  {
+    "id": "aws-data-analytics-01",
+    "question": "A team runs Athena on 2 TB of unpartitioned CSV and the bill is very high. What is the most correct way to cut cost?",
+    "options": [
+      "Add RAM",
+      "Convert to Parquet and partition by the filter column",
+      "Switch to Redshift",
+      "Increase the timeout"
+    ],
+    "explanation": "Athena bills by data scanned so reduce what must be scanned. Switching to Redshift is tempting as a solution but unnecessary if you only optimize the format."
+  },
+  {
+    "id": "aws-data-analytics-02",
+    "question": "Hundreds of analysts run dashboards with complex joins every day and need steady performance. What do you choose?",
+    "options": [
+      "Athena",
+      "Redshift",
+      "S3 Select",
+      "Glue crawler"
+    ],
+    "explanation": "Redshift is an MPP warehouse for frequent BI. Athena is tempting for convenience, but it bills by scan and is not optimized for large steady BI load."
+  },
+  {
+    "id": "aws-data-analytics-03",
+    "question": "The marketing department must see only some columns and rows of the customer table across the whole data lake (Athena, EMR, Redshift Spectrum). What do you use?",
+    "options": [
+      "A bucket policy",
+      "Lake Formation",
+      "A security group",
+      "KMS"
+    ],
+    "explanation": "Lake Formation manages column/row permissions centrally on the catalog. A bucket policy is tempting because it relates to access, but it works only at the object/prefix level."
+  },
+  {
+    "id": "aws-data-analytics-04",
+    "question": "A company has an ad-hoc end-of-month report and a BI dashboard that runs all day. When do you choose Athena and when Redshift?",
+    "modelAnswer": "Athena is serverless and billed by data scanned, suiting infrequent ad-hoc queries on S3. Redshift is a cluster warehouse with columnar storage optimized for frequent BI workloads with many users and complex joins, with more predictable cost under high load. So the month-end report uses Athena and the all-day dashboard uses Redshift.",
+    "keyPoints": [
+      "Athena: ad-hoc, pay per scan",
+      "Redshift: frequent BI",
+      "Cost depends on the usage model"
+    ]
+  },
+  {
+    "id": "aws-data-analytics-05",
+    "question": "You need ad-hoc SQL queries on Parquet logs in S3 without standing up infrastructure. What do you choose?",
+    "options": [
+      "Redshift",
+      "Athena",
+      "EMR",
+      "RDS"
+    ],
+    "explanation": "Athena is serverless and billed by data scanned. EMR is tempting because it can process big data, but you must manage a cluster."
+  },
+  {
+    "id": "cloudformation-cdk-iac-01",
+    "question": "A team deletes an application stack but does not want to lose the RDS database holding customer data. What is the right configuration?",
+    "options": [
+      "Impossible",
+      "DeletionPolicy Retain or Snapshot",
+      "Turn off rollback",
+      "Use Export"
+    ],
+    "explanation": "DeletionPolicy Retain keeps the resource and Snapshot takes a snapshot before deletion. Turning off rollback is tempting because it relates to safety, but it only affects failed create/update."
+  },
+  {
+    "id": "cloudformation-cdk-iac-02",
+    "question": "Before updating a production stack, the team wants to know which resources will be modified or replaced. What do you use?",
+    "options": [
+      "Update directly",
+      "Change Set",
+      "Drift detection",
+      "Nested stack"
+    ],
+    "explanation": "A Change Set lists the changes and shows whether there is a Replacement. Drift detection is easy to confuse because it also compares, but it compares real state with the template and does not preview an update."
+  },
+  {
+    "id": "cloudformation-cdk-iac-03",
+    "question": "You need to deploy the same guardrail template to 30 accounts in Organizations. What do you use?",
+    "options": [
+      "Run by hand in each account",
+      "StackSets",
+      "CloudTrail",
+      "Config"
+    ],
+    "explanation": "StackSets deploys one template to many accounts and Regions. A nested stack is tempting because it splits templates, but it runs within one account."
+  },
+  {
+    "id": "cloudformation-cdk-iac-04",
+    "question": "After an incident, a dev finds that a production security group differs from the CloudFormation template because someone edited it by hand. What is drift and how do you handle it?",
+    "modelAnswer": "Drift is when a resource is modified outside CloudFormation and so differs from the template. It is detected with drift detection and handled by updating the template to match the current state or restoring the resource to match the template, while restricting direct edit permissions.",
+    "keyPoints": [
+      "Manual edits cause mismatch",
+      "Drift detection",
+      "Update the template or restore"
+    ]
+  },
+  {
+    "id": "cloudformation-cdk-iac-05",
+    "question": "A change to an RDS property in the template is reported as a Replacement in the change set. What should you do?",
+    "options": [
+      "Execute immediately because change sets are always safe",
+      "Set DeletionPolicy/UpdateReplacePolicy Snapshot and check the data impact before executing",
+      "Turn off the change set",
+      "Delete the stack"
+    ],
+    "explanation": "A replacement deletes and recreates, so data may be lost. 'Change sets are always safe' is wrong because it only shows you; you still have to decide."
+  },
+  {
+    "id": "aws-organizations-governance-01",
+    "question": "An SCP with Allow s3:* is attached to an OU but a developer in the OU still gets AccessDenied writing to S3. Why?",
+    "options": [
+      "An SCP grants permissions to IAM users",
+      "An SCP only sets a maximum limit; an IAM policy is still needed to grant permissions",
+      "An SCP is only for root",
+      "An SCP is only for S3"
+    ],
+    "explanation": "Effective permissions are the intersection of the SCP and IAM policy. 'An SCP grants permissions' is easy to assume because the name has Allow, but an Allow in an SCP only opens the ceiling."
+  },
+  {
+    "id": "aws-organizations-governance-02",
+    "question": "A policy requires every account to use only the ap-southeast-1 Region. What is the way to enforce it centrally?",
+    "options": [
+      "Each user's IAM",
+      "An SCP deny on aws:RequestedRegion",
+      "A security group",
+      "A NACL"
+    ],
+    "explanation": "An SCP applies to whole accounts/OUs with a Region condition. Per-user IAM is tempting but is hard to scale and can be edited."
+  },
+  {
+    "id": "aws-organizations-governance-03",
+    "question": "An admin attaches a very strict deny SCP to the Organization root but users in the management account can still do things. Why?",
+    "options": [
+      "Member accounts are not affected",
+      "SCPs do not apply to the management account",
+      "The OU is broken",
+      "A member's root user is blocked"
+    ],
+    "explanation": "The management account is not limited by SCPs, which is why you should not run workloads there."
+  },
+  {
+    "id": "aws-organizations-governance-04",
+    "question": "A company runs every workload in one account and is weighing splitting into several accounts. Explain why to split and the price you pay.",
+    "modelAnswer": "An account is the strongest isolation boundary: it limits the blast radius, separates permissions and cost by environment or workload, lets you set guardrails with SCPs and meets compliance. The price is having to manage networking, cross-account access and tooling, and standardizing with Control Tower/Identity Center.",
+    "keyPoints": [
+      "Isolate the blast radius",
+      "Separate permissions and cost",
+      "SCP guardrails",
+      "Multi-account operational cost"
+    ]
+  },
+  {
+    "id": "aws-organizations-governance-05",
+    "question": "You need to stop every account in the organization from turning off CloudTrail, even that account's admin. What do you use?",
+    "options": [
+      "Each user's IAM policy",
+      "An SCP deny on cloudtrail:StopLogging",
+      "A security group",
+      "A NACL"
+    ],
+    "explanation": "An SCP applies to the whole account and beats an IAM Allow. Per-user IAM policies are tempting but the account's admin can remove them."
   }
 ]

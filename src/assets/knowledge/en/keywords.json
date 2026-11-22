@@ -1298,5 +1298,75 @@
     "id": "kinesis-vs-sqs-vs-msk",
     "meaning": "Comparing messaging and streaming",
     "definition": "Choose by replay, ordering and the number of consumers."
+  },
+  {
+    "id": "athena-partitioning-parquet",
+    "meaning": "Reduce the data scanned",
+    "definition": "You pay by data scanned, so use Parquet and partitions."
+  },
+  {
+    "id": "glue-data-catalog",
+    "meaning": "A shared metadata catalog",
+    "definition": "The schema used by Athena, EMR and Redshift Spectrum."
+  },
+  {
+    "id": "redshift-distribution-sort-keys",
+    "meaning": "Designing MPP tables",
+    "definition": "A wrong distribution key causes shuffling between nodes."
+  },
+  {
+    "id": "redshift-spectrum",
+    "meaning": "Query S3 from Redshift",
+    "definition": "Extends the warehouse to data in the data lake."
+  },
+  {
+    "id": "lake-formation",
+    "meaning": "Data lake permissions",
+    "definition": "Column- and row-level permissions on the catalog."
+  },
+  {
+    "id": "cloudformation-change-sets",
+    "meaning": "Preview stack changes",
+    "definition": "Know which resources will be updated or replaced."
+  },
+  {
+    "id": "cloudformation-drift-detection",
+    "meaning": "Detect hand-edited configuration",
+    "definition": "Compares reality with the template."
+  },
+  {
+    "id": "cloudformation-stacksets",
+    "meaning": "Deploy across accounts and Regions",
+    "definition": "One template deployed across many accounts."
+  },
+  {
+    "id": "aws-cdk-constructs",
+    "meaning": "The levels of abstraction",
+    "definition": "L1 is close to CloudFormation, L2 has sensible defaults, L3 is a pattern."
+  },
+  {
+    "id": "aws-sam",
+    "meaning": "A serverless framework",
+    "definition": "Extends CloudFormation for Lambda and APIs."
+  },
+  {
+    "id": "aws-organizations-scp",
+    "meaning": "A maximum-permission guardrail",
+    "definition": "An SCP limits permissions and does not grant them."
+  },
+  {
+    "id": "aws-control-tower",
+    "meaning": "A multi-account landing zone",
+    "definition": "Builds a standard environment with guardrails."
+  },
+  {
+    "id": "aws-ram",
+    "meaning": "Share resources",
+    "definition": "Share subnets and Transit Gateway between accounts."
+  },
+  {
+    "id": "multi-account-strategy",
+    "meaning": "Separate accounts by workload",
+    "definition": "A small blast radius and a clear bill."
   }
 ]
