@@ -4485,5 +4485,271 @@
     "meaning": "Đánh giá thử",
     "definition": "Đề thử chính thức.",
     "topicId": "azure"
+  },
+  {
+    "id": "spark-shuffle-skew",
+    "term": "Spark Shuffle and Data Skew",
+    "meaning": "Di chuyển dữ liệu và lệch key",
+    "definition": "Shuffle tốn mạng và đĩa; skew làm một task chạy rất lâu.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "spark-broadcast-join",
+    "term": "Spark Broadcast Join vs Sort-Merge Join",
+    "meaning": "Chọn thuật toán join",
+    "definition": "Bảng nhỏ gửi tới mọi executor.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "spark-catalyst",
+    "term": "Spark Catalyst Optimizer",
+    "meaning": "Tối ưu kế hoạch truy vấn",
+    "definition": "Predicate pushdown, chọn join.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "spark-aqe",
+    "term": "Spark Adaptive Query Execution",
+    "meaning": "Tự tối ưu lúc chạy",
+    "definition": "Điều chỉnh partition và join theo thống kê thực.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "spark-partitioning",
+    "term": "Spark Partitioning",
+    "meaning": "Chia dữ liệu để song song",
+    "definition": "Số partition quyết định độ song song.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "dbt-incremental-models",
+    "term": "dbt Incremental Models",
+    "meaning": "Chỉ xử lý dữ liệu mới",
+    "definition": "Cần unique_key và xử lý dữ liệu đến trễ.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "dbt-tests",
+    "term": "dbt Tests",
+    "meaning": "Kiểm thử dữ liệu",
+    "definition": "unique, not_null, relationships.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "analytics-engineering-layers",
+    "term": "Staging, Intermediate and Marts Layers",
+    "meaning": "Phân lớp mô hình",
+    "definition": "Từ làm sạch tới bảng phục vụ BI.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "dbt-snapshots-scd2",
+    "term": "dbt Snapshots (SCD Type 2)",
+    "meaning": "Lưu lịch sử thay đổi",
+    "definition": "Theo dõi thay đổi chiều theo thời gian.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "nosql-four-models",
+    "term": "Key-Value, Document, Wide-Column, Graph",
+    "meaning": "Bốn mô hình NoSQL",
+    "definition": "Mỗi mô hình tối ưu một mẫu truy cập.",
+    "topicId": "backend"
+  },
+  {
+    "id": "single-table-design",
+    "term": "DynamoDB Single Table Design",
+    "meaning": "Thiết kế theo access pattern",
+    "definition": "Nhiều thực thể trong một bảng.",
+    "topicId": "backend"
+  },
+  {
+    "id": "cassandra-partition-clustering",
+    "term": "Cassandra Partition and Clustering Key",
+    "meaning": "Khoá của wide-column",
+    "definition": "Partition xác định node, clustering sắp xếp trong partition.",
+    "topicId": "backend"
+  },
+  {
+    "id": "mongodb-embed-reference",
+    "term": "MongoDB Embed vs Reference",
+    "meaning": "Mô hình tài liệu",
+    "definition": "Embed dữ liệu đọc cùng nhau.",
+    "topicId": "backend"
+  },
+  {
+    "id": "eventual-consistency-quorum",
+    "term": "Eventual Consistency and Quorum",
+    "meaning": "Nhất quán cuối cùng",
+    "definition": "R + W > N cho đọc mới nhất.",
+    "topicId": "backend"
+  },
+  {
+    "id": "inverted-index",
+    "term": "Inverted Index and Analyzer",
+    "meaning": "Chỉ mục ngược",
+    "definition": "Từ trỏ tới danh sách tài liệu.",
+    "topicId": "backend"
+  },
+  {
+    "id": "bm25-relevance",
+    "term": "BM25 Relevance Scoring",
+    "meaning": "Xếp hạng theo liên quan",
+    "definition": "TF-IDF cải tiến.",
+    "topicId": "backend"
+  },
+  {
+    "id": "es-shards-replicas",
+    "term": "Elasticsearch Shards and Replicas",
+    "meaning": "Phân mảnh và bản sao",
+    "definition": "Số primary shard khó đổi.",
+    "topicId": "backend"
+  },
+  {
+    "id": "es-search-after",
+    "term": "Elasticsearch search_after",
+    "meaning": "Phân trang sâu",
+    "definition": "Thay from+size lớn.",
+    "topicId": "backend"
+  },
+  {
+    "id": "es-text-vs-keyword",
+    "term": "Elasticsearch text vs keyword",
+    "meaning": "Hai kiểu trường",
+    "definition": "Text phân tích, keyword nguyên văn.",
+    "topicId": "backend"
+  },
+  {
+    "id": "iceberg-snapshots",
+    "term": "Apache Iceberg Snapshots and Manifests",
+    "meaning": "Cấu trúc metadata Iceberg",
+    "definition": "Snapshot trỏ tới manifest và file dữ liệu.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "delta-lake-log",
+    "term": "Delta Lake Transaction Log",
+    "meaning": "Nhật ký giao dịch",
+    "definition": "_delta_log ghi các commit.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "iceberg-delta-hudi",
+    "term": "Iceberg vs Delta vs Hudi",
+    "meaning": "So sánh ba format",
+    "definition": "Chọn theo hệ sinh thái.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "cow-vs-mor",
+    "term": "Copy-on-Write vs Merge-on-Read",
+    "meaning": "Hai cách cập nhật",
+    "definition": "Đánh đổi ghi và đọc.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "table-compaction",
+    "term": "Table Compaction",
+    "meaning": "Gộp file nhỏ",
+    "definition": "Giảm small files.",
+    "topicId": "data-engineering"
+  },
+  {
+    "id": "mlops-model-registry",
+    "term": "MLOps Model Registry",
+    "meaning": "Quản lý phiên bản model",
+    "definition": "Stage, phê duyệt, tái lập.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "data-vs-concept-drift",
+    "term": "Data Drift vs Concept Drift",
+    "meaning": "Hai loại trôi dữ liệu",
+    "definition": "Đầu vào đổi vs quan hệ đổi.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "feature-store-skew",
+    "term": "Feature Store and Training-Serving Skew",
+    "meaning": "Nhất quán feature",
+    "definition": "Định nghĩa một lần cho offline và online.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "ml-deployment-strategies",
+    "term": "ML Shadow, Canary and A/B Deployment",
+    "meaning": "Triển khai model an toàn",
+    "definition": "So sánh model mới với cũ.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "data-leakage",
+    "term": "Data Leakage",
+    "meaning": "Rò rỉ dữ liệu khi huấn luyện",
+    "definition": "Dùng thông tin tương lai.",
+    "topicId": "ai-ml"
+  },
+  {
+    "id": "hyde",
+    "term": "HyDE (Hypothetical Document Embeddings)",
+    "meaning": "Sinh tài liệu giả để tìm",
+    "definition": "Embed câu trả lời giả thay vì câu hỏi.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "parent-document-retriever",
+    "term": "Parent Document Retriever",
+    "meaning": "Tìm nhỏ, đưa lớn",
+    "definition": "Tìm đoạn nhỏ, đưa đoạn cha vào context.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "graph-rag",
+    "term": "Graph RAG",
+    "meaning": "Truy xuất dựa trên đồ thị",
+    "definition": "Trả lời câu hỏi nhiều bước qua quan hệ.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agentic-rag",
+    "term": "Agentic RAG",
+    "meaning": "Agent điều khiển truy xuất",
+    "definition": "Quyết định truy xuất gì và lặp.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "rag-eval-faithfulness",
+    "term": "RAG Evaluation: Faithfulness and Context Recall",
+    "meaning": "Đo RAG",
+    "definition": "Tách đo truy xuất và sinh.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-gateway",
+    "term": "LLM Gateway",
+    "meaning": "Lớp trung gian cho lời gọi LLM",
+    "definition": "Auth, quota, routing, fallback, log.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-observability",
+    "term": "LLM Observability",
+    "meaning": "Theo dõi prompt, token, chi phí",
+    "definition": "Trace từng request.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-fallback-resilience",
+    "term": "LLM Fallback and Resilience",
+    "meaning": "Chịu lỗi nhà cung cấp",
+    "definition": "Timeout, retry có kiểm soát, fallback.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "prompt-versioning",
+    "term": "Prompt Versioning",
+    "meaning": "Quản lý phiên bản prompt",
+    "definition": "Gắn với eval.",
+    "topicId": "ai-engineering"
   }
 ]

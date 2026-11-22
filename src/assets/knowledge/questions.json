@@ -10150,5 +10150,517 @@
       1
     ],
     "explanation": "Phát hiện sớm và truy vết."
+  },
+  {
+    "id": "spark-fundamentals-01",
+    "playbookId": "spark-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Action nào kích hoạt Spark thực thi?",
+    "options": [
+      "filter",
+      "select",
+      "count",
+      "withColumn"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Transformation là lazy; action mới chạy."
+  },
+  {
+    "id": "spark-fundamentals-02",
+    "playbookId": "spark-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một bảng nhỏ join với bảng rất lớn, cách tối ưu?",
+    "options": [
+      "Sort-merge",
+      "Broadcast join",
+      "Cartesian",
+      "Repartition 1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Broadcast tránh shuffle bảng lớn."
+  },
+  {
+    "id": "spark-fundamentals-03",
+    "playbookId": "spark-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Một task chạy hơn các task khác 50 lần. Nguyên nhân khả dĩ?",
+    "options": [
+      "Hết đĩa",
+      "Data skew",
+      "Sai schema",
+      "Lỗi mạng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Một key chiếm đa số dữ liệu."
+  },
+  {
+    "id": "spark-fundamentals-04",
+    "playbookId": "spark-fundamentals",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao shuffle là điểm tốn kém nhất của Spark?",
+    "modelAnswer": "Shuffle phải ghi dữ liệu trung gian ra đĩa, truyền qua mạng giữa các executor và gộp lại, nên tốn I/O, mạng và dễ gây skew. Giảm bằng lọc sớm, broadcast join, partition hợp lý và tránh wide transformation thừa.",
+    "keyPoints": [
+      "Ghi đĩa và mạng",
+      "Dễ skew",
+      "Giảm wide transformation"
+    ]
+  },
+  {
+    "id": "dbt-analytics-engineering-01",
+    "playbookId": "dbt-analytics-engineering",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "dbt thực hiện bước nào của ELT?",
+    "options": [
+      "Extract",
+      "Load",
+      "Transform",
+      "Cả ba"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "dbt biến đổi trong warehouse."
+  },
+  {
+    "id": "dbt-analytics-engineering-02",
+    "playbookId": "dbt-analytics-engineering",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hàm nào tạo phụ thuộc giữa các model?",
+    "options": [
+      "source()",
+      "ref()",
+      "var()",
+      "env_var()"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "ref xây DAG."
+  },
+  {
+    "id": "dbt-analytics-engineering-03",
+    "playbookId": "dbt-analytics-engineering",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Incremental model sinh dòng trùng. Nguyên nhân khả dĩ?",
+    "options": [
+      "Thiếu unique_key hoặc điều kiện sai",
+      "Dùng view",
+      "Thiếu test",
+      "Tên model dài"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cần khoá để merge."
+  },
+  {
+    "id": "dbt-analytics-engineering-04",
+    "playbookId": "dbt-analytics-engineering",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao phân lớp staging/intermediate/marts?",
+    "modelAnswer": "Staging làm sạch 1-1 nguồn, intermediate chứa logic tái dùng, marts phục vụ BI. Phân lớp giúp kiểm thử sớm, tái dùng và tách logic nghiệp vụ khỏi dashboard.",
+    "keyPoints": [
+      "Làm sạch sớm",
+      "Tái dùng logic",
+      "Tách khỏi BI"
+    ]
+  },
+  {
+    "id": "nosql-data-models-01",
+    "playbookId": "nosql-data-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Thiết kế NoSQL bắt đầu từ?",
+    "options": [
+      "Chuẩn hoá dữ liệu",
+      "Danh sách truy vấn (access pattern)",
+      "Số bảng",
+      "Index"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Truy vấn quyết định khoá và denormalize."
+  },
+  {
+    "id": "nosql-data-models-02",
+    "playbookId": "nosql-data-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Nhược điểm thường gặp của partition key kém?",
+    "options": [
+      "Hot partition",
+      "Thiếu index",
+      "Không scale",
+      "Mất schema"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Tải dồn vào một partition."
+  },
+  {
+    "id": "nosql-data-models-03",
+    "playbookId": "nosql-data-models",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cần truy vấn bạn của bạn bè nhiều bước. Chọn?",
+    "options": [
+      "Key-value",
+      "Graph",
+      "Wide-column",
+      "Document nhúng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Graph duyệt quan hệ hiệu quả."
+  },
+  {
+    "id": "nosql-data-models-04",
+    "playbookId": "nosql-data-models",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào KHÔNG nên chọn NoSQL?",
+    "modelAnswer": "Khi cần join phức tạp, báo cáo ad-hoc, ràng buộc toàn vẹn và giao dịch nhiều thực thể, hoặc mẫu truy cập chưa rõ. Khi đó SQL linh hoạt và an toàn hơn.",
+    "keyPoints": [
+      "Join và ad-hoc",
+      "Giao dịch ràng buộc",
+      "Mẫu truy cập chưa rõ"
+    ]
+  },
+  {
+    "id": "search-elasticsearch-01",
+    "playbookId": "search-elasticsearch",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Elasticsearch có nên là nguồn dữ liệu chính?",
+    "options": [
+      "Có",
+      "Không, nên giữ DB làm nguồn sự thật",
+      "Luôn",
+      "Chỉ khi nhỏ"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chỉ mục dẫn xuất, nhất quán cuối cùng."
+  },
+  {
+    "id": "search-elasticsearch-02",
+    "playbookId": "search-elasticsearch",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Vì sao mới ghi chưa tìm thấy ngay?",
+    "options": [
+      "Lỗi",
+      "Chưa refresh (near real-time)",
+      "Sai query",
+      "Hết đĩa"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Refresh định kỳ."
+  },
+  {
+    "id": "search-elasticsearch-03",
+    "playbookId": "search-elasticsearch",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Trường dùng để sort và aggregate chính xác?",
+    "options": [
+      "text",
+      "keyword",
+      "analyzed",
+      "stemmed"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Keyword giữ nguyên văn."
+  },
+  {
+    "id": "search-elasticsearch-04",
+    "playbookId": "search-elasticsearch",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao quá nhiều shard nhỏ gây hại?",
+    "modelAnswer": "Mỗi shard tốn tài nguyên (bộ nhớ, file handle, overhead điều phối), nhiều shard nhỏ làm cluster chậm và khó quản lý; số primary shard không đổi dễ nên cần thiết kế từ đầu.",
+    "keyPoints": [
+      "Overhead mỗi shard",
+      "Cluster chậm",
+      "Khó đổi sau"
+    ]
+  },
+  {
+    "id": "lakehouse-table-formats-01",
+    "playbookId": "lakehouse-table-formats",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Time travel dựa trên?",
+    "options": [
+      "Backup",
+      "Giữ snapshot metadata cũ trỏ tới file cũ",
+      "Log ứng dụng",
+      "Cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Snapshot bất biến."
+  },
+  {
+    "id": "lakehouse-table-formats-02",
+    "playbookId": "lakehouse-table-formats",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hiện tượng chậm dần do nhiều file nhỏ xử lý bằng?",
+    "options": [
+      "Compaction",
+      "Thêm cột",
+      "Giảm snapshot",
+      "Đổi engine"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Gộp file."
+  },
+  {
+    "id": "lakehouse-table-formats-03",
+    "playbookId": "lakehouse-table-formats",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Upsert từ CDC lên data lake cần?",
+    "options": [
+      "CSV",
+      "Table format hỗ trợ MERGE (Iceberg/Delta/Hudi)",
+      "Parquet thuần",
+      "Cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần giao dịch trên file."
+  },
+  {
+    "id": "lakehouse-table-formats-04",
+    "playbookId": "lakehouse-table-formats",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Table format khác Parquet thuần ở điểm nào?",
+    "modelAnswer": "Parquet chỉ là định dạng file. Table format thêm lớp metadata có giao dịch ACID, snapshot, schema evolution, partition evolution và row-level update/delete, cho phép nhiều engine truy cập nhất quán.",
+    "keyPoints": [
+      "Metadata và giao dịch",
+      "Snapshot và time travel",
+      "Row-level update"
+    ]
+  },
+  {
+    "id": "mlops-model-lifecycle-01",
+    "playbookId": "mlops-model-lifecycle",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Model offline tốt nhưng online tệ. Nguyên nhân khả dĩ?",
+    "options": [
+      "Quá nhiều RAM",
+      "Training-serving skew hoặc leakage",
+      "Quá nhiều core",
+      "Đổi màu UI"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Feature/phân phối khác nhau."
+  },
+  {
+    "id": "mlops-model-lifecycle-02",
+    "playbookId": "mlops-model-lifecycle",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phân phối đầu vào thay đổi theo thời gian gọi là?",
+    "options": [
+      "Data drift",
+      "Overfitting",
+      "Underfitting",
+      "Sharding"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Data drift."
+  },
+  {
+    "id": "mlops-model-lifecycle-03",
+    "playbookId": "mlops-model-lifecycle",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Triển khai model mới ít rủi ro nhất để so sánh?",
+    "options": [
+      "Thay thẳng",
+      "Shadow rồi canary",
+      "Xoá model cũ",
+      "Tắt giám sát"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Shadow quan sát không ảnh hưởng."
+  },
+  {
+    "id": "mlops-model-lifecycle-04",
+    "playbookId": "mlops-model-lifecycle",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao cần giám sát model sau triển khai?",
+    "modelAnswer": "Dữ liệu thế giới đổi nên chất lượng suy giảm âm thầm (data drift, concept drift). Giám sát phát hiện sớm để retrain hoặc rollback.",
+    "keyPoints": [
+      "Dữ liệu đổi",
+      "Suy giảm âm thầm",
+      "Retrain hoặc rollback"
+    ]
+  },
+  {
+    "id": "advanced-rag-patterns-01",
+    "playbookId": "advanced-rag-patterns",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Bước nào giúp chọn lại top-K chính xác hơn?",
+    "options": [
+      "Reranker",
+      "Tăng temperature",
+      "Giảm chunk",
+      "Bỏ filter"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cross-encoder chấm lại."
+  },
+  {
+    "id": "advanced-rag-patterns-02",
+    "playbookId": "advanced-rag-patterns",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Parent-document retriever làm gì?",
+    "options": [
+      "Tìm đoạn nhỏ rồi đưa đoạn cha lớn hơn vào context",
+      "Xoá chunk",
+      "Nén vector",
+      "Dịch văn bản"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cân bằng độ chính xác tìm và đủ ngữ cảnh."
+  },
+  {
+    "id": "advanced-rag-patterns-03",
+    "playbookId": "advanced-rag-patterns",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "RAG bịa khi không có tài liệu. Giải pháp?",
+    "options": [
+      "Tăng temperature",
+      "Chính sách trả lời \"không đủ thông tin\" kèm trích dẫn",
+      "Giảm top-K về 0",
+      "Bỏ RAG"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Buộc bám căn cứ."
+  },
+  {
+    "id": "advanced-rag-patterns-04",
+    "playbookId": "advanced-rag-patterns",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào thêm Graph RAG hoặc agentic RAG?",
+    "modelAnswer": "Khi câu hỏi cần liên kết nhiều thực thể hoặc nhiều bước và RAG thường không đủ, sau khi đo cho thấy lỗi nằm ở đó. Mỗi tầng thêm độ trễ và chi phí nên cần chứng minh bằng eval.",
+    "keyPoints": [
+      "Câu hỏi nhiều bước",
+      "Sau khi đo lỗi",
+      "Đánh đổi độ trễ"
+    ]
+  },
+  {
+    "id": "llm-app-architecture-gateway-01",
+    "playbookId": "llm-app-architecture-gateway",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "API key của nhà cung cấp LLM nên ở đâu?",
+    "options": [
+      "Trong client",
+      "Ở server/gateway, không lộ cho client",
+      "Trong prompt",
+      "Trong repo công khai"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giữ bí mật phía server."
+  },
+  {
+    "id": "llm-app-architecture-gateway-02",
+    "playbookId": "llm-app-architecture-gateway",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một người dùng đốt hết ngân sách. Biện pháp?",
+    "options": [
+      "Không có",
+      "Quota và rate limit theo người dùng",
+      "Tăng token",
+      "Tắt log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Gateway áp hạn mức."
+  },
+  {
+    "id": "llm-app-architecture-gateway-03",
+    "playbookId": "llm-app-architecture-gateway",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Nhà cung cấp lỗi diện rộng. Thiết kế tốt?",
+    "options": [
+      "Chờ mãi",
+      "Timeout, fallback sang model/nhà cung cấp khác, degrade chức năng",
+      "Retry vô hạn",
+      "Tắt ứng dụng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chịu lỗi."
+  },
+  {
+    "id": "llm-app-architecture-gateway-04",
+    "playbookId": "llm-app-architecture-gateway",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao cần gateway thay vì gọi LLM trực tiếp từ mỗi service?",
+    "modelAnswer": "Gateway tập trung xác thực, quota, routing, fallback, log và guardrail, giúp đổi model dễ và kiểm soát chi phí. Gọi trực tiếp làm lặp logic và khó quan sát.",
+    "keyPoints": [
+      "Tập trung kiểm soát",
+      "Đổi model dễ",
+      "Quan sát và chi phí"
+    ]
   }
 ]

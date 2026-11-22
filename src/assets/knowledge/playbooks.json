@@ -2400,5 +2400,151 @@
     "prerequisites": [
       "azure-governance-cost"
     ]
+  },
+  {
+    "id": "spark-fundamentals",
+    "title": "Apache Spark Fundamentals",
+    "summary": "Hiểu DAG, shuffle, join và skew để viết job Spark nhanh và không OOM.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "spark-shuffle-skew",
+      "spark-broadcast-join",
+      "spark-catalyst",
+      "spark-aqe",
+      "spark-partitioning"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/spark-fundamentals.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "batch-vs-stream-processing"
+    ]
+  },
+  {
+    "id": "dbt-analytics-engineering",
+    "title": "dbt & Analytics Engineering",
+    "summary": "Biến đổi dữ liệu bằng SQL trong warehouse với model, test, lineage và phân lớp staging/marts.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "dbt-incremental-models",
+      "dbt-tests",
+      "analytics-engineering-layers",
+      "dbt-snapshots-scd2"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/dbt-analytics-engineering.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "oltp-olap-data-modeling",
+      "etl-elt-orchestration-airflow"
+    ]
+  },
+  {
+    "id": "nosql-data-models",
+    "title": "NoSQL Data Models & Thiết kế theo Access Pattern",
+    "summary": "Chọn key-value, document, wide-column hay graph và thiết kế dữ liệu theo truy vấn thay vì chuẩn hoá.",
+    "topicId": "backend",
+    "keywordIds": [
+      "nosql-four-models",
+      "single-table-design",
+      "cassandra-partition-clustering",
+      "mongodb-embed-reference",
+      "eventual-consistency-quorum"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/nosql-data-models.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "db-indexing-storage-engines",
+      "cap-consistency-models"
+    ]
+  },
+  {
+    "id": "search-elasticsearch",
+    "title": "Search Engine: Elasticsearch/OpenSearch",
+    "summary": "Hiểu inverted index, analyzer, BM25 và shard để xây tìm kiếm văn bản đúng cách.",
+    "topicId": "backend",
+    "keywordIds": [
+      "inverted-index",
+      "bm25-relevance",
+      "es-shards-replicas",
+      "es-search-after",
+      "es-text-vs-keyword"
+    ],
+    "filePath": "assets/knowledge/playbooks/backend/search-elasticsearch.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "db-indexing-storage-engines"
+    ]
+  },
+  {
+    "id": "lakehouse-table-formats",
+    "title": "Open Table Formats: Iceberg, Delta, Hudi",
+    "summary": "ACID, time travel và schema evolution trên data lake bằng metadata snapshot.",
+    "topicId": "data-engineering",
+    "keywordIds": [
+      "iceberg-snapshots",
+      "delta-lake-log",
+      "iceberg-delta-hudi",
+      "cow-vs-mor",
+      "table-compaction"
+    ],
+    "filePath": "assets/knowledge/playbooks/data-engineering/lakehouse-table-formats.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "data-warehouse-lakehouse"
+    ]
+  },
+  {
+    "id": "mlops-model-lifecycle",
+    "title": "MLOps: Vòng đời Model, Drift & Triển khai",
+    "summary": "Tái lập, triển khai, giám sát drift và retrain model; tránh training-serving skew và data leakage.",
+    "topicId": "ai-ml",
+    "keywordIds": [
+      "mlops-model-registry",
+      "data-vs-concept-drift",
+      "feature-store-skew",
+      "ml-deployment-strategies",
+      "data-leakage"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-ml/mlops-model-lifecycle.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ml-evaluation-metrics",
+      "ai-ml-fundamentals"
+    ]
+  },
+  {
+    "id": "advanced-rag-patterns",
+    "title": "RAG nâng cao: Rewrite, Rerank, Graph & Agentic",
+    "summary": "Cải thiện RAG bằng query transformation, hybrid, rerank, parent-document, Graph RAG và đánh giá tách truy xuất/sinh.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "hyde",
+      "parent-document-retriever",
+      "graph-rag",
+      "agentic-rag",
+      "rag-eval-faithfulness"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/advanced-rag-patterns.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "vector-databases-embeddings"
+    ]
+  },
+  {
+    "id": "llm-app-architecture-gateway",
+    "title": "Kiến trúc ứng dụng LLM: Gateway, Routing, Guardrails",
+    "summary": "Bọc LLM như dependency không đáng tin với gateway, quota, fallback, cache, guardrail và quan sát.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "llm-gateway",
+      "llm-observability",
+      "llm-fallback-resilience",
+      "prompt-versioning"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/llm-app-architecture-gateway.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ai-agents-agentic-loop",
+      "llm-cost-latency-optimization"
+    ]
   }
 ]
