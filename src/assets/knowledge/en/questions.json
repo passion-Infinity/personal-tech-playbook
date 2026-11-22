@@ -1110,5 +1110,167 @@
       "A slow cluster",
       "Hard to change the primary shard count"
     ]
+  },
+  {
+    "id": "microservices-fundamentals-01",
+    "question": "A team of 6 is building a new product with an unclear business domain and no operational platform. Which architecture fits?",
+    "options": [
+      "Microservices right away",
+      "A modular monolith with clear module boundaries",
+      "20 nanoservices",
+      "One service per function"
+    ],
+    "explanation": "A modular monolith gives clear boundaries without network costs. Microservices right away is tempting as 'modern', but adds unnecessary distributed complexity."
+  },
+  {
+    "id": "microservices-fundamentals-02",
+    "question": "Five services read and write one database and must be deployed together to work. What is this?",
+    "options": [
+      "Proper microservices",
+      "A distributed monolith",
+      "A modular monolith",
+      "A strangler fig"
+    ],
+    "explanation": "Tight coupling through a shared DB and joint deployment is a distributed monolith: all the costs, none of the benefits."
+  },
+  {
+    "id": "microservices-fundamentals-03",
+    "question": "A service needs customer data owned by another service. What fits database per service?",
+    "options": [
+      "Read the other service's DB directly",
+      "Call an API or receive events, keeping a local copy if needed",
+      "Share the schema",
+      "Share a table"
+    ],
+    "explanation": "Reading the DB directly breaks the data ownership boundary."
+  },
+  {
+    "id": "microservices-fundamentals-04",
+    "question": "A company wants to replace a 10-year-old monolith with microservices and is considering a full rewrite. Explain the strangler fig and why to use it instead of a rewrite.",
+    "modelAnswer": "A strangler fig puts a facade/proxy in front and moves features to new services one at a time (routing by URL or feature flag) while the monolith shrinks until it is replaced. This lowers risk, delivers value early and is easy to roll back, unlike a full rewrite, which takes long and is prone to failure.",
+    "keyPoints": [
+      "A facade and gradual feature-by-feature migration",
+      "Lower risk",
+      "Avoids a full rewrite"
+    ]
+  },
+  {
+    "id": "microservices-fundamentals-05",
+    "question": "What does Conway's law say and how is it applied?",
+    "options": [
+      "A system mirrors the organization's communication structure; organize teams around the desired architecture",
+      "The more services the better",
+      "A shared DB is needed",
+      "Use one language"
+    ],
+    "explanation": "The inverse Conway maneuver: design the teams to get the architecture you want."
+  },
+  {
+    "id": "event-driven-architecture-01",
+    "question": "When a new order arrives, inventory, payment and notifications must each react independently, and new systems may be added later. What communication fits?",
+    "options": [
+      "The Order service calls each system directly",
+      "Publish an OrderPlaced event to many consumers",
+      "Share a database",
+      "A cron job"
+    ],
+    "explanation": "Events let you add consumers without changing the producer. Direct calls create coupling and require changes every time a system is added."
+  },
+  {
+    "id": "event-driven-architecture-02",
+    "question": "One event contains only the order id and the consumer must call the API for details, while another event carries all the data. What are these two styles called?",
+    "options": [
+      "Event notification and event-carried state transfer",
+      "Command and query",
+      "Saga and outbox",
+      "Pull and push"
+    ],
+    "explanation": "A notification is thin and requires a call back; ECST carries state so the consumer is more autonomous."
+  },
+  {
+    "id": "event-driven-architecture-03",
+    "question": "A producer renames a field in an event and many consumers break. What is the right prevention?",
+    "options": [
+      "Announce it in chat",
+      "A schema registry checking compatibility, only adding optional fields with defaults",
+      "Free-form JSON",
+      "Never change anything"
+    ],
+    "explanation": "Event contracts need automatic compatibility checks."
+  },
+  {
+    "id": "event-driven-architecture-04",
+    "question": "Compare choreography and orchestration in EDA and say when to use each.",
+    "modelAnswer": "Choreography: each service reacts to events and emits the next, with no center, so it is loose but the business flow is hard to see when there are many steps. Orchestration: an orchestrator coordinates each step explicitly, so it is easier to follow and compensate but has a central component. Use choreography for few loose steps and orchestration for multi-step processes that need tracking.",
+    "keyPoints": [
+      "Choreography: no center",
+      "Orchestration: coordinated, easy to follow",
+      "Choose by number of steps and observability needs"
+    ]
+  },
+  {
+    "id": "event-driven-architecture-05",
+    "question": "A consumer receives a repeated event and sends an email twice. What is the right fix?",
+    "options": [
+      "Ignore it",
+      "An idempotent consumer: dedupe by event id",
+      "Add consumers",
+      "Delete the queue"
+    ],
+    "explanation": "Brokers are at-least-once so consumers must tolerate duplicates."
+  },
+  {
+    "id": "saga-pattern-01",
+    "question": "An order passes through the Order, Stock and Payment services, each with its own DB. How do you ensure consistency?",
+    "options": [
+      "An ACID transaction across services",
+      "A saga with compensating transactions",
+      "One shared DB",
+      "Ignore failures"
+    ],
+    "explanation": "A saga splits the work into local transactions with compensation. An ACID transaction across services is not feasible."
+  },
+  {
+    "id": "saga-pattern-02",
+    "question": "Why not use Two-Phase Commit between microservices?",
+    "options": [
+      "Because it is too fast",
+      "It blocks resources, the coordinator is a single point of failure, it does not scale and does not support many systems",
+      "Because it has no name",
+      "Because it is only for NoSQL"
+    ],
+    "explanation": "2PC locks and blocks when the coordinator dies."
+  },
+  {
+    "id": "saga-pattern-03",
+    "question": "A compensating refund transaction runs twice because of retries. What property is required?",
+    "options": [
+      "Fast",
+      "Idempotent and retryable",
+      "Random",
+      "Synchronous"
+    ],
+    "explanation": "A compensation can also fail/repeat, so it must be idempotent."
+  },
+  {
+    "id": "saga-pattern-04",
+    "question": "A user sees an order in the 'stock reserved' state and then it disappears after the saga compensates. Explain why a saga lacks isolation and how to deal with it.",
+    "modelAnswer": "Each step commits locally right away, so other transactions can see half-finished data (dirty read) or overwrite it. A saga has no isolation (the I in ACID). Countermeasures include a semantic lock (a PENDING flag on the record), commutative updates, a pessimistic view, reread value and versioning, plus telling the user about intermediate states.",
+    "keyPoints": [
+      "Local commits are immediate, so half-finished data is visible",
+      "A saga has no isolation",
+      "Semantic lock and other countermeasures"
+    ]
+  },
+  {
+    "id": "saga-pattern-05",
+    "question": "Where should you put a non-compensable step (sending a confirmation email) in a saga?",
+    "options": [
+      "At the start of the chain",
+      "At the end of the chain, after the pivot",
+      "In the middle",
+      "It does not matter"
+    ],
+    "explanation": "A step that cannot be undone should run when you are sure no compensation will be needed."
   }
 ]

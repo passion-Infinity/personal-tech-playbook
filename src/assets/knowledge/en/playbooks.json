@@ -103,5 +103,20 @@
     "id": "search-elasticsearch",
     "title": "Search Engine: Elasticsearch/OpenSearch",
     "summary": "Understand the inverted index, analyzers, BM25 and shards to build text search correctly."
+  },
+  {
+    "id": "microservices-fundamentals",
+    "title": "Microservices Fundamentals",
+    "summary": "Know when to split into microservices and when not to, boundaries by business capability and the price you pay."
+  },
+  {
+    "id": "event-driven-architecture",
+    "title": "Event-Driven Architecture",
+    "summary": "Reduce coupling with events, and understand choreography, schemas and the risk of event spaghetti."
+  },
+  {
+    "id": "saga-pattern",
+    "title": "Saga Pattern",
+    "summary": "Achieve business consistency across services with a chain of local transactions and compensating steps instead of 2PC."
   }
 ]

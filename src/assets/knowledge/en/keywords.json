@@ -553,5 +553,85 @@
     "id": "es-text-vs-keyword",
     "meaning": "Two field types",
     "definition": "Text is analyzed, keyword is verbatim."
+  },
+  {
+    "id": "microservices-vs-monolith",
+    "meaning": "Comparing architecture styles and when to move",
+    "definition": "Microservices trade in-code complexity for distributed-system complexity; a modular monolith is a sensible starting point."
+  },
+  {
+    "id": "bounded-context-ddd",
+    "meaning": "A business boundary for splitting services",
+    "definition": "Each context has its own model and language; boundaries follow business capabilities rather than technical layers."
+  },
+  {
+    "id": "database-per-service",
+    "meaning": "Each service owns its own data",
+    "definition": "Never read another service's DB directly; exchange data through APIs or events."
+  },
+  {
+    "id": "strangler-fig",
+    "meaning": "Gradually replace a legacy system with new services",
+    "definition": "Wrap and move one feature at a time to new services until the legacy system can be retired."
+  },
+  {
+    "id": "distributed-monolith",
+    "meaning": "Split into services but still tightly dependent",
+    "definition": "Sharing a DB or needing to deploy together: you pay microservices' costs without their benefits."
+  },
+  {
+    "id": "conways-law",
+    "meaning": "Architecture mirrors the organization's structure",
+    "definition": "System design resembles how teams communicate; split teams by business capability."
+  },
+  {
+    "id": "event-driven-architecture",
+    "meaning": "Communicating through events via a broker",
+    "definition": "A producer emits what has happened and consumers react on their own, reducing coupling but making debugging harder."
+  },
+  {
+    "id": "event-notification-vs-state-transfer",
+    "meaning": "Two ways to carry data in an event",
+    "definition": "A notification only signals a change; state transfer includes enough data so the consumer does not need to call back."
+  },
+  {
+    "id": "choreography-vs-orchestration",
+    "meaning": "Self-organizing or coordinated",
+    "definition": "Choreography relies on events between services; orchestration has a coordinator commanding each step."
+  },
+  {
+    "id": "schema-registry",
+    "meaning": "Managing event schema evolution",
+    "definition": "Checks backward and forward compatibility so schema changes do not break consumers."
+  },
+  {
+    "id": "cloudevents",
+    "meaning": "A standard for describing events across systems",
+    "definition": "A common format for event metadata across many platforms."
+  },
+  {
+    "id": "saga-pattern",
+    "meaning": "A distributed transaction as a chain of local transactions plus compensation",
+    "definition": "Achieves atomicity at the business level without a global lock like 2PC."
+  },
+  {
+    "id": "compensating-transaction",
+    "meaning": "Semantically undoing completed steps",
+    "definition": "Not a rollback: for example a refund or a correction email; it must be idempotent and retryable."
+  },
+  {
+    "id": "two-phase-commit-vs-saga",
+    "meaning": "The trade-off between a global lock and eventual consistency",
+    "definition": "2PC gives strong consistency but blocks and is hard to scale; a saga is flexible but lacks isolation."
+  },
+  {
+    "id": "saga-isolation-countermeasures",
+    "meaning": "Handling the lack of isolation in a saga",
+    "definition": "Semantic lock, commutative updates, pessimistic view and re-read value."
+  },
+  {
+    "id": "durable-execution-temporal",
+    "meaning": "A platform for durable workflow orchestration",
+    "definition": "Stores workflow state so it can resume after failures; suits multi-step sagas."
   }
 ]
