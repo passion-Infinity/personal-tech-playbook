@@ -1428,5 +1428,55 @@
     "id": "redis-cluster-sharding",
     "meaning": "Sharding Redis",
     "definition": "Scales capacity and throughput."
+  },
+  {
+    "id": "direct-connect-vs-vpn",
+    "meaning": "Two kinds of hybrid connectivity",
+    "definition": "VPN goes over the Internet; DX is a private line."
+  },
+  {
+    "id": "dms-cdc",
+    "meaning": "Low-downtime DB migration",
+    "definition": "Change data capture keeps data in sync continuously."
+  },
+  {
+    "id": "snowball",
+    "meaning": "Move large data with a device",
+    "definition": "For when bandwidth is not enough."
+  },
+  {
+    "id": "six-rs-migration",
+    "meaning": "Six migration strategies",
+    "definition": "Rehost, Replatform, Refactor, Repurchase, Retire, Retain."
+  },
+  {
+    "id": "codepipeline-codebuild",
+    "meaning": "AWS's managed CI/CD",
+    "definition": "A pipeline of stages with a buildspec."
+  },
+  {
+    "id": "codedeploy-blue-green",
+    "meaning": "Zero-downtime deployment",
+    "definition": "Shifts traffic and rolls back on alarms."
+  },
+  {
+    "id": "ssm-session-manager",
+    "meaning": "A shell without SSH",
+    "definition": "No port 22 and with auditing."
+  },
+  {
+    "id": "deployment-strategies-canary",
+    "meaning": "Deployment strategies",
+    "definition": "Reduce risk when releasing."
+  },
+  {
+    "id": "aws-privatelink",
+    "meaning": "Publish a private service",
+    "definition": "No peering or distinct CIDRs needed."
+  },
+  {
+    "id": "vpc-flow-logs",
+    "meaning": "Observe traffic",
+    "definition": "Metadata, no payload."
   }
 ]

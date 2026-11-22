@@ -3009,5 +3009,167 @@
       "Instance Store"
     ],
     "explanation": "Redis is shared across instances. Local disk is tempting for its simplicity, but it is lost when an instance is replaced and cannot be shared."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-01",
+    "question": "A company needs to connect on-prem to AWS today at low cost. What do you choose?",
+    "options": [
+      "Direct Connect",
+      "Site-to-Site VPN",
+      "Snowball",
+      "DMS"
+    ],
+    "explanation": "A VPN is set up in minutes over the Internet. Direct Connect is tempting because it is better, but it takes weeks to install."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-02",
+    "question": "VPC A peers with B and B peers with C. Can A reach C automatically and what do you use to join many VPCs?",
+    "options": [
+      "Yes",
+      "No, use Transit Gateway",
+      "Only the same Region",
+      "Only the same account"
+    ],
+    "explanation": "Peering is not transitive; Transit Gateway has transitive routing."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-03",
+    "question": "A company has 200 TB of data and only a 1 Gbps link. What is the fastest and most practical way to move it to S3?",
+    "options": [
+      "Upload over the Internet",
+      "Snowball",
+      "VPN",
+      "CloudFront"
+    ],
+    "explanation": "Transferring 200 TB over 1 Gbps takes over 23 days; Snowball's physical transport is faster. A VPN is tempting for security, but it does not add bandwidth."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-04",
+    "question": "A company uses a single Direct Connect line for its payment system. Why is redundancy needed and how do you provide it?",
+    "modelAnswer": "A single DX line is a single point of failure, is not encrypted by default and takes many weeks to install. Typically add a second DX at another location or a VPN backup, plus encryption with a VPN or MACsec if needed.",
+    "keyPoints": [
+      "A single point of failure",
+      "Add a VPN or a second DX",
+      "Encrypt separately"
+    ]
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-05",
+    "question": "Migrating an Oracle DB to Aurora PostgreSQL involves converting both the schema and the code. What do you use?",
+    "options": [
+      "DMS alone",
+      "SCT combined with DMS",
+      "Snowball",
+      "DataSync"
+    ],
+    "explanation": "SCT converts the schema and DMS moves the data. DMS alone is tempting as enough, but it does not convert the full schema across different engines."
+  },
+  {
+    "id": "aws-cicd-devops-tools-01",
+    "question": "Security requires closing port 22 entirely but admins still need an audited shell into EC2. What do you use?",
+    "options": [
+      "Open another port",
+      "SSM Session Manager",
+      "Telnet",
+      "FTP"
+    ],
+    "explanation": "Session Manager uses IAM and an agent, is audited and needs no port 22. Opening another port is tempting as a solution but still opens an attack surface."
+  },
+  {
+    "id": "aws-cicd-devops-tools-02",
+    "question": "A team wants to release to production with the lowest risk and be able to go back quickly. Which strategy?",
+    "options": [
+      "In-place straight onto servers",
+      "Blue/green or canary",
+      "Edit directly on the server",
+      "Turn off health checks"
+    ],
+    "explanation": "Blue/green shifts traffic to a new environment and can shift back. In-place is tempting for its simplicity but overwrites the running version so rollback is hard."
+  },
+  {
+    "id": "aws-cicd-devops-tools-03",
+    "question": "A developer puts the DB password directly in buildspec.yml. What is the problem and the right way?",
+    "options": [
+      "No problem",
+      "The secret can leak through the repo and logs; use Secrets Manager or Parameter Store",
+      "The build is slower",
+      "The cache is lost"
+    ],
+    "explanation": "Secrets should not live in code or logs. 'No problem' is tempting because the build still runs."
+  },
+  {
+    "id": "aws-cicd-devops-tools-04",
+    "question": "Describe the components a production CI/CD pipeline on AWS should have.",
+    "modelAnswer": "The pipeline needs build and test stages, an approval gate for production, deployment using a blue/green or canary strategy with health checks and automatic rollback on a CloudWatch alarm, least-privilege roles, secrets drawn from Secrets Manager/Parameter Store and encrypted artifacts.",
+    "keyPoints": [
+      "Test and approval",
+      "Blue/green + automatic rollback",
+      "Least privilege and safe secrets"
+    ]
+  },
+  {
+    "id": "aws-cicd-devops-tools-05",
+    "question": "A pipeline must automatically go back to the previous version when a CloudWatch alarm on 5xx errors fires after a deploy. Which service supports this?",
+    "options": [
+      "CodeBuild",
+      "CodeDeploy with alarm-based rollback",
+      "CodeArtifact",
+      "ECR"
+    ],
+    "explanation": "CodeDeploy supports automatic rollback on alarms. CodeBuild is tempting because it is in the pipeline, but it only builds and tests."
+  },
+  {
+    "id": "aws-advanced-networking-01",
+    "question": "EC2 in a private subnet downloads S3 data daily and the NAT bill rises. What is the cheapest way to reach S3 without the Internet?",
+    "options": [
+      "NAT Gateway",
+      "Gateway endpoint",
+      "Interface endpoint",
+      "Direct Connect"
+    ],
+    "explanation": "A Gateway endpoint for S3 is free. An Interface endpoint is easy to confuse because it is also private, but it is billed per hour and per GB."
+  },
+  {
+    "id": "aws-advanced-networking-02",
+    "question": "After adding a NACL to a subnet, customers reach the page but receive no data. Which key difference between NACL and security group explains this?",
+    "options": [
+      "A NACL is stateful",
+      "A NACL is stateless and subnet-level so it needs return-direction rules",
+      "A NACL only has Allow",
+      "A NACL is instance-level"
+    ],
+    "explanation": "A NACL is stateless so you must open ephemeral ports for the return direction. The SG is the stateful one, and the two filters are easy to confuse."
+  },
+  {
+    "id": "aws-advanced-networking-03",
+    "question": "A game needs global static IPs and fast failover for TCP/UDP traffic. What do you choose?",
+    "options": [
+      "CloudFront",
+      "Global Accelerator",
+      "Route 53 simple",
+      "S3"
+    ],
+    "explanation": "Global Accelerator provides static anycast IPs and supports TCP/UDP. CloudFront is tempting because it accelerates, but it caches HTTP."
+  },
+  {
+    "id": "aws-advanced-networking-04",
+    "question": "The infrastructure has three AZs but only one NAT Gateway in AZ-a. Why should you create a NAT Gateway per AZ?",
+    "modelAnswer": "A NAT Gateway lives in one AZ; if that AZ fails, private subnets in other AZs lose their route to the Internet. One NAT per AZ preserves availability and avoids cross-AZ traffic charges.",
+    "keyPoints": [
+      "A NAT belongs to one AZ",
+      "Preserves availability",
+      "Avoids cross-AZ charges"
+    ]
+  },
+  {
+    "id": "aws-advanced-networking-05",
+    "question": "Which two are true about a Gateway endpoint? (choose 2)",
+    "options": [
+      "Supports only S3 and DynamoDB",
+      "Free",
+      "Uses an ENI",
+      "Billed per hour"
+    ],
+    "explanation": "A Gateway endpoint is only for S3/DynamoDB and is free. Using an ENI and hourly billing are characteristics of an interface endpoint."
   }
 ]

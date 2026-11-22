@@ -278,5 +278,20 @@
     "id": "elasticache-caching",
     "title": "ElastiCache, DAX & Caching Strategies",
     "summary": "Choose Redis or Memcached, cache-aside and write-through, TTLs and the stampede/stale-data traps."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration",
+    "title": "Hybrid Connectivity & Migration (VPN, Direct Connect, DMS)",
+    "summary": "Connect on-prem to AWS with VPN/Direct Connect/Transit Gateway and migrate data with DMS, DataSync and Snowball."
+  },
+  {
+    "id": "aws-cicd-devops-tools",
+    "title": "AWS CI/CD & Systems Manager",
+    "summary": "Build pipelines with CodePipeline/CodeBuild/CodeDeploy and operate fleets with Systems Manager."
+  },
+  {
+    "id": "aws-advanced-networking",
+    "title": "Advanced AWS Networking (Endpoints, PrivateLink, Global Accelerator)",
+    "summary": "Access services privately, accelerate globally and observe traffic with endpoints, PrivateLink, Global Accelerator and Flow Logs."
   }
 ]
