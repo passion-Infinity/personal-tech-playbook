@@ -68,5 +68,20 @@
     "id": "authn-authz-oauth-jwt",
     "title": "AuthN, AuthZ, OAuth 2.0 & JWT",
     "summary": "Distinguish authentication from authorization, use sessions/JWT/OAuth correctly and avoid common security bugs."
+  },
+  {
+    "id": "idempotency-retries",
+    "title": "Idempotency & Retries",
+    "summary": "Let clients retry safely with idempotency keys, jittered backoff and duplicate handling."
+  },
+  {
+    "id": "backend-performance-profiling",
+    "title": "Backend Performance & Profiling",
+    "summary": "Optimize performance with a process of measuring, finding the bottleneck, fixing the right place and measuring again."
+  },
+  {
+    "id": "sql-query-optimization-advanced",
+    "title": "SQL Query Optimization (Advanced)",
+    "summary": "Read execution plans, understand join algorithms and write queries that let the planner choose good plans."
   }
 ]

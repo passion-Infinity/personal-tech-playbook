@@ -763,5 +763,180 @@
       "502"
     ],
     "explanation": "403 means authenticated but not permitted."
+  },
+  {
+    "id": "idempotency-retries-01",
+    "question": "A client calls a payment API, times out and retries. Why does a timeout not mean failure, and what is needed to retry safely?",
+    "options": [
+      "A timeout is always a failure",
+      "The first request may have succeeded; you need an idempotency key",
+      "Nothing is needed",
+      "Reduce the timeout"
+    ],
+    "explanation": "The response may be lost while the operation was carried out."
+  },
+  {
+    "id": "idempotency-retries-02",
+    "question": "Thousands of clients all retry 1 second after an incident, preventing the service from recovering. How do you reduce this?",
+    "options": [
+      "Retry faster",
+      "Exponential backoff with jitter",
+      "Remove the timeout",
+      "Increase the number of retries"
+    ],
+    "explanation": "Jitter spreads out the retry times."
+  },
+  {
+    "id": "idempotency-retries-03",
+    "question": "Three service layers each retry 3 times. How many calls does one failure in the bottom layer multiply into?",
+    "options": [
+      "3",
+      "9",
+      "27",
+      "No change"
+    ],
+    "explanation": "Retries multiply across layers; retry at one layer only."
+  },
+  {
+    "id": "idempotency-retries-04",
+    "question": "Explain 'exactly-once' in practice and how to achieve an equivalent effect.",
+    "modelAnswer": "Real distributed systems only guarantee at-least-once, so messages can be duplicated. The exactly-once effect is achieved with at-least-once plus idempotent processing: the consumer deduplicates by message id or business key (a processed_message_id table, UNIQUE, upsert).",
+    "keyPoints": [
+      "In practice it is at-least-once",
+      "Idempotent consumer",
+      "Dedup by id/UNIQUE"
+    ]
+  },
+  {
+    "id": "idempotency-retries-05",
+    "question": "An AI added a \"retry mechanism\" to a payment call. Choose ALL the correct problems.",
+    "code": "for attempt in range(5):\n    try:\n        return requests.post(f\"{API}/charges\", json=payload, timeout=2)\n    except requests.Timeout:\n        continue    # retry immediately",
+    "options": [
+      "Retrying a POST that creates a transaction without an Idempotency-Key can charge several times",
+      "Retrying immediately without backoff/jitter can cause a retry storm",
+      "A 2-second timeout is too long",
+      "requests should be replaced with urllib"
+    ],
+    "explanation": "A timeout does not mean failure: the first call may have succeeded. You need an Idempotency-Key and exponential backoff with jitter, with a bounded total time."
+  },
+  {
+    "id": "idempotency-retries-06",
+    "question": "Which error should NOT be retried automatically?",
+    "options": [
+      "503 Service Unavailable",
+      "429 with Retry-After",
+      "422 invalid data",
+      "A transient connection loss"
+    ],
+    "explanation": "A client-caused error does not change when retried."
+  },
+  {
+    "id": "backend-performance-profiling-01",
+    "question": "A team needs to know which endpoint is abnormal and what to measure for a service?",
+    "options": [
+      "CPU only",
+      "RED: Rate, Errors, Duration",
+      "RAM only",
+      "Commit counts"
+    ],
+    "explanation": "RED is for services; USE is for resources."
+  },
+  {
+    "id": "backend-performance-profiling-02",
+    "question": "A connection pool was raised from 20 to 500 and the DB got slower. Why?",
+    "options": [
+      "A bigger pool is always better",
+      "Too many concurrent connections overload the DB; a small pool is still good",
+      "The network is slow",
+      "A missing index, always"
+    ],
+    "explanation": "The DB can only process a finite amount in parallel."
+  },
+  {
+    "id": "backend-performance-profiling-03",
+    "question": "A load test reports a very low p99 but production is much worse. What is a likely cause?",
+    "options": [
+      "Coordinated omission: the tool waits for the response before sending the next one",
+      "Only the network",
+      "The cache",
+      "There is none"
+    ],
+    "explanation": "Use an open model with a fixed arrival rate."
+  },
+  {
+    "id": "backend-performance-profiling-04",
+    "question": "The CPU is idle but latency is high. Explain thread pool starvation and how to diagnose it.",
+    "modelAnswer": "A small pool holding blocking tasks (synchronous HTTP/DB calls) or tasks waiting on other tasks in the same pool runs out of threads, and requests queue even though the CPU is idle. Diagnose with a thread dump, an off-CPU/wall-clock profile and by watching the pool's queue; fix with a separate pool for blocking I/O, timeouts, async and concurrency limits.",
+    "keyPoints": [
+      "Blocking tasks occupy every thread",
+      "The CPU is idle but waiting",
+      "A separate pool, timeouts, async"
+    ]
+  },
+  {
+    "id": "backend-performance-profiling-05",
+    "question": "A function an AI wrote for an endpoint works in tests but collapses in production after a few hours. Choose the correct problem.",
+    "code": "def get_user(uid):\n    conn = pool.acquire()\n    row = conn.execute(\"SELECT * FROM users WHERE id = %s\", uid).fetchone()\n    if row is None:\n        raise NotFound(uid)       # early exit\n    pool.release(conn)\n    return row",
+    "options": [
+      "SELECT * is too slow",
+      "A connection leak: the NotFound branch does not release, so the pool slowly drains and every request hangs",
+      "It should use GET instead of POST",
+      "Missing cache"
+    ],
+    "explanation": "Each time a user is not found, the connection is never returned to the pool. Use try/finally or a context manager to always release."
+  },
+  {
+    "id": "backend-performance-profiling-06",
+    "question": "In a flame graph, what tells you a function takes a lot of time?",
+    "options": [
+      "Color",
+      "The width of the block",
+      "The height",
+      "The function name"
+    ],
+    "explanation": "Width is the share of sampled time."
+  },
+  {
+    "id": "sql-query-optimization-advanced-01",
+    "question": "Which condition is not sargable (cannot use an index on created_at)?",
+    "options": [
+      "created_at >= ?",
+      "date(created_at) = ?",
+      "created_at BETWEEN ? AND ?",
+      "created_at < ?"
+    ],
+    "explanation": "Wrapping a function around the column defeats the index; rewrite it as a range."
+  },
+  {
+    "id": "sql-query-optimization-advanced-02",
+    "question": "EXPLAIN shows an estimate of 10 rows but the actual is 5 million. What should you do?",
+    "options": [
+      "Ignore it",
+      "Update statistics (ANALYZE) and check column correlation",
+      "Add RAM",
+      "Switch to NoSQL"
+    ],
+    "explanation": "A wrong estimate makes the planner choose a wrong plan."
+  },
+  {
+    "id": "sql-query-optimization-advanced-03",
+    "question": "NOT IN (subquery) unexpectedly returns an empty set when the subquery contains NULL. What replaces it?",
+    "options": [
+      "IN",
+      "NOT EXISTS",
+      "LIKE",
+      "UNION"
+    ],
+    "explanation": "NOT IN with NULL gives three-valued logic; NOT EXISTS is safe."
+  },
+  {
+    "id": "sql-query-optimization-advanced-04",
+    "question": "Why is a large OFFSET slow and keyset better?",
+    "modelAnswer": "OFFSET N forces the DB to read and discard N rows, so cost grows with the page and results drift when data changes between calls. Keyset uses a condition on the sort key of the last row of the previous page, so it exploits an index, with near-constant, stable cost.",
+    "keyPoints": [
+      "OFFSET scans then discards rows",
+      "Keyset uses an index",
+      "Stable results"
+    ]
   }
 ]

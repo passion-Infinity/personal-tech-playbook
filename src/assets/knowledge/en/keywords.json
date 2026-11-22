@@ -378,5 +378,80 @@
     "id": "idor",
     "meaning": "A missing per-object permission check",
     "definition": "Changing an ID in the URL to reach other people's data; you need an ownership check on every object."
+  },
+  {
+    "id": "idempotency-key-pattern",
+    "meaning": "A unique key so retries do not repeat side effects",
+    "definition": "The client sends a key; the server stores the key with the result under a unique constraint and returns the old result when it sees it again."
+  },
+  {
+    "id": "exponential-backoff-jitter",
+    "meaning": "Spaced retries with randomness",
+    "definition": "Increase the wait progressively and add jitter so that not every client retries at once."
+  },
+  {
+    "id": "retry-amplification",
+    "meaning": "Multi-layer retries overloading a dependency",
+    "definition": "Three layers each trying three times multiply into 27 requests; retry at one layer and with a limit."
+  },
+  {
+    "id": "message-deduplication",
+    "meaning": "Removing duplicate messages on the consumer side",
+    "definition": "Store the processed messageId in the same transaction as the side effect, or use an upsert by business key."
+  },
+  {
+    "id": "red-use-methods",
+    "meaning": "Two quick performance review frameworks",
+    "definition": "RED: Rate, Errors, Duration for services; USE: Utilization, Saturation, Errors for resources."
+  },
+  {
+    "id": "flame-graphs-profiling",
+    "meaning": "Visualizing the functions that cost CPU",
+    "definition": "Shows how much CPU time each call stack takes so you can find the bottleneck."
+  },
+  {
+    "id": "connection-pool-sizing",
+    "meaning": "Choosing the connection pool size",
+    "definition": "A pool that is too small makes requests wait and one that is too large overloads the DB; start small, then measure and adjust."
+  },
+  {
+    "id": "n-plus-one-query",
+    "meaning": "One query for the list plus one query per element",
+    "definition": "The number of queries grows linearly with the list size; fix with a JOIN or prefetch."
+  },
+  {
+    "id": "coordinated-omission",
+    "meaning": "A measurement bias when load testing latency",
+    "definition": "A tool that waits for a response before sending the next underestimates tail latency."
+  },
+  {
+    "id": "thread-pool-starvation",
+    "meaning": "Blocked threads lengthen the queue",
+    "definition": "Every thread waits on slow I/O so new requests have no thread to run on even though the CPU is idle."
+  },
+  {
+    "id": "explain-analyze-plans",
+    "meaning": "Comparing estimates with reality",
+    "definition": "Estimated row counts far from the real ones are usually caused by stale statistics."
+  },
+  {
+    "id": "join-algorithms",
+    "meaning": "Three join algorithms",
+    "definition": "Nested loop suits few rows with an index; hash join suits large tables with equality conditions; merge join suits already sorted input."
+  },
+  {
+    "id": "sargable-queries",
+    "meaning": "Conditions that allow index use",
+    "definition": "Wrapping a function around a column or a LIKE starting with a wildcard defeats the index."
+  },
+  {
+    "id": "keyset-vs-offset",
+    "meaning": "Fast and stable pagination",
+    "definition": "Keyset uses a condition on the sort key; a large OFFSET scans and discards many rows."
+  },
+  {
+    "id": "window-functions",
+    "meaning": "Per-group computation without a self-join",
+    "definition": "ROW_NUMBER, LAG, SUM OVER for top-N per group and running totals."
   }
 ]
