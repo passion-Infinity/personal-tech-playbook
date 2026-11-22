@@ -38,5 +38,20 @@
     "id": "rate-limiting-algorithms",
     "title": "Rate Limiting Algorithms",
     "summary": "Protect the system and share quotas fairly with token bucket, sliding window and atomic distributed counters."
+  },
+  {
+    "id": "caching-strategies",
+    "title": "Caching Strategies",
+    "summary": "Choose a caching strategy and handle invalidation and cache failures to cut latency while staying correct enough."
+  },
+  {
+    "id": "redis-cache-stampede",
+    "title": "Redis Cache Stampede",
+    "summary": "Prevent thousands of requests from missing one hot key together and hitting the Database directly when the cache expires."
+  },
+  {
+    "id": "db-indexing-storage-engines",
+    "title": "DB Indexing & Storage Engines",
+    "summary": "Choose B-Tree or LSM-tree and design indexes correctly to trade write cost for read speed."
   }
 ]

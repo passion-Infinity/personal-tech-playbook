@@ -208,5 +208,85 @@
     "id": "fail-open-vs-closed",
     "meaning": "Behavior when a protection component fails",
     "definition": "Fail-open lets traffic through to stay available; fail-closed blocks to stay safe; the choice must be deliberate."
+  },
+  {
+    "id": "cache-strategies-patterns",
+    "meaning": "Cache read/write strategies",
+    "definition": "Cache-aside has the application populate on a miss; write-through writes both synchronously; write-behind writes asynchronously, which is fast but can lose data."
+  },
+  {
+    "id": "cache-invalidation",
+    "meaning": "TTL, explicit delete, event-driven",
+    "definition": "Usually combines a TTL as a safety net with deleting the key on write."
+  },
+  {
+    "id": "lru-lfu-eviction",
+    "meaning": "Eviction policies when the cache is full",
+    "definition": "LRU drops the least recently used item; LFU drops the least frequently used item."
+  },
+  {
+    "id": "cache-failure-modes",
+    "meaning": "Two classic cache failures",
+    "definition": "Penetration is a non-existent key that always misses; avalanche is many keys expiring at once."
+  },
+  {
+    "id": "cache-hit-ratio",
+    "meaning": "A measure of cache effectiveness",
+    "definition": "Hits over total accesses; a low ratio shows the key design or TTL is a poor fit."
+  },
+  {
+    "id": "cache-stampede",
+    "meaning": "Many requests miss the cache together and hit the Database at once",
+    "definition": "Also called Thundering Herd / Dog-piling: one hot key expires and thousands of requests recompute the value together."
+  },
+  {
+    "id": "probabilistic-early-expiration",
+    "meaning": "Randomly refresh the cache early before the TTL expires",
+    "definition": "Each request decides to recompute with a probability that grows as the TTL nears its end, spreading out the refresh time."
+  },
+  {
+    "id": "distributed-lock",
+    "meaning": "A distributed lock so only one process recomputes the cache",
+    "definition": "Uses Redis SET key value NX PX ttl; only the lock holder rebuilds the cache while other requests wait or return stale data."
+  },
+  {
+    "id": "request-coalescing",
+    "meaning": "Merge requests for the same key into one backend call",
+    "definition": "Within a process the first request executes and requests for the same key wait and share the result."
+  },
+  {
+    "id": "ttl-jitter",
+    "meaning": "Add a random offset to the TTL",
+    "definition": "Prevents many keys that were set together from expiring together (mass expiration)."
+  },
+  {
+    "id": "btree-vs-lsm-tree",
+    "meaning": "Two storage engine families and their read/write trade-offs",
+    "definition": "B-Tree updates in place and is good for reads and range scans; LSM writes sequentially then compacts in the background and is good for heavy writes."
+  },
+  {
+    "id": "write-read-amplification",
+    "meaning": "I/O amplification in a storage engine",
+    "definition": "The real I/O is larger than the original data; each engine trades off between writes, reads and space."
+  },
+  {
+    "id": "composite-index-leftmost-prefix",
+    "meaning": "The rule for using a multi-column index",
+    "definition": "An index (a, b) supports filtering by a, or a and b, but is not efficient when filtering by b alone."
+  },
+  {
+    "id": "covering-index",
+    "meaning": "An index that holds enough columns to avoid reading the table",
+    "definition": "The query gets its data straight from the index, greatly reducing I/O."
+  },
+  {
+    "id": "explain-analyze",
+    "meaning": "Reading the query execution plan",
+    "definition": "Shows whether the planner uses an index and the actual time of each step."
+  },
+  {
+    "id": "bloom-filter",
+    "meaning": "A probabilistic structure that helps skip data that does not contain a key",
+    "definition": "Returns \"definitely not present\" or \"possibly present\"; used in LSMs and to prevent cache penetration."
   }
 ]

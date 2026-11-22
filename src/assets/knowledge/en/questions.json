@@ -412,5 +412,170 @@
       "Switch to UDP"
     ],
     "explanation": "Retry-After tells the client when to try again. Raising the limit only hides the problem."
+  },
+  {
+    "id": "caching-strategies-01",
+    "question": "An API reads a user profile: check the cache, on a miss read the DB and store it in the cache with a TTL; on update, write the DB and then delete the key. Which strategy is this?",
+    "options": [
+      "Write-through",
+      "Cache-aside",
+      "Write-behind",
+      "Read-through"
+    ],
+    "explanation": "The application managing cache reads/writes itself is cache-aside. Read-through is tempting because it also loads on a miss, but there the cache layer does the loading."
+  },
+  {
+    "id": "caching-strategies-02",
+    "question": "An attacker keeps querying non-existent ids and the DB is hammered even though the cache works fine. What is this and how do you prevent it?",
+    "options": [
+      "Cache avalanche; increase the TTL",
+      "Cache penetration; negative caching or a Bloom filter",
+      "Cache stampede; add nodes",
+      "Replication lag"
+    ],
+    "explanation": "Non-existent keys always miss, so they punch through the cache. Avalanche is simultaneous expiry, which is easy to confuse."
+  },
+  {
+    "id": "caching-strategies-03",
+    "question": "Hit ratio 95%, cache 1 ms, DB 50 ms. What is the closest average latency?",
+    "options": [
+      "1 ms",
+      "3.45 ms",
+      "25 ms",
+      "50 ms"
+    ],
+    "explanation": "0.95×1 + 0.05×50 = 3.45 ms. Answering 1 ms ignores the miss portion."
+  },
+  {
+    "id": "caching-strategies-04",
+    "question": "A team sees stale data after an update even though they use cache-aside. List the invalidation strategies, the correct order on writes and why you should keep a TTL.",
+    "modelAnswer": "The options are TTL, deleting or updating the key on write, events/CDC and versioned keys. On a write, write the DB first and then delete the cache rather than updating it directly, because updating is prone to races. A TTL should always exist as a safety net so stale data eventually expires even if active invalidation misses something.",
+    "keyPoints": [
+      "TTL, delete on write, CDC, versioned keys",
+      "Write the DB then delete the cache",
+      "TTL as a safety net"
+    ]
+  },
+  {
+    "id": "caching-strategies-05",
+    "question": "Which two measures reduce cache avalanche? (choose 2)",
+    "options": [
+      "Randomized TTL (jitter)",
+      "Warm-up/multiple cache tiers",
+      "The same TTL for every key",
+      "Turn the cache off"
+    ],
+    "explanation": "Jitter and warm-up avoid simultaneous expiry. Using the same TTL for every key is exactly what causes avalanche."
+  },
+  {
+    "id": "redis-cache-stampede-01",
+    "question": "A hot product receives thousands of requests/second and the DB collapses exactly when that product's cache expires. What is this phenomenon?",
+    "options": [
+      "Cache penetration",
+      "Cache stampede (thundering herd)",
+      "Replication lag",
+      "Eviction"
+    ],
+    "explanation": "Many requests miss together and rebuild together. Penetration is tempting because it also hammers the DB, but it happens with non-existent keys."
+  },
+  {
+    "id": "redis-cache-stampede-02",
+    "question": "A team uses a SET NX PX lock but occasionally a request deletes another request's lock. What is the right fix?",
+    "options": [
+      "Remove the lock",
+      "Make the lock value a unique token and delete only if it matches (Lua compare-and-delete)",
+      "Make the lock TTL very long",
+      "Use KEYS"
+    ],
+    "explanation": "The token prevents deleting someone else's lock. A very long TTL is tempting as 'safe' but leaves the lock stuck for a long time after a crash."
+  },
+  {
+    "id": "redis-cache-stampede-03",
+    "question": "This product lookup is cached with Redis. What is the biggest risk when the product is hot?",
+    "code": "def get_product(pid):\n    v = redis.get(f\"p:{pid}\")\n    if v:\n        return json.loads(v)\n    row = db.query(\"SELECT * FROM products WHERE id = %s\", pid)   # heavy query\n    redis.set(f\"p:{pid}\", json.dumps(row), ex=60)\n    return row",
+    "options": [
+      "Using JSON instead of pickle",
+      "When a hot key expires, thousands of requests miss together and hit the DB (a stampede); there is no lock/single-flight and no TTL jitter",
+      "A 60-second TTL is too long",
+      "redis.get is too slow"
+    ],
+    "explanation": "Nothing ensures only one request rebuilds. Add a lock/single-flight, probabilistic early refresh or stale-while-revalidate, and TTL jitter. The tempting distractor is 'a 60-second TTL is too long', but shortening the TTL makes keys expire more often and increases the stampede risk."
+  },
+  {
+    "id": "redis-cache-stampede-04",
+    "question": "Many keys are loaded at the same time with the same 300-second TTL and expire in one wave. How do you reduce the risk?",
+    "options": [
+      "Reduce the TTL to 10 seconds",
+      "Add a random TTL (jitter)",
+      "Turn the cache off",
+      "Use KEYS to clean up"
+    ],
+    "explanation": "Jitter spreads out the expiry times. Cutting the TTL very short causes even more misses."
+  },
+  {
+    "id": "db-indexing-storage-engines-01",
+    "question": "The orders table has an index (customer_id, created_at). Which query uses this index most effectively?",
+    "options": [
+      "WHERE created_at > '2026-01-01' (no customer_id)",
+      "WHERE customer_id = 42 AND created_at > '2026-01-01'",
+      "WHERE date(created_at) = '2026-01-01'",
+      "WHERE customer_id + 0 = 42"
+    ],
+    "explanation": "Leftmost prefix: an equality on the first column and then a range on the next. The option with only created_at is tempting because the column is in the index, but it lacks the leading column."
+  },
+  {
+    "id": "db-indexing-storage-engines-02",
+    "question": "A system logs hundreds of thousands of events per second and rarely reads by range. Which engine fits better?",
+    "options": [
+      "B-Tree because reads are fast",
+      "LSM-Tree because sequential writes are fast",
+      "A hash index",
+      "No engine needed"
+    ],
+    "explanation": "LSM turns random writes into sequential ones. B-Tree is tempting because it is common, but page splits and in-place writes cost more under heavy write load."
+  },
+  {
+    "id": "db-indexing-storage-engines-03",
+    "question": "A query needs only the customer_id and total columns and an index already holds both. What does the DB do to be fastest?",
+    "options": [
+      "Seq scan the table",
+      "An index-only scan, without reading the main table",
+      "Drop the index",
+      "Always a bitmap scan"
+    ],
+    "explanation": "A covering index lets the result come from the index alone."
+  },
+  {
+    "id": "db-indexing-storage-engines-04",
+    "question": "A team adds 8 indexes to a write-heavy table and sees INSERTs slow down noticeably. Explain the index trade-off, write amplification and how to decide which indexes to keep.",
+    "modelAnswer": "Every index must be updated on every INSERT/UPDATE/DELETE, so many indexes slow writes and cost space; engines also have write amplification from page splits (B-Tree) or compaction (LSM). Keep only the indexes that serve queries that really run (confirm with EXPLAIN and usage statistics), merge them into composite indexes in the right order and drop unused ones.",
+    "keyPoints": [
+      "Every write updates every index",
+      "Write amplification",
+      "Keep only indexes for real queries"
+    ]
+  },
+  {
+    "id": "db-indexing-storage-engines-05",
+    "question": "This AI-generated endpoint is slow when a user has many orders. What is happening?",
+    "code": "orders = Order.objects.filter(user_id=uid)          # 1 query\nresult = []\nfor o in orders:\n    items = OrderItem.objects.filter(order_id=o.id) # 1 query for EACH order\n    result.append({\"order\": o.id, \"items\": list(items)})",
+    "options": [
+      "Missing try/except",
+      "The N+1 problem: one query for the list and then one query per order; it needs prefetch/JOIN and an index on order_id",
+      "Using a list instead of a tuple",
+      "filter is slower than get"
+    ],
+    "explanation": "N+1 makes the number of queries grow linearly with the number of orders. Use prefetch_related/JOIN to batch it into a few queries and make sure there is an index on the foreign key order_id."
+  },
+  {
+    "id": "db-indexing-storage-engines-06",
+    "question": "A random UUID v4 is used as the primary key of a write-heavy table, causing fragmentation and slow writes. What is the cause and the fix?",
+    "options": [
+      "Unrelated",
+      "Inserts land at random positions and cause page splits; use sequential UUIDv7/ULID or an increasing key",
+      "More RAM is needed",
+      "The primary key must be removed"
+    ],
+    "explanation": "Sequential keys insert at the end of the tree, so there are fewer page splits."
   }
 ]
