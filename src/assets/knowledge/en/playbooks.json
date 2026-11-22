@@ -568,5 +568,20 @@
     "id": "design-patterns-solid",
     "title": "Design Patterns & SOLID",
     "summary": "Use SOLID and common patterns as a shared language to lower the cost of the next change without over-engineering."
+  },
+  {
+    "id": "clean-architecture-ddd-basics",
+    "title": "Clean Architecture & DDD Basics",
+    "summary": "Put the business at the center, invert dependencies and model with aggregates and bounded contexts so systems last."
+  },
+  {
+    "id": "code-review-refactoring",
+    "title": "Code Review & Refactoring",
+    "summary": "Review small and on target and refactor step by step under test protection — a core skill for mastering even AI-generated code."
+  },
+  {
+    "id": "owasp-web-security-essentials",
+    "title": "OWASP & Web Security Essentials",
+    "summary": "Grasp the recurring classes of web vulnerabilities (injection, XSS, CSRF, SSRF, access control) and layered defenses."
   }
 ]

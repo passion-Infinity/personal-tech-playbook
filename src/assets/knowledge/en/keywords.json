@@ -2863,5 +2863,75 @@
     "id": "rule-of-three-dry",
     "meaning": "When to abstract",
     "definition": "Wait for two to three real cases; a wrong abstraction costs more than small duplication."
+  },
+  {
+    "id": "hexagonal-architecture",
+    "meaning": "The domain in the middle, infrastructure plugged in through ports",
+    "definition": "A port is an interface defined by the domain; an adapter is a concrete implementation such as JPA or Stripe living outside."
+  },
+  {
+    "id": "clean-architecture-dependency-rule",
+    "meaning": "Dependencies point only inward",
+    "definition": "Inner layers do not import outer layers; frameworks and the DB are replaceable details."
+  },
+  {
+    "id": "ddd-aggregate",
+    "meaning": "The business consistency boundary",
+    "definition": "A root and its related objects; a transaction changes only one aggregate and references other aggregates by ID."
+  },
+  {
+    "id": "entity-vs-value-object",
+    "meaning": "Identity versus comparison by value",
+    "definition": "An entity has an identity; a value object is immutable like Money and compared by value."
+  },
+  {
+    "id": "anemic-domain-model",
+    "meaning": "A domain that holds only data, with logic outside",
+    "definition": "Entities with only getters/setters and all logic in services lose the benefits of DDD."
+  },
+  {
+    "id": "code-review-practices",
+    "meaning": "How to review effectively",
+    "definition": "Small PRs, describe the why, check correctness and security first, and let tools handle style."
+  },
+  {
+    "id": "code-smells",
+    "meaning": "Signs that code needs improvement",
+    "definition": "Long method, god class, duplicated code, feature envy, shotgun surgery."
+  },
+  {
+    "id": "boy-scout-technical-debt",
+    "meaning": "Pay down technical debt step by step",
+    "definition": "Leave code cleaner than you found it, record deliberate debt and handle it by priority."
+  },
+  {
+    "id": "review-ai-generated-code",
+    "meaning": "Checking AI-generated code",
+    "definition": "Check that the code solves the right problem, has no edge-case or concurrency bugs and does not use nonexistent APIs."
+  },
+  {
+    "id": "owasp-top-10",
+    "meaning": "The top web application security risks",
+    "definition": "The list of the most common vulnerability classes including broken access control, injection and misconfiguration."
+  },
+  {
+    "id": "sql-injection-parameterized",
+    "meaning": "Separate data from SQL commands",
+    "definition": "Use prepared statements instead of string concatenation; dynamic table or column names need an allowlist."
+  },
+  {
+    "id": "xss-csp",
+    "meaning": "Prevent script injection into pages",
+    "definition": "Encode output by context, use Content-Security-Policy and the HttpOnly flag."
+  },
+  {
+    "id": "ssrf-metadata",
+    "meaning": "A server tricked into calling internal resources",
+    "definition": "Block internal IPs, allowlist destinations, use IMDSv2 to protect the cloud metadata endpoint."
+  },
+  {
+    "id": "defense-in-depth",
+    "meaning": "Layered defense and least privilege",
+    "definition": "Do not rely on a single layer of protection; each component has only the permissions it needs."
   }
 ]

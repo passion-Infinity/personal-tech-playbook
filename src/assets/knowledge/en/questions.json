@@ -5847,5 +5847,134 @@
       "Depend on abstractions",
       "Easy to test"
     ]
+  },
+  {
+    "id": "clean-architecture-ddd-basics-01",
+    "question": "A domain class imports ORM framework annotations. What is the problem?",
+    "options": [
+      "No problem",
+      "It violates the dependency rule and ties the domain to infrastructure",
+      "It is faster",
+      "It is mandatory"
+    ],
+    "explanation": "The domain must be independent; map in the adapter."
+  },
+  {
+    "id": "clean-architecture-ddd-basics-02",
+    "question": "How does a Value Object differ from an Entity?",
+    "options": [
+      "Immutable, equal by value, no identity",
+      "It has an id",
+      "It has a lifecycle",
+      "Always stored in the DB"
+    ],
+    "explanation": "An entity has an identity while a Value Object is compared by value."
+  },
+  {
+    "id": "clean-architecture-ddd-basics-03",
+    "question": "A transaction modifies five different aggregates and causes wide locks. Which principle is violated?",
+    "options": [
+      "One transaction per aggregate",
+      "SRP",
+      "DRY",
+      "KISS"
+    ],
+    "explanation": "Consistency between aggregates should be eventual via domain events."
+  },
+  {
+    "id": "clean-architecture-ddd-basics-04",
+    "question": "What is an anemic domain model and what is the consequence?",
+    "modelAnswer": "Entities have only getters/setters and the logic piles up in services, so invariants are scattered and easily violated. A rich domain model puts behavior inside the aggregate to protect invariants centrally.",
+    "keyPoints": [
+      "Entities with only getters/setters",
+      "Scattered invariants",
+      "A rich domain model"
+    ]
+  },
+  {
+    "id": "code-review-refactoring-01",
+    "question": "A 2,000-line PR is approved in a flash. How do you reduce the risk?",
+    "options": [
+      "Try to read it all",
+      "Split it into small PRs with one purpose",
+      "Skip review",
+      "Add reviewers"
+    ],
+    "explanation": "Small PRs enable careful review; adding people does not fix the root."
+  },
+  {
+    "id": "code-review-refactoring-02",
+    "question": "You need to refactor old code that has no tests. What is the first step?",
+    "options": [
+      "Refactor immediately",
+      "Write characterization tests capturing current behavior",
+      "Rewrite",
+      "Delete the code"
+    ],
+    "explanation": "Have protecting tests before changing structure."
+  },
+  {
+    "id": "code-review-refactoring-03",
+    "question": "When reviewing AI-generated code, what needs special attention?",
+    "options": [
+      "Invented APIs/libraries, edge cases, security holes",
+      "Variable names",
+      "Line count",
+      "Formatting"
+    ],
+    "explanation": "Syntactically correct is not necessarily business-correct or safe."
+  },
+  {
+    "id": "code-review-refactoring-04",
+    "question": "Distinguish refactoring from bug fixing or adding a feature.",
+    "modelAnswer": "Refactoring changes structure without changing external behavior, is done in small steps protected by tests and should be in its own commit so reviewers can check it easily.",
+    "keyPoints": [
+      "No behavior change",
+      "Small steps with tests",
+      "Separate commits"
+    ]
+  },
+  {
+    "id": "owasp-web-security-essentials-01",
+    "question": "GET /orders/1234 returns someone else's order even though the user is logged in. What is the bug and how do you fix it?",
+    "options": [
+      "IDOR: check object ownership on the server",
+      "XSS: encode",
+      "CSRF: token",
+      "SSRF: allowlist"
+    ],
+    "explanation": "A hard-to-guess UUID does not replace an authorization check."
+  },
+  {
+    "id": "owasp-web-security-essentials-02",
+    "question": "What is the best defense against SQL injection?",
+    "options": [
+      "Parameterized queries",
+      "Manual escaping",
+      "A keyword blacklist",
+      "Client-side validation"
+    ],
+    "explanation": "Separate data from the command; escaping and blacklists can be bypassed."
+  },
+  {
+    "id": "owasp-web-security-essentials-03",
+    "question": "A server lets users enter a URL to fetch an image. What is the major risk on cloud?",
+    "options": [
+      "SSRF to metadata stealing IAM credentials",
+      "XSS",
+      "Clickjacking",
+      "CSRF"
+    ],
+    "explanation": "Use an allowlist, block internal IPs and IMDSv2."
+  },
+  {
+    "id": "owasp-web-security-essentials-04",
+    "question": "Explain defense in depth and least privilege.",
+    "modelAnswer": "Defense in depth uses several independent layers of control so that one layer failing does not lose everything. Least privilege limits each account/service to minimum permissions, reducing the blast radius when compromised.",
+    "keyPoints": [
+      "Several independent layers",
+      "Minimum privileges",
+      "Reduce the blast radius"
+    ]
   }
 ]
