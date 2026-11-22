@@ -1,54 +1,80 @@
 ## 1. Core Concept
 
-Khi mỗi service có DB riêng, một nghiệp vụ như "đặt hàng" trải qua nhiều service và **không thể dùng một ACID transaction**. **Saga** chia nó thành chuỗi **local transaction**; nếu một bước thất bại, chạy các **compensating transaction** để hoàn tác các bước trước đó. Nó thay thế **2PC (two-phase commit)** vốn chặn và khó scale. Mental model: *Saga đạt **atomicity ở mức nghiệp vụ** bằng cách "làm rồi xin lỗi", chứ không bằng khoá toàn cục.*
+Khi một nghiệp vụ trải qua **nhiều dịch vụ, mỗi dịch vụ có DB riêng**, không còn **giao dịch ACID** xuyên dịch vụ. **Saga** giải quyết bằng cách chia nghiệp vụ thành **chuỗi giao dịch cục bộ**; nếu một bước thất bại, chạy các **giao dịch bù trừ (compensating transaction)** để **hoàn tác về mặt nghiệp vụ** các bước đã xong. Saga đảm bảo **tính nhất quán cuối cùng**, **không** có cô lập (I trong ACID).
+
+**Mental model:** như **đặt tour du lịch trọn gói**: đặt vé máy bay → khách sạn → thuê xe. Nếu bước thuê xe hỏng, bạn **không "rollback" như chưa từng xảy ra** mà phải **huỷ khách sạn rồi hoàn tiền vé** — những hành động bù trừ có thể mất phí, mất thời gian, và trong lúc đó **người khác có thể thấy trạng thái dở dang**.
 
 ## 2. How It Works
 
-- **Chuỗi bước**: `T1 → T2 → T3 …`, mỗi `Ti` là local transaction và có `Ci` (compensation) hoàn tác ngữ nghĩa của nó. Thất bại ở `Tk` → chạy `C(k-1) … C1` theo thứ tự ngược.
-- **Hai cách phối hợp**:
-  - **Choreography**: mỗi service nghe event của service trước và phát event kết quả — đơn giản với ít bước, khó theo dõi khi nhiều bước.
-  - **Orchestration**: một **orchestrator** (state machine) ra lệnh từng bước, nhận kết quả, quyết định tiếp hoặc bù — dễ nhìn trạng thái, tập trung logic (Temporal, AWS Step Functions, Camunda).
-- **Phát lệnh/event tin cậy** bằng **transactional outbox**; mỗi bước phải **idempotent** vì có retry.
-- **Compensation phải retryable và luôn thành công** (hoặc chuyển cho người xử lý): hoàn tiền, nhả tồn kho, huỷ đặt chỗ.
-- **Thiếu cô lập (the "I" in ACID)**: trạng thái trung gian nhìn thấy được → biện pháp: **semantic lock** (trạng thái `PENDING`), **commutative updates**, **pessimistic view** (sắp thứ tự bước), **re-read giá trị** trước khi ghi.
-- Mỗi saga có **trạng thái được lưu bền** và **timeout** cho từng bước.
+**Vì sao không dùng 2PC**
+- **Two-Phase Commit** (chuẩn bị rồi commit) **khoá tài nguyên và chặn** khi coordinator chết, **không khả thi** qua nhiều dịch vụ/DB/broker khác nhau, giảm khả dụng và **không scale**. Saga đánh đổi **cô lập** lấy **khả dụng và tự chủ**.
+
+**Chuỗi giao dịch cục bộ + bù trừ**
+- Ví dụ đơn hàng: **T1** tạo đơn → **T2** giữ hàng → **T3** thanh toán → **T4** giao vận. Mỗi bước có **bù trừ**: **C1** huỷ đơn, **C2** nhả hàng, **C3** hoàn tiền. Nếu **T4 lỗi**, chạy **C3 → C2 → C1** theo thứ tự ngược.
+- **Bù trừ phải idempotent và có thể retry** (có thể chạy nhiều lần mà không gây hại) vì nó cũng có thể lỗi; nó là **hoàn tác ngữ nghĩa** (hoàn tiền, không phải xoá bản ghi thanh toán). Có bước **không bù trừ được** (gửi email) → đặt ở **cuối**. **Pivot transaction** là bước quyết định "đi tiếp hay không"; các bước sau nó là **retriable** (phải thành công).
+
+**Choreography vs Orchestration**
+- **Choreography**: mỗi dịch vụ phản ứng với sự kiện rồi phát sự kiện tiếp (không trung tâm; khó theo dõi). **Orchestration**: một **saga orchestrator** (state machine) ra lệnh từng bước và bù trừ — **dễ hiểu, dễ quan sát**, thành phần trung tâm cần HA.
+
+**Thiếu cô lập → Dị thường và đối phó**
+- Vì các bước commit cục bộ ngay, giao dịch khác có thể **thấy dữ liệu dở dang** (dirty read), **ghi đè** (lost update). **Biện pháp (countermeasures)**: **semantic lock** (cờ `PENDING` trên bản ghi), **commutative updates**, **pessimistic view** (sắp xếp bước giảm rủi ro), **reread value**, **versioning**, **by-value** (chọn mức bảo vệ theo rủi ro).
+
+**Độ bền của saga**
+- Trạng thái saga phải **được lưu bền** để sống sót khi crash: dùng **bảng trạng thái + outbox** hoặc **durable execution** (**Temporal**, **AWS Step Functions**) tự lưu tiến trình, retry, timeout và bù trừ. Dùng **correlation id** để theo dõi.
+
+```python
+saga = [("create_order", "cancel_order"), ("reserve_stock", "release_stock"),
+        ("charge_payment", "refund_payment"), ("ship", None)]
+done = []
+for step, compensate in saga:
+    try: run(step); done.append(compensate)
+    except Exception:
+        for comp in reversed(done):          # bù trừ ngược thứ tự
+            if comp: run_with_retry(comp)    # idempotent, retry
+        raise
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 sequenceDiagram
     participant O as Orchestrator
-    participant P as Payment
-    participant I as Inventory
-    participant S as Shipping
-    O->>P: charge
-    O->>I: reserve stock
-    O->>S: create shipment (fails)
-    O->>I: compensate: release stock
-    O->>P: compensate: refund
+    participant S as Order / Stock / Payment / Shipping
+    O->>S: T1 tạo đơn, T2 giữ hàng, T3 thanh toán
+    O->>S: T4 giao vận
+    S-->>O: T4 thất bại
+    O->>S: C3 hoàn tiền
+    O->>S: C2 nhả hàng
+    O->>S: C1 huỷ đơn
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Nghiệp vụ xuyên nhiều service và chấp nhận **eventual consistency** → Saga. Nếu phải ACID thật sự → cân nhắc **gộp dữ liệu vào một service** thay vì ép Saga.
-- **Sắp xếp bước**: đặt bước **khó hoặc không thể hoàn tác** (gửi email, giao hàng) ở **cuối**; bước dễ bù ở đầu. Bước không bù được gọi là **pivot transaction**.
-- 2–3 bước → choreography; nhiều nhánh/điều kiện → **orchestration**.
-- Trade-off: **Availability & scalability vs. Isolation/simplicity** — bạn tự gánh việc xử lý trạng thái trung gian.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Nghiệp vụ xuyên nhiều dịch vụ có DB riêng | Saga |
+| Ít bước, lỏng lẻo | Choreography |
+| Nhiều bước, cần theo dõi và bù trừ rõ | Orchestration |
+| Cần độ bền và retry tự động | Durable execution (Temporal/Step Functions) |
+| Tránh đọc dữ liệu dở dang | Semantic lock (`PENDING`) |
+| Trong một DB duy nhất | Giao dịch ACID thường |
+
+- **Được gì:** nhất quán cuối cùng xuyên dịch vụ, khả dụng cao. **Mất gì:** **không cô lập**, phải thiết kế bù trừ cho từng bước, phức tạp và khó test; không phải mọi thứ đều bù trừ được.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Compensation không phải rollback**: không thể "thu hồi" email đã gửi; hoàn tác là **bù ngữ nghĩa** (gửi email đính chính, hoàn tiền).
-- **Không idempotent** → retry làm hai lần trừ tiền/hoàn tiền; mỗi bước và mỗi compensation cần khoá idempotency.
-- **Không có timeout** → saga treo vĩnh viễn ở trạng thái trung gian; cần timeout + cơ chế người xử lý (**manual intervention**).
-- **Người dùng thấy trạng thái dở dang**: thiết kế trạng thái rõ ràng (`PENDING`, `CONFIRMED`, `CANCELLED`) và cập nhật UX.
-- **Orchestrator thành "god service"** chứa logic nghiệp vụ của mọi service → chỉ điều phối, logic nằm ở service.
-- Interview trap: "Saga có đảm bảo ACID không?" → **không**: chỉ có **A, C, D** ở mức nghiệp vụ; thiếu **I** (isolation).
+- **Saga kẹt giữa chừng sau khi crash → trạng thái không bền → lưu trạng thái + outbox hoặc dùng durable execution**.
+- **Bù trừ chạy hai lần gây hoàn tiền kép → không idempotent → idempotency key, kiểm tra trạng thái trước khi bù**.
+- **Người dùng thấy đơn "đã giữ hàng" rồi biến mất → thiếu cô lập → semantic lock (PENDING), thông báo trạng thái trung gian**.
+- **Bù trừ lỗi và không ai biết → thiếu giám sát → retry có backoff, cảnh báo, DLQ cho can thiệp thủ công**.
+- **Đặt bước không bù trừ được (gửi email) ở đầu → không hoàn tác được → để ở cuối sau pivot**.
+- Interview trap: "vì sao không dùng 2PC giữa microservices?" → **chặn, coordinator là điểm lỗi, không scale, không hỗ trợ đa hệ thống**; "saga có cô lập không?" → **không, cần biện pháp như semantic lock**; "bù trừ khác rollback?" → **bù trừ là hoàn tác ngữ nghĩa bằng giao dịch mới, không xoá lịch sử**.
 
 ## 6. Search Hooks
 
-- `saga pattern microservices` — giao dịch phân tán bằng chuỗi local transaction và bù.
-- `compensating transaction` — hoàn tác ngữ nghĩa các bước đã làm.
-- `saga orchestration vs choreography` — hai cách phối hợp saga.
-- `two-phase commit 2PC vs saga` — đánh đổi giữa khoá toàn cục và eventual consistency.
-- `semantic lock saga isolation countermeasures` — xử lý thiếu cô lập trong saga.
-- `Temporal workflow durable execution` — nền tảng điều phối saga bền vững.
+- `saga pattern microservices` — giao dịch xuyên dịch vụ bằng chuỗi giao dịch cục bộ.
+- `compensating transaction` — hoàn tác ngữ nghĩa các bước đã xong.
+- `two-phase commit vs saga` — vì sao 2PC không hợp microservices.
+- `saga isolation countermeasures semantic lock` — đối phó thiếu cô lập.
+- `durable execution Temporal` — lưu bền tiến trình saga.
+- `choreography vs orchestration` — hai cách điều phối saga.

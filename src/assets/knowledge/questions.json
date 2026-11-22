@@ -900,63 +900,63 @@
     "playbookId": "microservices-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dấu hiệu rõ nhất của \"distributed monolith\" là gì?",
+    "question": "Một đội 6 người xây sản phẩm mới, miền nghiệp vụ chưa rõ và chưa có nền tảng vận hành. Kiến trúc nào hợp lý?",
     "options": [
-      "Có nhiều service",
-      "Các service dùng chung một database hoặc phải deploy cùng nhau",
-      "Có API Gateway",
-      "Dùng gRPC"
+      "Microservices ngay",
+      "Modular monolith với ranh giới module rõ",
+      "20 nanoservices",
+      "Mỗi hàm một dịch vụ"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tách service nhưng vẫn phụ thuộc chặt khiến mọi chi phí của microservices mà không có lợi ích."
+    "explanation": "Modular monolith cho ranh giới rõ mà không tốn chi phí mạng. Microservices ngay dễ nhầm là hiện đại, nhưng thêm độ phức tạp phân tán không cần thiết."
   },
   {
     "id": "microservices-fundamentals-02",
     "playbookId": "microservices-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Đội 6 người, sản phẩm đang tìm hướng, ranh giới nghiệp vụ chưa rõ. Lựa chọn hợp lý?",
+    "question": "Năm dịch vụ cùng đọc ghi một database và phải deploy cùng lúc mới chạy. Đây là gì?",
     "options": [
-      "Chia ngay 30 microservices",
-      "Bắt đầu bằng modular monolith, tách dần khi có áp lực thực",
-      "Mỗi lập trình viên một service",
-      "Chỉ dùng serverless"
+      "Microservices chuẩn",
+      "Distributed monolith",
+      "Modular monolith",
+      "Strangler fig"
     ],
     "answer": [
       1
     ],
-    "explanation": "Microservices giải quyết vấn đề tổ chức và scale; chưa có vấn đề đó thì chi phí lớn hơn lợi ích."
+    "explanation": "Gắn kết chặt qua DB chung và deploy chung là distributed monolith: đủ chi phí, không có lợi ích."
   },
   {
     "id": "microservices-fundamentals-03",
     "playbookId": "microservices-fundamentals",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Service Order cần dữ liệu khách hàng do service Customer sở hữu. Cách đúng?",
+    "question": "Một dịch vụ cần dữ liệu khách hàng của dịch vụ khác. Cách phù hợp với database per service?",
     "options": [
-      "Đọc thẳng DB của Customer",
-      "Gọi API của Customer hoặc nhận sự kiện và giữ bản sao cần thiết",
-      "Dùng chung một bảng",
-      "Copy code của Customer"
+      "Đọc trực tiếp DB của dịch vụ kia",
+      "Gọi API hoặc nhận sự kiện, giữ bản sao cục bộ nếu cần",
+      "Chia sẻ schema",
+      "Dùng chung bảng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Database per service: dữ liệu chỉ truy cập qua API hoặc sự kiện để giữ độc lập triển khai."
+    "explanation": "Đọc trực tiếp DB phá ranh giới sở hữu dữ liệu."
   },
   {
     "id": "microservices-fundamentals-04",
     "playbookId": "microservices-fundamentals",
     "type": "explain",
     "difficulty": 3,
-    "question": "Khi nào KHÔNG nên dùng microservices? Nêu lý do.",
-    "modelAnswer": "Không nên khi đội nhỏ, sản phẩm chưa ổn định hoặc ranh giới nghiệp vụ chưa rõ vì sẽ phải trả chi phí gọi qua mạng, nhất quán dữ liệu, vận hành, debug mà chưa cần lợi ích deploy độc lập. Modular monolith đơn giản và rẻ hơn, có thể tách dần bằng Strangler Fig.",
+    "question": "Công ty muốn thay một monolith 10 năm tuổi bằng microservices và cân nhắc viết lại toàn bộ. Hãy giải thích strangler fig và vì sao nên dùng thay vì viết lại.",
+    "modelAnswer": "Strangler fig đặt một facade/proxy phía trước, chuyển dần từng chức năng sang dịch vụ mới (route theo URL hoặc feature flag) trong khi monolith thu nhỏ dần cho tới khi bị thay thế. Cách này giảm rủi ro, cho phép giao giá trị sớm và quay lại dễ dàng, trái với viết lại toàn bộ vốn tốn thời gian và dễ thất bại.",
     "keyPoints": [
-      "Đội nhỏ/ranh giới chưa rõ",
-      "Chi phí mạng, nhất quán, vận hành",
-      "Modular monolith rồi tách dần"
+      "Facade và chuyển dần từng chức năng",
+      "Giảm rủi ro",
+      "Tránh viết lại toàn bộ"
     ]
   },
   {
@@ -964,63 +964,63 @@
     "playbookId": "event-driven-architecture",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Tên event nào đúng chuẩn \"sự thật đã xảy ra\"?",
+    "question": "Khi có đơn hàng mới, kho, thanh toán và thông báo đều cần phản ứng độc lập và có thể thêm hệ thống mới sau này. Cách giao tiếp phù hợp?",
     "options": [
-      "ReserveStock",
-      "StockReserved",
-      "DoReserve",
-      "ReserveStockNow"
+      "Order service gọi trực tiếp từng hệ thống",
+      "Phát sự kiện OrderPlaced cho nhiều consumer",
+      "Dùng chung database",
+      "Cron job"
     ],
     "answer": [
       1
     ],
-    "explanation": "Event là quá khứ và bất biến; command là yêu cầu hành động."
+    "explanation": "Sự kiện cho phép thêm consumer mà không sửa producer. Gọi trực tiếp tạo gắn kết và phải sửa mỗi khi thêm hệ thống."
   },
   {
     "id": "event-driven-architecture-02",
     "playbookId": "event-driven-architecture",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Service ghi đơn hàng vào DB rồi publish event; crash giữa hai bước làm mất event. Giải pháp tiêu chuẩn?",
+    "question": "Sự kiện chỉ chứa id đơn và consumer phải gọi lại API để lấy chi tiết, còn sự kiện khác mang đủ dữ liệu. Hai kiểu này gọi là gì?",
     "options": [
-      "Publish trước khi ghi DB",
-      "Transactional outbox: ghi event vào bảng outbox cùng transaction rồi relay publish",
-      "Bỏ qua lỗi",
-      "Tăng timeout"
+      "Event notification và event-carried state transfer",
+      "Command và query",
+      "Saga và outbox",
+      "Pull và push"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Outbox đảm bảo nguyên tử giữa thay đổi dữ liệu và event."
+    "explanation": "Notification mỏng và gọi lại; ECST mang trạng thái nên consumer tự chủ hơn."
   },
   {
     "id": "event-driven-architecture-03",
     "playbookId": "event-driven-architecture",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Vì sao consumer trong hệ event-driven phải idempotent?",
+    "difficulty": 3,
+    "question": "Producer đổi tên trường trong sự kiện và nhiều consumer hỏng. Cách phòng đúng?",
     "options": [
-      "Vì broker giao nhận at-least-once nên có thể giao trùng",
-      "Vì consumer chạy chậm",
-      "Vì event luôn rất lớn",
-      "Không cần idempotent"
+      "Thông báo qua chat",
+      "Schema registry kiểm tra tương thích, chỉ thêm trường tuỳ chọn có mặc định",
+      "Dùng JSON tự do",
+      "Không đổi bao giờ"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "At-least-once là mặc định; xử lý trùng phải vô hại."
+    "explanation": "Hợp đồng sự kiện cần kiểm tra tương thích tự động."
   },
   {
     "id": "event-driven-architecture-04",
     "playbookId": "event-driven-architecture",
     "type": "explain",
     "difficulty": 3,
-    "question": "Choreography và orchestration khác nhau thế nào?",
-    "modelAnswer": "Choreography: mỗi service tự phản ứng với event của service khác, không có điều phối viên, linh hoạt nhưng khó theo dõi khi nhiều bước. Orchestration: một bộ điều phối ra lệnh từng bước và theo dõi trạng thái, dễ hiểu luồng nhưng tập trung logic và cần tránh thành god service.",
+    "question": "So sánh choreography và orchestration trong EDA và nêu khi nào dùng mỗi loại.",
+    "modelAnswer": "Choreography: mỗi dịch vụ phản ứng với sự kiện và phát sự kiện tiếp, không có trung tâm nên lỏng lẻo nhưng luồng nghiệp vụ khó nhìn khi nhiều bước. Orchestration: một orchestrator điều phối từng bước rõ ràng nên dễ theo dõi và bù trừ nhưng có thành phần trung tâm. Dùng choreography cho ít bước lỏng lẻo, orchestration cho quy trình nhiều bước cần theo dõi.",
     "keyPoints": [
-      "Choreography: phản ứng event, phi tập trung",
-      "Orchestration: điều phối viên",
-      "Đánh đổi giữa linh hoạt và khả năng theo dõi"
+      "Choreography: không trung tâm",
+      "Orchestration: có điều phối, dễ theo dõi",
+      "Chọn theo số bước và nhu cầu quan sát"
     ]
   },
   {
@@ -1028,63 +1028,63 @@
     "playbookId": "saga-pattern",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Saga bảo đảm thuộc tính ACID nào ở mức yếu hoặc thiếu?",
+    "question": "Đơn hàng trải qua dịch vụ Order, Stock, Payment mỗi dịch vụ có DB riêng. Cách đảm bảo nhất quán?",
     "options": [
-      "Atomicity",
-      "Isolation: trạng thái trung gian nhìn thấy được",
-      "Durability",
-      "Không thuộc tính nào"
+      "Giao dịch ACID xuyên dịch vụ",
+      "Saga với giao dịch bù trừ",
+      "Chung một DB",
+      "Bỏ qua lỗi"
     ],
     "answer": [
       1
     ],
-    "explanation": "Saga đạt A, C, D ở mức nghiệp vụ nhưng thiếu Isolation nên cần semantic lock và các biện pháp khác."
+    "explanation": "Saga chia chuỗi giao dịch cục bộ kèm bù trừ. ACID xuyên dịch vụ không khả thi."
   },
   {
     "id": "saga-pattern-02",
     "playbookId": "saga-pattern",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Một saga có bước \"gửi email xác nhận\" khó hoàn tác. Nên đặt bước này ở đâu?",
+    "question": "Vì sao không dùng Two-Phase Commit giữa các microservices?",
     "options": [
-      "Đầu chuỗi",
-      "Cuối chuỗi, sau các bước có thể bù",
-      "Ngẫu nhiên",
-      "Không cần quan tâm"
+      "Vì quá nhanh",
+      "Chặn tài nguyên, coordinator là điểm lỗi, không scale và không hỗ trợ nhiều hệ thống",
+      "Vì không có tên",
+      "Vì chỉ dùng cho NoSQL"
     ],
     "answer": [
       1
     ],
-    "explanation": "Đặt bước không thể bù ở cuối (pivot) để tránh phải hoàn tác nó."
+    "explanation": "2PC khoá và chặn khi coordinator chết."
   },
   {
     "id": "saga-pattern-03",
     "playbookId": "saga-pattern",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Yêu cầu bắt buộc đối với compensating transaction?",
+    "question": "Giao dịch bù trừ hoàn tiền bị chạy hai lần do retry. Tính chất cần có?",
     "options": [
-      "Phải chạy đúng một lần",
-      "Phải idempotent và có thể retry cho tới khi thành công",
-      "Phải giống hệt rollback của DB",
-      "Phải dùng 2PC"
+      "Nhanh",
+      "Idempotent và có thể retry",
+      "Ngẫu nhiên",
+      "Đồng bộ"
     ],
     "answer": [
       1
     ],
-    "explanation": "Compensation chạy trong môi trường có lỗi nên phải retry an toàn."
+    "explanation": "Bù trừ cũng có thể lỗi/lặp nên phải idempotent."
   },
   {
     "id": "saga-pattern-04",
     "playbookId": "saga-pattern",
     "type": "explain",
     "difficulty": 3,
-    "question": "Giải thích saga với ví dụ đặt hàng gồm thanh toán, giữ tồn kho và giao hàng khi bước giao hàng thất bại.",
-    "modelAnswer": "Mỗi bước là local transaction: charge thanh toán, reserve tồn kho, tạo giao hàng. Nếu tạo giao hàng thất bại, chạy bước bù theo thứ tự ngược: nhả tồn kho rồi hoàn tiền. Mỗi bước và bước bù phải idempotent và retry được; trạng thái đơn như PENDING/CANCELLED giúp người dùng thấy rõ tiến trình.",
+    "question": "Người dùng thấy đơn hàng ở trạng thái 'đã giữ hàng' rồi biến mất sau khi saga bù trừ. Giải thích vì sao saga thiếu cô lập và cách đối phó.",
+    "modelAnswer": "Mỗi bước commit cục bộ ngay nên giao dịch khác có thể thấy dữ liệu dở dang (dirty read) hoặc ghi đè. Saga không có cô lập (I trong ACID). Biện pháp gồm semantic lock (cờ PENDING trên bản ghi), commutative updates, pessimistic view, reread value và versioning, cộng thông báo trạng thái trung gian cho người dùng.",
     "keyPoints": [
-      "Chuỗi local transaction",
-      "Compensation theo thứ tự ngược",
-      "Idempotent, retry, trạng thái trung gian rõ ràng"
+      "Commit cục bộ ngay nên thấy dở dang",
+      "Saga không có cô lập",
+      "Semantic lock và các countermeasure"
     ]
   },
   {
@@ -1832,63 +1832,63 @@
     "playbookId": "observability-tracing-metrics-logs",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Vì sao gắn user_id vào label của metric là nguy hiểm?",
+    "question": "Team cần biết request chậm ở dịch vụ nào trong chuỗi 8 dịch vụ. Tín hiệu nào phù hợp nhất?",
     "options": [
-      "Vì user_id nhạy cảm bảo mật",
-      "High cardinality làm số chuỗi thời gian bùng nổ và đội chi phí/bộ nhớ",
-      "Vì metric không hỗ trợ chuỗi",
-      "Vì Prometheus không chạy được"
+      "Chỉ metrics CPU",
+      "Distributed tracing",
+      "Chỉ log lỗi",
+      "Số commit"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mỗi giá trị label tạo một chuỗi thời gian mới; ID chi tiết nên nằm trong log hoặc trace."
+    "explanation": "Trace cho thấy thời gian ở từng span. Metrics báo có vấn đề nhưng không chỉ ra đoạn nào."
   },
   {
     "id": "observability-tracing-metrics-logs-02",
     "playbookId": "observability-tracing-metrics-logs",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Trace bị cắt đứt ở bước xử lý qua message queue. Nguyên nhân thường gặp?",
+    "difficulty": 3,
+    "question": "Prometheus quá tải bộ nhớ sau khi thêm nhãn user_id vào metric. Nguyên nhân?",
     "options": [
-      "Queue không hỗ trợ JSON",
-      "Không truyền trace context (traceparent) trong header của message",
-      "Quá nhiều consumer",
-      "Dùng HTTP/2"
+      "Nhãn high-cardinality tạo hàng triệu time series",
+      "Do Grafana",
+      "Do nén",
+      "Không liên quan"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Ranh giới bất đồng bộ cần truyền context tường minh vào message."
+    "explanation": "Mỗi tổ hợp nhãn là một series; đưa dữ liệu cardinality cao vào logs/traces."
   },
   {
     "id": "observability-tracing-metrics-logs-03",
     "playbookId": "observability-tracing-metrics-logs",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Head-based sampling 1% có rủi ro gì so với tail-based?",
+    "difficulty": 2,
+    "question": "Head-based sampling 1% khiến team bỏ lỡ gần hết trace lỗi. Giải pháp?",
     "options": [
-      "Không có rủi ro",
-      "Có thể bỏ sót đúng những trace lỗi hoặc chậm hiếm gặp vì quyết định trước khi biết kết quả",
-      "Tốn nhiều bộ nhớ hơn",
-      "Không thể bật trong production"
+      "Tăng lên 100% luôn",
+      "Tail-based sampling giữ trace lỗi và chậm",
+      "Tắt tracing",
+      "Dùng logs thôi"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tail-based quyết định sau khi trace hoàn tất nên giữ được trace lỗi và chậm."
+    "explanation": "Tail sampling quyết định sau khi trace hoàn tất."
   },
   {
     "id": "observability-tracing-metrics-logs-04",
     "playbookId": "observability-tracing-metrics-logs",
     "type": "explain",
     "difficulty": 2,
-    "question": "Logs, metrics và traces khác nhau thế nào và dùng phối hợp ra sao khi điều tra sự cố?",
-    "modelAnswer": "Metrics là số liệu tổng hợp nhẹ, cho biết có vấn đề (tỉ lệ lỗi, độ trễ tăng). Traces theo một request qua nhiều service để chỉ ra service nào chậm. Logs chi tiết giải thích vì sao ở service đó. Phối hợp: cảnh báo từ metrics, mở trace của request chậm, rồi đọc log theo trace ID.",
+    "question": "SLO 99,9% trong 30 ngày tương ứng error budget bao nhiêu và vì sao nên cảnh báo theo burn rate?",
+    "modelAnswer": "Error budget là 0,1% của 30 ngày, khoảng 43,2 phút cho phép lỗi. Cảnh báo theo burn rate cho biết budget đang bị đốt quá nhanh nên phản ứng sớm khi ảnh hưởng người dùng thật, thay vì cảnh báo ngưỡng thô gây ồn hoặc báo trễ.",
     "keyPoints": [
-      "Metrics: có vấn đề",
-      "Traces: ở đâu",
-      "Logs: vì sao, nối bằng trace ID"
+      "99,9% ≈ 43,2 phút/30 ngày",
+      "Burn rate",
+      "Cảnh báo theo triệu chứng"
     ]
   },
   {
@@ -1896,63 +1896,63 @@
     "playbookId": "raft-consensus",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Cluster Raft 5 node chịu được tối đa bao nhiêu node hỏng mà vẫn commit được?",
+    "question": "Cụm Raft cần chịu được lỗi 2 node. Cần tối thiểu bao nhiêu node?",
     "options": [
-      "1",
-      "2",
       "3",
-      "4"
+      "4",
+      "5",
+      "6"
     ],
     "answer": [
-      1
+      2
     ],
-    "explanation": "Cần đa số (3/5) nên chịu tối đa 2 node hỏng (2f+1 với f = 2)."
+    "explanation": "N = 2f + 1 = 5. 6 node vẫn chỉ chịu 2 nên không hơn 5."
   },
   {
     "id": "raft-consensus-02",
     "playbookId": "raft-consensus",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Vì sao cụm 4 node không bền hơn cụm 3 node?",
+    "difficulty": 3,
+    "question": "Mạng chia đôi cụm 5 node thành 3 và 2. Phía nào commit được ghi mới?",
     "options": [
-      "Vì 4 node không thể bầu leader",
-      "Quorum của 4 node là 3 nên vẫn chỉ chịu được 1 node hỏng nhưng tốn thêm tài nguyên",
-      "Vì 4 chia hết cho 2",
-      "Vì Raft cấm số chẵn"
+      "Phía 2 node",
+      "Phía 3 node (đa số)",
+      "Cả hai",
+      "Không phía nào"
     ],
     "answer": [
       1
     ],
-    "explanation": "Dùng số node lẻ để tối ưu chi phí cho cùng khả năng chịu lỗi."
+    "explanation": "Chỉ phía đa số commit được; phía thiểu số không tiến triển nên tránh split brain."
   },
   {
     "id": "raft-consensus-03",
     "playbookId": "raft-consensus",
     "type": "mcq",
-    "difficulty": 3,
-    "question": "Cluster 3 node bị partition thành nhóm 2 node và nhóm 1 node. Điều gì xảy ra?",
+    "difficulty": 2,
+    "question": "Follower không nhận được heartbeat trong election timeout thì làm gì?",
     "options": [
-      "Cả hai nhóm đều ghi được",
-      "Chỉ nhóm 2 node có quorum nên bầu leader và commit; nhóm 1 node không ghi được",
-      "Không nhóm nào ghi được",
-      "Nhóm 1 node tự thành leader"
+      "Tắt",
+      "Thành candidate, tăng term và xin phiếu",
+      "Chờ mãi",
+      "Xoá log"
     ],
     "answer": [
       1
     ],
-    "explanation": "Raft chọn Consistency: phía thiểu số không có quorum nên không commit."
+    "explanation": "Timeout ngẫu nhiên giảm khả năng nhiều candidate cùng lúc."
   },
   {
     "id": "raft-consensus-04",
     "playbookId": "raft-consensus",
     "type": "explain",
     "difficulty": 3,
-    "question": "Giải thích bầu leader và commit trong Raft.",
-    "modelAnswer": "Follower không nhận heartbeat trong election timeout ngẫu nhiên thì tăng term, thành candidate và xin phiếu; đủ đa số phiếu thì thành leader. Leader nhận ghi, append vào log và gửi cho follower; khi đa số đã lưu thì entry được commit và áp dụng. Node chỉ bỏ phiếu cho candidate có log ít nhất mới như mình nên leader luôn có mọi entry đã commit.",
+    "question": "Giải thích khi nào một entry được coi là committed trong Raft và vì sao điều này đảm bảo an toàn khi đổi leader.",
+    "modelAnswer": "Entry được committed khi leader đã lưu nó ở đa số node. Khi bầu leader mới, một candidate chỉ nhận phiếu nếu log của nó ít nhất cập nhật bằng log của người bỏ phiếu, nên leader mới luôn chứa mọi entry đã commit, do đó không mất dữ liệu đã xác nhận.",
     "keyPoints": [
-      "Election timeout ngẫu nhiên, term, đa số phiếu",
-      "Commit khi đa số đã lưu",
-      "Bỏ phiếu theo độ mới của log"
+      "Commit khi lưu ở đa số",
+      "Chỉ bỏ phiếu cho log đủ mới",
+      "Leader mới có mọi entry đã commit"
     ]
   },
   {
@@ -9885,89 +9885,85 @@
     "playbookId": "microservices-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai dấu hiệu microservices làm sai? (chọn 2)",
+    "question": "Conway's law nói gì và áp dụng ra sao?",
     "options": [
-      "Distributed monolith",
-      "Chia sẻ một database giữa các service",
-      "Mỗi service sở hữu dữ liệu",
-      "Triển khai độc lập"
+      "Hệ thống phản chiếu cấu trúc giao tiếp của tổ chức; tổ chức đội theo kiến trúc mong muốn",
+      "Càng nhiều dịch vụ càng tốt",
+      "Cần một DB chung",
+      "Dùng một ngôn ngữ"
     ],
     "answer": [
-      0,
-      1
+      0
     ],
-    "explanation": "Ghép chặt qua DB chung."
+    "explanation": "Inverse Conway maneuver: thiết kế đội để có kiến trúc mong muốn."
   },
   {
     "id": "event-driven-architecture-05",
     "playbookId": "event-driven-architecture",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Consumer nhận sự kiện lặp. Cần?",
+    "question": "Consumer nhận sự kiện lặp và gửi email hai lần. Cách xử lý đúng?",
     "options": [
-      "Idempotent consumer",
       "Bỏ qua",
+      "Idempotent consumer: khử trùng theo event id",
       "Tăng consumer",
       "Xoá queue"
     ],
     "answer": [
-      0
+      1
     ],
-    "explanation": "At-least-once."
+    "explanation": "Broker at-least-once nên consumer phải chịu trùng."
   },
   {
     "id": "saga-pattern-05",
     "playbookId": "saga-pattern",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai kiểu saga? (chọn 2)",
+    "question": "Nên đặt bước không bù trừ được (gửi email xác nhận) ở đâu trong saga?",
     "options": [
-      "Choreography",
-      "Orchestration",
-      "Sharding",
-      "Replication"
+      "Đầu chuỗi",
+      "Cuối chuỗi sau pivot",
+      "Giữa chuỗi",
+      "Không cần quan tâm"
     ],
     "answer": [
-      0,
       1
     ],
-    "explanation": "Hai cách phối hợp."
+    "explanation": "Bước không hoàn tác được nên chạy khi chắc chắn không phải bù trừ."
   },
   {
     "id": "observability-tracing-metrics-logs-05",
     "playbookId": "observability-tracing-metrics-logs",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Những thành phần nào là ba trụ cột của observability? (chọn 3)",
+    "question": "Header chuẩn W3C để truyền ngữ cảnh trace giữa các dịch vụ là gì?",
     "options": [
-      "Metrics",
-      "Logs",
-      "Traces",
-      "Marketing"
+      "X-Request",
+      "traceparent",
+      "Authorization",
+      "Cache-Control"
     ],
     "answer": [
-      0,
-      1,
-      2
+      1
     ],
-    "explanation": "Metrics, logs và traces bổ trợ nhau khi chẩn đoán."
+    "explanation": "traceparent mang trace-id và span-id."
   },
   {
     "id": "raft-consensus-05",
     "playbookId": "raft-consensus",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Raft cần đa số node để?",
+    "question": "Raft thuộc loại CP hay AP?",
     "options": [
-      "Bầu leader và commit log",
-      "Tăng tốc đọc",
-      "Nén dữ liệu",
-      "Backup"
+      "CP: mất đa số thì dừng ghi",
+      "AP",
+      "Cả hai",
+      "Không liên quan CAP"
     ],
     "answer": [
       0
     ],
-    "explanation": "Quorum."
+    "explanation": "Ưu tiên nhất quán, đổi lấy khả dụng khi thiếu đa số."
   },
   {
     "id": "kubernetes-fundamentals-05",
@@ -10409,7 +10405,7 @@
     "type": "explain",
     "difficulty": 2,
     "question": "Cluster có hàng nghìn shard rất nhỏ và chậm. Vì sao quá nhiều shard nhỏ gây hại và cách thiết kế?",
-    "modelAnswer": "Mỗi shard tốn tài nguyên (bộ nhnhớ, file handle, overhead điều phối), nhiều shard nhỏ làm cluster chậm và khó quản lý; số primary shard lại khó đổi sau khi tạo. Nên thiết kế số shard theo kích thước mục tiêu (hàng chục GB mỗi shard), gộp index nhỏ và dùng index theo thời gian có ILM cho log.",
+    "modelAnswer": "Mỗi shard tốn tài nguyên (bộ nhớ, file handle, overhead điều phối), nhiều shard nhỏ làm cluster chậm và khó quản lý; số primary shard lại khó đổi sau khi tạo. Nên thiết kế số shard theo kích thước mục tiêu (hàng chục GB mỗi shard), gộp index nhỏ và dùng index theo thời gian có ILM cho log.",
     "keyPoints": [
       "Overhead mỗi shard",
       "Cluster chậm",
