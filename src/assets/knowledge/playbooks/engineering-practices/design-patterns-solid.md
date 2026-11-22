@@ -1,61 +1,79 @@
 ## 1. Core Concept
 
-**SOLID** là năm nguyên tắc thiết kế hướng đối tượng giúp code **dễ thay đổi mà không vỡ**; **design pattern** là các lời giải đã được kiểm chứng cho vấn đề thiết kế lặp lại. Chúng không phải mục tiêu mà là **ngôn ngữ chung** để thảo luận và đánh giá thiết kế. Mental model: *mục đích duy nhất của thiết kế tốt là làm **chi phí của thay đổi tiếp theo** thấp — và việc thêm abstraction thừa cũng là một chi phí.*
+**SOLID** là năm nguyên tắc thiết kế hướng đối tượng giúp code **dễ đổi mà không vỡ**; **design patterns** là các giải pháp lặp lại cho vấn đề thiết kế quen thuộc (Strategy, Factory, Observer, Decorator…). Chúng giải quyết **chi phí thay đổi**: code tốt là code mà **yêu cầu mới chỉ cần thêm, không cần sửa chỗ cũ**. Nhưng áp dụng sai (trừu tượng sớm) còn tệ hơn không áp dụng.
+
+**Mental model:** như **ổ cắm điện chuẩn**: thiết bị (module) cắm vào qua **giao diện cố định (abstraction)**, thay thiết bị không cần đục tường (sửa code lõi). Nhưng đừng lắp ổ cắm cho mọi chỗ khi chưa ai có nhu cầu cắm gì thêm.
 
 ## 2. How It Works
 
-- **S — Single Responsibility**: một module có **một lý do để thay đổi**.
-- **O — Open/Closed**: mở để mở rộng (thêm hành vi mới), đóng với sửa đổi (không động vào code đã chạy tốt) — thường qua đa hình/strategy.
-- **L — Liskov Substitution**: kiểu con **thay thế được** kiểu cha mà không phá hợp đồng (không tăng điều kiện đầu vào, không giảm bảo đảm đầu ra).
-- **I — Interface Segregation**: nhiều interface nhỏ, đúng nhu cầu, thay vì một interface "béo".
-- **D — Dependency Inversion**: module cấp cao phụ thuộc **abstraction**, không phụ thuộc chi tiết; **Dependency Injection** truyền phụ thuộc từ ngoài vào.
-- **Pattern dùng nhiều nhất**:
-  - **Strategy** (đổi thuật toán lúc chạy), **Factory/Builder** (tạo đối tượng phức tạp), **Adapter** (nối interface không khớp).
-  - **Decorator** (thêm hành vi bằng cách bọc), **Observer** (thông báo thay đổi), **Facade** (giao diện đơn giản cho hệ con).
-- **Composition over inheritance**: ghép các đối tượng nhỏ thay vì cây kế thừa sâu.
+**SOLID thực dụng**
+- **S** (Single Responsibility): một lớp **một lý do để thay đổi** (không phải "làm một việc"). **O** (Open/Closed): **mở rộng không sửa** — thêm hành vi bằng code mới. **L** (Liskov): lớp con **thay thế được** lớp cha mà không phá hợp đồng (hình vuông kế thừa hình chữ nhật là phản ví dụ). **I** (Interface Segregation): interface **nhỏ, theo nhu cầu client**, không ép implement method thừa. **D** (Dependency Inversion): module cấp cao **phụ thuộc abstraction**, không phụ thuộc cài đặt cụ thể.
 
-```python
-# Strategy + Dependency Inversion: thêm phương thức giảm giá mà không sửa Checkout
-class Discount(Protocol):
-    def apply(self, total: Decimal) -> Decimal: ...
+**Dependency Injection vs Dependency Inversion**
+- **Inversion** là **nguyên tắc** (phụ thuộc vào abstraction). **Injection** là **kỹ thuật** truyền dependency từ ngoài (constructor) thay vì tự `new`. Injection giúp đạt inversion và **dễ test** (truyền fake).
 
-class Checkout:
-    def __init__(self, discount: Discount):   # phụ thuộc abstraction, được inject
-        self.discount = discount
-    def total(self, subtotal: Decimal) -> Decimal:
-        return self.discount.apply(subtotal)
+**Strategy pattern**
+- Đóng gói **các thuật toán thay thế được** sau một interface, chọn lúc chạy → thay thế chuỗi `if/else`/`switch` theo kiểu (loại giảm giá, cổng thanh toán). Thêm chiến lược mới = thêm lớp (Open/Closed).
+
+**Composition over Inheritance**
+- Kế thừa tạo **gắn kết chặt** (fragile base class), cấu trúc cứng. **Composition** ghép hành vi từ các đối tượng nhỏ (has-a) → linh hoạt, dễ đổi lúc chạy. Dùng kế thừa chỉ khi thật sự **is-a** và ổn định.
+
+**Rule of Three và wrong abstraction**
+- **Rule of Three**: đợi **lần lặp thứ ba** mới trừu tượng hoá. Trừu tượng sớm dựa trên **hai ví dụ** thường đoán sai trục biến đổi → **"duplication is far cheaper than the wrong abstraction"**: sau đó mọi người bẻ cong abstraction bằng cờ/tham số.
+
+```java
+interface DiscountStrategy { Money apply(Money total); }
+class Vip implements DiscountStrategy { public Money apply(Money t){ return t.times(0.9); } }
+class Coupon implements DiscountStrategy { public Money apply(Money t){ return t.minus(Money.of(5)); } }
+
+class Checkout {                                   // phụ thuộc abstraction, nhận qua constructor
+    private final DiscountStrategy discount;
+    Checkout(DiscountStrategy d) { this.discount = d; }
+    Money total(Money cart) { return discount.apply(cart); }
+}
 ```
 
 ## 3. Visual Diagram
 
-_No diagram needed._
+```mermaid
+classDiagram
+    class DiscountStrategy {
+      <<interface>>
+      +apply(total)
+    }
+    Checkout --> DiscountStrategy : phụ thuộc abstraction
+    DiscountStrategy <|.. VipDiscount
+    DiscountStrategy <|.. CouponDiscount
+```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Triệu chứng | Hướng xử lý |
+| Tình huống / Nhu cầu | Chọn gì |
 | --- | --- |
-| Chuỗi `if/else` theo "loại" ở nhiều nơi | **Strategy / đa hình** |
-| Tạo đối tượng nhiều bước, nhiều tham số | **Builder / Factory** |
-| Thư viện bên ngoài lan khắp code | **Adapter** bọc lại một chỗ |
-| Class làm quá nhiều việc | Tách theo **trách nhiệm** (SRP) |
+| Nhiều biến thể thuật toán, chọn lúc chạy | Strategy |
+| Cần fake khi test | Dependency Injection |
+| Chia sẻ hành vi giữa lớp không thật sự is-a | Composition |
+| Mới thấy lặp lần 2 | Chấp nhận trùng, chờ lần 3 |
+| Interface phình to | Interface Segregation |
+| Lớp con phá hợp đồng cha | Xem lại Liskov, dùng composition |
 
-- Chờ có **hai–ba trường hợp thật** rồi mới trừu tượng hoá (**rule of three**); **YAGNI** (đừng xây thứ chưa cần).
-- Trade-off: **linh hoạt tương lai** vs **độ phức tạp hiện tại** — mỗi lớp trừu tượng thêm một lớp phải hiểu.
+- **Được gì:** thay đổi cục bộ, dễ test, mở rộng an toàn. **Mất gì:** nhiều lớp/gián tiếp hơn, khó đọc nếu trừu tượng hoá quá sớm hoặc thừa.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Over-engineering**: interface và factory cho thứ chỉ có một cài đặt làm code khó đọc mà không có lợi.
-- **DRY sai chỗ**: gộp hai đoạn code "giống nhau về hình dạng" nhưng khác lý do thay đổi tạo ra abstraction sai và coupling; **chấp nhận trùng lặp nhỏ còn hơn abstraction sai**.
-- **Singleton** là trạng thái toàn cục trá hình: khó test, ẩn phụ thuộc; ưu tiên DI.
-- **Kế thừa để tái sử dụng code** (thay vì quan hệ "là một") sinh ra cây phân cấp mong manh.
-- Vi phạm **Liskov** (kiểu con ném lỗi "không hỗ trợ") là dấu hiệu phân cấp sai.
-- Interview trap: "SOLID có luôn đúng không?" → là **heuristic**, áp dụng khi nó giảm chi phí thay đổi, không áp dụng máy móc.
+- **Mỗi yêu cầu mới phải sửa `switch` ở nhiều nơi → vi phạm Open/Closed → Strategy/polymorphism**.
+- **Abstraction đầy cờ boolean/tham số tùy chọn → wrong abstraction → inline lại, trùng lặp rồi trừu tượng hoá đúng**.
+- **Lớp con ném `UnsupportedOperationException` → vi phạm Liskov → tách interface/dùng composition**.
+- **Lớp "God class" làm mọi thứ → vi phạm SRP → tách theo lý do thay đổi**.
+- **Cây kế thừa sâu khó đổi → fragile base class → composition**.
+- **Pattern áp dụng cho đủ trò → over-engineering → bắt đầu đơn giản, tái cấu trúc khi có nhu cầu thật**.
+- Interview trap: "DI vs DIP?" → **DIP là nguyên tắc, DI là kỹ thuật tiêm phụ thuộc**; "SRP nghĩa là gì?" → **một lý do để thay đổi**; "khi nào nên trừu tượng hoá?" → **Rule of Three**.
 
 ## 6. Search Hooks
 
-- `SOLID principles explained` — năm nguyên tắc thiết kế hướng đối tượng.
-- `Strategy pattern vs State pattern` — hai pattern dễ nhầm với nhau.
-- `dependency injection vs dependency inversion` — phân biệt kỹ thuật và nguyên tắc.
-- `composition over inheritance` — ưu tiên ghép đối tượng hơn kế thừa.
-- `rule of three DRY wrong abstraction` — khi nào nên trừu tượng hoá.
-- `Liskov substitution principle violations` — dấu hiệu phân cấp kế thừa sai.
+- `SOLID principles` — năm nguyên tắc thiết kế hướng đối tượng.
+- `Strategy pattern` — thuật toán thay thế được sau một interface.
+- `dependency injection vs dependency inversion` — kỹ thuật và nguyên tắc.
+- `composition over inheritance` — ưu tiên ghép hơn kế thừa.
+- `Liskov substitution principle` — lớp con thay thế được lớp cha.
+- `wrong abstraction rule of three` — tránh trừu tượng hoá sớm.

@@ -1,55 +1,77 @@
 ## 1. Core Concept
 
-Mật mã học cho kỹ sư không phải là tự phát minh thuật toán mà là **chọn đúng công cụ cho đúng mục đích**: **bảo mật** (confidentiality — mã hoá), **toàn vẹn** (integrity — hash/MAC), **xác thực** (authenticity — chữ ký số/MAC), và **quản lý khoá**. Mental model: *thuật toán thì công khai và đã được kiểm chứng; **chỉ khoá là bí mật** — nên phần khó nhất của mật mã trong thực tế là **quản lý khoá**, không phải toán học.*
+Mật mã học thực dụng cho kỹ sư xoay quanh bốn mục tiêu: **confidentiality** (bí mật), **integrity** (toàn vẹn), **authenticity** (xác thực nguồn gốc) và **non-repudiation** (chống chối bỏ). Quy tắc số một: **không tự chế thuật toán, dùng thư viện chuẩn** và chọn **primitive đúng mục đích** — sai primitive (hash để mã hoá, MD5 để băm mật khẩu) là lỗi phổ biến nhất.
+
+**Mental model:** mỗi primitive là một **công cụ khác nhau**: **hash** như dấu vân tay một chiều; **mã hoá đối xứng** như khoá chung cho khoá và mở; **bất đối xứng** như hộp thư (ai cũng bỏ thư vào được bằng public key, chỉ chủ mở bằng private key); **chữ ký** như con dấu chứng thực.
 
 ## 2. How It Works
 
-- **Hash** (SHA-256, SHA-3): hàm một chiều, kết quả cố định; **không phải mã hoá**. Dùng cho toàn vẹn, định danh nội dung. **MD5/SHA-1 đã hỏng** về va chạm.
-- **Password hashing**: dùng hàm **chậm có chủ đích và có salt** — **argon2id**, **bcrypt**, **scrypt** — không dùng SHA-256 thuần. **Salt** duy nhất mỗi mật khẩu chống rainbow table; **pepper** là bí mật chung lưu ngoài DB.
-- **Mã hoá đối xứng** (AES): một khoá cho cả mã hoá và giải mã, nhanh. Dùng chế độ **authenticated encryption (AES-GCM, ChaCha20-Poly1305)** vừa mã hoá vừa chống sửa đổi; **nonce/IV không bao giờ được lặp** với cùng khoá.
-- **Mã hoá bất đối xứng** (RSA, ECC): cặp khoá công khai/riêng; chậm hơn, dùng để **trao đổi khoá** (ECDH) và **chữ ký số**. Thực tế dùng **hybrid**: bất đối xứng để thoả thuận khoá, đối xứng để mã hoá dữ liệu (đúng cách TLS làm).
-- **MAC/HMAC**: xác thực và toàn vẹn bằng khoá chung; **chữ ký số** làm điều đó với khoá riêng/công khai (bất kỳ ai cũng kiểm chứng được).
-- **Envelope encryption**: mã hoá dữ liệu bằng **data key**, rồi mã hoá data key bằng **master key** trong **KMS/HSM** — xoay master key không cần mã hoá lại toàn bộ dữ liệu.
-- **Ngẫu nhiên**: chỉ dùng **CSPRNG** (`/dev/urandom`, `crypto.randomBytes`), không dùng `Math.random()` cho token/khoá.
+**Hash và băm mật khẩu**
+- **Hash** (SHA-256) một chiều, nhanh — **không dùng trực tiếp cho mật khẩu**: GPU thử hàng tỷ hash/giây. Mật khẩu cần **hàm chậm, có salt, tốn bộ nhớ**: **argon2id** (khuyên dùng), **bcrypt**, **scrypt/PBKDF2**. **Salt** ngẫu nhiên riêng từng người chống rainbow table; **pepper** là bí mật bổ sung lưu ngoài DB.
+
+**Mã hoá đối xứng: AES-GCM**
+- **AES-GCM** là **authenticated encryption (AEAD)**: vừa **bí mật** vừa **phát hiện sửa đổi** (auth tag). **Nonce/IV không được lặp lại với cùng key** (lặp nonce trong GCM làm lộ key/plaintext thảm hoạ). Tránh **ECB** (lộ mẫu) và **CBC không xác thực** (padding oracle). Key 128/256 bit.
+
+**Đối xứng vs bất đối xứng**
+- **Đối xứng**: nhanh, mã hoá dữ liệu lớn, nhưng phải **chia sẻ khoá**. **Bất đối xứng** (RSA ≥ 2048, ECDSA/Ed25519): chậm, dùng cho **trao đổi khoá, chữ ký, TLS handshake**; thực tế **kết hợp**: bất đối xứng thoả thuận khoá, đối xứng mã hoá dữ liệu.
+
+**HMAC vs chữ ký số**
+- **HMAC**: xác thực bằng **khoá bí mật chung**; ai có khoá đều tạo được → **không chống chối bỏ**; dùng giữa hai hệ thống tin nhau (webhook signature). **Digital signature**: ký bằng **private key**, xác minh bằng **public key** → xác thực nguồn gốc và **non-repudiation**.
+
+**Envelope encryption (KMS data key)**
+- Mã hoá dữ liệu lớn bằng **data key (DEK)** cục bộ, rồi **mã hoá DEK bằng master key (KEK)** trong **KMS/HSM**. Lưu `{ciphertext, encrypted DEK}`. Lợi: master key **không rời KMS**, mã hoá nhanh cục bộ, **xoay khoá** chỉ cần re-wrap DEK, kiểm soát bằng IAM và audit.
+
+**So sánh nhanh theo mục đích**
+- Băm mật khẩu → **argon2id**; mã hoá dữ liệu → **AES-GCM/ChaCha20-Poly1305**; ký/xác minh → **Ed25519/ECDSA**; xác thực webhook → **HMAC-SHA256**; số ngẫu nhiên bảo mật → **CSPRNG** (không `Math.random`).
+
+```python
+import os
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+key = AESGCM.generate_key(bit_length=256)
+nonce = os.urandom(12)                       # nonce DUY NHẤT cho mỗi lần mã hoá với cùng key
+ct = AESGCM(key).encrypt(nonce, b"secret", b"aad")   # ct gồm cả auth tag
+pt = AESGCM(key).decrypt(nonce, ct, b"aad")          # sai/sửa -> raise InvalidTag
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    P[Plaintext] -->|"AES-GCM with data key"| C[Ciphertext]
-    DK[Data key] -->|"encrypted by master key in KMS"| EDK[Encrypted data key]
-    C --> S[(Storage)]
-    EDK --> S
+    APP["Ứng dụng"] -->|"1. xin data key"| KMS["KMS / HSM (master key)"]
+    KMS -->|"2. plaintext DEK + encrypted DEK"| APP
+    APP -->|"3. AES-GCM bằng DEK"| CT[("Ciphertext + encrypted DEK")]
+    APP -->|"4. huỷ DEK plaintext"| X["Xoá khỏi bộ nhớ"]
+    CT -->|"giải mã: gửi encrypted DEK"| KMS
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Cần | Dùng |
+| Nhu cầu | Dùng |
 | --- | --- |
-| Lưu mật khẩu | **argon2id / bcrypt** + salt |
-| Mã hoá dữ liệu | **AES-256-GCM** (hoặc ChaCha20-Poly1305) |
-| Kiểm tra dữ liệu không bị sửa (cùng bí mật) | **HMAC-SHA256** |
-| Chứng minh nguồn gốc, nhiều bên kiểm | **Chữ ký số (Ed25519/ECDSA/RSA-PSS)** |
-| Trao đổi khoá | **ECDH** (qua TLS 1.3) |
+| Lưu mật khẩu | argon2id (hoặc bcrypt) + salt |
+| Mã hoá dữ liệu | AES-256-GCM / ChaCha20-Poly1305 |
+| Mã hoá dữ liệu lớn trên cloud | Envelope encryption với KMS |
+| Xác thực webhook giữa hai bên tin nhau | HMAC-SHA256 |
+| Chống chối bỏ, xác minh công khai | Chữ ký số (Ed25519/ECDSA) |
+| Sinh token/key | CSPRNG |
 
-- **Đừng tự viết crypto**; dùng thư viện chuẩn (libsodium, thư viện của nền tảng) với cấu hình mặc định an toàn.
-- Trade-off: **an toàn vs hiệu năng** (argon2 tốn CPU/RAM có chủ đích; tăng cost theo năm).
+- **Được gì:** bảo vệ dữ liệu có cơ sở toán học. **Mất gì:** hàm băm mật khẩu chậm tốn CPU/RAM (có chủ đích), quản lý khoá và xoay khoá phức tạp, sai cấu hình mất toàn bộ bảo đảm.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Base64/hex không phải mã hoá**; nó chỉ là **mã hoá dạng biểu diễn** — ai cũng giải được.
-- **Tái dùng nonce** với AES-GCM làm lộ khoá/plaintext — thảm hoạ.
-- **ECB mode** làm lộ mẫu dữ liệu; **mã hoá không xác thực (CBC không MAC)** dễ bị tấn công padding oracle.
-- **Khoá cứng trong code/repo** và không có kế hoạch **xoay khoá** là lỗi phổ biến nhất.
-- **So sánh MAC/hash bằng `==`** rò rỉ qua timing; dùng so sánh **constant-time**.
-- **JWT `alg: none`**, nhầm HS256/RS256 là lỗi triển khai mật mã kinh điển.
-- Interview trap: "Hash khác mã hoá thế nào?" → hash **một chiều**, không có khoá giải; mã hoá **hai chiều** với khoá.
+- **Mật khẩu bị bẻ nhanh sau khi lộ DB → SHA-256/MD5 không salt → argon2id/bcrypt**.
+- **Lộ plaintext khi lặp nonce → GCM dùng lại nonce với cùng key → nonce ngẫu nhiên/đếm duy nhất, xoay key**.
+- **Dữ liệu bị sửa không phát hiện → dùng CBC/ECB không xác thực → AEAD (AES-GCM)**.
+- **Mất kiểm soát khoá → để master key trong code/biến môi trường → KMS/HSM, envelope encryption, IAM**.
+- **Token đoán được → dùng `Math.random`/time → CSPRNG**.
+- **So sánh HMAC/token bằng `==` → timing attack → so sánh hằng thời gian**.
+- Interview trap: "hash vs mã hoá?" → **hash một chiều, mã hoá hai chiều có khoá**; "HMAC vs chữ ký số?" → **HMAC khoá chung không chống chối bỏ, chữ ký dùng khoá bất đối xứng**; "vì sao envelope encryption?" → **master key không rời KMS, xoay khoá rẻ**.
 
 ## 6. Search Hooks
 
-- `password hashing argon2 bcrypt salt` — lưu mật khẩu an toàn.
-- `AES-GCM authenticated encryption nonce` — mã hoá đối xứng kèm toàn vẹn.
-- `symmetric vs asymmetric encryption hybrid` — khi nào dùng loại nào và cách kết hợp.
-- `envelope encryption KMS data key` — mã hoá dữ liệu bằng data key bảo vệ bởi master key.
-- `HMAC vs digital signature` — xác thực bằng khoá chung và khoá công khai.
-- `constant-time comparison timing attack` — so sánh không rò rỉ qua thời gian.
+- `password hashing argon2id bcrypt` — băm mật khẩu đúng cách.
+- `AES-GCM authenticated encryption` — mã hoá kèm xác thực.
+- `symmetric vs asymmetric encryption` — khác biệt và cách kết hợp.
+- `envelope encryption KMS data key` — mã hoá phong bì với KMS.
+- `HMAC vs digital signature` — xác thực bằng khoá chung và khoá bất đối xứng.
+- `CSPRNG secure random` — sinh ngẫu nhiên an toàn.

@@ -1,49 +1,77 @@
 ## 1. Core Concept
 
-Ứng dụng hiện đại có **70–90% code là thư viện bên thứ ba**, cộng với công cụ build, image nền và pipeline CI. **Software supply chain security** bảo vệ **toàn bộ chuỗi** từ mã nguồn → dependency → build → artifact → triển khai, vì kẻ tấn công nhắm vào mắt xích yếu nhất. Mental model: *bạn chạy code của hàng nghìn người lạ — hãy biết mình đang dùng gì, kiểm chứng nó từ đâu tới, và đảm bảo build là lặp lại được.*
+**Software supply chain security** bảo vệ **toàn bộ đường từ mã nguồn, dependency, build đến artifact chạy production** khỏi bị can thiệp. Phần lớn code bạn chạy là **của người khác** (thư viện, base image, build tool), nên kẻ tấn công nhắm vào **mắt xích yếu nhất**: package độc hại, build server bị chiếm, artifact bị thay. Mục tiêu: **biết bạn chạy cái gì, nó đến từ đâu, và chứng minh nó không bị sửa**.
+
+**Mental model:** như **chuỗi cung ứng thực phẩm**: bạn cần **nhãn thành phần (SBOM)**, **niêm phong chống tháo (chữ ký)**, **hồ sơ nhà máy (provenance)** và **chỉ nhập từ nhà cung cấp đã kiểm duyệt**. Một lô nguyên liệu bẩn đầu chuỗi làm hỏng mọi thứ cuối chuỗi.
 
 ## 2. How It Works
 
-- **Dependency scanning (SCA)**: so khớp phiên bản dependency với cơ sở dữ liệu **CVE** (Dependabot, Renovate, Snyk, `npm audit`, `osv-scanner`); xử lý cả **dependency gián tiếp (transitive)**.
-- **Lockfile + ghim phiên bản/hash**: `package-lock.json`, `poetry.lock`, `go.sum` để cài **đúng bản đã kiểm duyệt**; CI dùng `npm ci`, không `npm install`.
-- **Các kiểu tấn công**: **typosquatting** (gói tên gần giống), **dependency confusion** (gói nội bộ bị gói công khai trùng tên đè lên), **tài khoản maintainer bị chiếm**, **mã độc trong postinstall script**, **image nền độc hại**.
-- **SBOM (Software Bill of Materials)**: danh sách thành phần của artifact (SPDX, CycloneDX) để biết ngay mình bị ảnh hưởng khi có lỗ hổng mới (như Log4Shell).
-- **Build đáng tin cậy**: build trong môi trường **cô lập, tái lập được (reproducible)**; **ký artifact/image** (Sigstore/cosign) và **kiểm chứng chữ ký + provenance (SLSA)** trước khi triển khai.
-- **Bảo vệ pipeline**: quyền tối thiểu cho CI, secret ngắn hạn qua OIDC, **bảo vệ nhánh chính** (review bắt buộc), pin version của **GitHub Actions** theo commit SHA.
-- **Image container**: dùng image nền nhỏ/đã xác minh (distroless), quét lỗ hổng, cập nhật định kỳ.
+**Các hình thức tấn công**
+- **Dependency confusion**: kẻ tấn công đăng package công khai **trùng tên package nội bộ** với version cao hơn → build kéo nhầm gói độc. **Typosquatting**: tên gần giống (`reqeusts`). **Compromised maintainer/package** (event-stream), **malicious install script**, **build system compromise** (SolarWinds).
+
+**Lockfile và reproducible build**
+- **Lockfile** (`package-lock.json`, `poetry.lock`, `go.sum`) **ghim version + hash** → cùng input cho cùng dependency; dùng lệnh cài **nghiêm ngặt** (`npm ci`, `pip install --require-hashes`). **Reproducible build**: cùng source cho **artifact giống hệt từng bit** → bên thứ ba **xác minh** binary khớp source. Ghim base image theo **digest** (`@sha256:…`), không chỉ tag `latest`.
+
+**SBOM**
+- **Software Bill of Materials** liệt kê thành phần và phiên bản (định dạng **SPDX**, **CycloneDX**), sinh bằng **Syft**. Giá trị: khi có CVE mới (Log4Shell) biết **ngay hệ thống nào bị ảnh hưởng**; kết hợp quét lỗ hổng (Grype, Trivy, Dependabot).
+
+**Ký artifact và provenance**
+- **Sigstore/cosign**: ký image/artifact bằng **danh tính ngắn hạn (keyless, OIDC)** và ghi vào **transparency log (Rekor)**; admission controller trên Kubernetes **chỉ cho chạy image đã ký đúng**. **Provenance** (attestation) ghi **ai build, từ commit nào, ở đâu**.
+
+**SLSA**
+- Khung **mức độ trưởng thành** của build: L1 (có provenance) → L2 (build hosted, provenance ký) → L3 (**build cô lập, chống giả mạo**). Bảo vệ **build pipeline** như production: quyền tối thiểu, runner ephemeral, bảo vệ nhánh, review bắt buộc.
+
+**Phòng thủ dependency confusion**
+- **Scoped/namespaced package** (`@company/x`), cấu hình registry **ưu tiên nguồn nội bộ**, **đặt trước tên** nội bộ trên registry công khai, chặn tên nội bộ từ nguồn ngoài, **allowlist registry**.
+
+```bash
+# Build chặt: cài đúng lockfile, sinh SBOM, quét lỗ hổng, ký image theo digest
+npm ci --ignore-scripts
+syft packages dir:. -o cyclonedx-json > sbom.json
+grype sbom:sbom.json --fail-on high
+cosign sign --yes registry.example.com/app@sha256:abc123...
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    SRC[Source + lockfile] --> B["Isolated build"]
-    B --> SC[SCA + SAST scans]
-    SC --> SIGN["Sign artifact + SBOM + provenance"]
-    SIGN --> REG[(Registry)]
-    REG -->|"verify signature"| DEP[Deploy]
+    SRC["Source + lockfile (hash pinned)"] --> BLD["Build cô lập (SLSA)"]
+    BLD --> SBOM["SBOM + quét lỗ hổng"]
+    BLD --> SIG["Ký cosign + provenance"]
+    SIG --> REG[("Registry")]
+    REG --> ADM["Admission: chỉ image đã ký"]
+    ADM --> PROD["Production"]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- **Ít dependency hơn = ít bề mặt tấn công**: cân nhắc trước khi thêm thư viện cho vài dòng code.
-- **Cập nhật thường xuyên theo lô nhỏ** (Renovate) rẻ hơn dồn một cú "nâng cấp lớn" khi có CVE khẩn.
-- Ưu tiên theo **khả năng khai thác thực tế** (reachability, EPSS) thay vì chạy theo mọi CVE.
-- Trade-off: **an toàn (ghim, kiểm chứng)** vs **tốc độ nhận bản vá**; tự động hoá cập nhật có test để cân bằng.
+| Rủi ro | Biện pháp |
+| --- | --- |
+| Dependency confusion | Scoped package, ưu tiên registry nội bộ, giữ chỗ tên |
+| Thư viện có CVE | SBOM + quét liên tục + tự động cập nhật |
+| Artifact bị thay | Ký cosign + xác minh khi admission |
+| Build khác nhau mỗi lần | Lockfile + base image theo digest + reproducible build |
+| Pipeline bị chiếm | Runner ephemeral, quyền tối thiểu, SLSA L3 |
+| Script cài đặt độc hại | `--ignore-scripts`, review dependency mới |
+
+- **Được gì:** truy vết được, phát hiện/chặn thay đổi trái phép. **Mất gì:** thêm bước CI/công cụ, ma sát cập nhật dependency, cần quản lý khoá/danh tính ký.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **`npm install` trong CI** có thể kéo bản mới khác bản đã test; dùng lockfile (`npm ci`).
-- **Dependency confusion**: cấu hình registry nội bộ ưu tiên và dùng scope/namespace cho package riêng.
-- **Quét một lần khi release** là không đủ: lỗ hổng mới xuất hiện **sau** khi bạn đã phát hành → quét liên tục artifact đang chạy.
-- **Action/plugin CI ghim theo tag** (`@v3`) có thể bị chiếm và đổi nội dung; ghim theo SHA.
-- **AI gợi ý tên package không tồn tại** ("package hallucination") — kẻ tấn công đăng ký đúng tên đó; luôn kiểm tra package có thật, có uy tín.
-- Interview trap: "SBOM để làm gì?" → biết nhanh **mình có dùng thành phần bị lỗ hổng không** và ở đâu.
+- **Build kéo nhầm package công khai trùng tên nội bộ → dependency confusion → scoped package, registry nội bộ ưu tiên**.
+- **Không biết bị ảnh hưởng bởi CVE nào → thiếu SBOM → sinh và lưu SBOM mỗi build, quét liên tục**.
+- **Cùng tag nhưng nội dung đổi → tag `latest` có thể bị ghi đè → ghim theo digest**.
+- **Image lạ chạy được trong cluster → không kiểm chữ ký → admission controller yêu cầu cosign**.
+- **Pipeline CI bị chiếm → quyền quá rộng, token dài hạn → OIDC, runner ephemeral, bảo vệ nhánh**.
+- **Cập nhật tự động kéo bản độc hại → tin mù → review, cooldown, quét trước khi merge**.
+- Interview trap: "dependency confusion là gì?" → **package công khai trùng tên nội bộ, version cao hơn**; "SBOM dùng làm gì?" → **biết thành phần để phản ứng nhanh khi có CVE**; "lockfile có đủ không?" → **không, cần ghim hash/digest và bảo vệ build**.
 
 ## 6. Search Hooks
 
 - `software supply chain security SLSA` — khung bảo vệ chuỗi cung ứng phần mềm.
-- `SBOM SPDX CycloneDX` — danh sách thành phần của phần mềm.
-- `dependency confusion typosquatting` — hai kiểu tấn công qua tên package.
-- `Sigstore cosign image signing` — ký và kiểm chứng artifact.
-- `lockfile npm ci reproducible builds` — cài đúng bản đã kiểm duyệt.
-- `Dependabot Renovate vulnerability scanning` — tự động hoá cập nhật dependency.
+- `SBOM SPDX CycloneDX` — danh sách thành phần phần mềm.
+- `dependency confusion typosquatting` — tấn công qua tên package.
+- `Sigstore cosign artifact signing` — ký và xác minh artifact.
+- `lockfiles reproducible builds` — ghim phụ thuộc và build tái lập.
+- `in-toto provenance attestation` — bằng chứng nguồn gốc build.

@@ -1,47 +1,75 @@
 ## 1. Core Concept
 
-**Secret** (mật khẩu DB, API key, private key, token) là thứ cho phép hành động nhân danh hệ thống; lộ một secret thường đồng nghĩa mất quyền kiểm soát. **Secrets management** là việc **lưu, cấp phát, xoay vòng và kiểm toán** secret để chúng **không nằm trong code, ngắn hạn và chỉ đúng chủ thể mới lấy được**. Mental model: *đừng "giấu" secret — hãy **loại bỏ chúng** bằng danh tính (identity) và credentials ngắn hạn bất cứ khi nào có thể.*
+**Secrets management** là cách **lưu, cấp phát, xoay vòng và thu hồi** thông tin nhạy cảm (mật khẩu DB, API key, token, chứng chỉ) mà **không để lộ trong code, Git, log hay image**. Hướng tốt nhất hiện nay: **ít secret dài hạn nhất có thể** — dùng **danh tính workload và credential ngắn hạn** thay vì khoá tĩnh.
+
+**Mental model:** secret như **chìa khoá phòng server**. Cách tệ nhất là **dán chìa lên cửa (commit vào Git)**. Cách tốt là **không phát chìa cố định**: mỗi lần cần, **người gác cổng (Vault/IAM) cấp thẻ tạm** chỉ mở đúng phòng trong vài phút rồi **tự hết hạn**.
 
 ## 2. How It Works
 
-- **Không bao giờ commit secret**: lịch sử Git giữ mãi; bot quét GitHub tìm key lộ trong **vài phút**. Dùng **pre-commit hook + secret scanning** (gitleaks, GitHub push protection).
-- **Nơi lưu**: **Secrets Manager / Vault / Key Vault / Parameter Store (SecureString)**, mã hoá bằng KMS, có **IAM, audit log, versioning**. Không dùng file `.env` commit lên repo hay biến môi trường làm nơi lưu chính.
-- **Cấp phát cho ứng dụng bằng danh tính**: **IAM role / managed identity / workload identity** để ứng dụng **tự lấy** secret lúc chạy; không phải nhúng credential để lấy secret (bài toán "secret zero").
-- **Credentials ngắn hạn**: **STS** token tạm thời, **dynamic secrets** (Vault tạo user DB riêng có TTL cho mỗi lần dùng), **OIDC federation** cho CI/CD (GitHub Actions nhận role AWS không cần lưu access key).
-- **Xoay vòng (rotation)**: tự động theo lịch và khi nghi ngờ lộ; thiết kế ứng dụng hỗ trợ **hai secret hợp lệ cùng lúc** để xoay không downtime.
-- **Phân quyền tối thiểu**: mỗi service chỉ đọc secret của mình; tách secret theo môi trường (dev/staging/prod).
-- **Kubernetes Secret** mặc định chỉ **base64**, không mã hoá: bật **encryption at rest** hoặc dùng **External Secrets/CSI driver** lấy từ vault.
+**Nguyên tắc chung**
+- **Không hard-code**, không đưa vào image/env file commit. Lưu trong **secrets manager** (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault). Áp dụng **least privilege**, **mã hoá at-rest**, **audit log** mỗi lần truy cập, **rotation** định kỳ và khi nghi ngờ lộ. Tách secret theo môi trường.
+
+**Dynamic secrets (Vault)**
+- Thay vì một mật khẩu DB dùng chung mãi, Vault **tạo user DB tạm thời theo yêu cầu** (TTL vài phút–giờ, quyền tối thiểu) và **tự thu hồi khi hết hạn**. Lợi: **không có secret dài hạn để lộ**, mỗi workload có credential riêng → truy vết và thu hồi từng cái.
+
+**Secret zero và Workload Identity**
+- **Secret zero** là bài toán gà–trứng: để lấy secret cần có credential ban đầu — vậy lưu credential đó ở đâu? Lời giải: **workload identity** nền tảng cấp danh tính cho workload (IAM role gắn EC2/ECS/EKS, **IRSA**, Azure **Managed Identity**, GCP Workload Identity); workload **chứng minh danh tính bằng nền tảng**, không cần mang secret nào.
+
+**OIDC federation cho CI/CD**
+- Pipeline (GitHub Actions) lấy **token OIDC ngắn hạn** do GitHub phát, **đổi lấy role cloud tạm thời** (`AssumeRoleWithWebIdentity`) qua **trust policy** giới hạn repo/branch → **không lưu AWS key dài hạn** trong CI secrets.
+
+**Secret scanning và pre-commit**
+- **Pre-commit hooks** (gitleaks, detect-secrets) chặn commit chứa secret; **secret scanning** trên repo/CI (và GitHub push protection) bắt lọt. **Khi lộ: coi như đã bị lộ vĩnh viễn → thu hồi/xoay ngay**, xoá khỏi history chỉ là bước phụ (đã bị crawler thu).
+
+```yaml
+# GitHub Actions: không lưu AWS key, dùng OIDC -> role tạm thời
+permissions: { id-token: write, contents: read }
+steps:
+  - uses: aws-actions/configure-aws-credentials@v4
+    with:
+      role-to-assume: arn:aws:iam::123456789012:role/gha-deploy
+      aws-region: ap-southeast-1
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    APP[Application] -->|"proves identity: IAM role / OIDC token"| V[Vault / Secrets Manager]
-    V -->|"short-lived secret + TTL"| APP
-    APP --> DB[(Database)]
-    V -.->|"audit log + rotation"| A[Security team]
+    WL["Workload (pod / EC2 / CI job)"] -->|"danh tính nền tảng / OIDC"| IDP["IAM / OIDC provider"]
+    IDP -->|"token ngắn hạn"| WL
+    WL -->|"xin secret"| VLT["Vault / Secrets Manager"]
+    VLT -->|"cấp credential có TTL"| WL
+    WL --> DB[("Database")]
+    VLT -.->|"tự thu hồi khi hết TTL"| DB
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Thứ tự ưu tiên: **không cần secret (identity)** > **credentials ngắn hạn tự động** > **secret lưu trong vault, xoay vòng** > (tránh) secret tĩnh dài hạn.
-- **Tách cấu hình khỏi secret**: cấu hình không nhạy cảm để trong config; secret ở kho riêng.
-- Phát hiện lộ → **thu hồi và xoay vòng ngay**, rồi mới điều tra; xoá khỏi Git không làm secret an toàn trở lại.
-- Trade-off: **vault tập trung** tăng an toàn và audit nhưng thêm **điểm phụ thuộc/độ trễ** — cache có TTL và thiết kế khi vault không sẵn sàng.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Truy cập AWS/Azure từ workload | Workload identity (IAM role/Managed Identity), không dùng key |
+| CI/CD deploy lên cloud | OIDC federation |
+| Mật khẩu DB cho nhiều service | Dynamic secrets (Vault) hoặc rotation tự động |
+| Ngăn secret vào Git | Pre-commit + secret scanning + push protection |
+| Secret đã lộ | Thu hồi/xoay ngay |
+
+- **Được gì:** ít secret dài hạn, thu hồi nhanh, audit rõ. **Mất gì:** thêm hạ tầng (Vault) và độ phức tạp, phụ thuộc availability của secrets manager, cần thiết kế cache/fallback.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Xoá secret khỏi commit mới nhất không đủ**: nó vẫn nằm trong lịch sử và các bản clone/fork; phải **thu hồi**.
-- **Secret trong log, error message, URL, biến CI in ra** — che (mask) và không log header Authorization.
-- **Một secret dùng chung cho mọi môi trường/service** làm bán kính ảnh hưởng khi lộ cực lớn.
-- **Quên xoay vòng** và secret của nhân viên đã nghỉ vẫn hoạt động.
-- Interview trap: "Lưu secret ở đâu?" → trả lời bằng **identity + vault + credentials ngắn hạn**, không phải "trong `.env`".
+- **Key AWS bị đào bới trên GitHub → commit secret → thu hồi ngay, xoay, bật push protection**.
+- **Lộ secret qua log/biến môi trường dump → in ra khi lỗi → che secret trong log, không in env**.
+- **Một mật khẩu DB dùng chung mọi nơi → blast radius lớn, khó xoay → dynamic secrets/credential riêng từng service**.
+- **Ứng dụng sập vì secret hết hạn → rotation không phối hợp → rotation hai pha, ứng dụng tải lại secret**.
+- **Secrets manager chết làm cả hệ thống chết → phụ thuộc cứng → cache có TTL, retry, thiết kế HA**.
+- **Lưu AWS key trong CI secrets → khoá dài hạn → OIDC federation, trust policy theo repo/branch**.
+- Interview trap: "secret zero là gì?" → **credential ban đầu để lấy secret; giải bằng workload identity**; "bị commit secret thì làm gì trước?" → **thu hồi/xoay, rồi mới dọn history**; "dynamic secrets lợi gì?" → **credential tạm, riêng từng workload, tự hết hạn**.
 
 ## 6. Search Hooks
 
-- `secrets management best practices` — lưu, cấp phát, xoay vòng và audit secret.
-- `HashiCorp Vault dynamic secrets` — credentials sinh theo yêu cầu, có TTL.
-- `AWS Secrets Manager rotation` — xoay secret tự động trên AWS.
-- `OIDC federation CI/CD GitHub Actions AWS` — CI nhận quyền tạm thời không lưu key.
-- `gitleaks secret scanning pre-commit` — phát hiện secret trước khi commit.
-- `secret zero problem workload identity` — dùng danh tính thay cho credential khởi tạo.
+- `secrets management best practices` — thực hành quản lý secret.
+- `HashiCorp Vault dynamic secrets` — credential tạm theo yêu cầu.
+- `OIDC federation GitHub Actions AWS` — CI không cần khoá dài hạn.
+- `secret scanning pre-commit gitleaks` — chặn secret vào Git.
+- `workload identity IRSA Managed Identity` — danh tính workload thay secret tĩnh.
+- `secret zero problem` — bài toán credential khởi đầu.

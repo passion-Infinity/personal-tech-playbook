@@ -1,51 +1,81 @@
 ## 1. Core Concept
 
-**Clean/Hexagonal Architecture** đặt **nghiệp vụ (domain) ở trung tâm** và buộc mọi phụ thuộc chỉ hướng **vào trong**, để framework, DB, UI là chi tiết có thể thay. **Domain-Driven Design (DDD)** cung cấp từ vựng để mô hình hoá nghiệp vụ phức tạp: **entity, value object, aggregate, bounded context**. Mental model: *code nghiệp vụ không được biết nó đang chạy trên Spring, Postgres hay Kafka — những thứ đó cắm vào qua "cổng" (port).*
+**Clean/Hexagonal Architecture** đặt **logic nghiệp vụ (domain) ở trung tâm**, độc lập framework, DB, UI; các chi tiết kỹ thuật cắm vào qua **port/adapter**. **DDD** (Domain-Driven Design) bổ sung cách **mô hình hoá domain** bằng Entity, Value Object, Aggregate, ngôn ngữ chung. Cả hai giải quyết: **nghiệp vụ không bị trói vào công nghệ** nên dễ test, dễ đổi DB/framework và không thành "big ball of mud".
+
+**Mental model:** domain là **lõi của củ hành**; các lớp ngoài (use case, adapter, framework) bọc quanh. **Mũi tên phụ thuộc luôn hướng vào trong**: lõi không biết gì về lớp ngoài. DB hay REST chỉ là **chi tiết thay thế được**.
 
 ## 2. How It Works
 
-- **Dependency rule**: domain ← application ← infrastructure/interface. Lớp trong **không import** lớp ngoài.
-- **Các lớp**: **Domain** (entity, value object, quy tắc nghiệp vụ), **Application/Use case** (điều phối một kịch bản), **Infrastructure** (DB, HTTP client, queue), **Interface** (controller, CLI).
-- **Ports & Adapters**: **port** là interface do domain/application định nghĩa (`OrderRepository`, `PaymentGateway`); **adapter** là cài đặt cụ thể (JPA, Stripe) nằm ở ngoài — nhờ **Dependency Inversion**.
-- **DDD tactical**:
-  - **Entity** có danh tính; **Value Object** bất biến, so sánh theo giá trị (`Money`, `Address`).
-  - **Aggregate**: cụm đối tượng có **một root** và là **ranh giới nhất quán** — **một transaction chỉ sửa một aggregate**; tham chiếu aggregate khác bằng ID.
-  - **Repository** lưu/lấy aggregate; **Domain Service** cho logic không thuộc entity nào; **Domain Event** ghi nhận điều đã xảy ra.
-- **DDD strategic**: **Bounded Context** (ranh giới mô hình và ngôn ngữ), **Ubiquitous Language** (dev và chuyên gia nghiệp vụ dùng chung thuật ngữ), **Context Map** (quan hệ giữa các context) — nền tảng để tách microservices.
+**Dependency Rule**
+- Code **chỉ phụ thuộc vào trong**: infrastructure → application → domain. Lõi định nghĩa **interface (port)** như `OrderRepository`; adapter ở ngoài (JPA, REST) **cài đặt** nó (Dependency Inversion). Kết quả: test domain **không cần DB/Spring**.
+
+**Hexagonal (Ports & Adapters)**
+- **Port vào** (driving): use case mà bên ngoài gọi (REST controller, message listener). **Port ra** (driven): thứ lõi cần (repository, gửi email, payment gateway). **Adapter** là cài đặt cụ thể cho từng port.
+
+**Entity vs Value Object**
+- **Entity**: có **định danh** (`orderId`), bình đẳng theo id, vòng đời thay đổi. **Value Object**: **không có id**, **bất biến**, bình đẳng theo **giá trị** (`Money(100,"USD")`, `Address`), nên tự validate ngay lúc tạo. Ưu tiên Value Object để tránh "primitive obsession".
+
+**Aggregate và Aggregate Root**
+- **Aggregate** là cụm đối tượng được xử lý như **một đơn vị nhất quán**, **root** là cổng duy nhất để thay đổi và bảo vệ **invariant** (tổng tiền = tổng các dòng). Quy tắc: **một giao dịch = một aggregate**, tham chiếu aggregate khác **bằng id**, aggregate **nhỏ**. Truy cập qua **repository** theo root.
+
+**Anemic Domain Model**
+- Entity chỉ có getter/setter, logic dồn ở "service" → **mất ý nghĩa OOP**, invariant bị rải rác, dễ vi phạm. **Rich domain model**: hành vi nằm trong entity/aggregate (`order.addItem()`, `order.pay()`), setter không công khai.
+
+**Bounded Context và Ubiquitous Language**
+- Mỗi **bounded context** có **mô hình và thuật ngữ riêng** (Customer trong Sales ≠ Customer trong Billing); ranh giới thường tương ứng **microservice**. **Ubiquitous language**: dev và chuyên gia nghiệp vụ dùng cùng thuật ngữ, thể hiện trong code.
+
+```java
+public class Order {                                  // Aggregate Root: bảo vệ invariant
+    private final OrderId id; private final List<OrderLine> lines = new ArrayList<>();
+    private Status status = Status.DRAFT;
+    public void addLine(ProductId p, int qty, Money price) {
+        if (status != Status.DRAFT) throw new IllegalStateException("Order is locked");
+        if (qty <= 0) throw new IllegalArgumentException("qty");
+        lines.add(new OrderLine(p, qty, price));
+    }
+    public Money total() { return lines.stream().map(OrderLine::subtotal).reduce(Money.ZERO, Money::plus); }
+}
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    UI[Controller / CLI] --> UC[Use case]
-    UC --> DOM["Domain: entities, rules"]
-    UC -->|port| REPO[(OrderRepository)]
-    ADP["Adapter: SQL / JPA"] -.->|implements| REPO
-    UC -->|port| PAY[PaymentGateway]
-    ADP2["Adapter: Stripe client"] -.->|implements| PAY
+    UI["REST / Message adapter"] --> UC["Use case: application"]
+    UC --> DOM["Domain: Aggregate, Entity, Value Object"]
+    UC -->|"port ra"| REPO["OrderRepository (interface)"]
+    JPA["JPA adapter"] -.->|"cài đặt"| REPO
+    PAY["Payment adapter"] -.-> UC
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Dùng khi **nghiệp vụ phức tạp, sống lâu, nhiều quy tắc**; **CRUD đơn giản** thì kiến trúc này là thừa — ứng dụng nhỏ cứ giữ layered gọn.
-- Giữ **aggregate nhỏ**: aggregate to gây tranh chấp khoá và khó scale.
-- Thiết kế **bounded context trước**, rồi mới tách service: ranh giới sai thì microservices chỉ nhân bội vấn đề.
-- Trade-off: **dễ test và dễ thay công nghệ** đổi lấy **nhiều lớp, nhiều ánh xạ, boilerplate**.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Nghiệp vụ phức tạp, sống lâu | Clean/Hexagonal + DDD |
+| CRUD đơn giản | Không cần; tránh over-engineering |
+| Có giá trị đo lường (tiền, địa chỉ) | Value Object bất biến |
+| Cần bảo vệ invariant | Aggregate Root, một giao dịch/aggregate |
+| Nhiều đội, thuật ngữ khác nhau | Bounded Context |
+| Domain chỉ có getter/setter | Chuyển sang rich domain model |
+
+- **Được gì:** domain dễ test, thay công nghệ ít đau, nghiệp vụ rõ ràng. **Mất gì:** nhiều lớp, mapping giữa lớp, chi phí khởi đầu cao; không đáng cho ứng dụng CRUD nhỏ.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Anemic domain model**: entity chỉ có getter/setter, logic nằm hết trong service → mất ý nghĩa của DDD; đưa quy tắc vào entity/aggregate.
-- **Rò rỉ chi tiết hạ tầng vào domain** (annotation ORM, DTO HTTP trong entity) phá dependency rule.
-- **Sửa nhiều aggregate trong một transaction** là dấu hiệu ranh giới sai; dùng domain event và eventual consistency.
-- **Một mô hình dùng cho mọi nơi** (một `User` cho cả billing, auth, profile) làm mô hình phình to; mỗi bounded context có mô hình riêng.
-- **Over-engineering** cho CRUD: hàng chục file cho một bảng.
-- Interview trap: "Repository khác DAO?" → Repository là **abstraction của domain** trả aggregate; DAO bám sát bảng/DB.
+- **Domain import annotation của framework/DB → rò rỉ phụ thuộc → giữ domain thuần, ánh xạ ở adapter**.
+- **Một giao dịch sửa nhiều aggregate → khoá rộng, khó scale → một giao dịch một aggregate, nhất quán cuối cùng qua domain event**.
+- **Aggregate quá lớn (load cả cây) → chậm, xung đột → giữ nhỏ, tham chiếu bằng id**.
+- **Service chứa toàn bộ logic, entity chỉ có setter → anemic → đưa hành vi vào aggregate**.
+- **Dùng chung một model cho nhiều context → mơ hồ, coupling → bounded context + anti-corruption layer**.
+- **Áp DDD đầy đủ cho CRUD → phức tạp vô ích → chỉ dùng ở lõi nghiệp vụ phức tạp**.
+- Interview trap: "dependency rule?" → **phụ thuộc chỉ hướng vào trong**; "entity vs value object?" → **có định danh vs bất biến theo giá trị**; "aggregate root để làm gì?" → **bảo vệ invariant, cổng duy nhất thay đổi aggregate**.
 
 ## 6. Search Hooks
 
-- `hexagonal architecture ports and adapters` — domain ở giữa, hạ tầng cắm vào qua port.
-- `Clean Architecture dependency rule` — phụ thuộc chỉ hướng vào trong.
-- `DDD aggregate root consistency boundary` — ranh giới nhất quán và một transaction một aggregate.
-- `entity vs value object` — danh tính so với so sánh theo giá trị.
-- `bounded context context map` — ranh giới mô hình và quan hệ giữa các context.
-- `anemic domain model anti-pattern` — domain chỉ chứa dữ liệu, logic nằm ngoài.
+- `Hexagonal architecture ports and adapters` — domain ở lõi, adapter cắm ngoài.
+- `Clean Architecture dependency rule` — phụ thuộc hướng vào trong.
+- `DDD aggregate root` — đơn vị nhất quán và bảo vệ invariant.
+- `Entity vs Value Object` — định danh so với giá trị bất biến.
+- `anemic domain model` — anti-pattern thiếu hành vi.
+- `bounded context DDD` — ranh giới mô hình và thuật ngữ.
