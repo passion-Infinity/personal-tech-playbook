@@ -7040,59 +7040,59 @@
     "playbookId": "aws-cost-optimization-billing",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Tải ổn định 24/7 nên mua?",
+    "question": "Một web app có tải nền ổn định chạy 24/7 suốt 3 năm tới. Cách giảm chi phí compute hợp lý nhất?",
     "options": [
       "Spot",
       "Savings Plans hoặc RI",
       "On-Demand mãi",
-      "Dedicated"
+      "Dedicated Host"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cam kết giảm giá."
+    "explanation": "Tải ổn định hợp cam kết dài hạn. Spot dễ nhầm vì rẻ nhất, nhưng có thể bị thu hồi nên không an toàn cho tải nền chính."
   },
   {
     "id": "aws-cost-optimization-billing-02",
     "playbookId": "aws-cost-optimization-billing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tag không xuất hiện trong báo cáo chi phí vì?",
+    "question": "Team đã gán tag CostCenter cho mọi tài nguyên nhưng Cost Explorer không cho lọc theo tag đó. Nguyên nhân?",
     "options": [
-      "Sai tên",
-      "Chưa kích hoạt cost allocation tag",
-      "Hết hạn",
-      "Lỗi vùng"
+      "Sai tên tag",
+      "Chưa kích hoạt cost allocation tag trong Billing",
+      "Tag hết hạn",
+      "Lỗi Region"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần bật trong Billing."
+    "explanation": "Tag người dùng phải được kích hoạt trong Billing mới xuất hiện trong báo cáo chi phí."
   },
   {
     "id": "aws-cost-optimization-billing-03",
     "playbookId": "aws-cost-optimization-billing",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Chi phí dễ bị bỏ sót?",
+    "question": "Hoá đơn tăng 30% dù số instance không đổi, trong khi EC2 trả tiền ổn. Khoản dễ bị bỏ sót nhất cần kiểm tra?",
     "options": [
       "Chỉ EC2",
       "NAT Gateway và data transfer",
-      "Chỉ S3",
+      "Chỉ S3 storage",
       "IAM"
     ],
     "answer": [
       1
     ],
-    "explanation": "Phí xử lý dữ liệu và truyền."
+    "explanation": "Phí xử lý NAT theo GB và truyền dữ liệu cross-AZ/ra Internet hay bị bỏ sót. IAM không tính phí."
   },
   {
     "id": "aws-cost-optimization-billing-04",
     "playbookId": "aws-cost-optimization-billing",
     "type": "explain",
     "difficulty": 2,
-    "question": "Nêu các bước giảm chi phí AWS.",
-    "modelAnswer": "Đo và gán chi phí bằng tag, phân tích Cost Explorer/CUR, right-size, tắt tài nguyên rảnh, mua Savings Plans cho tải ổn định, dùng Spot cho tải chịu gián đoạn và đặt Budgets cảnh báo.",
+    "question": "Hãy nêu các bước giảm chi phí AWS cho một công ty chưa tối ưu gì.",
+    "modelAnswer": "Đo và gán chi phí bằng tag, phân tích bằng Cost Explorer/CUR, right-size và dọn tài nguyên rảnh, mua Savings Plans cho tải ổn định, dùng Spot cho tải chịu gián đoạn, và đặt Budgets cảnh báo để kiểm soát liên tục.",
     "keyPoints": [
       "Tag và đo",
       "Right-size và dọn dẹp",
@@ -7104,63 +7104,63 @@
     "playbookId": "aws-developer-toolkit",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Lambda cần ghi S3?",
+    "question": "Lambda cần ghi file vào S3. Cách cấp quyền đúng?",
     "options": [
-      "Nhúng access key",
-      "Execution role",
+      "Nhúng access key vào code",
+      "Execution role của Lambda",
       "Mở bucket public",
       "Dùng root"
     ],
     "answer": [
       1
     ],
-    "explanation": "Dùng role."
+    "explanation": "Execution role cấp credential tạm thời. Nhúng key dễ nhầm là nhanh, nhưng có thể lộ và khó thu hồi."
   },
   {
     "id": "aws-developer-toolkit-02",
     "playbookId": "aws-developer-toolkit",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cho người dùng tải file tạm thời mà không lộ credential?",
+    "question": "Cần cho khách tải file báo cáo trong 10 phút mà không cấp credential. Dùng gì?",
     "options": [
-      "Chia sẻ key",
+      "Chia sẻ access key",
       "Presigned URL",
-      "Mở public",
+      "Mở bucket public",
       "Email file"
     ],
     "answer": [
       1
     ],
-    "explanation": "URL ký có hạn."
+    "explanation": "Presigned URL có hạn dùng và mang quyền người ký. Mở bucket public dễ nhầm là đơn giản nhưng ai cũng truy cập được."
   },
   {
     "id": "aws-developer-toolkit-03",
     "playbookId": "aws-developer-toolkit",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Retry không jitter gây?",
+    "question": "Sau sự cố throttling, hàng nghìn client retry đồng loạt cùng lúc làm hệ thống tắc lại. Nguyên nhân?",
     "options": [
-      "Tốt hơn",
-      "Thundering herd",
+      "Retry giúp tốt hơn",
+      "Retry không jitter gây thundering herd",
       "Giảm lỗi",
       "Không ảnh hưởng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Nhiều client thử lại cùng lúc."
+    "explanation": "Retry cần exponential backoff có jitter để rải thời điểm thử lại."
   },
   {
     "id": "aws-developer-toolkit-04",
     "playbookId": "aws-developer-toolkit",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao phải lặp pagination?",
-    "modelAnswer": "API trả theo trang; nếu chỉ đọc trang đầu sẽ thiếu dữ liệu một cách âm thầm. Cần lặp bằng NextToken/LastEvaluatedKey đến khi hết.",
+    "question": "Một dev dùng list_objects_v2 nhưng thiếu object khi bucket có hơn 1.000 object. Vì sao cần lặp pagination?",
+    "modelAnswer": "API trả theo trang (tối đa 1.000 object mỗi lần); nếu chỉ đọc trang đầu sẽ thiếu dữ liệu một cách âm thầm. Cần lặp bằng ContinuationToken hoặc dùng paginator đến khi hết.",
     "keyPoints": [
       "Kết quả theo trang",
       "Thiếu dữ liệu âm thầm",
-      "Lặp đến hết"
+      "Lặp đến hết bằng paginator"
     ]
   },
   {
@@ -7168,63 +7168,63 @@
     "playbookId": "aws-backup-data-protection",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Replication có thay backup?",
+    "question": "Team bật replication sang Region khác rồi một lập trình viên chạy DROP TABLE nhầm. Điều gì xảy ra và replication có thay backup không?",
     "options": [
-      "Có",
-      "Không, xoá nhầm cũng bị sao chép",
-      "Chỉ với S3",
-      "Chỉ với RDS"
+      "Có, bản sao vẫn nguyên",
+      "Không, xoá nhầm cũng bị sao chép sang bản sao",
+      "Chỉ đúng với S3",
+      "Chỉ đúng với RDS"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần bản sao độc lập."
+    "explanation": "Replication nhân bản cả lỗi. Cần backup point-in-time."
   },
   {
     "id": "aws-backup-data-protection-02",
     "playbookId": "aws-backup-data-protection",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chống ransomware xoá backup?",
+    "question": "Công ty muốn chống ransomware xoá cả backup của chính mình. Giải pháp?",
     "options": [
       "Backup cùng account",
-      "Vault Lock và cross-account",
+      "Vault Lock và copy cross-account",
       "Tắt backup",
       "Giảm retention"
     ],
     "answer": [
       1
     ],
-    "explanation": "Bất biến và cô lập."
+    "explanation": "Vault Lock giữ bất biến và cross-account cô lập khỏi account bị chiếm. Backup cùng account dễ nhầm là tiện nhưng bị mất cùng lúc."
   },
   {
     "id": "aws-backup-data-protection-03",
     "playbookId": "aws-backup-data-protection",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Chiến lược DR: chỉ bật phần lõi tối thiểu, mở rộng khi sự cố?",
+    "question": "Chiến lược DR chỉ bật phần lõi tối thiểu như database replica, phần ứng dụng bật và mở rộng khi sự cố?",
     "options": [
       "Backup & Restore",
       "Pilot Light",
-      "Active-active",
+      "Multi-site active-active",
       "Không DR"
     ],
     "answer": [
       1
     ],
-    "explanation": "Pilot Light."
+    "explanation": "Pilot Light giữ phần lõi chạy sẵn. Warm Standby dễ nhầm vì cũng giữ sẵn, nhưng chạy bản thu nhỏ đầy đủ."
   },
   {
     "id": "aws-backup-data-protection-04",
     "playbookId": "aws-backup-data-protection",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao phải thử restore định kỳ?",
-    "modelAnswer": "Backup chưa từng restore không đảm bảo dùng được: có thể hỏng, thiếu khoá mã hoá, hoặc thời gian phục hồi vượt RTO. Thử định kỳ xác nhận quy trình và RTO thực tế.",
+    "question": "Công ty có backup hằng đêm 2 năm nhưng chưa từng thử khôi phục. Vì sao cần diễn tập restore định kỳ?",
+    "modelAnswer": "Backup chưa từng restore không đảm bảo dùng được: có thể hỏng, thiếu khoá mã hoá hoặc thời gian phục hồi vượt RTO. Diễn tập định kỳ xác nhận quy trình và đo RTO thực tế.",
     "keyPoints": [
       "Backup có thể hỏng",
-      "Thiếu khoá",
-      "Kiểm tra RTO thực tế"
+      "Thiếu khoá hoặc quyền",
+      "Đo RTO thực tế"
     ]
   },
   {
@@ -7232,24 +7232,24 @@
     "playbookId": "aws-certification-roadmap",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Chứng chỉ nền tảng phổ biến nhất?",
+    "question": "Một người mới hoàn toàn với cloud muốn chứng chỉ khởi đầu. Chọn?",
     "options": [
       "Cloud Practitioner",
       "Professional",
       "Specialty",
-      "DevOps Pro"
+      "DevOps Professional"
     ],
     "answer": [
       0
     ],
-    "explanation": "Foundational."
+    "explanation": "Cloud Practitioner là tầng Foundational. Professional/Specialty dễ nhầm vì uy tín, nhưng đòi hỏi kinh nghiệm nền."
   },
   {
     "id": "aws-certification-roadmap-02",
     "playbookId": "aws-certification-roadmap",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai đáp án đều đúng, chọn?",
+    "question": "Trong đề thi, hai đáp án đều đúng về kỹ thuật. Cách chọn?",
     "options": [
       "Đắt nhất",
       "Đáp ứng đủ ràng buộc với ít vận hành nhất",
@@ -7259,32 +7259,32 @@
     "answer": [
       1
     ],
-    "explanation": "Ưu tiên managed."
+    "explanation": "Đề thi ưu tiên managed và đáp ứng ràng buộc. Chọn đắt nhất dễ nhầm là an toàn, nhưng thường vi phạm yêu cầu chi phí."
   },
   {
     "id": "aws-certification-roadmap-03",
     "playbookId": "aws-certification-roadmap",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Nhầm lẫn phổ biến trong đề?",
+    "question": "Một câu hỏi yêu cầu hệ thống sống sót khi cả Region gặp sự cố, bạn chọn Multi-AZ. Nhầm lẫn phổ biến nào đã xảy ra?",
     "options": [
-      "HA và DR",
-      "S3 và S3",
-      "IAM và IAM",
-      "Không có"
+      "Nhầm HA với DR",
+      "Nhầm S3 với S3",
+      "Nhầm IAM với IAM",
+      "Không có nhầm lẫn"
     ],
     "answer": [
       0
     ],
-    "explanation": "Multi-AZ không phải multi-Region."
+    "explanation": "Multi-AZ là HA trong một Region; sống sót khi mất cả Region cần DR cross-Region."
   },
   {
     "id": "aws-certification-roadmap-04",
     "playbookId": "aws-certification-roadmap",
     "type": "explain",
     "difficulty": 2,
-    "question": "Cách tiếp cận câu hỏi tình huống?",
-    "modelAnswer": "Gạch từ khoá ràng buộc như rẻ nhất, ít vận hành nhất, độ trễ thấp, loại đáp án vi phạm ràng buộc, rồi ưu tiên managed, loosely coupled, multi-AZ và least privilege.",
+    "question": "Hãy mô tả cách tiếp cận một câu hỏi tình huống dài trong đề AWS.",
+    "modelAnswer": "Gạch từ khoá ràng buộc như rẻ nhất, ít vận hành nhất, độ trễ thấp hay tuân thủ, loại các đáp án vi phạm ràng buộc, rồi ưu tiên giải pháp managed, loosely coupled, multi-AZ và least privilege.",
     "keyPoints": [
       "Tìm ràng buộc",
       "Loại đáp án sai",
@@ -8615,27 +8615,27 @@
     "playbookId": "aws-cost-optimization-billing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tải ổn định chạy EC2 và Fargate, muốn linh hoạt?",
+    "question": "Công ty chạy EC2 và đang chuyển một phần sang Fargate, muốn một cam kết dùng chung cho cả hai. Chọn?",
     "options": [
       "EC2 Instance Savings Plan",
       "Compute Savings Plans",
       "Spot",
-      "Dedicated"
+      "Dedicated Host"
     ],
     "answer": [
       1
     ],
-    "explanation": "Compute SP áp cho nhiều dịch vụ."
+    "explanation": "Compute Savings Plans áp cho EC2, Fargate và Lambda. EC2 Instance Savings Plan dễ nhầm vì giảm sâu hơn nhưng gắn một family và không áp cho Fargate."
   },
   {
     "id": "aws-developer-toolkit-05",
     "playbookId": "aws-developer-toolkit",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai cách đúng để ứng dụng AWS xác thực không lưu key dài hạn? (chọn 2)",
+    "question": "Hai cách đúng để ứng dụng xác thực với AWS mà không lưu access key dài hạn? (chọn 2)",
     "options": [
-      "IAM role gắn compute",
-      "STS credential tạm",
+      "IAM role gắn vào compute",
+      "Credential tạm từ STS",
       "Access key trong code",
       "Root key"
     ],
@@ -8643,24 +8643,24 @@
       0,
       1
     ],
-    "explanation": "Credential tạm thời an toàn hơn."
+    "explanation": "Role và STS cấp credential tạm thời. Access key trong code và root key là phương án nguy hiểm dễ lộ."
   },
   {
     "id": "aws-backup-data-protection-05",
     "playbookId": "aws-backup-data-protection",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Backup không thể bị xoá kể cả bởi admin trong thời hạn?",
+    "question": "Cần bảo đảm backup không thể bị xoá hay sửa trong thời hạn retention, kể cả bởi admin. Dùng gì?",
     "options": [
       "Snapshot thường",
-      "Backup Vault Lock",
+      "AWS Backup Vault Lock",
       "Tag",
       "IAM deny"
     ],
     "answer": [
       1
     ],
-    "explanation": "Vault Lock cung cấp WORM."
+    "explanation": "Vault Lock cung cấp WORM. IAM deny dễ nhầm vì chặn xoá, nhưng admin có thể gỡ policy."
   },
   {
     "id": "azure-core-architecture-04",
