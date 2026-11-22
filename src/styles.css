@@ -267,11 +267,12 @@
   .topic-gradient {
     background-image: linear-gradient(135deg, var(--t-from, #8b5cf6), var(--t-to, #22d3ee));
   }
+  /* Solid, contrast-safe topic colour (gradient text vanished on dark backgrounds) */
   .topic-text {
-    background-image: linear-gradient(100deg, var(--t-from, #8b5cf6), var(--t-to, #22d3ee));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: color-mix(in srgb, var(--t-from, #8b5cf6) 72%, #000);
+  }
+  .dark .topic-text {
+    color: color-mix(in srgb, var(--t-from, #a78bfa) 55%, #fff);
   }
   .topic-tile {
     @apply inline-flex shrink-0 items-center justify-center rounded-xl text-white shadow-lg;
