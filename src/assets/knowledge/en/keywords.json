@@ -1008,5 +1008,80 @@
     "id": "transit-gateway",
     "meaning": "A central hub connecting many VPCs and on-premises",
     "definition": "A hub-and-spoke model with transitive routing, replacing a complex Peering mesh."
+  },
+  {
+    "id": "alb-nlb-gwlb",
+    "meaning": "Choose a load balancer by layer 7, 4 or 3",
+    "definition": "ALB (L7) routes by path/host; NLB (L4) has ultra-high performance and static IPs; GWLB (L3) inserts third-party appliances into the traffic path via GENEVE."
+  },
+  {
+    "id": "cross-zone-load-balancing",
+    "meaning": "Distribute traffic evenly across targets in every AZ",
+    "definition": "On by default for ALB, off for NLB/GWLB; enabling it on an NLB incurs inter-AZ traffic charges."
+  },
+  {
+    "id": "asg-target-tracking",
+    "meaning": "A policy that keeps a metric at a target value",
+    "definition": "For example keep CPU at 50% — the ASG scales the instance count itself; simpler than Step/Simple scaling based on alarm thresholds."
+  },
+  {
+    "id": "deregistration-delay",
+    "meaning": "Wait for in-flight requests to finish before removing a target",
+    "definition": "Default 300 seconds on an ELB target group, avoiding cutting connections when an instance is replaced or scaled in."
+  },
+  {
+    "id": "asg-lifecycle-hooks",
+    "meaning": "Insert actions when an instance launches or terminates",
+    "definition": "Lets you run setup scripts or save logs before an instance enters service or is destroyed."
+  },
+  {
+    "id": "rds-multi-az-vs-read-replica",
+    "meaning": "Multi-AZ for fault tolerance, Read Replica for read scaling",
+    "definition": "Multi-AZ uses a synchronous standby and automatic failover; a Read Replica replicates asynchronously, can be cross-Region and promoted to a standalone DB."
+  },
+  {
+    "id": "aurora-storage-architecture",
+    "meaning": "A shared volume with 6 copies across 3 AZs",
+    "definition": "One writer and up to 15 readers share storage that grows to 128 TiB; failover is typically under ~30 seconds."
+  },
+  {
+    "id": "aurora-global-database",
+    "meaning": "Aurora with ultra-low-latency cross-Region replication",
+    "definition": "About 1 second of replication, cross-Region failover in about a minute; suits DR with a very small RPO."
+  },
+  {
+    "id": "rds-proxy",
+    "meaning": "A connection pool for RDS/Aurora",
+    "definition": "Reduces failover time, protects the DB from connection storms (especially from Lambda) and supports IAM auth and Secrets Manager."
+  },
+  {
+    "id": "aurora-serverless-v2",
+    "meaning": "Aurora that scales automatically in ACU units",
+    "definition": "Suits erratic load and dev/test; capacity changes continuously without dropping connections."
+  },
+  {
+    "id": "dynamodb-partition-key-design",
+    "meaning": "Choose an evenly distributed partition key to avoid hot partitions",
+    "definition": "A high-cardinality key spreads load; a skewed key causes throttling even when total capacity remains."
+  },
+  {
+    "id": "dynamodb-capacity-rcu-wcu",
+    "meaning": "DynamoDB's read and write capacity units",
+    "definition": "1 RCU = one strongly consistent read of ≤ 4 KB/second (eventually consistent gets twice as many); 1 WCU = one write of ≤ 1 KB/second; transactions cost double."
+  },
+  {
+    "id": "dynamodb-gsi-vs-lsi",
+    "meaning": "DynamoDB's two secondary index types",
+    "definition": "A GSI changes the partition key, can be created at any time, and reads are eventually consistent; an LSI keeps the same partition key, is created only at table creation, at most 5."
+  },
+  {
+    "id": "dynamodb-dax",
+    "meaning": "A write-through in-memory cache for DynamoDB",
+    "definition": "Reduces read latency to microseconds and only serves eventually consistent reads."
+  },
+  {
+    "id": "dynamodb-global-tables",
+    "meaning": "Multi-Region, multi-active tables",
+    "definition": "Every replica is writable, conflicts are resolved by last-writer-wins; used for DR and access close to users."
   }
 ]

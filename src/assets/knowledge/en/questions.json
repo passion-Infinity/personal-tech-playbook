@@ -2034,5 +2034,167 @@
       "Only the same account works"
     ],
     "explanation": "Peering requires non-overlapping CIDRs. 'Same Region/account' is easy to confuse because peering actually works cross-Region and cross-account."
+  },
+  {
+    "id": "elb-auto-scaling-01",
+    "question": "A system has 3 microservices sharing one domain: /api/* to service A, /img/* to service B, /ws/* to service C using WebSocket. Which load balancer do you use?",
+    "options": [
+      "NLB",
+      "ALB",
+      "GWLB",
+      "Classic"
+    ],
+    "explanation": "ALB is Layer 7 and supports host/path routing and WebSocket. NLB is tempting for its performance, but it only understands TCP/UDP so it cannot route by path."
+  },
+  {
+    "id": "elb-auto-scaling-02",
+    "question": "Web traffic fluctuates constantly and the team wants the ASG to keep average CPU around 50% without hand-tuning thresholds. Which policy?",
+    "options": [
+      "Scheduled",
+      "Target tracking",
+      "Manual",
+      "Lifecycle hook"
+    ],
+    "explanation": "Target tracking adjusts the instance count itself to keep a metric at the target. Scheduled is tempting because it is also automatic, but it only runs on a fixed schedule, not according to real load."
+  },
+  {
+    "id": "elb-auto-scaling-03",
+    "question": "After moving a web app to an ASG, users keep getting logged out whenever the system scales. Why should instances in an ASG be stateless and how should it be fixed?",
+    "modelAnswer": "An ASG can add or remove instances at any time, so state stored locally on an instance is lost and requests cannot be assumed to return to the same instance. State must move to a shared DB or cache such as ElastiCache/DynamoDB so every instance can serve any request and be replaced safely on scale-in.",
+    "keyPoints": [
+      "Instances can be added/removed at any time",
+      "Local state is lost",
+      "State belongs in a shared DB/cache"
+    ]
+  },
+  {
+    "id": "elb-auto-scaling-04",
+    "question": "During scale-in, some users report large file downloads being cut off. Which setting lets in-flight connections finish and what is the default?",
+    "options": [
+      "Turn off health checks",
+      "Deregistration delay, default 300 seconds",
+      "Set the cooldown to 0",
+      "Use a Classic LB"
+    ],
+    "explanation": "Deregistration delay lets existing connections finish before the target is removed. Cooldown is tempting because it relates to scaling, but it only blocks consecutive scaling actions and does not protect connections."
+  },
+  {
+    "id": "elb-auto-scaling-05",
+    "question": "A team enables cross-zone on an NLB and sees the data transfer bill rise. What is true?",
+    "options": [
+      "Cross-zone on an NLB is free",
+      "On an NLB cross-zone is off by default and enabling it incurs inter-AZ traffic charges, while on an ALB it is on by default at no charge",
+      "Only ALBs have cross-zone",
+      "Cross-zone is only for GWLB"
+    ],
+    "explanation": "ALB has cross-zone on by default with no inter-AZ charge; NLB/GWLB are off by default and enabling it is charged for inter-AZ traffic."
+  },
+  {
+    "id": "rds-aurora-01",
+    "question": "An application needs AZ fault tolerance for its database with automatic failover, but has no need to scale reads yet. What do you choose?",
+    "options": [
+      "Read Replica",
+      "Multi-AZ",
+      "A manual snapshot",
+      "A bigger instance"
+    ],
+    "explanation": "Multi-AZ uses a synchronous standby and automatic failover. A Read Replica is easy to confuse because it is also a copy, but it is asynchronous and does not fail over automatically like Multi-AZ."
+  },
+  {
+    "id": "rds-aurora-02",
+    "question": "A production RDS instance has run for 2 years unencrypted and a compliance requirement now mandates encryption. What is the right way?",
+    "options": [
+      "Enable encryption directly in the console",
+      "Create a snapshot, copy the snapshot with encryption, then restore",
+      "It is impossible",
+      "Switch the engine to Aurora"
+    ],
+    "explanation": "Encryption must be chosen at creation; an existing DB must go through an encrypted snapshot. Switching engine is tempting as a solution but does not enable encryption for existing data."
+  },
+  {
+    "id": "rds-aurora-03",
+    "question": "A read-heavy app is slow and the team is weighing Multi-AZ versus a Read Replica. How do the two mechanisms differ and which should they choose?",
+    "modelAnswer": "Multi-AZ uses a synchronous standby in another AZ for fault tolerance with automatic failover, and the standby does not serve reads. A Read Replica replicates asynchronously to scale reads, can be cross-Region, has replica lag and can be promoted. Since the problem is heavy reads, choose a Read Replica; if fault tolerance is also needed, add Multi-AZ.",
+    "keyPoints": [
+      "Multi-AZ: synchronous, HA, does not serve reads",
+      "Read Replica: asynchronous, read scaling, has lag",
+      "Two different goals, both can be used"
+    ]
+  },
+  {
+    "id": "rds-aurora-04",
+    "question": "Lambda opens thousands of concurrent connections and exhausts the DB's connections at peak. What is a suitable solution?",
+    "options": [
+      "Increase backup retention",
+      "RDS Proxy to pool and reuse connections",
+      "Turn off Multi-AZ",
+      "Switch to a Read Replica"
+    ],
+    "explanation": "RDS Proxy pools connections to protect the DB from connection storms. A Read Replica is tempting because it spreads read load, but it does not solve too many open connections."
+  },
+  {
+    "id": "rds-aurora-05",
+    "question": "After writing an order, the application immediately reads from a Read Replica and sometimes does not see the order. Why, and how do you handle it?",
+    "options": [
+      "Multi-AZ failed",
+      "The replica replicates asynchronously with replica lag, so read-after-write must use the writer",
+      "An old snapshot",
+      "RDS Proxy is missing"
+    ],
+    "explanation": "Replication is asynchronous so there is lag. Multi-AZ is easy to confuse, but the standby is synchronous and unrelated to read queries on a replica."
+  },
+  {
+    "id": "dynamodb-01",
+    "question": "An orders table of 2 TB; the order detail page needs a customer's orders for this month sorted by date. Which query approach is correct and cheapest?",
+    "options": [
+      "Scan and then filter by customerId and month",
+      "Query by partition key customerId with a sort key condition orderDate begins_with the month",
+      "Increase RCU so the Scan is faster",
+      "Use DAX to make the Scan faster"
+    ],
+    "explanation": "A Query touches only one partition key and a sort key range, so it costs RCU by the data returned. A Scan (even with more RCU or DAX) still reads the whole table; DAX only caches results and does not turn a Scan into key-based access."
+  },
+  {
+    "id": "dynamodb-02",
+    "question": "A table whose partition key is status (ACTIVE or CLOSED) is constantly hit by ProvisionedThroughputExceededException although the table's total WCU is plentiful. What is the root cause?",
+    "options": [
+      "Too many GSIs",
+      "The partition key has low cardinality so load piles onto one partition (a hot partition)",
+      "TTL is enabled",
+      "It is using on-demand mode"
+    ],
+    "explanation": "Each partition handles only about 1,000 WCU and 3,000 RCU; a skewed key piles load onto one partition so there is throttling even when the table has spare capacity overall. Adding GSIs can cause back-pressure but does not explain throttling while capacity is spare."
+  },
+  {
+    "id": "dynamodb-03",
+    "question": "A team needs two extra query paths on a production table: by customer email (not the partition key) and by delivery date within one customer with strongly consistent reads. Explain how a GSI differs from an LSI and how feasible each need is.",
+    "modelAnswer": "A GSI has a different partition key, can be created at any time, has its own capacity and reads only eventually consistent, so it meets the email need. An LSI has the same partition key but a different sort key, supports strongly consistent reads, is limited to 5 and can only be created at table creation, with a 10 GB limit per partition key value; since the table is already running, the second need cannot be met by adding an LSI, so they must create a new table or accept eventual consistency through a GSI.",
+    "keyPoints": [
+      "GSI: different partition key, can be created later, own capacity, eventually consistent",
+      "LSI: same partition key, only at table creation, at most 5, 10 GB per key, supports strongly consistent",
+      "An LSI cannot be added to an existing table"
+    ]
+  },
+  {
+    "id": "dynamodb-04",
+    "question": "An application needs to find orders by customer email, but the table only has the partition key orderId. The team proposes a Scan filtered by email, running 50 times per second. What is the right solution?",
+    "options": [
+      "Keep scanning but raise RCU",
+      "Create a Global Secondary Index with email as the partition key",
+      "Add DAX in front of the table",
+      "Switch to an LSI for email"
+    ],
+    "explanation": "A GSI allows querying by an alternative key and can be created at any time. Raising RCU only makes the Scan more expensive; an LSI uses the same partition key and can only be created at table creation so it does not help find by email."
+  },
+  {
+    "id": "dynamodb-05",
+    "question": "A newly launched application has unpredictable traffic. Which two statements about on-demand mode are correct? (choose 2)",
+    "options": [
+      "No need to forecast and declare capacity in advance",
+      "Billed by the number of read/write requests",
+      "Always cheaper than provisioned at every load level",
+      "Does not support GSIs"
+    ],
+    "explanation": "On-demand scales automatically and is billed per request, so it suits unpredictable load. The claim \"always cheaper\" is wrong because for steady, high load provisioned with auto scaling is usually cheaper."
   }
 ]

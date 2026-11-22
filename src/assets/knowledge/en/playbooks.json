@@ -188,5 +188,20 @@
     "id": "vpc-networking",
     "title": "AWS VPC Networking",
     "summary": "Build an isolated network on AWS with subnets, NAT, endpoints and connect multiple VPCs with Peering or Transit Gateway."
+  },
+  {
+    "id": "elb-auto-scaling",
+    "title": "ELB & EC2 Auto Scaling",
+    "summary": "Combine the right type of load balancer with an Auto Scaling Group to achieve high availability and elasticity with load."
+  },
+  {
+    "id": "rds-aurora",
+    "title": "RDS & Aurora High Availability",
+    "summary": "Distinguish Multi-AZ (fault tolerance) from Read Replicas (read scaling) and choose Aurora when you need performance, durability and Global Database."
+  },
+  {
+    "id": "dynamodb",
+    "title": "Amazon DynamoDB Design",
+    "summary": "Design DynamoDB tables around access patterns with a good partition key, suitable capacity, the right kind of index and DAX when caching is needed."
   }
 ]
