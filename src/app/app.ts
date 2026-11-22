@@ -44,14 +44,6 @@ import { I18n } from './core/i18n.service';
     <header
       class="glass-strong sticky top-0 z-30 flex h-14 items-center gap-2 border-x-0 border-t-0 px-3 pt-[env(safe-area-inset-top)] lg:hidden"
     >
-      <button
-        type="button"
-        class="icon-btn"
-        aria-label="{{ i18n.t('Mở menu') }}"
-        (click)="ui.drawerOpen.set(true)"
-      >
-        <app-icon name="menu" />
-      </button>
       <a routerLink="/" class="flex min-w-0 items-center gap-2 font-display font-semibold text-ink">
         <img src="icons/icon-96x96.png" alt="" width="28" height="28" class="rounded-lg" />
         <span class="truncate">Playbook</span>
@@ -70,6 +62,14 @@ import { I18n } from './core/i18n.service';
         [attr.aria-label]="i18n.t('Đổi ngôn ngữ')"
       >
         {{ i18n.isEn() ? 'EN' : 'VI' }}
+      </button>
+      <button
+        type="button"
+        class="icon-btn shrink-0"
+        (click)="theme.toggle()"
+        [attr.aria-label]="theme.theme() === 'dark' ? i18n.t('Chế độ sáng') : i18n.t('Chế độ tối')"
+      >
+        <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
       </button>
     </header>
 

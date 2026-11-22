@@ -11,22 +11,22 @@
    Light = pastel aurora (default in @theme), Dark = deep space (.dark)
    ============================================================ */
 @theme {
-  --color-bg: #f6f5fb;
-  --color-sidebar: rgb(255 255 255 / 0.55);
-  --color-surface: rgb(255 255 255 / 0.62);
-  --color-surface-strong: rgb(255 255 255 / 0.85);
-  --color-line: rgb(30 27 75 / 0.09);
-  --color-ink: #141631;
-  --color-muted: #5b6280;
+  --color-bg: #fbfbfd;
+  --color-sidebar: rgb(255 255 255 / 0.92);
+  --color-surface: rgb(255 255 255 / 0.94);
+  --color-surface-strong: #ffffff;
+  --color-line: rgb(30 27 75 / 0.14);
+  --color-ink: #0f1226;
+  --color-muted: #454c6b;
   --color-accent: #7c3aed;
-  --color-accent-ink: #6d28d9;
+  --color-accent-ink: #5b21b6;
   --color-accent-soft: rgb(124 58 237 / 0.1);
   --color-cyan: #0891b2;
   --color-pink: #db2777;
-  --color-code-bg: rgb(245 243 255 / 0.9);
-  --color-aurora-1: rgb(167 139 250 / 0.45);
-  --color-aurora-2: rgb(34 211 238 / 0.35);
-  --color-aurora-3: rgb(244 114 182 / 0.3);
+  --color-code-bg: #f3f2fa;
+  --color-aurora-1: rgb(167 139 250 / 0.16);
+  --color-aurora-2: rgb(34 211 238 / 0.12);
+  --color-aurora-3: rgb(244 114 182 / 0.1);
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -421,8 +421,9 @@
   --tw-prose-invert-counters: var(--color-accent);
   --tw-prose-invert-th-borders: var(--color-line);
   --tw-prose-invert-td-borders: var(--color-line);
-  font-size: 1.02rem;
+  font-size: 1.06rem;
   line-height: 1.8;
+  letter-spacing: 0.005em;
 }
 .markdown h2 {
   position: relative;
@@ -647,4 +648,11 @@
 .dark .hljs-attribute,
 .dark .hljs-meta {
   color: #f9a8d4;
+}
+
+/* Light mode on phones: a clean, near-white reading surface (no tinted aurora behind the text) */
+@media (max-width: 1023px) {
+  html:not(.dark) .aurora {
+    display: none;
+  }
 }
