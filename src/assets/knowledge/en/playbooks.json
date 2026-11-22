@@ -233,5 +233,20 @@
     "id": "cloudwatch-cloudtrail-config",
     "title": "CloudWatch, CloudTrail & AWS Config",
     "summary": "Distinguish performance monitoring, API auditing and configuration tracking for investigation and compliance on AWS."
+  },
+  {
+    "id": "ecs-eks-fargate",
+    "title": "ECS, EKS & Fargate",
+    "summary": "Choose a container orchestrator (ECS/EKS) and compute (EC2/Fargate), along with how to grant permissions to tasks/pods."
+  },
+  {
+    "id": "api-gateway-step-functions",
+    "title": "API Gateway & Step Functions",
+    "summary": "Use API Gateway as the front door and Step Functions to orchestrate workflows instead of chains of Lambdas."
+  },
+  {
+    "id": "kinesis-streaming",
+    "title": "Amazon Kinesis (Streams, Firehose, Flink)",
+    "summary": "Choose Kinesis Data Streams, Firehose or Flink for ingesting and processing streaming data."
   }
 ]

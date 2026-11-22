@@ -1233,5 +1233,70 @@
     "id": "cloudwatch-composite-alarms",
     "meaning": "Combine several alarms",
     "definition": "Reduces noise with AND/OR conditions across alarms."
+  },
+  {
+    "id": "ecs-task-role-execution-role",
+    "meaning": "ECS's two roles",
+    "definition": "The task role grants permissions to the application; the execution role lets ECS pull images and write logs."
+  },
+  {
+    "id": "fargate-vs-ec2-launch-type",
+    "meaning": "Serverless or self-managed nodes",
+    "definition": "Fargate has no servers to manage but costs more under steady load."
+  },
+  {
+    "id": "eks-irsa",
+    "meaning": "IAM permissions per pod",
+    "definition": "Grants a role to each pod instead of the node's role, following least privilege."
+  },
+  {
+    "id": "karpenter-vs-cluster-autoscaler",
+    "meaning": "Scaling nodes for EKS",
+    "definition": "Karpenter creates just-right nodes directly, and faster."
+  },
+  {
+    "id": "amazon-ecr",
+    "meaning": "AWS's container registry",
+    "definition": "Stores images, scans for vulnerabilities and has lifecycle policies."
+  },
+  {
+    "id": "api-gateway-rest-vs-http",
+    "meaning": "Two API types",
+    "definition": "REST has many features; HTTP API is cheaper and faster."
+  },
+  {
+    "id": "api-gateway-lambda-authorizer",
+    "meaning": "Custom authentication",
+    "definition": "A Lambda decides whether to allow the request."
+  },
+  {
+    "id": "step-functions-standard-vs-express",
+    "meaning": "Two workflow types",
+    "definition": "Standard runs long with exactly-once; Express is short, at-least-once, with high throughput."
+  },
+  {
+    "id": "api-gateway-throttling-usage-plans",
+    "meaning": "Rate limits and quotas",
+    "definition": "Limits per stage and per API key."
+  },
+  {
+    "id": "kinesis-shards-partition-key",
+    "meaning": "Distributing data across shards",
+    "definition": "Each shard handles 1 MB/s of writes, and ordering is only guaranteed within a shard."
+  },
+  {
+    "id": "kinesis-enhanced-fan-out",
+    "meaning": "Dedicated bandwidth per consumer",
+    "definition": "2 MB/s per consumer, pushed over HTTP/2."
+  },
+  {
+    "id": "kinesis-firehose",
+    "meaning": "Near-real-time delivery",
+    "definition": "Buffers and then pushes into S3, Redshift, OpenSearch, with no replay."
+  },
+  {
+    "id": "kinesis-vs-sqs-vs-msk",
+    "meaning": "Comparing messaging and streaming",
+    "definition": "Choose by replay, ordering and the number of consumers."
   }
 ]

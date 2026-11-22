@@ -2522,5 +2522,167 @@
       "Cost Explorer"
     ],
     "explanation": "CloudTrail shows who called the API and Config shows the configuration before and after. A CloudWatch CPU metric is tempting because it is an observability tool but is unrelated to configuration."
+  },
+  {
+    "id": "ecs-eks-fargate-01",
+    "question": "A team wants to run production containers without patching or managing servers. What do you choose?",
+    "options": [
+      "EC2 launch type",
+      "Fargate",
+      "Dedicated Host",
+      "Snowball"
+    ],
+    "explanation": "Fargate is serverless compute for containers. The EC2 launch type is easy to confuse because it also runs containers, but you manage the nodes."
+  },
+  {
+    "id": "ecs-eks-fargate-02",
+    "question": "An ECS container needs to write an object to S3 but PutObject returns AccessDenied. Which role do you grant the permission to?",
+    "options": [
+      "The execution role",
+      "The task role",
+      "The deployer's role",
+      "A security group"
+    ],
+    "explanation": "The application in the container uses the task role. The execution role is easy to confuse because it also has 'role' in the name, but it is for the ECS agent to pull images and write logs."
+  },
+  {
+    "id": "ecs-eks-fargate-03",
+    "question": "An EKS pod must read a DynamoDB table with least privilege and other pods must not have this permission. What is the right way?",
+    "options": [
+      "Attach the permission to the node role",
+      "IRSA / EKS Pod Identity",
+      "Hard-code an access key",
+      "Open the security group"
+    ],
+    "explanation": "IRSA grants a separate role to the pod's service account. Attaching the permission to the node role is tempting because it is simple, but every pod on the node gets the permission."
+  },
+  {
+    "id": "ecs-eks-fargate-04",
+    "question": "A 5-person startup not using Kubernetes needs to run 8 container microservices. When should it choose ECS over EKS and why?",
+    "modelAnswer": "ECS is simple, deeply integrated with AWS (ALB, IAM, CloudWatch) and has no control plane fee, suiting cases where the Kubernetes ecosystem is not needed. Choose EKS when you need the Kubernetes API, community tooling, multi-cloud portability or the team already knows K8s, at the cost of complexity and money. For this startup, choose ECS on Fargate.",
+    "keyPoints": [
+      "ECS is simple, AWS-integrated",
+      "EKS for the Kubernetes ecosystem",
+      "An operations trade-off"
+    ]
+  },
+  {
+    "id": "ecs-eks-fargate-05",
+    "question": "A Fargate task in a private subnet fails to start with an error that it cannot pull the image from ECR. What is the most reasonable cause?",
+    "options": [
+      "No outbound path: it needs NAT or VPC endpoints for ECR and S3",
+      "A missing Task role",
+      "Missing Reserved concurrency",
+      "The wrong Availability Zone"
+    ],
+    "explanation": "A task in a private subnet needs a path to ECR. The Task role is tempting because it relates to permissions, but the permission to pull images belongs to the Execution role."
+  },
+  {
+    "id": "api-gateway-step-functions-01",
+    "question": "An endpoint calls a backend that takes about 40 seconds and often returns 504 through API Gateway. What is the default maximum integration time and what should you do?",
+    "options": [
+      "3 seconds, raise RAM",
+      "29 seconds, switch to asynchronous processing",
+      "5 minutes, raise the Lambda timeout",
+      "15 minutes, switch to HTTP API"
+    ],
+    "explanation": "The default integration timeout is 29 seconds so long work must be asynchronous (SQS/Step Functions). 15 minutes is easy to confuse because it is Lambda's limit, not API Gateway's."
+  },
+  {
+    "id": "api-gateway-step-functions-02",
+    "question": "An ordering process consists of checking stock, payment and shipping; if payment fails stock must be restored. What do you choose?",
+    "options": [
+      "Lambda calling Lambda",
+      "Step Functions with Retry and Catch",
+      "SNS",
+      "CloudFront"
+    ],
+    "explanation": "Step Functions manages state, retries and compensation branches. Lambda calling Lambda is tempting because it is simple, but it is hard to retry/roll back and you pay while waiting."
+  },
+  {
+    "id": "api-gateway-step-functions-03",
+    "question": "An Express workflow processes payment events and sometimes charges a customer twice. What must you note?",
+    "options": [
+      "Express is exactly-once",
+      "Express is at-least-once so operations must be idempotent",
+      "Express runs for at most 1 year",
+      "Express has no logs"
+    ],
+    "explanation": "Express may run twice in asynchronous mode. Standard is the one that is exactly-once for workflow execution, so the two modes are easy to confuse."
+  },
+  {
+    "id": "api-gateway-step-functions-04",
+    "question": "A developer chains three Lambdas that call each other synchronously to process orders. Explain why to avoid this and what to use instead.",
+    "modelAnswer": "Two Lambdas are billed at the same time while one waits for the other, it easily hits timeouts and makes error handling, retries and rollback hard. Step Functions or a queue lets you separate the steps, with configurable retries, Catch compensation branches and per-step state tracking.",
+    "keyPoints": [
+      "You pay while waiting",
+      "Hard to retry and roll back",
+      "Use Step Functions or a queue"
+    ]
+  },
+  {
+    "id": "api-gateway-step-functions-05",
+    "question": "A Lambda behind API Gateway REST takes 40 seconds in the normal case. What happens to the client?",
+    "options": [
+      "It runs normally",
+      "It may hit API Gateway's 29-second timeout even though the Lambda keeps running",
+      "The timeout increases automatically",
+      "No effect"
+    ],
+    "explanation": "API Gateway cuts off after the default integration timeout of 29 seconds. Raising the Lambda timeout is tempting as enough, but the limit sits in API Gateway."
+  },
+  {
+    "id": "kinesis-streaming-01",
+    "question": "An analytics system must keep a clickstream for 7 days so several services can read it and replay when fixing bugs. What do you choose?",
+    "options": [
+      "SQS",
+      "Kinesis Data Streams",
+      "Firehose",
+      "SNS"
+    ],
+    "explanation": "Streams keeps retention and supports many consumers. SQS is tempting because it is a queue, but messages are deleted after processing and cannot be replayed."
+  },
+  {
+    "id": "kinesis-streaming-02",
+    "question": "A team needs to ingest logs into S3 in Parquet format with the least code. What do you choose?",
+    "options": [
+      "Data Streams + KCL",
+      "Firehose",
+      "SQS",
+      "A hand-written Lambda"
+    ],
+    "explanation": "Firehose has built-in format conversion and delivery into S3. Data Streams is tempting because it also ingests data, but you must write the consumer yourself."
+  },
+  {
+    "id": "kinesis-streaming-03",
+    "question": "A stream with 10 shards constantly reports ProvisionedThroughputExceeded while total throughput is under 30%. What is the cause?",
+    "options": [
+      "A hot shard from a skewed partition key",
+      "Retention expired",
+      "Wrong IAM",
+      "Missing VPC"
+    ],
+    "explanation": "One very hot key piles onto one shard so that shard is throttled even though total capacity remains. Expired retention does not cause throughput errors."
+  },
+  {
+    "id": "kinesis-streaming-04",
+    "question": "Records A and B share a partition key and records C and D have different keys. Explain Kinesis's ordering guarantee.",
+    "modelAnswer": "Ordering is only guaranteed within each shard. The partition key is hashed to a shard, so records with the same key keep their order (A before B), while C and D on other shards have no global ordering relative to A/B. Resharding can change the key's mapping to another shard.",
+    "keyPoints": [
+      "Ordering per shard",
+      "The same key lands on the same shard",
+      "No global ordering"
+    ]
+  },
+  {
+    "id": "kinesis-streaming-05",
+    "question": "Three consumers reading one stream are slow because they share the shard's 2 MB/s. How do you solve it?",
+    "options": [
+      "Shared throughput",
+      "Enhanced Fan-Out",
+      "Firehose",
+      "SQS"
+    ],
+    "explanation": "Enhanced Fan-Out gives each consumer its own 2 MB/s. Shared throughput is the root cause, easy to mistake as a reasonable default configuration."
   }
 ]
