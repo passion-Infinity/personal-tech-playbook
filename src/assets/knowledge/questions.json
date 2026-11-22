@@ -6897,5 +6897,389 @@
       "Blue/green + rollback",
       "Least privilege và secret"
     ]
+  },
+  {
+    "id": "aws-advanced-networking-01",
+    "playbookId": "aws-advanced-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy cập S3 từ private subnet không qua Internet, rẻ nhất?",
+    "options": [
+      "NAT Gateway",
+      "Gateway endpoint",
+      "Interface endpoint",
+      "Direct Connect"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Gateway endpoint cho S3 miễn phí."
+  },
+  {
+    "id": "aws-advanced-networking-02",
+    "playbookId": "aws-advanced-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "NACL khác security group ở điểm nào?",
+    "options": [
+      "Stateful",
+      "Stateless và cấp subnet",
+      "Chỉ allow",
+      "Cấp instance"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "NACL cần rule chiều về."
+  },
+  {
+    "id": "aws-advanced-networking-03",
+    "playbookId": "aws-advanced-networking",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cần IP tĩnh toàn cầu và failover nhanh cho TCP?",
+    "options": [
+      "CloudFront",
+      "Global Accelerator",
+      "Route 53 simple",
+      "S3"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Anycast IP và health check."
+  },
+  {
+    "id": "aws-advanced-networking-04",
+    "playbookId": "aws-advanced-networking",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao tạo NAT Gateway mỗi AZ?",
+    "modelAnswer": "NAT Gateway nằm trong một AZ; nếu AZ đó lỗi thì subnet private ở các AZ khác mất đường ra Internet. Mỗi AZ một NAT giữ độ sẵn sàng và tránh phí cross-AZ.",
+    "keyPoints": [
+      "NAT thuộc một AZ",
+      "Giữ độ sẵn sàng",
+      "Tránh phí cross-AZ"
+    ]
+  },
+  {
+    "id": "aws-database-portfolio-01",
+    "playbookId": "aws-database-portfolio",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn bạn của bạn bè nhiều bước, dữ liệu quan hệ sâu?",
+    "options": [
+      "DynamoDB",
+      "Neptune",
+      "S3",
+      "Timestream"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Graph database."
+  },
+  {
+    "id": "aws-database-portfolio-02",
+    "playbookId": "aws-database-portfolio",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Multi-AZ RDS dùng để?",
+    "options": [
+      "Scale đọc",
+      "Chịu lỗi HA đồng bộ",
+      "Giảm chi phí",
+      "Backup"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Failover tự động."
+  },
+  {
+    "id": "aws-database-portfolio-03",
+    "playbookId": "aws-database-portfolio",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Dùng DynamoDB cho truy vấn ad-hoc nhiều join?",
+    "options": [
+      "Tốt",
+      "Sai công cụ, nên dùng SQL/warehouse",
+      "Chỉ cần GSI",
+      "Chỉ cần DAX"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DynamoDB tối ưu truy cập theo khoá."
+  },
+  {
+    "id": "aws-database-portfolio-04",
+    "playbookId": "aws-database-portfolio",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào chọn Aurora thay vì DynamoDB?",
+    "modelAnswer": "Khi cần quan hệ, join, giao dịch ACID và truy vấn linh hoạt. DynamoDB hợp truy cập theo khoá với scale và độ trễ dự đoán được, nhưng truy vấn ad-hoc kém.",
+    "keyPoints": [
+      "Quan hệ và join",
+      "ACID",
+      "Truy vấn linh hoạt"
+    ]
+  },
+  {
+    "id": "aws-cost-optimization-billing-01",
+    "playbookId": "aws-cost-optimization-billing",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Tải ổn định 24/7 nên mua?",
+    "options": [
+      "Spot",
+      "Savings Plans hoặc RI",
+      "On-Demand mãi",
+      "Dedicated"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cam kết giảm giá."
+  },
+  {
+    "id": "aws-cost-optimization-billing-02",
+    "playbookId": "aws-cost-optimization-billing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tag không xuất hiện trong báo cáo chi phí vì?",
+    "options": [
+      "Sai tên",
+      "Chưa kích hoạt cost allocation tag",
+      "Hết hạn",
+      "Lỗi vùng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần bật trong Billing."
+  },
+  {
+    "id": "aws-cost-optimization-billing-03",
+    "playbookId": "aws-cost-optimization-billing",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Chi phí dễ bị bỏ sót?",
+    "options": [
+      "Chỉ EC2",
+      "NAT Gateway và data transfer",
+      "Chỉ S3",
+      "IAM"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Phí xử lý dữ liệu và truyền."
+  },
+  {
+    "id": "aws-cost-optimization-billing-04",
+    "playbookId": "aws-cost-optimization-billing",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Nêu các bước giảm chi phí AWS.",
+    "modelAnswer": "Đo và gán chi phí bằng tag, phân tích Cost Explorer/CUR, right-size, tắt tài nguyên rảnh, mua Savings Plans cho tải ổn định, dùng Spot cho tải chịu gián đoạn và đặt Budgets cảnh báo.",
+    "keyPoints": [
+      "Tag và đo",
+      "Right-size và dọn dẹp",
+      "Savings Plans, Spot, Budgets"
+    ]
+  },
+  {
+    "id": "aws-developer-toolkit-01",
+    "playbookId": "aws-developer-toolkit",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Lambda cần ghi S3?",
+    "options": [
+      "Nhúng access key",
+      "Execution role",
+      "Mở bucket public",
+      "Dùng root"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dùng role."
+  },
+  {
+    "id": "aws-developer-toolkit-02",
+    "playbookId": "aws-developer-toolkit",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cho người dùng tải file tạm thời mà không lộ credential?",
+    "options": [
+      "Chia sẻ key",
+      "Presigned URL",
+      "Mở public",
+      "Email file"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "URL ký có hạn."
+  },
+  {
+    "id": "aws-developer-toolkit-03",
+    "playbookId": "aws-developer-toolkit",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Retry không jitter gây?",
+    "options": [
+      "Tốt hơn",
+      "Thundering herd",
+      "Giảm lỗi",
+      "Không ảnh hưởng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Nhiều client thử lại cùng lúc."
+  },
+  {
+    "id": "aws-developer-toolkit-04",
+    "playbookId": "aws-developer-toolkit",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao phải lặp pagination?",
+    "modelAnswer": "API trả theo trang; nếu chỉ đọc trang đầu sẽ thiếu dữ liệu một cách âm thầm. Cần lặp bằng NextToken/LastEvaluatedKey đến khi hết.",
+    "keyPoints": [
+      "Kết quả theo trang",
+      "Thiếu dữ liệu âm thầm",
+      "Lặp đến hết"
+    ]
+  },
+  {
+    "id": "aws-backup-data-protection-01",
+    "playbookId": "aws-backup-data-protection",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Replication có thay backup?",
+    "options": [
+      "Có",
+      "Không, xoá nhầm cũng bị sao chép",
+      "Chỉ với S3",
+      "Chỉ với RDS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần bản sao độc lập."
+  },
+  {
+    "id": "aws-backup-data-protection-02",
+    "playbookId": "aws-backup-data-protection",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chống ransomware xoá backup?",
+    "options": [
+      "Backup cùng account",
+      "Vault Lock và cross-account",
+      "Tắt backup",
+      "Giảm retention"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Bất biến và cô lập."
+  },
+  {
+    "id": "aws-backup-data-protection-03",
+    "playbookId": "aws-backup-data-protection",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Chiến lược DR: chỉ bật phần lõi tối thiểu, mở rộng khi sự cố?",
+    "options": [
+      "Backup & Restore",
+      "Pilot Light",
+      "Active-active",
+      "Không DR"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Pilot Light."
+  },
+  {
+    "id": "aws-backup-data-protection-04",
+    "playbookId": "aws-backup-data-protection",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao phải thử restore định kỳ?",
+    "modelAnswer": "Backup chưa từng restore không đảm bảo dùng được: có thể hỏng, thiếu khoá mã hoá, hoặc thời gian phục hồi vượt RTO. Thử định kỳ xác nhận quy trình và RTO thực tế.",
+    "keyPoints": [
+      "Backup có thể hỏng",
+      "Thiếu khoá",
+      "Kiểm tra RTO thực tế"
+    ]
+  },
+  {
+    "id": "aws-certification-roadmap-01",
+    "playbookId": "aws-certification-roadmap",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Chứng chỉ nền tảng phổ biến nhất?",
+    "options": [
+      "Cloud Practitioner",
+      "Professional",
+      "Specialty",
+      "DevOps Pro"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Foundational."
+  },
+  {
+    "id": "aws-certification-roadmap-02",
+    "playbookId": "aws-certification-roadmap",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai đáp án đều đúng, chọn?",
+    "options": [
+      "Đắt nhất",
+      "Đáp ứng đủ ràng buộc với ít vận hành nhất",
+      "Ngẫu nhiên",
+      "Dài nhất"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ưu tiên managed."
+  },
+  {
+    "id": "aws-certification-roadmap-03",
+    "playbookId": "aws-certification-roadmap",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Nhầm lẫn phổ biến trong đề?",
+    "options": [
+      "HA và DR",
+      "S3 và S3",
+      "IAM và IAM",
+      "Không có"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Multi-AZ không phải multi-Region."
+  },
+  {
+    "id": "aws-certification-roadmap-04",
+    "playbookId": "aws-certification-roadmap",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Cách tiếp cận câu hỏi tình huống?",
+    "modelAnswer": "Gạch từ khoá ràng buộc như rẻ nhất, ít vận hành nhất, độ trễ thấp, loại đáp án vi phạm ràng buộc, rồi ưu tiên managed, loosely coupled, multi-AZ và least privilege.",
+    "keyPoints": [
+      "Tìm ràng buộc",
+      "Loại đáp án sai",
+      "Ưu tiên managed"
+    ]
   }
 ]

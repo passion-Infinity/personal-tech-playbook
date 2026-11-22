@@ -4135,5 +4135,138 @@
     "meaning": "Các chiến lược triển khai",
     "definition": "Giảm rủi ro khi release.",
     "topicId": "aws"
+  },
+  {
+    "id": "aws-privatelink",
+    "term": "AWS PrivateLink",
+    "meaning": "Công bố dịch vụ riêng tư",
+    "definition": "Không cần peering hay CIDR khác nhau.",
+    "topicId": "aws"
+  },
+  {
+    "id": "vpc-flow-logs",
+    "term": "VPC Flow Logs",
+    "meaning": "Quan sát lưu lượng",
+    "definition": "Metadata, không có payload.",
+    "topicId": "aws"
+  },
+  {
+    "id": "amazon-neptune",
+    "term": "Amazon Neptune",
+    "meaning": "Graph database managed",
+    "definition": "Truy vấn quan hệ nhiều bước.",
+    "topicId": "aws"
+  },
+  {
+    "id": "amazon-timestream",
+    "term": "Amazon Timestream",
+    "meaning": "Time-series database",
+    "definition": "IoT và metric.",
+    "topicId": "aws"
+  },
+  {
+    "id": "savings-plans-vs-ri",
+    "term": "Savings Plans vs Reserved Instances",
+    "meaning": "Hai kiểu cam kết",
+    "definition": "Compute Savings Plans linh hoạt hơn RI.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-cur",
+    "term": "AWS Cost and Usage Report",
+    "meaning": "Dữ liệu chi phí chi tiết",
+    "definition": "Phân tích bằng Athena.",
+    "topicId": "aws"
+  },
+  {
+    "id": "compute-optimizer",
+    "term": "AWS Compute Optimizer",
+    "meaning": "Gợi ý right-sizing",
+    "definition": "Dựa trên metric sử dụng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cost-allocation-tags",
+    "term": "Cost Allocation Tags",
+    "meaning": "Gán chi phí theo tag",
+    "definition": "Phải kích hoạt trong Billing.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-x-ray",
+    "term": "AWS X-Ray",
+    "meaning": "Truy vết phân tán",
+    "definition": "Trace ID qua header, service map.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-sdk-retry-backoff",
+    "term": "AWS SDK Retry and Backoff",
+    "meaning": "Retry có jitter",
+    "definition": "Tránh thundering herd.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-presigned-url",
+    "term": "S3 Presigned URL",
+    "meaning": "Liên kết tạm thời",
+    "definition": "Không lộ credential.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-sts-assume-role",
+    "term": "AWS STS AssumeRole",
+    "meaning": "Credential tạm thời",
+    "definition": "Cấp quyền chéo account.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-appsync",
+    "term": "AWS AppSync",
+    "meaning": "GraphQL managed",
+    "definition": "Resolver và subscription.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-backup-vault-lock",
+    "term": "AWS Backup Vault Lock",
+    "meaning": "Backup bất biến",
+    "definition": "WORM chống xoá.",
+    "topicId": "aws"
+  },
+  {
+    "id": "s3-object-lock",
+    "term": "S3 Object Lock",
+    "meaning": "WORM cho S3",
+    "definition": "Compliance và governance mode.",
+    "topicId": "aws"
+  },
+  {
+    "id": "pilot-light-warm-standby",
+    "term": "Pilot Light vs Warm Standby",
+    "meaning": "Chiến lược DR",
+    "definition": "Đánh đổi RTO và chi phí.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-certification-paths",
+    "term": "AWS Certification Paths",
+    "meaning": "Lộ trình theo vai trò",
+    "definition": "Foundational, Associate, Professional, Specialty.",
+    "topicId": "aws"
+  },
+  {
+    "id": "saa-exam-guide",
+    "term": "SAA Exam Guide Domains",
+    "meaning": "Domain và tỷ trọng",
+    "definition": "Secure, resilient, performant, cost-optimized.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-skill-builder",
+    "term": "AWS Skill Builder",
+    "meaning": "Học và đề thử chính thức",
+    "definition": "Đề thi thử và khoá học.",
+    "topicId": "aws"
   }
 ]

@@ -2144,5 +2144,115 @@
     "prerequisites": [
       "iam-fundamentals"
     ]
+  },
+  {
+    "id": "aws-advanced-networking",
+    "title": "AWS Networking nâng cao (Endpoints, PrivateLink, Global Accelerator)",
+    "summary": "Truy cập dịch vụ riêng tư, tăng tốc toàn cầu và quan sát lưu lượng bằng endpoint, PrivateLink, Global Accelerator và Flow Logs.",
+    "topicId": "aws",
+    "keywordIds": [
+      "vpc-endpoints",
+      "aws-privatelink",
+      "global-accelerator",
+      "security-group-vs-nacl",
+      "vpc-flow-logs"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-advanced-networking.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "vpc-networking",
+      "route53-cloudfront"
+    ]
+  },
+  {
+    "id": "aws-database-portfolio",
+    "title": "AWS Database Portfolio: Chọn DB theo Mô hình Dữ liệu",
+    "summary": "Chọn giữa RDS/Aurora, DynamoDB, DocumentDB, Neptune, Timestream, MemoryDB theo mẫu truy cập.",
+    "topicId": "aws",
+    "keywordIds": [
+      "aurora-global-database",
+      "dynamodb-global-tables",
+      "amazon-neptune",
+      "amazon-timestream",
+      "rds-multi-az-vs-read-replica"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-database-portfolio.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "rds-aurora",
+      "dynamodb"
+    ]
+  },
+  {
+    "id": "aws-cost-optimization-billing",
+    "title": "Tối ưu Chi phí AWS & FinOps",
+    "summary": "Quan sát chi phí bằng tag/Cost Explorer, chọn Savings Plans/Spot và loại bỏ lãng phí.",
+    "topicId": "aws",
+    "keywordIds": [
+      "savings-plans-vs-ri",
+      "aws-cur",
+      "compute-optimizer",
+      "cost-allocation-tags",
+      "ec2-spot-instances"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-cost-optimization-billing.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ec2-pricing-models",
+      "aws-organizations-governance"
+    ]
+  },
+  {
+    "id": "aws-developer-toolkit",
+    "title": "AWS cho Developer: SDK, X-Ray, STS, Presigned URL",
+    "summary": "Xác thực bằng role, retry/pagination đúng cách và truy vết phân tán bằng X-Ray.",
+    "topicId": "aws",
+    "keywordIds": [
+      "aws-x-ray",
+      "aws-sdk-retry-backoff",
+      "s3-presigned-url",
+      "aws-sts-assume-role",
+      "aws-appsync"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-developer-toolkit.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "lambda-serverless",
+      "iam-fundamentals"
+    ]
+  },
+  {
+    "id": "aws-backup-data-protection",
+    "title": "AWS Backup & Bảo vệ Dữ liệu",
+    "summary": "Backup bất biến, cross-account và DR theo RPO/RTO; replication không thay backup.",
+    "topicId": "aws",
+    "keywordIds": [
+      "aws-backup-vault-lock",
+      "s3-object-lock",
+      "pilot-light-warm-standby",
+      "aws-elastic-disaster-recovery"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-backup-data-protection.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "disaster-recovery-strategies",
+      "s3-versioning-replication"
+    ]
+  },
+  {
+    "id": "aws-certification-roadmap",
+    "title": "Lộ trình Chứng chỉ AWS & Kỹ thuật làm đề",
+    "summary": "Chọn chứng chỉ theo vai trò, học theo domain và đọc ràng buộc của đề để chọn đáp án đúng.",
+    "topicId": "aws",
+    "keywordIds": [
+      "aws-certification-paths",
+      "saa-exam-guide",
+      "aws-skill-builder"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-certification-roadmap.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "aws-well-architected-framework"
+    ]
   }
 ]
