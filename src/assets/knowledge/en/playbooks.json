@@ -658,5 +658,20 @@
     "id": "vector-databases-embeddings",
     "title": "Embeddings & Vector Databases",
     "summary": "Understand embeddings, ANN (HNSW), chunking, hybrid search and reranking so RAG retrieves correctly."
+  },
+  {
+    "id": "fine-tuning-lora-distillation",
+    "title": "Fine-tuning, LoRA & Distillation",
+    "summary": "Know when to fine-tune (behavior/format) instead of RAG (knowledge) and how LoRA, DPO and distillation work."
+  },
+  {
+    "id": "build-agent-end-to-end",
+    "title": "Building an Agent from A to Z",
+    "summary": "A minimal bounded agent loop, safe tools, verification, tracing and evals."
+  },
+  {
+    "id": "speech-voice-ai",
+    "title": "Speech & Voice AI (STT, TTS, Voice Agents)",
+    "summary": "The STT-LLM-TTS pipeline, real-time latency, WebRTC and the pitfalls of voice agents."
   }
 ]

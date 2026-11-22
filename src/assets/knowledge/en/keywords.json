@@ -3278,5 +3278,75 @@
     "id": "pgvector",
     "meaning": "Vector search in PostgreSQL",
     "definition": "Enough for moderate scale when you already have Postgres."
+  },
+  {
+    "id": "lora-qlora-peft",
+    "meaning": "Parameter-efficient fine-tuning",
+    "definition": "Learn low-rank add-on matrices, cheap and swappable."
+  },
+  {
+    "id": "supervised-fine-tuning",
+    "meaning": "Training with example pairs",
+    "definition": "Data quality matters more than quantity."
+  },
+  {
+    "id": "dpo",
+    "meaning": "Learning from preference pairs",
+    "definition": "A simple replacement for RLHF."
+  },
+  {
+    "id": "llm-distillation",
+    "meaning": "Distilling a model",
+    "definition": "A large model teaches a small one for a narrow task."
+  },
+  {
+    "id": "finetuning-vs-rag",
+    "meaning": "When to use which",
+    "definition": "RAG for knowledge, fine-tuning for behavior."
+  },
+  {
+    "id": "building-effective-agents",
+    "meaning": "Agent design guidance",
+    "definition": "Start simple, add complexity when evals justify it."
+  },
+  {
+    "id": "agent-observability",
+    "meaning": "Tracing each agent step",
+    "definition": "Log prompts, tools, tokens, latency."
+  },
+  {
+    "id": "agent-sandbox",
+    "meaning": "Run code safely",
+    "definition": "Isolate model-generated code."
+  },
+  {
+    "id": "agent-evals",
+    "meaning": "Measure agents with sample tasks",
+    "definition": "Completion rate, step count, cost."
+  },
+  {
+    "id": "whisper-stt",
+    "meaning": "Open-source STT",
+    "definition": "Multilingual speech recognition."
+  },
+  {
+    "id": "webrtc-voice",
+    "meaning": "Low-latency audio transport",
+    "definition": "UDP in the browser."
+  },
+  {
+    "id": "vad",
+    "meaning": "Detect when the user speaks",
+    "definition": "Decides the turn-ending point."
+  },
+  {
+    "id": "word-error-rate",
+    "meaning": "Measure STT accuracy",
+    "definition": "Evaluate on real data."
+  },
+  {
+    "id": "speech-to-speech",
+    "meaning": "Models that process audio directly",
+    "definition": "Low latency, preserving intonation."
   }
 ]

@@ -6832,5 +6832,167 @@
       "Arbitrarily reducing vector dimensions"
     ],
     "explanation": "Hybrid and reranking improve the top-K. Arbitrarily reducing dimensions can lower quality."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-01",
+    "question": "A company wants a chatbot to answer from internal documents updated weekly. What is the right approach?",
+    "options": [
+      "Fine-tune again every week",
+      "RAG",
+      "Raise the temperature",
+      "Use a smaller model"
+    ],
+    "explanation": "Frequently changing knowledge belongs to RAG. Weekly fine-tuning is tempting because it seems to 'teach the model', but it is costly and unreliable for facts."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-02",
+    "question": "When using LoRA to fine-tune, which part of the model is trained?",
+    "options": [
+      "All the weights",
+      "The extra low-rank matrices, with the original weights frozen",
+      "Only the embeddings",
+      "The tokenizer"
+    ],
+    "explanation": "LoRA learns a low-rank update so it is cheap. Training all weights is full fine-tuning, easy to confuse with PEFT."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-03",
+    "question": "After heavy fine-tuning on narrow data, a model handles the new task well but drops clearly on general questions. What is this phenomenon called?",
+    "options": [
+      "None",
+      "Catastrophic forgetting",
+      "Ever-increasing accuracy",
+      "Size reduction"
+    ],
+    "explanation": "Losing general capability from learning too aggressively."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-04",
+    "question": "A team needs two features: answering from a new policy set every week and always returning a specific JSON format. Explain when to use fine-tuning, when RAG, and why to try prompts/RAG first.",
+    "modelAnswer": "Prompts and RAG are cheap, fast, reversible and solve most problems; policies that change weekly should use RAG. Fine-tuning needs clean data, training and maintenance when the base model changes, and is poor at learning new knowledge; use it only when you need to change behavior or a stable format. A specific stable JSON format can be a fine-tuning candidate after structured output/few-shot is not enough.",
+    "keyPoints": [
+      "RAG for changing knowledge",
+      "Fine-tuning for behavior/format",
+      "Try prompts/RAG first because they are cheap and reversible"
+    ]
+  },
+  {
+    "id": "fine-tuning-lora-distillation-05",
+    "question": "You need a model that always answers in one format and a fixed tone for a narrow, high-volume task. Which direction is reasonable?",
+    "options": [
+      "Fine-tune",
+      "RAG only",
+      "Raise the temperature",
+      "A long context"
+    ],
+    "explanation": "Fine-tuning changes behavior/format. RAG is tempting because it adds information, but it does not guarantee a stable style."
+  },
+  {
+    "id": "build-agent-end-to-end-01",
+    "question": "An agent runs overnight and the token bill rises unusually. What is the mandatory element in the loop to avoid burning money?",
+    "options": [
+      "A high temperature",
+      "A step and budget limit",
+      "Many tools",
+      "A long prompt"
+    ],
+    "explanation": "You need a hard stop condition. Adding tools is tempting as increasing the chance of completion, but it does not stop a loop."
+  },
+  {
+    "id": "build-agent-end-to-end-02",
+    "question": "A tool calling an API returns 404 because of a wrong id. How should it be handled so the agent can correct itself?",
+    "options": [
+      "Crash the program",
+      "Return a clear text error message to the model",
+      "Stay silent",
+      "Reset the session"
+    ],
+    "explanation": "The model can adjust parameters when it sees a specific error. A crash loses progress."
+  },
+  {
+    "id": "build-agent-end-to-end-03",
+    "question": "An agent has an order-creation tool and sometimes calls it repeatedly due to retries. What does a data-writing tool need?",
+    "options": [
+      "Nothing",
+      "Dry-run, confirmation and idempotency",
+      "Run in parallel",
+      "Turn off logs"
+    ],
+    "explanation": "The model or application may call repeatedly so it must be idempotent."
+  },
+  {
+    "id": "build-agent-end-to-end-04",
+    "question": "Your agent keeps calling the same tool with the same parameters repeatedly. Describe how to detect and handle it.",
+    "modelAnswer": "Detect repetition by hashing the tool name and parameters and counting; cap the number of times; return clearer error feedback or hint at another direction; summarize the context; if still stuck, stop and hand over to a human.",
+    "keyPoints": [
+      "Detect repetition",
+      "Clearer feedback",
+      "Stop and hand to a human"
+    ]
+  },
+  {
+    "id": "build-agent-end-to-end-05",
+    "question": "Which two things should be logged for each agent step? (choose 2)",
+    "options": [
+      "The tool call and result",
+      "Tokens and latency",
+      "User passwords",
+      "A mandatory screenshot"
+    ],
+    "explanation": "Traces serve debugging and cost. User passwords must never be logged."
+  },
+  {
+    "id": "speech-voice-ai-01",
+    "question": "A voice bot answers customers over the phone. What is the correct basic pipeline?",
+    "options": [
+      "TTS → STT → LLM",
+      "STT → LLM → TTS",
+      "LLM → STT",
+      "TTS only"
+    ],
+    "explanation": "Listen, understand, speak."
+  },
+  {
+    "id": "speech-voice-ai-02",
+    "question": "A voice bot takes nearly 3 seconds to answer after the user finishes speaking. What reduces latency the most?",
+    "options": [
+      "Wait for STT to fully finish before continuing",
+      "Streaming at every layer",
+      "A larger model",
+      "Lower mic quality"
+    ],
+    "explanation": "Overlap the layers with streaming. A larger model usually makes it slower."
+  },
+  {
+    "id": "speech-voice-ai-03",
+    "question": "A user cuts in while the bot is answering and the bot keeps talking. What mechanism is needed?",
+    "options": [
+      "Recording",
+      "Barge-in: stop TTS and cancel the LLM's generation",
+      "Raise the volume",
+      "Voice translation"
+    ],
+    "explanation": "You need to stop playback, cancel the generation turn and flush the audio buffer."
+  },
+  {
+    "id": "speech-voice-ai-04",
+    "question": "An STT system scores well on benchmarks but gets many of the customers' proper names and phone numbers wrong. Why measure WER on real data?",
+    "modelAnswer": "General benchmarks do not contain your proper names, numbers, terminology, regional accents and background noise. Measuring WER on real data shows which errors matter most so you can add custom vocabulary, switch models or add confirmation steps.",
+    "keyPoints": [
+      "Real data differs from benchmarks",
+      "Proper names, numbers and noise",
+      "Choose the right improvement"
+    ]
+  },
+  {
+    "id": "speech-voice-ai-05",
+    "question": "Which two ways reduce voice agent latency? (choose 2)",
+    "options": [
+      "Streaming in STT/LLM/TTS",
+      "Good VAD to close the turn quickly",
+      "Wait for a complete sentence before processing",
+      "Use the largest model"
+    ],
+    "explanation": "Overlap and quick turn closing. Waiting for a complete sentence increases latency."
   }
 ]
