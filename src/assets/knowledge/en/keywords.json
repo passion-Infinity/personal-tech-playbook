@@ -288,5 +288,95 @@
     "id": "bloom-filter",
     "meaning": "A probabilistic structure that helps skip data that does not contain a key",
     "definition": "Returns \"definitely not present\" or \"possibly present\"; used in LSMs and to prevent cache penetration."
+  },
+  {
+    "id": "acid-transactions",
+    "meaning": "The four properties of a transaction",
+    "definition": "Atomicity, Consistency, Isolation, Durability; Durability is achieved through the write-ahead log."
+  },
+  {
+    "id": "isolation-levels-anomalies",
+    "meaning": "Dirty read, non-repeatable read, phantom, write skew",
+    "definition": "The higher the isolation level, the fewer the anomalies but the more waiting or aborting."
+  },
+  {
+    "id": "mvcc-snapshot-isolation",
+    "meaning": "Snapshot reads that do not block writers",
+    "definition": "Each transaction sees a consistent snapshot; write skew is still possible."
+  },
+  {
+    "id": "lost-update-vs-write-skew",
+    "meaning": "Two anomalies that are often confused",
+    "definition": "A lost update is two read-modify-writes overwriting each other on the same row; write skew is two transactions writing different rows but violating a shared constraint."
+  },
+  {
+    "id": "select-for-update-optimistic-locking",
+    "meaning": "Two ways to handle write contention",
+    "definition": "Lock the row as soon as you read it, or use a version column and check the number of rows affected on update."
+  },
+  {
+    "id": "deadlock-retry",
+    "meaning": "The DB kills one transaction and the application must retry",
+    "definition": "Reduce deadlocks with a consistent table/row access order and short transactions."
+  },
+  {
+    "id": "rest-api-best-practices",
+    "meaning": "Conventions for naming, methods and status codes",
+    "definition": "Resources are nouns, methods have correct semantics, status codes are accurate and errors are consistent."
+  },
+  {
+    "id": "cursor-vs-offset-pagination",
+    "meaning": "Stable pagination for large tables",
+    "definition": "Offset is slow and drifts when data changes; cursor/keyset is fast and stable."
+  },
+  {
+    "id": "api-versioning-compatibility",
+    "meaning": "Evolving an API without breaking clients",
+    "definition": "Prefer backward-compatible changes such as adding fields; have a deprecation policy."
+  },
+  {
+    "id": "problem-details-rfc9457",
+    "meaning": "A standard for describing errors in HTTP APIs",
+    "definition": "A consistent error structure with type, title and detail so clients can handle it by machine."
+  },
+  {
+    "id": "rest-vs-grpc-vs-graphql",
+    "meaning": "Choosing an API style by need",
+    "definition": "REST is easy to cache and public; gRPC is fast for service-to-service; GraphQL is flexible to query but hard to cache."
+  },
+  {
+    "id": "openapi-spec",
+    "meaning": "A machine-readable description of the API contract",
+    "definition": "Used to generate documentation, client SDKs and contract tests."
+  },
+  {
+    "id": "oauth2-auth-code-pkce",
+    "meaning": "The standard authorization flow for SPAs and mobile",
+    "definition": "The client exchanges the authorization code for a token along with the code_verifier to prevent code interception."
+  },
+  {
+    "id": "openid-connect-id-token",
+    "meaning": "The identity layer built on OAuth 2.0",
+    "definition": "The ID token says who signed in; the access token is used to call APIs."
+  },
+  {
+    "id": "jwt-validation-claims",
+    "meaning": "What you must check when receiving a token",
+    "definition": "Verify the signature, whitelist algorithms, check expiry, issuer and audience; the payload is not secret."
+  },
+  {
+    "id": "session-cookie-csrf",
+    "meaning": "Protecting sessions and preventing CSRF",
+    "definition": "HttpOnly cookies stop JavaScript from reading them; SameSite and CSRF tokens reduce request forgery attacks."
+  },
+  {
+    "id": "rbac-vs-abac",
+    "meaning": "Two authorization models",
+    "definition": "RBAC is by role; ABAC is by attributes and context, more flexible but more complex."
+  },
+  {
+    "id": "idor",
+    "meaning": "A missing per-object permission check",
+    "definition": "Changing an ID in the URL to reach other people's data; you need an ownership check on every object."
   }
 ]

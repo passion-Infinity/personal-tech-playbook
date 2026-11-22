@@ -577,5 +577,191 @@
       "The primary key must be removed"
     ],
     "explanation": "Sequential keys insert at the end of the tree, so there are fewer page splits."
+  },
+  {
+    "id": "db-transactions-isolation-01",
+    "question": "Two requests each add 50 to a balance of 100 by reading, computing in the application and writing back, and the result is 150 instead of 200. What is the phenomenon and the quickest fix?",
+    "options": [
+      "Dirty read; raise the isolation",
+      "Lost update; UPDATE balance = balance + 50",
+      "Deadlock; retry",
+      "Phantom; add an index"
+    ],
+    "explanation": "A read-modify-write in the application causes a lost update. An atomic addition in SQL avoids it."
+  },
+  {
+    "id": "db-transactions-isolation-02",
+    "question": "Two on-call doctors each check 'at least 2 people are on call' and both ask for leave, leaving 0 even under Repeatable Read (snapshot). What is this?",
+    "options": [
+      "Dirty read",
+      "Write skew; needs Serializable or locking the set that was read",
+      "Lost update",
+      "Deadlock"
+    ],
+    "explanation": "Snapshot isolation still allows write skew because the two transactions write different rows."
+  },
+  {
+    "id": "db-transactions-isolation-03",
+    "question": "What is the main benefit of MVCC?",
+    "options": [
+      "Reads do not block writes and writes do not block reads thanks to multiple versions",
+      "It eliminates every anomaly",
+      "No VACUUM is needed",
+      "It turns off logging"
+    ],
+    "explanation": "MVCC keeps multiple versions. 'Eliminates every anomaly' is tempting, but snapshot isolation still has write skew."
+  },
+  {
+    "id": "db-transactions-isolation-04",
+    "question": "Explain the difference between lost update and write skew, giving an example and a prevention for each.",
+    "modelAnswer": "A lost update occurs when two transactions read-modify-write the same row and the later overwrites the earlier (balance 100, both write 150); prevent it with an atomic UPDATE, SELECT FOR UPDATE or an optimistic version. Write skew occurs when two transactions read the same set of rows and then write different rows, violating a shared constraint (two doctors both going on leave); prevent it with Serializable or by locking the whole set that was read.",
+    "keyPoints": [
+      "Lost update: the same row",
+      "Write skew: writes to different rows",
+      "Serializable or lock the set that was read"
+    ]
+  },
+  {
+    "id": "db-transactions-isolation-05",
+    "question": "This AI-generated function adds money. What goes wrong with two concurrent requests for the same account?",
+    "code": "BigDecimal bal = jdbc.queryForObject(\"SELECT balance FROM accounts WHERE id = ?\", BigDecimal.class, id);\nBigDecimal updated = bal.add(amount);                 // computed in the application\njdbc.update(\"UPDATE accounts SET balance = ? WHERE id = ?\", updated, id);",
+    "options": [
+      "Using BigDecimal",
+      "A read-modify-write in the application causes a lost update: both requests read the old value and overwrite each other",
+      "Missing index",
+      "It should use double"
+    ],
+    "explanation": "Push the arithmetic into the statement: UPDATE accounts SET balance = balance + ? WHERE id = ?, or use locks/an optimistic version."
+  },
+  {
+    "id": "db-transactions-isolation-06",
+    "question": "The application starts getting occasional deadlock errors when two threads update two rows in opposite order. What is the right fix?",
+    "options": [
+      "Turn transactions off",
+      "Acquire locks in a consistent order and retry when chosen as the victim",
+      "Raise the timeout to infinity",
+      "Use Read Uncommitted"
+    ],
+    "explanation": "A fixed lock order and a retry resolve deadlocks. Lowering the isolation does not."
+  },
+  {
+    "id": "api-design-rest-01",
+    "question": "An API must return a list of millions of records, the data changes constantly and clients page very deep. Which pagination fits?",
+    "options": [
+      "A large offset",
+      "Cursor/keyset pagination",
+      "Return everything at once",
+      "Random pagination"
+    ],
+    "explanation": "A cursor has a stable cost and does not drift. A large offset has to scan and discard many rows."
+  },
+  {
+    "id": "api-design-rest-02",
+    "question": "A team needs to rename the field `fullname` to `name` in a response used by many clients. What is the right way?",
+    "options": [
+      "Rename it right away",
+      "Add `name`, keep `fullname`, deprecate on a schedule or ship a new version",
+      "Delete the old field",
+      "Change the data type"
+    ],
+    "explanation": "Renaming is a breaking change. Adding a new field is backward compatible."
+  },
+  {
+    "id": "api-design-rest-03",
+    "question": "A client retries POST /payments on timeout and creates two payments. What is the solution?",
+    "options": [
+      "Forbid retries",
+      "An Idempotency-Key header and storing the result by key",
+      "Switch to GET",
+      "Increase the timeout"
+    ],
+    "explanation": "POST is not idempotent; a key lets the server recognize a repeated request."
+  },
+  {
+    "id": "api-design-rest-04",
+    "question": "Compare offset and cursor pagination, say when to use each and what the trade-off of a cursor is.",
+    "modelAnswer": "Offset reads and discards N rows, so it gets slower on deep pages and results can drift when data changes; cursor/keyset uses a condition on the sort key, so its cost is near-constant and stable. Use offset for small data where you must jump to any page, and a cursor for large or frequently changing lists; the trade-off is that you cannot jump to an arbitrary page.",
+    "keyPoints": [
+      "Offset: slow and drifting",
+      "Cursor: stable, fast",
+      "A cursor cannot jump to arbitrary pages"
+    ]
+  },
+  {
+    "id": "api-design-rest-05",
+    "question": "The server returns HTTP 200 with an 'error' string when the data is wrong, and clients struggle to handle it. What is the right approach?",
+    "options": [
+      "Leave it",
+      "An appropriate status code (400/422) with Problem Details (application/problem+json)",
+      "Return 500 for every error",
+      "Return HTML"
+    ],
+    "explanation": "Standardized errors let clients handle them by machine."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-01",
+    "question": "An SPA must sign users in through an identity provider and call an API. Which OAuth flow should it use?",
+    "options": [
+      "Implicit flow",
+      "Authorization Code + PKCE",
+      "Client credentials",
+      "Password grant"
+    ],
+    "explanation": "Code + PKCE is recommended for public clients. The implicit flow is tempting because it was once popular, but it is obsolete."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-02",
+    "question": "A developer uses an access token to find out who the user is. What is correct?",
+    "options": [
+      "Correct, the access token contains the identity",
+      "Use the OIDC ID token for authentication",
+      "Use the refresh token",
+      "Use a cookie"
+    ],
+    "explanation": "OAuth authorizes, OIDC authenticates."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-03",
+    "question": "An API receives `GET /orders/42` and returns the order without checking that the caller owns order 42. What is the flaw?",
+    "options": [
+      "XSS",
+      "IDOR/BOLA: missing per-object permission check",
+      "CSRF",
+      "SQL injection"
+    ],
+    "explanation": "Permission must be checked per object on the server."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-04",
+    "question": "List what must be checked when verifying a JWT and why jwt.decode is not enough.",
+    "modelAnswer": "You must check the signature with the right key (JWKS by kid) against an allowed algorithm list (reject none), plus the exp, nbf, iss and aud claims. jwt.decode only reads the payload without checking the signature, so an attacker can forge a token.",
+    "keyPoints": [
+      "Signature + algorithm whitelist",
+      "exp, nbf, iss, aud",
+      "decode does not check the signature"
+    ]
+  },
+  {
+    "id": "authn-authz-oauth-jwt-05",
+    "question": "This authentication middleware was written by an AI. What is the main flaw?",
+    "code": "app.use((req, res, next) => {\n  const payload = jwt.decode(req.headers.authorization.split(' ')[1]); // decode only\n  if (payload.exp * 1000 > Date.now()) {\n    req.user = payload;\n    return next();\n  }\n  res.sendStatus(401);\n});",
+    "options": [
+      "It does not verify the signature, so anyone can forge a valid-looking token",
+      "exp is miscomputed in milliseconds",
+      "Tokens must be stored in localStorage",
+      "Missing CORS"
+    ],
+    "explanation": "jwt.decode only reads the payload and does not check the signature. You must use jwt.verify with the key and an algorithm whitelist, plus iss and aud checks."
+  },
+  {
+    "id": "authn-authz-oauth-jwt-06",
+    "question": "A signed-in user calls an admin API and is denied. Which code should be returned?",
+    "options": [
+      "401",
+      "403",
+      "404",
+      "502"
+    ],
+    "explanation": "403 means authenticated but not permitted."
   }
 ]

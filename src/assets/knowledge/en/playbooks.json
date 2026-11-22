@@ -53,5 +53,20 @@
     "id": "db-indexing-storage-engines",
     "title": "DB Indexing & Storage Engines",
     "summary": "Choose B-Tree or LSM-tree and design indexes correctly to trade write cost for read speed."
+  },
+  {
+    "id": "db-transactions-isolation",
+    "title": "DB Transactions & Isolation Levels",
+    "summary": "Understand ACID, isolation levels and MVCC, and how to avoid lost update and write skew under concurrent access."
+  },
+  {
+    "id": "api-design-rest",
+    "title": "API Design (REST)",
+    "summary": "Design APIs that are easy to use correctly, can evolve and are safe when clients retry."
+  },
+  {
+    "id": "authn-authz-oauth-jwt",
+    "title": "AuthN, AuthZ, OAuth 2.0 & JWT",
+    "summary": "Distinguish authentication from authorization, use sessions/JWT/OAuth correctly and avoid common security bugs."
   }
 ]
