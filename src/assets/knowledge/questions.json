@@ -3006,46 +3006,46 @@
     "playbookId": "dynamodb",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy vấn nào hiệu quả nhất trong DynamoDB?",
+    "question": "Bảng đơn hàng 2 TB, trang chi tiết đơn cần lấy các đơn của một khách trong tháng này sắp theo ngày. Cách truy vấn nào đúng và rẻ nhất?",
     "options": [
-      "Scan toàn bảng",
-      "Query theo partition key (và sort key)",
-      "JOIN nhiều bảng",
-      "LIKE trên mọi thuộc tính"
+      "Scan rồi lọc theo customerId và tháng",
+      "Query theo partition key customerId với điều kiện sort key orderDate begins_with tháng",
+      "Tăng RCU để Scan nhanh hơn",
+      "Dùng DAX để Scan nhanh hơn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chỉ truy cập theo key mới nhanh; Scan đọc toàn bảng."
+    "explanation": "Query chỉ chạm một partition key và khoảng sort key nên tốn RCU theo dữ liệu trả về. Scan (kể cả khi tăng RCU hay thêm DAX) vẫn đọc toàn bảng; DAX chỉ cache kết quả, không biến Scan thành truy cập theo key."
   },
   {
     "id": "dynamodb-02",
     "playbookId": "dynamodb",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hot partition thường do nguyên nhân nào?",
+    "question": "Bảng có partition key là status (ACTIVE hoặc CLOSED) liên tục bị ProvisionedThroughputExceededException dù tổng WCU của bảng còn dư nhiều. Nguyên nhân gốc rễ là gì?",
     "options": [
-      "Quá nhiều GSI",
-      "Partition key có cardinality thấp hoặc phân bố lệch",
-      "Bật TTL",
-      "Dùng on-demand"
+      "Có quá nhiều GSI",
+      "Partition key có cardinality thấp nên tải dồn vào một partition (hot partition)",
+      "Đã bật TTL",
+      "Đang dùng chế độ on-demand"
     ],
     "answer": [
       1
     ],
-    "explanation": "Key lệch dồn tải vào một partition dù tổng capacity còn dư."
+    "explanation": "Mỗi partition chỉ chịu khoảng 1.000 WCU và 3.000 RCU, key lệch dồn tải vào một partition nên throttling dù tổng bảng còn dư. Thêm GSI có thể gây back-pressure nhưng không giải thích cho việc bảng còn dư capacity mà vẫn throttle."
   },
   {
     "id": "dynamodb-03",
     "playbookId": "dynamodb",
     "type": "explain",
     "difficulty": 2,
-    "question": "GSI khác LSI thế nào?",
-    "modelAnswer": "GSI có partition key khác, tạo bất cứ lúc nào, có capacity riêng và chỉ đọc eventually consistent. LSI cùng partition key nhưng sort key khác, chỉ tạo khi tạo bảng, tối đa 5 và hỗ trợ strongly consistent.",
+    "question": "Team cần hai cách truy vấn thêm trên bảng đang chạy production: theo email khách (khác partition key) và theo ngày giao trong cùng một khách với strongly consistent. Giải thích GSI khác LSI thế nào và hai nhu cầu trên khả thi ra sao.",
+    "modelAnswer": "GSI có partition key khác, tạo bất cứ lúc nào, có capacity riêng và chỉ đọc eventually consistent, nên đáp ứng nhu cầu theo email. LSI cùng partition key nhưng sort key khác, hỗ trợ strongly consistent, tối đa 5 và chỉ tạo khi tạo bảng, kèm giới hạn 10 GB mỗi giá trị partition key; vì bảng đã chạy nên nhu cầu thứ hai không thể thêm LSI, phải tạo bảng mới hoặc chấp nhận eventually consistent qua GSI.",
     "keyPoints": [
-      "GSI: khác partition key, tạo sau được",
-      "LSI: cùng partition key, chỉ lúc tạo bảng",
-      "LSI giới hạn 5 và 10 GB mỗi key"
+      "GSI: khác partition key, tạo sau được, capacity riêng, eventually consistent",
+      "LSI: cùng partition key, chỉ lúc tạo bảng, tối đa 5, 10 GB mỗi key, hỗ trợ strongly consistent",
+      "Bảng đã tạo thì không thêm được LSI"
     ]
   },
   {
@@ -8176,35 +8176,35 @@
     "playbookId": "dynamodb",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy vấn theo thuộc tính không phải partition key hiệu quả bằng?",
+    "question": "Ứng dụng cần tìm đơn hàng theo email khách, nhưng bảng chỉ có partition key orderId. Team đề xuất Scan lọc theo email, chạy 50 lần mỗi giây. Giải pháp đúng là gì?",
     "options": [
-      "Scan",
-      "Global Secondary Index",
-      "Tăng RCU",
-      "DAX"
+      "Tiếp tục Scan nhưng tăng RCU",
+      "Tạo Global Secondary Index với email làm partition key",
+      "Thêm DAX trước bảng",
+      "Chuyển sang LSI cho email"
     ],
     "answer": [
       1
     ],
-    "explanation": "GSI cho khoá truy cập thay thế."
+    "explanation": "GSI cho phép truy vấn bằng key thay thế và tạo được bất cứ lúc nào. Tăng RCU chỉ làm Scan đắt hơn; LSI cùng partition key và chỉ tạo được lúc tạo bảng nên không giúp tìm theo email."
   },
   {
     "id": "dynamodb-05",
     "playbookId": "dynamodb",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai điều nào đúng về DynamoDB on-demand? (chọn 2)",
+    "question": "Một ứng dụng mới ra mắt có lưu lượng không đoán được. Hai nhận định nào đúng về chế độ on-demand? (chọn 2)",
     "options": [
-      "Không cần dự đoán dung lượng",
-      "Trả theo request",
-      "Luôn rẻ hơn provisioned",
+      "Không cần dự đoán và khai báo capacity trước",
+      "Tính tiền theo số request đọc/ghi",
+      "Luôn rẻ hơn provisioned ở mọi mức tải",
       "Không hỗ trợ GSI"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "On-demand tự co giãn và tính theo request, nhưng không phải lúc nào cũng rẻ hơn."
+    "explanation": "On-demand tự co giãn và tính theo request nên hợp tải khó đoán. Nhận định \"luôn rẻ hơn\" sai vì với tải ổn định, cao thì provisioned kèm auto scaling thường rẻ hơn."
   },
   {
     "id": "route53-cloudfront-04",
