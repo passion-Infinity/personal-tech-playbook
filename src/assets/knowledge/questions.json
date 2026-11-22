@@ -3625,24 +3625,24 @@
     "playbookId": "ai-ml-fundamentals",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Dự đoán giá nhà là bài toán gì?",
+    "question": "Một công ty bất động sản muốn dự đoán giá bán căn hộ từ diện tích, vị trí và tuổi nhà. Đây là bài toán gì?",
     "options": [
       "Classification",
       "Regression",
       "Clustering",
-      "Reinforcement"
+      "Reinforcement learning"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giá trị liên tục là regression."
+    "explanation": "Giá là giá trị liên tục nên là regression. Classification dễ nhầm vì cũng là supervised, nhưng dự đoán nhãn rời rạc."
   },
   {
     "id": "ai-ml-fundamentals-02",
     "playbookId": "ai-ml-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Mô hình đạt điểm rất cao trên tập train nhưng kém trên dữ liệu mới. Hiện tượng?",
+    "question": "Một mô hình đạt 99% trên tập train nhưng chỉ 70% trên dữ liệu mới. Hiện tượng nào?",
     "options": [
       "Underfitting",
       "Overfitting",
@@ -3652,19 +3652,19 @@
     "answer": [
       1
     ],
-    "explanation": "Học thuộc dữ liệu train nên khái quát hoá kém."
+    "explanation": "Học thuộc dữ liệu train nên khái quát hoá kém. Underfitting dễ nhầm, nhưng khi đó cả train lẫn validation đều kém."
   },
   {
     "id": "ai-ml-fundamentals-03",
     "playbookId": "ai-ml-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích data leakage và cách tránh.",
-    "modelAnswer": "Data leakage là thông tin từ tập test hoặc tương lai lọt vào quá trình huấn luyện nên điểm đánh giá cao giả tạo. Tránh bằng cách chia dữ liệu trước khi tiền xử lý thống kê và chỉ dùng đặc trưng có sẵn tại thời điểm dự đoán.",
+    "question": "Team chuẩn hoá toàn bộ dữ liệu bằng trung bình và độ lệch chuẩn tính trên cả tập, rồi mới chia train/test, và thấy điểm test đẹp bất thường. Giải thích data leakage và cách tránh.",
+    "modelAnswer": "Data leakage là thông tin từ tập test hoặc từ tương lai lọt vào quá trình huấn luyện nên điểm đánh giá cao giả tạo. Ở đây thống kê của tập test đã ảnh hưởng đến bước chuẩn hoá. Tránh bằng cách chia dữ liệu trước, chỉ fit tiền xử lý trên train rồi áp dụng cho test, và kiểm tra mọi feature có sẵn tại thời điểm dự đoán thật.",
     "keyPoints": [
-      "Thông tin lọt vào train",
-      "Điểm số ảo",
-      "Chia dữ liệu trước khi tiền xử lý"
+      "Thông tin test/tương lai lọt vào train",
+      "Chia trước, fit tiền xử lý chỉ trên train",
+      "Kiểm tra feature có sẵn lúc dự đoán thật"
     ]
   },
   {
@@ -3672,7 +3672,7 @@
     "playbookId": "ml-evaluation-metrics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Phát hiện ung thư, bỏ sót ca bệnh rất nguy hiểm. Ưu tiên metric?",
+    "question": "Hệ thống sàng lọc ung thư mà bỏ sót ca bệnh rất nguy hiểm, báo nhầm thì chỉ cần xét nghiệm thêm. Ưu tiên metric nào?",
     "options": [
       "Precision",
       "Recall",
@@ -3682,36 +3682,36 @@
     "answer": [
       1
     ],
-    "explanation": "Recall đo tỉ lệ bắt được ca dương thật."
+    "explanation": "Recall đo tỉ lệ bắt được ca dương thật. Precision dễ nhầm, nhưng ưu tiên khi báo nhầm tốn kém."
   },
   {
     "id": "ml-evaluation-metrics-02",
     "playbookId": "ml-evaluation-metrics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Gian lận chỉ 1% dữ liệu, mô hình luôn đoán \"không gian lận\" đạt 99% accuracy. Vấn đề?",
+    "question": "Gian lận chỉ 1% dữ liệu; mô hình luôn đoán 'không gian lận' đạt 99% accuracy. Vấn đề và metric nên dùng?",
     "options": [
-      "Không có",
-      "Accuracy paradox; nên dùng F1/AUC/Recall",
+      "Không có vấn đề",
+      "Accuracy paradox; dùng F1/AUC/Recall",
       "Cần thêm layer",
       "Cần giảm learning rate"
     ],
     "answer": [
       1
     ],
-    "explanation": "Accuracy đánh lừa khi dữ liệu mất cân bằng."
+    "explanation": "Accuracy đánh lừa khi mất cân bằng; mô hình này có recall = 0."
   },
   {
     "id": "ml-evaluation-metrics-03",
     "playbookId": "ml-evaluation-metrics",
     "type": "explain",
     "difficulty": 2,
-    "question": "Precision và recall khác nhau thế nào?",
-    "modelAnswer": "Precision là trong số mô hình báo dương có bao nhiêu đúng, ưu tiên khi báo nhầm tốn kém. Recall là trong số dương thật bắt được bao nhiêu, ưu tiên khi bỏ sót tốn kém. Tăng ngưỡng thường tăng precision và giảm recall.",
+    "question": "Một mô hình có TP = 40, FP = 10, FN = 20. Hãy tính precision, recall và giải thích hai chỉ số khác nhau thế nào và khi nào ưu tiên mỗi loại.",
+    "modelAnswer": "Precision = 40/50 = 0,8: trong số mô hình báo dương, 80% đúng; ưu tiên khi báo nhầm tốn kém (khoá nhầm tài khoản). Recall = 40/60 ≈ 0,67: trong số dương thật, bắt được 67%; ưu tiên khi bỏ sót tốn kém (ung thư). Tăng ngưỡng thường tăng precision và giảm recall, hạ ngưỡng thì ngược lại.",
     "keyPoints": [
-      "Precision: báo dương đúng bao nhiêu",
-      "Recall: bắt được bao nhiêu dương thật",
-      "Đánh đổi theo ngưỡng"
+      "Precision: báo dương có bao nhiêu đúng",
+      "Recall: dương thật bắt được bao nhiêu",
+      "Ngưỡng đánh đổi hai chỉ số"
     ]
   },
   {
@@ -3719,7 +3719,7 @@
     "playbookId": "generative-ai-llm-concepts",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Muốn đầu ra ổn định, ít ngẫu nhiên. Điều chỉnh?",
+    "question": "Một ứng dụng sinh báo cáo cần đầu ra ổn định, ít ngẫu nhiên giữa các lần chạy. Điều chỉnh tham số nào?",
     "options": [
       "Tăng temperature",
       "Giảm temperature",
@@ -3729,36 +3729,36 @@
     "answer": [
       1
     ],
-    "explanation": "Temperature thấp cho kết quả nhất quán."
+    "explanation": "Temperature thấp cho kết quả nhất quán. Tăng temperature dễ nhầm với 'tăng chất lượng' nhưng làm đầu ra đa dạng hơn."
   },
   {
     "id": "generative-ai-llm-concepts-02",
     "playbookId": "generative-ai-llm-concepts",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hallucination là gì?",
+    "question": "Chatbot trích dẫn một điều luật không tồn tại một cách rất tự tin. Hiện tượng này là gì và giảm thế nào?",
     "options": [
       "Mô hình chạy chậm",
-      "Mô hình tự tin bịa thông tin không có thật",
+      "Hallucination: bịa thông tin; giảm bằng RAG, trích dẫn nguồn và kiểm chứng",
       "Lỗi mạng",
       "Hết token"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giảm bằng RAG, trích dẫn nguồn và kiểm chứng."
+    "explanation": "LLM dự đoán xác suất, không tra cứu sự thật."
   },
   {
     "id": "generative-ai-llm-concepts-03",
     "playbookId": "generative-ai-llm-concepts",
     "type": "explain",
     "difficulty": 2,
-    "question": "Thứ tự thử các cách tuỳ biến LLM?",
-    "modelAnswer": "Thử prompt engineering trước, sau đó RAG cho dữ liệu riêng hoặc mới, rồi fine-tuning cho phong cách hoặc nhiệm vụ chuyên biệt ổn định, cuối cùng mới pre-training. Chi phí và độ phức tạp tăng dần.",
+    "question": "Một công ty muốn LLM trả lời đúng về chính sách nội bộ và theo phong cách thương hiệu. Hãy nêu thứ tự thử các cách tuỳ biến LLM và vì sao.",
+    "modelAnswer": "Thử prompt engineering trước, sau đó RAG cho dữ liệu riêng hoặc mới, rồi fine-tuning cho phong cách hoặc nhiệm vụ chuyên biệt ổn định, cuối cùng mới pre-training. Chi phí và độ phức tạp tăng dần nên chỉ chuyển bước khi bước trước không đủ. Chính sách nội bộ dùng RAG, phong cách thương hiệu có thể bắt đầu bằng system prompt rồi mới cân nhắc fine-tuning.",
     "keyPoints": [
-      "Prompt → RAG → fine-tuning",
-      "RAG cho dữ liệu mới",
-      "Fine-tune cho hành vi ổn định"
+      "Prompt → RAG → fine-tuning → pre-training",
+      "Chi phí tăng dần",
+      "RAG cho dữ liệu riêng, fine-tuning cho phong cách"
     ]
   },
   {
@@ -3766,7 +3766,7 @@
     "playbookId": "rag-retrieval-augmented-generation",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chatbot trả lời theo tài liệu nội bộ mới nhất, không huấn luyện lại. Dùng?",
+    "question": "Công ty muốn chatbot trả lời theo tài liệu nội bộ cập nhật hằng ngày mà không huấn luyện lại model. Dùng gì?",
     "options": [
       "Fine-tuning",
       "RAG",
@@ -3776,17 +3776,17 @@
     "answer": [
       1
     ],
-    "explanation": "RAG truy xuất đoạn liên quan rồi đưa vào prompt."
+    "explanation": "RAG truy xuất đoạn liên quan rồi đưa vào prompt. Fine-tuning dễ nhầm vì 'dạy model', nhưng không phù hợp dữ liệu đổi hằng ngày."
   },
   {
     "id": "rag-retrieval-augmented-generation-02",
     "playbookId": "rag-retrieval-augmented-generation",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Đổi embedding model nhưng giữ nguyên index cũ. Hệ quả?",
+    "question": "Team đổi sang embedding model mới nhưng giữ nguyên index vector cũ và truy vấn bắt đầu cho kết quả vô nghĩa. Vì sao?",
     "options": [
       "Không ảnh hưởng",
-      "Phải re-index vì vector từ hai model không cùng không gian",
+      "Vector của hai model không cùng không gian nên phải re-index",
       "Nhanh hơn",
       "Tự động chuyển đổi"
     ],
@@ -3800,12 +3800,12 @@
     "playbookId": "rag-retrieval-augmented-generation",
     "type": "explain",
     "difficulty": 2,
-    "question": "Mô tả pipeline RAG.",
-    "modelAnswer": "Nạp: chia tài liệu thành chunk, tạo embedding và lưu vào vector database. Truy vấn: embed câu hỏi bằng cùng model, tìm top-k chunk gần nhất, ghép vào prompt rồi để LLM sinh câu trả lời có trích dẫn.",
+    "question": "Hãy mô tả pipeline RAG và nêu điểm cần chú ý ở mỗi pha.",
+    "modelAnswer": "Nạp: chia tài liệu thành chunk, tạo embedding và lưu vào vector database kèm metadata. Truy vấn: embed câu hỏi bằng cùng model, tìm top-k chunk gần nhất, ghép vào prompt rồi để LLM sinh câu trả lời có trích dẫn. Cần chú ý chunking, nhất quán embedding model, lọc quyền và chính sách trả lời khi thiếu thông tin.",
     "keyPoints": [
       "Chunk, embed, lưu vector",
-      "Truy xuất top-k",
-      "Augment prompt rồi generate"
+      "Embed câu hỏi, top-k, ghép prompt",
+      "Trích dẫn và lọc quyền"
     ]
   },
   {
@@ -9435,24 +9435,24 @@
     "playbookId": "ai-ml-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Mô hình đạt 99% trên train, 70% trên validation. Hiện tượng?",
+    "question": "Mô hình đạt 99% trên train và 70% trên validation. Hiện tượng và hướng xử lý?",
     "options": [
-      "Underfitting",
-      "Overfitting",
+      "Underfitting, thêm layer",
+      "Overfitting, dùng regularization/thêm dữ liệu",
       "Data leakage luôn",
-      "Tốt"
+      "Tốt, triển khai"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chênh lệch lớn là overfitting."
+    "explanation": "Chênh lệch lớn giữa train và validation là overfitting. Data leakage cho điểm cao ở cả test nên khác dấu hiệu."
   },
   {
     "id": "ml-evaluation-metrics-04",
     "playbookId": "ml-evaluation-metrics",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Phát hiện gian lận, chỉ 0.5% là gian lận. Accuracy 99.5% có ý nghĩa gì?",
+    "question": "Phát hiện gian lận, chỉ 0,5% giao dịch là gian lận. Accuracy 99,5% có ý nghĩa gì?",
     "options": [
       "Rất tốt",
       "Không đáng tin, dùng precision/recall/PR-AUC",
@@ -9480,14 +9480,14 @@
       0,
       1
     ],
-    "explanation": "Mô hình xác suất, không phải cơ sở dữ liệu."
+    "explanation": "Mô hình xác suất, không phải cơ sở dữ liệu. 'Luôn truy xuất sự thật' dễ nhầm vì câu trả lời nghe tự tin."
   },
   {
     "id": "rag-retrieval-augmented-generation-04",
     "playbookId": "rag-retrieval-augmented-generation",
     "type": "mcq",
     "difficulty": 2,
-    "question": "RAG trả sai vì truy xuất thiếu đoạn đúng. Kiểm tra trước?",
+    "question": "RAG trả lời sai vì không lấy được đoạn tài liệu đúng. Kiểm tra gì trước?",
     "options": [
       "Đổi LLM",
       "Chunking, embedding và recall của bước truy xuất",
@@ -9497,7 +9497,7 @@
     "answer": [
       1
     ],
-    "explanation": "Lỗi thường nằm ở truy xuất."
+    "explanation": "Lỗi thường nằm ở truy xuất; LLM chỉ dùng được thứ bạn đưa vào."
   },
   {
     "id": "responsible-ai-04",
