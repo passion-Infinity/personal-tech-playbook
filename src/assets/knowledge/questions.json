@@ -7296,7 +7296,7 @@
     "playbookId": "azure-databases-cosmos-sql",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Mức nhất quán mặc định của Cosmos DB?",
+    "question": "Một app dùng Cosmos DB không chỉ định mức nhất quán và team hỏi mức mặc định là gì và hợp với đa số ứng dụng vì sao?",
     "options": [
       "Strong",
       "Session",
@@ -7306,14 +7306,14 @@
     "answer": [
       1
     ],
-    "explanation": "Session là mặc định."
+    "explanation": "Session đảm bảo đọc nhất quán trong phiên của một client với chi phí thấp. Strong dễ nhầm vì an toàn nhất, nhưng tốn độ trễ/RU và giảm khả dụng đa Region."
   },
   {
     "id": "azure-databases-cosmos-sql-02",
     "playbookId": "azure-databases-cosmos-sql",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Di chuyển SQL Server on-prem với ít sửa đổi nhất?",
+    "question": "Công ty muốn chuyển SQL Server on-prem dùng SQL Agent và truy vấn chéo database lên Azure với ít sửa đổi nhất. Chọn?",
     "options": [
       "Azure SQL Database",
       "Managed Instance",
@@ -7323,36 +7323,36 @@
     "answer": [
       1
     ],
-    "explanation": "MI tương thích gần đầy đủ."
+    "explanation": "Managed Instance tương thích instance-level gần đầy đủ. Azure SQL Database dễ nhầm vì cùng họ, nhưng thiếu một số tính năng instance-level."
   },
   {
     "id": "azure-databases-cosmos-sql-03",
     "playbookId": "azure-databases-cosmos-sql",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cosmos DB trả 429 thường xuyên. Nguyên nhân khả dĩ?",
+    "question": "Container Cosmos DB có partition key là country và liên tục trả 429 dù tổng RU của container còn dư, phần lớn dữ liệu thuộc một quốc gia. Nguyên nhân?",
     "options": [
       "Hết đĩa",
-      "Hot partition hoặc RU không đủ",
+      "Hot partition vì key lệch",
       "Sai DNS",
-      "Lỗi mạng"
+      "Lỗi TTL"
     ],
     "answer": [
       1
     ],
-    "explanation": "Partition key kém dồn tải."
+    "explanation": "Tải dồn vào một logical partition nên bị throttle dù tổng còn dư. Hết đĩa dễ nhầm nhưng không gây 429."
   },
   {
     "id": "azure-databases-cosmos-sql-04",
     "playbookId": "azure-databases-cosmos-sql",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao partition key quan trọng trong Cosmos DB?",
-    "modelAnswer": "Partition key quyết định phân bổ dữ liệu và tải. Key kém làm hot partition, tốn RU và bị throttle; truy vấn cross-partition cũng đắt. Key tốt có cardinality cao và phân phối đều.",
+    "question": "Hãy giải thích vì sao partition key quan trọng trong Cosmos DB và các tiêu chí chọn key tốt.",
+    "modelAnswer": "Partition key quyết định cách dữ liệu và tải được chia thành các logical partition. Key kém gây hot partition, tốn RU và bị throttle; truy vấn cross-partition cũng đắt. Key tốt có cardinality cao, phân bố đều và xuất hiện trong hầu hết truy vấn.",
     "keyPoints": [
       "Phân bổ dữ liệu và tải",
-      "Hot partition",
-      "Cardinality cao"
+      "Hot partition gây 429",
+      "Cardinality cao, phân bố đều, có trong truy vấn"
     ]
   },
   {
@@ -7360,7 +7360,7 @@
     "playbookId": "azure-messaging-event-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Xử lý đơn hàng cần dead-letter và giao dịch?",
+    "question": "Hệ thống xử lý đơn hàng cần giao dịch, dead-letter queue và thứ tự theo khách hàng. Chọn dịch vụ nào?",
     "options": [
       "Event Grid",
       "Service Bus",
@@ -7370,14 +7370,14 @@
     "answer": [
       1
     ],
-    "explanation": "Broker doanh nghiệp."
+    "explanation": "Service Bus có transactions, DLQ và sessions. Storage Queue dễ nhầm vì cũng là queue, nhưng không có các tính năng broker này."
   },
   {
     "id": "azure-messaging-event-services-02",
     "playbookId": "azure-messaging-event-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ingest hàng triệu sự kiện telemetry, cần replay?",
+    "question": "Hàng triệu thiết bị gửi telemetry mỗi giây và team cần đọc lại dữ liệu cũ nhiều lần. Chọn?",
     "options": [
       "Service Bus",
       "Event Hubs",
@@ -7387,36 +7387,36 @@
     "answer": [
       1
     ],
-    "explanation": "Giữ retention, partition."
+    "explanation": "Event Hubs giữ retention và hỗ trợ nhiều consumer group. Event Grid dễ nhầm vì xử lý sự kiện, nhưng không giữ lâu để replay."
   },
   {
     "id": "azure-messaging-event-services-03",
     "playbookId": "azure-messaging-event-services",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Poison message lặp vô hạn. Xử lý?",
+    "question": "Một message lỗi liên tục bị xử lý lại làm chậm hàng đợi. Cách xử lý đúng?",
     "options": [
       "Bỏ qua",
-      "Dead-letter và MaxDeliveryCount",
-      "Tăng timeout",
-      "Restart"
+      "DLQ với MaxDeliveryCount và cảnh báo",
+      "Tăng timeout vô hạn",
+      "Restart service"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chuyển sang DLQ sau số lần thử."
+    "explanation": "Sau số lần thử quy định message vào DLQ để điều tra. Tăng timeout dễ nhầm nhưng không giải quyết poison message."
   },
   {
     "id": "azure-messaging-event-services-04",
     "playbookId": "azure-messaging-event-services",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao consumer phải idempotent?",
-    "modelAnswer": "Các dịch vụ này giao at-least-once: message có thể được giao lặp khi retry hoặc lock hết hạn. Consumer idempotent đảm bảo xử lý lặp không gây tác dụng phụ trùng.",
+    "question": "Vì sao consumer của các dịch vụ messaging này phải idempotent và làm sao đạt được?",
+    "modelAnswer": "Các dịch vụ giao at-least-once nên message có thể giao lặp khi retry hoặc lock hết hạn. Consumer idempotent đảm bảo xử lý lặp không gây tác dụng phụ trùng, ví dụ lưu id message đã xử lý hoặc upsert theo business key.",
     "keyPoints": [
       "At-least-once",
       "Retry giao lặp",
-      "Tránh tác dụng phụ trùng"
+      "Lưu id đã xử lý hoặc upsert"
     ]
   },
   {
@@ -7424,63 +7424,63 @@
     "playbookId": "azure-devops-bicep-iac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Xem trước thay đổi trước khi deploy production?",
+    "question": "Trước khi áp một thay đổi Bicep lên production, team muốn biết tài nguyên nào sẽ bị sửa hoặc xoá. Dùng gì?",
     "options": [
       "Deploy luôn",
       "what-if",
       "Xoá rồi tạo lại",
-      "Dùng portal"
+      "Chỉnh trên portal"
     ],
     "answer": [
       1
     ],
-    "explanation": "what-if hiển thị thay đổi."
+    "explanation": "what-if hiển thị thay đổi trước khi áp dụng. Chỉnh trên portal dễ nhầm là nhanh nhưng bỏ qua review và gây drift."
   },
   {
     "id": "azure-devops-bicep-iac-02",
     "playbookId": "azure-devops-bicep-iac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Complete deployment mode nguy hiểm vì?",
+    "question": "Một deployment dùng Complete mode và làm mất một storage account không có trong template. Vì sao?",
     "options": [
-      "Chậm",
-      "Có thể xoá tài nguyên không có trong template",
-      "Tốn tiền",
-      "Không idempotent"
+      "Lỗi Azure",
+      "Complete mode xoá tài nguyên không khai báo trong template",
+      "Policy chặn",
+      "Thiếu role"
     ],
     "answer": [
       1
     ],
-    "explanation": "Xoá tài nguyên thừa."
+    "explanation": "Incremental chỉ thêm/sửa; Complete xoá tài nguyên không có trong template."
   },
   {
     "id": "azure-devops-bicep-iac-03",
     "playbookId": "azure-devops-bicep-iac",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Pipeline truy cập Azure không lưu secret?",
+    "question": "Pipeline truy cập Azure bằng client secret và sập mỗi khi secret hết hạn. Giải pháp tốt hơn?",
     "options": [
-      "Client secret trong biến",
+      "Tăng thời hạn secret",
       "Workload identity federation",
-      "Mật khẩu admin",
-      "Key trong repo"
+      "Lưu secret trong repo",
+      "Dùng root"
     ],
     "answer": [
       1
     ],
-    "explanation": "Token liên kết."
+    "explanation": "Federation dùng token không cần secret. Tăng thời hạn dễ nhầm là giải pháp, nhưng vẫn là secret phải quản lý và có thể lộ."
   },
   {
     "id": "azure-devops-bicep-iac-04",
     "playbookId": "azure-devops-bicep-iac",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao dùng IaC thay thao tác portal?",
-    "modelAnswer": "IaC có version, review, lặp lại được, phát hiện drift và dựng môi trường nhất quán; thao tác tay khó tái tạo và kiểm toán.",
+    "question": "Vì sao nên dùng IaC thay vì thao tác trên portal cho hạ tầng production?",
+    "modelAnswer": "IaC có version, được review, lặp lại được và dựng môi trường nhất quán; kết hợp what-if và pipeline cho phép xem trước và kiểm soát thay đổi. Thao tác tay khó tái tạo, khó kiểm toán và dễ gây drift.",
     "keyPoints": [
       "Versioned và review",
       "Lặp lại được",
-      "Nhất quán"
+      "Nhất quán, tránh drift"
     ]
   },
   {
@@ -7488,63 +7488,63 @@
     "playbookId": "azure-data-platform",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy vấn Parquet trên lake không dựng cluster?",
+    "question": "Analyst cần truy vấn nhanh các file Parquet trên data lake bằng T-SQL mà không muốn dựng hay quản lý cluster. Chọn?",
     "options": [
-      "Dedicated pool",
+      "Synapse dedicated SQL pool",
       "Synapse serverless SQL",
       "Databricks job",
-      "VM"
+      "VM chạy SQL Server"
     ],
     "answer": [
       1
     ],
-    "explanation": "Trả theo dữ liệu quét."
+    "explanation": "Serverless SQL truy vấn trực tiếp file trên lake và trả theo dữ liệu xử lý. Dedicated pool dễ nhầm vì là warehouse, nhưng phải cấp phát và tính tiền khi chạy."
   },
   {
     "id": "azure-data-platform-02",
     "playbookId": "azure-data-platform",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Medallion có nghĩa?",
+    "question": "Kiến trúc medallion trong lakehouse là gì và dùng để làm gì?",
     "options": [
       "Ba Region",
-      "Bronze/Silver/Gold",
-      "Ba DB",
+      "Bronze/Silver/Gold: các lớp dữ liệu thô, làm sạch, phục vụ BI",
+      "Ba database",
       "Ba cache"
     ],
     "answer": [
       1
     ],
-    "explanation": "Các lớp tinh luyện."
+    "explanation": "Medallion chia lớp tinh luyện dần để kiểm soát chất lượng."
   },
   {
     "id": "azure-data-platform-03",
     "playbookId": "azure-data-platform",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Synapse dedicated pool quên tạm dừng?",
+    "question": "Team không dùng Synapse dedicated pool ngoài giờ nhưng hoá đơn vẫn cao. Vì sao?",
     "options": [
       "Không tốn",
-      "Vẫn tính tiền compute",
+      "Pool vẫn tính tiền compute khi chưa pause",
       "Tự xoá",
       "Mất dữ liệu"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tính tiền khi chạy."
+    "explanation": "Dedicated pool tính tiền khi chạy; cần pause. Serverless dễ nhầm nhưng khác ở chỗ chỉ tính theo dữ liệu xử lý."
   },
   {
     "id": "azure-data-platform-04",
     "playbookId": "azure-data-platform",
     "type": "explain",
     "difficulty": 2,
-    "question": "Delta Lake giải quyết vấn đề gì?",
-    "modelAnswer": "Thêm giao dịch ACID, schema enforcement và time travel lên file Parquet trên lake nên ghi đồng thời và sửa dữ liệu an toàn.",
+    "question": "Dữ liệu trên lake thường gặp ghi đồng thời hỏng và không sửa/xoá từng dòng được. Delta Lake giải quyết vấn đề gì và bằng cách nào?",
+    "modelAnswer": "Delta Lake thêm giao dịch ACID, schema enforcement và time travel lên file Parquet nhờ transaction log, cho phép ghi đồng thời, MERGE/UPDATE/DELETE an toàn và quay lại phiên bản cũ.",
     "keyPoints": [
-      "ACID",
-      "Schema",
-      "Time travel"
+      "ACID bằng transaction log",
+      "Schema enforcement",
+      "Time travel và MERGE"
     ]
   },
   {
@@ -7552,7 +7552,7 @@
     "playbookId": "azure-security-keyvault-defender",
     "type": "mcq",
     "difficulty": 1,
-    "question": "App truy cập Key Vault không lưu credential?",
+    "question": "Ứng dụng trên Azure cần đọc secret từ Key Vault mà team không muốn lưu bất kỳ credential nào. Dùng gì?",
     "options": [
       "Connection string",
       "Managed Identity",
@@ -7562,16 +7562,16 @@
     "answer": [
       1
     ],
-    "explanation": "Token từ danh tính."
+    "explanation": "Managed identity cấp token tự động. Connection string dễ nhầm là cấu hình thường dùng, nhưng là secret phải lưu và bảo vệ."
   },
   {
     "id": "azure-security-keyvault-defender-02",
     "playbookId": "azure-security-keyvault-defender",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Bảo vệ vault khỏi xoá vĩnh viễn?",
+    "question": "Một admin xoá nhầm Key Vault chứa secret production. Bật gì để tránh mất vĩnh viễn?",
     "options": [
-      "Không",
+      "Không cần",
       "Soft delete và purge protection",
       "RBAC",
       "Tag"
@@ -7579,36 +7579,36 @@
     "answer": [
       1
     ],
-    "explanation": "Giữ lại thời gian."
+    "explanation": "Soft delete cho khôi phục và purge protection chặn xoá vĩnh viễn trong thời gian giữ. RBAC dễ nhầm vì liên quan an toàn, nhưng không chặn xoá bởi người có quyền."
   },
   {
     "id": "azure-security-keyvault-defender-03",
     "playbookId": "azure-security-keyvault-defender",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Defender for Cloud tự sửa lỗi cấu hình?",
+    "question": "Team cho rằng Defender for Cloud sẽ tự sửa mọi cấu hình sai. Nhận định đúng?",
     "options": [
-      "Có luôn",
-      "Chủ yếu khuyến nghị và phát hiện",
-      "Chỉ Sentinel",
-      "Không dùng"
+      "Có, tự sửa tất cả",
+      "Chủ yếu đánh giá và khuyến nghị, cần automation/Policy để khắc phục",
+      "Chỉ Sentinel mới có khuyến nghị",
+      "Không dùng được"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần hành động hoặc automation."
+    "explanation": "Defender chủ yếu đánh giá và khuyến nghị. Sentinel dễ nhầm vì có playbook phản ứng, nhưng dùng cho phát hiện và phản ứng sự cố."
   },
   {
     "id": "azure-security-keyvault-defender-04",
     "playbookId": "azure-security-keyvault-defender",
     "type": "explain",
     "difficulty": 2,
-    "question": "System-assigned vs user-assigned identity?",
-    "modelAnswer": "System-assigned gắn vòng đời một tài nguyên và bị xoá cùng nó; user-assigned độc lập và dùng chung cho nhiều tài nguyên.",
+    "question": "Hãy so sánh system-assigned và user-assigned managed identity và cho biết khi nào dùng mỗi loại.",
+    "modelAnswer": "System-assigned gắn vòng đời một tài nguyên và bị xoá cùng nó, hợp khi một tài nguyên cần danh tính riêng. User-assigned là tài nguyên độc lập, dùng chung cho nhiều tài nguyên và bền hơn, hợp khi nhiều dịch vụ cần cùng quyền hoặc cần cấp quyền trước khi tạo tài nguyên.",
     "keyPoints": [
-      "Vòng đời gắn tài nguyên",
+      "System-assigned gắn vòng đời tài nguyên",
       "User-assigned dùng chung",
-      "Chọn theo nhu cầu"
+      "Chọn theo nhu cầu chia sẻ"
     ]
   },
   {
@@ -7616,7 +7616,7 @@
     "playbookId": "azure-hybrid-connectivity",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Kết nối nhanh, rẻ?",
+    "question": "Công ty cần kết nối on-prem với Azure ngay trong tuần này với chi phí thấp. Chọn?",
     "options": [
       "ExpressRoute",
       "VPN Gateway",
@@ -7626,31 +7626,31 @@
     "answer": [
       1
     ],
-    "explanation": "Dựng trong phút."
+    "explanation": "VPN dựng nhanh qua Internet. ExpressRoute dễ nhầm vì tốt hơn, nhưng mất vài tuần lắp đặt."
   },
   {
     "id": "azure-hybrid-connectivity-02",
     "playbookId": "azure-hybrid-connectivity",
     "type": "mcq",
     "difficulty": 2,
-    "question": "VNet peering có bắc cầu?",
+    "question": "VNet A peering với hub, VNet B peering với hub nhưng A không tới được B. Vì sao và cách xử lý?",
     "options": [
-      "Có",
-      "Không mặc định",
+      "Peering tự bắc cầu",
+      "Peering không bắc cầu, cần định tuyến qua Firewall/NVA ở hub hoặc Virtual WAN",
       "Chỉ cùng Region",
-      "Chỉ ARM"
+      "Chỉ cùng subscription"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần hub/Firewall."
+    "explanation": "Peering không transitive."
   },
   {
     "id": "azure-hybrid-connectivity-03",
     "playbookId": "azure-hybrid-connectivity",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Quản trị server on-prem bằng Azure Policy?",
+    "question": "Công ty muốn áp Azure Policy và Defender cho server đặt tại datacenter riêng. Dùng gì?",
     "options": [
       "Không thể",
       "Azure Arc",
@@ -7660,18 +7660,18 @@
     "answer": [
       1
     ],
-    "explanation": "Arc gắn server."
+    "explanation": "Arc gắn server vào mặt phẳng quản lý Azure. VPN dễ nhầm vì kết nối mạng, nhưng không đưa server vào quản trị Azure."
   },
   {
     "id": "azure-hybrid-connectivity-04",
     "playbookId": "azure-hybrid-connectivity",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao tránh chồng lấn địa chỉ?",
-    "modelAnswer": "Định tuyến cần mạng phân biệt; CIDR trùng làm không route được giữa on-prem và VNet, buộc đổi địa chỉ hoặc NAT.",
+    "question": "On-prem dùng 10.0.0.0/16 và VNet Azure cũng 10.0.0.0/16. Vì sao tránh chồng lấn địa chỉ?",
+    "modelAnswer": "Định tuyến cần các mạng phân biệt; CIDR trùng nhau làm không route được giữa on-prem và VNet, buộc đổi địa chỉ hoặc dùng NAT phức tạp. Cần quy hoạch địa chỉ không trùng từ đầu.",
     "keyPoints": [
-      "Cần mạng phân biệt",
-      "Không route được",
+      "Cần mạng phân biệt để route",
+      "Không route được khi trùng",
       "NAT phức tạp"
     ]
   },
@@ -8925,7 +8925,7 @@
     "playbookId": "azure-databases-cosmos-sql",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai điều nào đúng về Cosmos DB? (chọn 2)",
+    "question": "Hai nhận định nào đúng về Cosmos DB? (chọn 2)",
     "options": [
       "Throughput tính bằng RU/s",
       "Partition key ảnh hưởng hiệu năng",
@@ -8936,7 +8936,7 @@
       0,
       1
     ],
-    "explanation": "RU và partition key là cốt lõi."
+    "explanation": "RU và partition key là cốt lõi. Cosmos hỗ trợ nhiều API và đa Region, hai phương án sai dễ gây nhiễu."
   },
   {
     "id": "azure-messaging-event-services-05",
@@ -8977,7 +8977,7 @@
     "playbookId": "azure-data-platform",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Orchestrate pipeline ETL theo lịch?",
+    "question": "Cần điều phối pipeline ETL chạy theo lịch và theo sự kiện, kết nối cả nguồn on-prem. Dùng gì?",
     "options": [
       "Data Factory",
       "Event Grid",
@@ -8987,32 +8987,32 @@
     "answer": [
       0
     ],
-    "explanation": "Data Factory điều phối."
+    "explanation": "Data Factory điều phối pipeline, có self-hosted integration runtime cho on-prem. Event Grid dễ nhầm vì liên quan sự kiện, nhưng không là công cụ ETL."
   },
   {
     "id": "azure-security-keyvault-defender-05",
     "playbookId": "azure-security-keyvault-defender",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai biện pháp bảo vệ Key Vault? (chọn 2)",
+    "question": "Hai biện pháp nào bảo vệ Key Vault? (chọn 2)",
     "options": [
       "Soft delete và purge protection",
       "Private Endpoint",
-      "Công khai Internet",
+      "Công khai ra Internet",
       "Chia sẻ key admin"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "Chống xoá và hạn chế mạng."
+    "explanation": "Chống xoá nhầm và hạn chế mạng. Công khai ra Internet và chia sẻ key admin làm tăng rủi ro."
   },
   {
     "id": "azure-hybrid-connectivity-05",
     "playbookId": "azure-hybrid-connectivity",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Kết nối riêng tư ổn định, không qua Internet?",
+    "question": "Cần kết nối riêng tư, ổn định, không đi qua Internet cho hệ thống tài chính. Chọn?",
     "options": [
       "VPN Gateway",
       "ExpressRoute",
@@ -9022,7 +9022,7 @@
     "answer": [
       1
     ],
-    "explanation": "ExpressRoute là đường riêng."
+    "explanation": "ExpressRoute là đường riêng. VPN Gateway dễ nhầm vì cũng riêng tư (mã hoá), nhưng vẫn đi qua Internet."
   },
   {
     "id": "azure-app-service-api-management-05",
