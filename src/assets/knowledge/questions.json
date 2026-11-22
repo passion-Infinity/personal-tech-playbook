@@ -2489,46 +2489,47 @@
     "playbookId": "iam-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ứng dụng chạy trên EC2 cần đọc S3. Cách đúng nhất để cấp quyền?",
+    "question": "Một ứng dụng trên EC2 cần đọc S3 và team đang lưu access key của IAM user trong file cấu hình trên instance. Key này vừa bị lộ trong repo. Cách đúng nhất để cấp quyền?",
     "options": [
-      "Lưu access key trong code",
-      "Gán IAM Role (instance profile) cho EC2",
-      "Dùng root user",
-      "Mở bucket public"
+      "Lưu access key trong code nhưng mã hoá bằng base64",
+      "Gán IAM Role (instance profile) với quyền tối thiểu cho EC2",
+      "Dùng access key của root user",
+      "Mở bucket public cho ứng dụng đọc"
     ],
     "answer": [
       1
     ],
-    "explanation": "Role cấp credentials tạm thời tự động xoay vòng, không cần lưu secret dài hạn."
+    "explanation": "Role cấp credential tạm thời tự xoay vòng nên không có secret dài hạn để lộ. Base64 chỉ là mã hoá hình thức, key vẫn lộ; dùng root key là phương án tệ nhất vì root không bị giới hạn bởi IAM."
   },
   {
     "id": "iam-fundamentals-02",
     "playbookId": "iam-fundamentals",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Một policy có Allow s3:* nhưng một policy khác có explicit Deny s3:DeleteObject. Kết quả khi xoá object?",
+    "difficulty": 3,
+    "question": "Policy của nhóm Dev có Allow s3:* trên bucket, nhưng SCP của OU có explicit Deny s3:DeleteObject. Một developer gọi DeleteObject. Kết quả?",
     "options": [
-      "Cho phép vì Allow rộng hơn",
-      "Từ chối vì explicit Deny luôn thắng",
-      "Tuỳ thứ tự policy",
+      "Cho phép vì Allow s3:* rộng hơn",
+      "Từ chối vì explicit Deny ở bất kỳ lớp nào luôn thắng",
+      "Tuỳ thứ tự policy được đánh giá",
       "Chỉ từ chối với root"
     ],
     "answer": [
       1
     ],
-    "explanation": "Explicit Deny luôn thắng mọi Allow."
+    "explanation": "Explicit Deny, kể cả từ SCP, thắng mọi Allow. Phương án nhiễu hấp dẫn nhất là 'Allow rộng hơn thắng' nhưng IAM không so độ rộng, nó chỉ tìm Deny trước."
   },
   {
     "id": "iam-fundamentals-03",
     "playbookId": "iam-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích nguyên tắc least privilege và cách áp dụng trong IAM.",
-    "modelAnswer": "Chỉ cấp đúng quyền tối thiểu cần thiết cho đúng tài nguyên và đúng thời gian. Áp dụng bằng cách gán quyền cho group hoặc role, dùng policy có Resource và Condition cụ thể, tránh quyền rộng như *, dùng IAM Access Analyzer để thu hẹp, và bật MFA, không dùng root.",
+    "question": "Một công ty có 40 kỹ sư, 5 AWS account và thường có người chuyển team. Giải thích cách áp dụng least privilege và cách cấp quyền nên thiết kế ra sao.",
+    "modelAnswer": "Chỉ cấp quyền tối thiểu cho đúng tài nguyên và đúng thời gian: policy có Resource và Condition cụ thể, tránh dấu *, dùng IAM Access Analyzer để thu hẹp theo hoạt động thực tế. Với nhiều người và nhiều account dùng IAM Identity Center liên kết IdP công ty và permission set, gắn quyền qua group/role thay vì từng user để người chuyển team được cập nhật ở một nơi. Bật MFA, không dùng root, ứng dụng dùng role thay cho access key.",
     "keyPoints": [
-      "Quyền tối thiểu cho đúng tài nguyên",
-      "Group/role, Resource và Condition cụ thể",
-      "Access Analyzer, MFA, tránh root"
+      "Resource và Condition cụ thể, tránh *",
+      "Access Analyzer sinh policy từ hoạt động thực tế",
+      "Identity Center + group/role thay IAM user riêng",
+      "MFA và không dùng root"
     ]
   },
   {
@@ -2536,7 +2537,7 @@
     "playbookId": "s3-security-encryption",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần audit ai đã dùng khoá để giải mã object trong S3. Chọn kiểu mã hoá nào?",
+    "question": "Đội compliance yêu cầu chứng minh ai đã giải mã dữ liệu trong bucket và chặn được một nhóm xem object bằng cách khoá quyền dùng key. Chọn kiểu mã hoá nào?",
     "options": [
       "SSE-S3",
       "SSE-KMS",
@@ -2546,36 +2547,37 @@
     "answer": [
       1
     ],
-    "explanation": "KMS ghi lại việc dùng khoá qua CloudTrail và cho phân quyền theo khoá."
+    "explanation": "SSE-KMS ghi việc dùng key qua CloudTrail và cho phân quyền theo key. SSE-S3 dễ nhầm vì cũng mã hoá, nhưng S3 tự quản key nên không có audit và phân quyền theo key."
   },
   {
     "id": "s3-security-encryption-02",
     "playbookId": "s3-security-encryption",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Mặc định của bucket mới về truy cập công khai?",
+    "question": "Admin tạo bucket mới và chưa cấu hình gì. Trạng thái truy cập mặc định đúng nhất?",
     "options": [
-      "Public",
-      "Private và Block Public Access được bật",
-      "Chỉ đọc công khai",
-      "Tuỳ region"
+      "Public đọc được",
+      "Private, Block Public Access bật, ACL bị tắt",
+      "Public chỉ đọc",
+      "Tuỳ Region"
     ],
     "answer": [
       1
     ],
-    "explanation": "Bucket mới mặc định private và ACL bị tắt."
+    "explanation": "Bucket mới mặc định private với Block Public Access và Bucket owner enforced. 'Tuỳ Region' sai vì hành vi này nhất quán toàn cầu."
   },
   {
     "id": "s3-security-encryption-03",
     "playbookId": "s3-security-encryption",
     "type": "explain",
     "difficulty": 2,
-    "question": "So sánh SSE-S3, SSE-KMS và SSE-C.",
-    "modelAnswer": "SSE-S3 do S3 quản lý khoá, mặc định, không tốn thêm phí. SSE-KMS dùng khoá trong KMS, có audit, phân quyền và xoay vòng nhưng có phí và quota KMS. SSE-C khách hàng gửi khoá trong mỗi request, S3 không lưu khoá nên mất khoá là mất dữ liệu.",
+    "question": "Một ứng dụng upload/download S3 tốc độ cao dùng SSE-KMS, bắt đầu nhận lỗi 503 SlowDown. So sánh SSE-S3, SSE-KMS, SSE-C và giải thích nguyên nhân cùng cách xử lý.",
+    "modelAnswer": "SSE-S3 do S3 quản lý khoá, mặc định, miễn phí và không có audit theo khoá. SSE-KMS dùng key trong KMS, có audit CloudTrail, phân quyền và xoay vòng nhưng mỗi request gọi KMS nên chịu quota và phí, traffic cao dễ bị throttling. SSE-C bắt khách hàng gửi key mỗi request, S3 không lưu key nên mất key là mất dữ liệu. Với lỗi 503, bật S3 Bucket Key để giảm số lần gọi KMS, tăng quota hoặc dùng SSE-S3 nếu không cần audit.",
     "keyPoints": [
-      "SSE-S3: mặc định",
-      "SSE-KMS: audit, kiểm soát khoá",
-      "SSE-C: khách hàng giữ khoá"
+      "SSE-S3: mặc định, không audit theo khoá",
+      "SSE-KMS: audit và phân quyền, nhưng quota và phí",
+      "SSE-C: S3 không lưu key, mất key là mất dữ liệu",
+      "Giảm throttling bằng S3 Bucket Key"
     ]
   },
   {
@@ -2583,46 +2585,47 @@
     "playbookId": "s3-versioning-replication",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Bật S3 Replication nhưng object đã có trước đó không được sao chép. Giải pháp?",
+    "question": "Team bật S3 Replication hôm nay nhưng 2 triệu object cũ không xuất hiện ở bucket đích. Giải pháp đúng?",
     "options": [
-      "Tắt versioning",
+      "Tắt versioning rồi bật lại",
       "Dùng S3 Batch Replication cho object có sẵn",
-      "Xoá bucket",
-      "Đổi region"
+      "Xoá bucket và tạo lại",
+      "Đổi Region đích"
     ],
     "answer": [
       1
     ],
-    "explanation": "Rule replication chỉ áp dụng cho object mới sau khi tạo."
+    "explanation": "Rule replication chỉ áp dụng cho object mới sau khi tạo. Tắt versioning là sai vì replication bắt buộc versioning và Suspend không giúp sao chép object cũ."
   },
   {
     "id": "s3-versioning-replication-02",
     "playbookId": "s3-versioning-replication",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Xoá một object trong bucket có versioning (không chỉ định versionId) sẽ?",
+    "question": "Bucket bật versioning, người dùng chạy delete object mà không chỉ định versionId, rồi báo 'mất file'. Điều gì thực sự xảy ra và cách khôi phục?",
     "options": [
-      "Xoá vĩnh viễn mọi version",
-      "Chèn delete marker, các version cũ vẫn còn",
-      "Báo lỗi",
-      "Tắt versioning"
+      "Mọi version bị xoá vĩnh viễn",
+      "Chèn delete marker, các version cũ vẫn còn, xoá marker để khôi phục",
+      "Báo lỗi và không xoá",
+      "Versioning tự tắt"
     ],
     "answer": [
       1
     ],
-    "explanation": "Xoá delete marker để khôi phục object."
+    "explanation": "DELETE không kèm versionId chỉ tạo delete marker. Phương án 'xoá vĩnh viễn mọi version' dễ nhầm với hành vi bucket không bật versioning."
   },
   {
     "id": "s3-versioning-replication-03",
     "playbookId": "s3-versioning-replication",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao replication không thay thế backup?",
-    "modelAnswer": "Replication sao chép cả thao tác ghi đè và xoá nhầm sang bản sao nên lỗi cũng bị nhân bản. Cần kết hợp versioning, Object Lock và backup có thời điểm để khôi phục khi dữ liệu bị hỏng hoặc xoá nhầm.",
+    "question": "Một lập trình viên ghi đè file cấu hình bằng bản lỗi, vài giây sau lỗi đã xuất hiện ở bucket CRR. Vì sao replication không thay thế backup và cần kết hợp gì?",
+    "modelAnswer": "Replication sao chép bất đồng bộ cả thao tác ghi đè lẫn xoá nhầm sang bản sao nên lỗi cũng được nhân bản. Cần kết hợp versioning để khôi phục phiên bản trước, Object Lock cho dữ liệu bất biến và backup có thời điểm. Xoá có versionId thì không được replicate, nhưng ghi đè tạo version mới vẫn được replicate.",
     "keyPoints": [
-      "Lỗi cũng được nhân bản",
-      "Versioning/Object Lock bảo vệ khỏi xoá nhầm",
-      "Backup điểm thời gian vẫn cần"
+      "Replication nhân bản cả lỗi",
+      "Versioning để khôi phục version cũ",
+      "Object Lock hoặc backup point-in-time",
+      "Xoá có versionId không được replicate"
     ]
   },
   {
@@ -2630,7 +2633,7 @@
     "playbookId": "s3-storage-classes-lifecycle",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dữ liệu có pattern truy cập không đoán được, không muốn phí truy xuất. Chọn class nào?",
+    "question": "Một bucket có dữ liệu mà mẫu truy cập thay đổi theo mùa và không ai đoán được, team muốn tối ưu chi phí mà không muốn bị tính phí truy xuất khi dữ liệu nguội bỗng được đọc lại. Chọn class nào?",
     "options": [
       "Glacier Deep Archive",
       "S3 Intelligent-Tiering",
@@ -2640,36 +2643,37 @@
     "answer": [
       1
     ],
-    "explanation": "Intelligent-Tiering tự chuyển tầng, không phí truy xuất nhưng có phí monitoring theo object."
+    "explanation": "Intelligent-Tiering tự chuyển tầng, không phí truy xuất, chỉ có phí monitoring theo object. Standard-IA dễ nhầm nhưng tính phí truy xuất mỗi lần đọc lại."
   },
   {
     "id": "s3-storage-classes-lifecycle-02",
     "playbookId": "s3-storage-classes-lifecycle",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Chuyển hàng triệu file 10 KB sang Standard-IA thường dẫn tới?",
+    "question": "Team chuyển 3 triệu file log 10 KB sang Standard-IA để tiết kiệm nhưng hoá đơn tăng. Nguyên nhân?",
     "options": [
       "Giảm chi phí chắc chắn",
-      "Có thể tăng chi phí vì tính tối thiểu 128 KB mỗi object",
-      "Mất dữ liệu",
-      "Tăng bảo mật"
+      "IA tính tối thiểu 128 KB mỗi object nên file nhỏ tốn hơn",
+      "Dữ liệu bị mất",
+      "Bảo mật tăng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Các class IA tính kích thước tối thiểu nên file nhỏ không hợp."
+    "explanation": "Các class IA tính kích thước tối thiểu 128 KB mỗi object. 'Giảm chắc chắn' sai vì đơn giá/GB thấp hơn không bù được phần tính tối thiểu với file nhỏ."
   },
   {
     "id": "s3-storage-classes-lifecycle-03",
     "playbookId": "s3-storage-classes-lifecycle",
     "type": "explain",
     "difficulty": 2,
-    "question": "Lifecycle rule dùng để làm gì và cần lưu ý gì?",
-    "modelAnswer": "Tự động chuyển object sang class rẻ hơn theo tuổi và xoá object, version cũ hay multipart upload dở dang. Cần lưu ý thời gian lưu tối thiểu của từng class, chiều chuyển chỉ xuống tầng lạnh hơn và thêm rule dọn multipart upload.",
+    "question": "Thiết kế lifecycle cho log kiểm toán giữ 7 năm. Lifecycle rule làm gì và cần lưu ý những gì?",
+    "modelAnswer": "Lifecycle tự động transition object sang class rẻ hơn theo tuổi (ví dụ Standard-IA sau 30 ngày, Deep Archive sau 180 ngày) và expire object, noncurrent version hoặc multipart upload dở dang. Cần lưu ý thời gian lưu tối thiểu mỗi class (IA 30, Glacier 90, Deep Archive 180 ngày) vẫn bị tính khi chuyển sớm, chiều chuyển chỉ đi xuống tầng lạnh hơn, Standard sang IA cần tối thiểu 30 ngày, và nên thêm rule AbortIncompleteMultipartUpload.",
     "keyPoints": [
-      "Transition và Expiration theo tuổi",
-      "Thời gian lưu tối thiểu (30/90/180 ngày)",
-      "Dọn multipart upload"
+      "Transition theo tuổi và Expiration",
+      "Thời gian lưu tối thiểu mỗi class",
+      "Chỉ chuyển xuống tầng lạnh hơn",
+      "Dọn multipart dở dang"
     ]
   },
   {
@@ -2677,46 +2681,47 @@
     "playbookId": "s3-performance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Upload file 10 GB thường bị lỗi giữa chừng. Giải pháp?",
+    "question": "Job nightly upload file backup 10 GB lên S3 bằng một lệnh PUT và thường đứt giữa chừng, phải làm lại từ đầu. Giải pháp?",
     "options": [
       "Tăng timeout",
       "Multipart Upload (bắt buộc cho file > 5 GB)",
-      "Chia thành nhiều bucket",
+      "Chia dữ liệu ra nhiều bucket",
       "Nén bằng zip"
     ],
     "answer": [
       1
     ],
-    "explanation": "Multipart cho phép upload song song và retry từng phần."
+    "explanation": "Multipart upload song song và thử lại từng part. Tăng timeout dễ nhầm nhưng PUT đơn không vượt được giới hạn 5 GB."
   },
   {
     "id": "s3-performance-02",
     "playbookId": "s3-performance",
     "type": "mcq",
     "difficulty": 3,
-    "question": "S3 hỗ trợ tối thiểu bao nhiêu request GET mỗi giây cho mỗi prefix?",
+    "question": "Một dịch vụ cần 20.000 GET/giây vào cùng một prefix và nhận 503 SlowDown. Mỗi prefix hỗ trợ tối thiểu bao nhiêu GET/giây và cách xử lý?",
     "options": [
-      "500",
-      "5,500",
-      "55,000",
+      "500, không mở rộng được",
+      "5.500, rải object qua nhiều prefix",
+      "55.000, tăng timeout",
       "Không giới hạn"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tối thiểu 5,500 GET/HEAD và 3,500 PUT/COPY/POST/DELETE mỗi prefix; tăng bằng nhiều prefix."
+    "explanation": "Tối thiểu 5.500 GET/HEAD mỗi prefix, tăng bằng nhiều prefix. 'Không giới hạn' sai vì giới hạn theo prefix, không phải theo bucket."
   },
   {
     "id": "s3-performance-03",
     "playbookId": "s3-performance",
     "type": "explain",
     "difficulty": 2,
-    "question": "Làm cách nào tăng throughput S3?",
-    "modelAnswer": "Song song hoá: rải object qua nhiều prefix, dùng multipart upload và byte-range fetch, thêm Transfer Acceleration khi client ở xa. Với SSE-KMS cần chú ý quota request của KMS và có thể bật S3 Bucket Key.",
+    "question": "Ứng dụng của bạn ở nhiều Region cần tăng throughput upload/download S3 và đang dùng SSE-KMS. Làm cách nào và cần chú ý gì?",
+    "modelAnswer": "Song song hoá: rải object qua nhiều prefix (mỗi prefix 3.500 ghi và 5.500 đọc mỗi giây), dùng multipart upload và byte-range fetch, thêm Transfer Acceleration khi client ở xa Region. Với SSE-KMS cần chú ý KMS request quota vì mỗi request gọi KMS, giảm bằng S3 Bucket Key.",
     "keyPoints": [
       "Nhiều prefix",
-      "Multipart và byte-range",
-      "Transfer Acceleration và KMS quota"
+      "Multipart và byte-range fetch",
+      "Transfer Acceleration cho client ở xa",
+      "KMS quota và Bucket Key"
     ]
   },
   {
@@ -2724,7 +2729,7 @@
     "playbookId": "ec2-pricing-models",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Workload batch chịu được gián đoạn, cần chi phí thấp nhất. Chọn?",
+    "question": "Pipeline xử lý ảnh batch chạy ban đêm, mỗi task độc lập, chịu được bị ngắt và chạy lại. Chọn mô hình giá rẻ nhất?",
     "options": [
       "On-Demand",
       "Spot Instances",
@@ -2734,14 +2739,14 @@
     "answer": [
       1
     ],
-    "explanation": "Spot giảm tới ~90% nhưng có thể bị thu hồi với cảnh báo 2 phút."
+    "explanation": "Spot giảm tới ~90% nhưng có thể bị thu hồi với cảnh báo 2 phút. Reserved 3 năm dễ nhầm là rẻ nhưng bạn trả cam kết cả khi chỉ chạy ban đêm."
   },
   {
     "id": "ec2-pricing-models-02",
     "playbookId": "ec2-pricing-models",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần license theo socket/core (BYOL) và tuân thủ. Chọn?",
+    "question": "Công ty muốn mang license database tính theo core lên EC2 và phải chứng minh hạ tầng riêng để tuân thủ. Chọn?",
     "options": [
       "Spot",
       "Dedicated Host",
@@ -2751,19 +2756,20 @@
     "answer": [
       1
     ],
-    "explanation": "Dedicated Host cho nhìn thấy socket/core vật lý."
+    "explanation": "Dedicated Host cho nhìn thấy socket/core vật lý để dùng BYOL. Dedicated Instance dễ nhầm nhưng bạn không kiểm soát host nên không đáp ứng BYOL theo core."
   },
   {
     "id": "ec2-pricing-models-03",
     "playbookId": "ec2-pricing-models",
     "type": "explain",
     "difficulty": 2,
-    "question": "Kết hợp các mô hình giá EC2 cho một ứng dụng web như thế nào?",
-    "modelAnswer": "Phần tải nền chạy ổn định 24/7 dùng Savings Plans hoặc Reserved, phần tăng đột biến dùng On-Demand, và các job chịu gián đoạn dùng Spot, thường kết hợp trong Auto Scaling Group với mixed instances policy.",
+    "question": "Một ứng dụng web có tải nền ổn định 24/7, đột biến vào cuối tháng và các job nền chịu gián đoạn. Hãy kết hợp các mô hình giá EC2 và giải thích.",
+    "modelAnswer": "Phần tải nền ổn định 24/7 dùng Savings Plans (hoặc Reserved) để giảm tới 72% nhờ cam kết. Phần đột biến cuối tháng dùng On-Demand cho linh hoạt, không cam kết. Job nền chịu gián đoạn dùng Spot giảm tới ~90%. Thường gộp trong một Auto Scaling Group với mixed instances policy.",
     "keyPoints": [
-      "Baseline: Savings Plans/Reserved",
-      "Đỉnh tải: On-Demand",
-      "Job chịu gián đoạn: Spot"
+      "Savings Plans/Reserved cho tải nền",
+      "On-Demand cho đột biến",
+      "Spot cho job chịu gián đoạn",
+      "ASG mixed instances policy"
     ]
   },
   {
@@ -7799,86 +7805,86 @@
     "playbookId": "iam-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ứng dụng chạy trên EC2 cần đọc một S3 bucket. Cách an toàn nhất?",
+    "question": "Dev mới được thêm vào group có policy cho phép ec2:StartInstances nhưng vẫn nhận AccessDenied ngay sau khi admin vừa gắn policy. Nguyên nhân hợp lý nhất và cách xử lý?",
     "options": [
-      "Nhúng access key của IAM user vào code",
-      "Gắn IAM role với quyền tối thiểu qua instance profile",
-      "Dùng root account access key",
-      "Mở bucket public"
+      "Policy sai cú pháp nên phải xoá user và tạo lại",
+      "IAM là eventually consistent, thay đổi cần vài giây để có hiệu lực nên chờ rồi thử lại",
+      "Group không thể gắn policy",
+      "Phải restart instance"
     ],
     "answer": [
       1
     ],
-    "explanation": "Role cấp credential tạm thời tự xoay, không có key dài hạn để lộ."
+    "explanation": "Quyền IAM nhân bản toàn cầu nên có độ trễ ngắn. Phương án 'xoá user tạo lại' là phản xạ sai vì làm mất lịch sử và không giải quyết gì."
   },
   {
     "id": "iam-fundamentals-05",
     "playbookId": "iam-fundamentals",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai điều nào đúng về đánh giá quyền của IAM? (chọn 2)",
+    "question": "Hai nhận định nào đúng về cách IAM đánh giá quyền? (chọn 2)",
     "options": [
-      "Mặc định là deny",
-      "Explicit deny thắng mọi allow",
-      "Allow ở một policy luôn thắng deny ở policy khác",
-      "Root user không bị giới hạn bởi bất kỳ điều gì"
+      "Mặc định mọi request đều bị từ chối nếu không có Allow",
+      "Explicit Deny thắng mọi Allow ở bất kỳ lớp nào",
+      "Allow ở một policy luôn thắng Deny ở policy khác",
+      "Root user không bị giới hạn bởi bất kỳ điều gì trong mọi trường hợp"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "Mặc định từ chối ngầm; một explicit deny luôn ghi đè allow."
+    "explanation": "Implicit deny là mặc định và explicit Deny luôn thắng. Phương án 'Root không bị giới hạn bởi gì' dễ nhầm nhưng root vẫn bị SCP của Organizations giới hạn ở member account."
   },
   {
     "id": "s3-security-encryption-04",
     "playbookId": "s3-security-encryption",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Cần bảo đảm mọi object trong bucket được mã hoá bằng khoá KMS do công ty quản lý. Cách nào hợp lý?",
+    "difficulty": 3,
+    "question": "Công ty bắt buộc mọi object phải mã hoá bằng khoá KMS do công ty quản lý, kể cả khi một team khác cấu hình upload sai. Cách hợp lý nhất?",
     "options": [
       "Chỉ bật Block Public Access",
-      "Đặt default encryption SSE-KMS và bucket policy từ chối PUT không mã hoá",
+      "Đặt default encryption SSE-KMS và bucket policy từ chối PUT không dùng aws:kms",
       "Dùng ACL",
       "Bật versioning"
     ],
     "answer": [
       1
     ],
-    "explanation": "Default encryption cộng policy deny ép buộc đúng khoá."
+    "explanation": "Default encryption lo mặc định, bucket policy deny ép buộc đúng khoá khi upload sai. Block Public Access dễ nhầm nhưng chỉ chống truy cập công khai, không liên quan mã hoá."
   },
   {
     "id": "s3-security-encryption-05",
     "playbookId": "s3-security-encryption",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Muốn cho một đối tác tải file lên trong 15 phút mà không tạo IAM user. Chọn?",
+    "question": "Cần cho một đối tác tải file lên trong 15 phút mà không tạo IAM user. Chọn gì và nó dùng quyền của ai?",
     "options": [
       "Mở bucket public",
-      "Presigned URL hết hạn sau 15 phút",
+      "Presigned URL hết hạn sau 15 phút, mang quyền của người ký",
       "Chia sẻ access key",
       "Bật CRR"
     ],
     "answer": [
       1
     ],
-    "explanation": "Presigned URL mang quyền của người ký và có hạn dùng."
+    "explanation": "Presigned URL mang quyền của người ký và có hạn dùng. Chia sẻ access key dễ nhầm là tiện nhưng cấp quyền dài hạn và không thu hồi gọn."
   },
   {
     "id": "s3-versioning-replication-04",
     "playbookId": "s3-versioning-replication",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ai đó xoá nhầm object khi bucket bật versioning. Điều gì xảy ra?",
+    "question": "Hóa đơn S3 tăng đều dù số object hiển thị không đổi, bucket đã bật versioning và ghi đè hằng ngày. Nguyên nhân và cách xử lý?",
     "options": [
-      "Object mất vĩnh viễn",
-      "Tạo delete marker, các phiên bản cũ vẫn khôi phục được",
-      "Bucket bị khoá",
-      "Object chuyển sang Glacier"
+      "Phí request tăng",
+      "Mọi version cũ đều chiếm dung lượng, dùng Lifecycle expire noncurrent versions",
+      "Replication hỏng",
+      "Bucket bị Suspend"
     ],
     "answer": [
       1
     ],
-    "explanation": "Xoá không chỉ định version chỉ thêm delete marker."
+    "explanation": "Mỗi lần ghi đè giữ một version và tính phí lưu trữ. Suspend không giải quyết vì version cũ vẫn được giữ và vẫn tính phí."
   },
   {
     "id": "s3-versioning-replication-05",
@@ -7888,7 +7894,7 @@
     "question": "Hai yêu cầu bắt buộc để bật S3 Replication? (chọn 2)",
     "options": [
       "Versioning bật ở cả nguồn và đích",
-      "Bucket đích cùng Region",
+      "Bucket đích bắt buộc cùng Region",
       "IAM role cho S3 thực hiện replication",
       "Bucket phải public"
     ],
@@ -7896,31 +7902,31 @@
       0,
       2
     ],
-    "explanation": "CRR cần versioning hai phía và role; đích có thể khác Region (CRR) hoặc cùng (SRR)."
+    "explanation": "Cần versioning hai phía và IAM role. Đích có thể khác Region (CRR) hoặc cùng Region (SRR), nên phương án 'cùng Region' là sai dù dễ tưởng đó là điều kiện."
   },
   {
     "id": "s3-storage-classes-lifecycle-04",
     "playbookId": "s3-storage-classes-lifecycle",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dữ liệu truy cập không đoán trước, cần tối ưu chi phí tự động?",
+    "question": "Ảnh gốc của sản phẩm được truy cập nhiều trong 2 tuần đầu rồi hầu như không ai xem, nhưng khi cần phải tải trong vài mili-giây. Cách tiết kiệm phù hợp?",
     "options": [
-      "S3 Standard-IA",
-      "S3 Intelligent-Tiering",
-      "S3 One Zone-IA",
-      "Glacier Deep Archive"
+      "Lifecycle chuyển sang Glacier Deep Archive sau 14 ngày",
+      "Lifecycle chuyển sang Standard-IA hoặc Glacier Instant Retrieval sau 30 ngày",
+      "Để Standard mãi",
+      "Chuyển sang One Zone-IA vì cần độ bền cao"
     ],
     "answer": [
       1
     ],
-    "explanation": "Intelligent-Tiering tự chuyển tầng theo mẫu truy cập."
+    "explanation": "IA hoặc Glacier Instant giữ độ trễ mili-giây với giá lưu thấp hơn. Deep Archive dễ nhầm là rẻ nhất nhưng phải chờ nhiều giờ; One Zone-IA chỉ 1 AZ nên không hợp dữ liệu cần độ bền cao."
   },
   {
     "id": "s3-storage-classes-lifecycle-05",
     "playbookId": "s3-storage-classes-lifecycle",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Log cần giữ 7 năm để kiểm toán, hiếm khi đọc, chấp nhận chờ nhiều giờ để lấy ra, rẻ nhất?",
+    "question": "Log kiểm toán cần giữ 7 năm, hiếm khi đọc, chấp nhận chờ nhiều giờ để lấy ra. Chọn class rẻ nhất?",
     "options": [
       "Standard",
       "Glacier Instant Retrieval",
@@ -7930,31 +7936,31 @@
     "answer": [
       2
     ],
-    "explanation": "Deep Archive rẻ nhất, thời gian lấy dữ liệu tính bằng giờ."
+    "explanation": "Deep Archive rẻ nhất, lấy ra tính bằng giờ (Standard ≤ 12 giờ, Bulk ≤ 48 giờ). Glacier Instant dễ nhầm nhưng đắt hơn vì cho truy xuất mili-giây mà ở đây không cần."
   },
   {
     "id": "s3-performance-04",
     "playbookId": "s3-performance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tải lên file 5 GB nhanh và chịu lỗi mạng tốt?",
+    "question": "Cần chỉ đọc 1 MB footer của file Parquet 50 GB trong S3 mà không tải toàn bộ. Dùng gì?",
     "options": [
-      "PUT một lần",
-      "Multipart upload",
-      "Dùng ACL",
-      "Chia bucket"
+      "Tải toàn bộ rồi cắt",
+      "Byte-Range Fetch với header Range",
+      "Multipart Upload",
+      "Transfer Acceleration"
     ],
     "answer": [
       1
     ],
-    "explanation": "Multipart song song và thử lại từng phần; bắt buộc trên 5 GB."
+    "explanation": "GET kèm Range chỉ lấy khúc cần. Transfer Acceleration dễ nhầm vì tăng tốc, nhưng vẫn tải toàn bộ và không chọn phần."
   },
   {
     "id": "s3-performance-05",
     "playbookId": "s3-performance",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Client ở xa Region cần upload nhanh hơn qua mạng backbone AWS?",
+    "question": "Client ở Châu Âu upload file lớn lên bucket ở Singapore rất chậm và muốn đi qua mạng backbone AWS. Dùng gì?",
     "options": [
       "Transfer Acceleration",
       "Versioning",
@@ -7964,41 +7970,41 @@
     "answer": [
       0
     ],
-    "explanation": "Transfer Acceleration đi qua edge location gần nhất."
+    "explanation": "Transfer Acceleration upload tới edge location gần nhất rồi đi backbone AWS. Requester Pays chỉ đổi người trả phí request/dữ liệu, không ảnh hưởng tốc độ."
   },
   {
     "id": "ec2-pricing-models-04",
     "playbookId": "ec2-pricing-models",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Batch xử lý ảnh ban đêm chịu được gián đoạn, cần rẻ nhất?",
+    "question": "Team cam kết 3 năm EC2 Instance Savings Plan cho họ m5, nửa năm sau chuyển workload sang Fargate và Graviton. Điều gì xảy ra và lẽ ra nên chọn gì?",
     "options": [
-      "On-Demand",
-      "Spot Instances",
-      "Dedicated Host",
-      "Reserved 3 năm"
+      "Cam kết tự chuyển sang Fargate",
+      "Vẫn phải trả cam kết cho m5, lẽ ra nên chọn Compute Savings Plans",
+      "Được hoàn tiền",
+      "Spot bù lại"
     ],
     "answer": [
       1
     ],
-    "explanation": "Spot giảm giá sâu, có thể bị thu hồi."
+    "explanation": "Compute Savings Plans áp cho EC2 mọi family, Fargate và Lambda nên linh hoạt khi đổi kiến trúc. EC2 Instance Savings Plan gắn một family trong một Region nên không áp cho Fargate."
   },
   {
     "id": "ec2-pricing-models-05",
     "playbookId": "ec2-pricing-models",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Giấy phép phần mềm theo socket/core cần máy vật lý riêng. Chọn?",
+    "question": "Một đợt bán hàng cần chắc chắn có 50 instance trong một AZ vào đúng giờ cao điểm, nhưng team lo capacity không đủ. Điều gì phù hợp và cần lưu ý gì?",
     "options": [
       "Spot",
+      "Capacity Reservation, kết hợp Savings Plans nếu muốn giảm giá",
       "Dedicated Host",
-      "Savings Plans",
-      "Capacity Reservation"
+      "Reserved Instance không giữ chỗ"
     ],
     "answer": [
       1
     ],
-    "explanation": "Dedicated Host cho kiểm soát socket/core và BYOL."
+    "explanation": "Capacity Reservation giữ chỗ trong AZ nhưng không tự giảm giá, nên kết hợp Savings Plans. Dedicated Host dễ nhầm là chắc chắn có máy, nhưng mục đích là cô lập phần cứng và BYOL chứ không phải giữ chỗ."
   },
   {
     "id": "ec2-security-groups-networking-04",

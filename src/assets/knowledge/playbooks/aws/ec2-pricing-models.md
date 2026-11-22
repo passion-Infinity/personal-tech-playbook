@@ -1,47 +1,68 @@
 ## 1. Core Concept
 
-EC2 có nhiều **purchasing option** cho cùng một instance; khác nhau ở **cam kết**, **mức giảm giá** và **khả năng bị thu hồi**. Chọn đúng có thể giảm chi phí compute 50–90% mà không đổi kiến trúc. Mental model: *cam kết càng lâu và chấp nhận gián đoạn càng nhiều thì giá càng rẻ.*
+EC2 bán cùng một máy với nhiều mô hình giá khác nhau; chọn đúng có thể giảm **50–90%** chi phí compute. Cái bạn đánh đổi là **cam kết thời gian** hoặc **khả năng bị thu hồi** để lấy giá thấp hơn.
+
+**Mental model:** như **đặt phòng khách sạn**: On-Demand là đến là ở nhưng giá niêm yết; Reserved/Savings Plans là hợp đồng dài hạn giá rẻ; Spot là phòng trống phút chót siêu rẻ nhưng có thể bị đuổi; Dedicated Host là thuê nguyên tầng.
 
 ## 2. How It Works
 
-- **On-Demand**: trả theo giây (Linux/Windows, tối thiểu 60 giây) hoặc theo giờ (một số OS); không cam kết, giá cao nhất trong nhóm "shared".
-- **Reserved Instances (RI)**: cam kết **1 hoặc 3 năm** cho instance type/region; giảm tới **72%**. Trả trước All/Partial/No Upfront. **Standard RI** giảm nhiều hơn nhưng khó đổi; **Convertible RI** đổi được instance family.
-- **Savings Plans**: cam kết **$/giờ** trong 1–3 năm, giảm tới **72%**, linh hoạt hơn RI (Compute Savings Plans áp cả Fargate, Lambda).
-- **Spot Instances**: dùng capacity dư, giảm tới **90%**. AWS thu hồi khi cần capacity, báo trước **2 phút**. Giá Spot thay đổi dần theo cung cầu dài hạn (không còn đấu giá).
-- **Dedicated Hosts**: thuê nguyên một **server vật lý**, nhìn thấy socket/core → dùng license theo core (BYOL: Windows Server, SQL Server, Oracle). Đắt nhất.
-- **Dedicated Instances**: instance chạy trên phần cứng riêng cho account, nhưng không kiểm soát được host.
-- **On-Demand Capacity Reservations**: giữ chỗ capacity trong một AZ, không giảm giá (kết hợp Savings Plans để giảm).
+**On-Demand → Linh hoạt nhất**
+- Tính **theo giây** (tối thiểu 60 giây) cho Linux/Windows, không cam kết. Đắt nhất trong shared tenancy nhưng hợp tải ngắn hạn, khó đoán.
+
+**Reserved Instances (RI) → Cam kết 1 hoặc 3 năm**
+- Giảm **tới 72%**; chọn All/Partial/No Upfront. **Standard RI** giảm nhiều hơn, **Convertible RI** đổi được instance family (giảm ít hơn, tới ~66%).
+
+**Savings Plans → Cam kết theo $/giờ**
+- Cam kết chi tiêu **$/giờ** trong 1 hoặc 3 năm, giảm **tới 72%**. **Compute Savings Plans** áp cho EC2 (mọi family/Region), **Fargate** và **Lambda**; **EC2 Instance Savings Plans** gắn một family trong một Region, giảm nhiều hơn.
+- Tác động: linh hoạt hơn RI khi bạn đổi kiến trúc.
+
+**Spot → Rẻ nhất, có thể bị thu hồi**
+- Giảm **tới ~90%**; AWS có thể thu hồi với **cảnh báo 2 phút**. Chỉ hợp workload **stateless, chịu gián đoạn** (batch, CI, xử lý ảnh). Dùng đa dạng instance type/AZ để giảm xác suất bị thu hồi.
+
+**Dedicated Host / Instances → Cô lập phần cứng**
+- **Dedicated Host** là máy vật lý riêng, nhìn thấy **socket/core** để dùng **license BYOL** theo core và đáp ứng compliance; chi phí cao nhất. **Dedicated Instance** chạy trên phần cứng riêng nhưng bạn không kiểm soát host.
+
+**Capacity Reservation → Đảm bảo có máy**
+- Giữ chỗ capacity trong một AZ theo giờ, **không tự có giảm giá**; kết hợp Savings Plans/RI để giảm giá.
+
+**Ví dụ kết hợp:** web app có tải nền ổn định dùng **Savings Plans**, phần tăng đột biến **On-Demand**, job xử lý nền **Spot**, trong cùng **Auto Scaling Group** dùng **mixed instances policy**.
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart TD
-    Q{Workload chịu được gián đoạn?} -->|Yes| SPOT[Spot]
-    Q -->|No| L{Chạy ổn định 1-3 năm?}
-    L -->|Yes| RI[Savings Plans / Reserved]
-    L -->|No| OD[On-Demand]
-    RI --> H{"Cần license theo core / compliance?"}
-    H -->|Yes| DH[Dedicated Host]
+    W{Workload?} -->|"Ổn định 24/7, biết trước"| SP["Savings Plans / RI"]
+    W -->|"Khó đoán, ngắn hạn"| OD[On-Demand]
+    W -->|"Chịu gián đoạn, stateless"| SPOT[Spot]
+    W -->|"License theo core, compliance"| DH[Dedicated Host]
+    W -->|"Cần chắc chắn có capacity"| CR[Capacity Reservation]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Baseline chạy 24/7 → **Savings Plans/RI**; phần tăng đột biến → **On-Demand**; batch, CI, rendering, big data stateless → **Spot**.
-- Kết hợp trong **Auto Scaling Group** với *mixed instances policy* (một phần On-Demand + phần lớn Spot, nhiều instance type).
-- Dev/test ngắn hạn, không đoán được → **On-Demand**.
-- Trade-off: *Cost vs. Flexibility vs. Availability*.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Tải nền ổn định, dự đoán được | Savings Plans (hoặc Reserved) |
+| Ra mắt mới, tải khó đoán | On-Demand |
+| Batch ban đêm, chịu gián đoạn | Spot |
+| BYOL theo socket/core | Dedicated Host |
+| Dùng EC2, Fargate, Lambda và có thể đổi family | Compute Savings Plans |
+
+- **Được gì:** giảm tới 72% (cam kết) hoặc ~90% (Spot). **Mất gì:** mất tính linh hoạt khi cam kết sai, hoặc phải chịu bị thu hồi với Spot.
 
 ## 5. Must Remember / Production Pitfalls
 
-- Spot không dùng cho database chính hoặc job không checkpoint được; xử lý **interruption notice** qua instance metadata hoặc EventBridge.
-- RI là cam kết thanh toán, không phải instance: tắt instance vẫn phải trả tiền RI. Standard RI dư có thể bán trên RI Marketplace.
-- RI/Savings Plans chỉ giảm giá; muốn **đảm bảo capacity** trong AZ phải dùng zonal RI hoặc Capacity Reservation.
-- Exam trap: "licensing theo socket/core, BYOL" → **Dedicated Host**; "rẻ nhất cho job chịu được gián đoạn" → **Spot**.
+- **Mua RI/Savings Plans rồi đổi kiến trúc → cam kết thừa, vẫn phải trả → ưu tiên Compute Savings Plans và rà soát mức sử dụng**.
+- **Chạy tải stateful hoặc không chịu gián đoạn trên Spot → mất tiến độ khi bị thu hồi → checkpoint, ASG đa instance type, hoặc chuyển On-Demand**.
+- **Nhầm Dedicated Instance với Dedicated Host → không có BYOL theo core → chọn Dedicated Host khi cần nhìn thấy socket/core**.
+- **Nghĩ Capacity Reservation có giảm giá → vẫn tính giá On-Demand → kết hợp Savings Plans**.
+- **Quên tắt môi trường dev ngoài giờ → tốn tiền vô ích → lịch dừng tự động**.
+- Exam trap: "batch chịu gián đoạn, rẻ nhất" → **Spot**; "license theo socket/core (BYOL) và tuân thủ" → **Dedicated Host**; "linh hoạt trên EC2, Fargate, Lambda" → **Compute Savings Plans**.
 
 ## 6. Search Hooks
 
-- `EC2 On-Demand per-second billing` — tính tiền theo giây, tối thiểu 60 giây.
-- `Standard vs Convertible Reserved Instances` — khác biệt mức giảm và độ linh hoạt.
-- `Compute Savings Plans vs EC2 Instance Savings Plans` — hai loại Savings Plans.
-- `EC2 Spot interruption notice` — cảnh báo 2 phút trước khi thu hồi.
-- `Dedicated Hosts vs Dedicated Instances` — khác biệt về kiểm soát phần cứng và license.
+- `EC2 On-Demand vs Reserved vs Spot` — so sánh các mô hình giá chính.
+- `AWS Savings Plans vs Reserved Instances` — hai hình thức cam kết.
+- `EC2 Spot interruption notice` — cảnh báo thu hồi 2 phút và cách xử lý.
+- `EC2 Dedicated Host BYOL` — license theo socket/core.
+- `EC2 Capacity Reservations` — giữ chỗ capacity theo AZ.

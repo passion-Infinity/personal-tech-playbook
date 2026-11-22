@@ -7,6 +7,8 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const KB = join(ROOT, 'src/assets/knowledge');
 const errors = [];
 const warnings = [];
+const shortPlaybooks = [];
+const noDiagram = [];
 const err = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 
@@ -86,13 +88,18 @@ for (const p of playbooks) {
   if (/^# /m.test(outsideCode)) err(`${p.filePath}: must not contain an H1 title`);
   const prose = md.replace(/```[\s\S]*?```/g, ' ').split('\n').filter((l) => !l.startsWith('|')).join(' ');
   const words = prose.split(/\s+/).filter(Boolean).length;
-  if (words < 300 || words > 600) warn(`${p.filePath}: ${words} words (target 300-600)`);
+  if (words < 300 || words > 1100) warn(`${p.filePath}: ${words} words (target 800-1100, accepted 300-1100)`);
+  else if (words < 800) shortPlaybooks.push(p.id);
+  if (!/```mermaid\n/.test(md)) noDiagram.push(p.id);
   for (const m of md.matchAll(/```mermaid\n([\s\S]*?)```/g)) {
     const lines = m[1].trimEnd().split('\n').length;
     if (lines > 10) warn(`${p.filePath}: mermaid diagram has ${lines} lines (max 10)`);
     if (m[1].includes(';')) warn(`${p.filePath}: mermaid contains ";" (it ends a statement)`);
   }
 }
+
+if (noDiagram.length) warn(`${noDiagram.length} playbooks have no Mermaid diagram yet (required): ${noDiagram.join(', ')}`);
+if (shortPlaybooks.length) warn(`${shortPlaybooks.length} playbooks are under 800 words and still need the deep-dive rewrite`);
 
 // every .md must be listed
 const walk = (d) => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n)) : [join(d, n)]));

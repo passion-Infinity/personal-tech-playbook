@@ -1,69 +1,71 @@
 ## 1. Core Concept
 
-**S3 Storage Classes** cho phép đổi giữa **giá lưu trữ** và **giá + tốc độ truy xuất** theo mức độ truy cập dữ liệu. **Lifecycle configuration** tự động chuyển (transition) hoặc xoá (expire) object theo tuổi. Mental model: *dữ liệu càng "lạnh" thì lưu càng rẻ, nhưng lấy ra càng đắt, càng chậm, và có thời gian lưu tối thiểu.*
+**S3 Storage Classes** cho phép trả đúng giá cho đúng mức độ truy cập: dữ liệu nóng ở tầng đắt nhưng nhanh, dữ liệu nguội ở tầng rẻ nhưng có phí truy xuất hoặc thời gian chờ. **Lifecycle Configuration** tự động chuyển và xoá object theo tuổi để bạn không phải làm tay.
+
+**Mental model:** như **kho hàng nhiều tầng**: hàng bán chạy để sát cửa (Standard), hàng ít bán xếp vào kho sâu hơn (IA, Glacier) — gửi vào rẻ, lấy ra thì tốn công hoặc tốn tiền, và có **thời gian gửi tối thiểu** dù bạn rút sớm.
 
 ## 2. How It Works
 
-| Storage class | Truy cập | Latency | Retrieval fee | Min duration |
-| --- | --- | --- | --- | --- |
-| S3 Standard | Thường xuyên | ms | Không | — |
-| S3 Intelligent-Tiering | Không đoán được | ms | Không (có phí monitoring/object) | — |
-| S3 Standard-IA | Ít, ≥ 3 AZ | ms | Có | 30 ngày |
-| S3 One Zone-IA | Ít, 1 AZ | ms | Có | 30 ngày |
-| S3 Glacier Instant Retrieval | ~1 lần/quý | ms | Có | 90 ngày |
-| S3 Glacier Flexible Retrieval | 1–2 lần/năm | phút → giờ | Có | 90 ngày |
-| S3 Glacier Deep Archive | Rất hiếm | 12–48 giờ | Có | 180 ngày |
+**Các class → Giá, độ trễ, độ bền**
+- **Standard**: truy cập thường xuyên, ≥3 AZ, không phí truy xuất.
+- **Intelligent-Tiering**: tự chuyển object giữa các tầng theo mẫu truy cập (Frequent → Infrequent sau 30 ngày không đụng → Archive Instant sau 90 ngày), **không phí truy xuất** nhưng **phí monitoring theo object**; object nhỏ hơn 128 KB không được tự động tiering.
+- **Standard-IA**: truy cập hiếm nhưng cần nhanh, tính phí truy xuất theo GB, **tối thiểu 128 KB/object** và **30 ngày**.
+- **One Zone-IA**: như IA nhưng **chỉ 1 AZ** (mất dữ liệu nếu AZ bị phá huỷ), rẻ hơn ~20%; hợp bản sao tái tạo được.
+- **Glacier Instant Retrieval**: lưu trữ lâu, lấy ra **mili-giây**, tối thiểu 90 ngày.
+- **Glacier Flexible Retrieval**: Expedited **1–5 phút**, Standard **3–5 giờ**, Bulk **5–12 giờ**; tối thiểu 90 ngày.
+- **Glacier Deep Archive**: rẻ nhất, Standard **≤ 12 giờ**, Bulk **≤ 48 giờ**; tối thiểu **180 ngày**.
 
-- Mọi class (trừ One Zone) lưu ở ≥ 3 AZ, durability 11 số 9; **One Zone-IA** mất dữ liệu nếu AZ bị phá huỷ.
-- Glacier Flexible: **Expedited** 1–5 phút, **Standard** 3–5 giờ, **Bulk** 5–12 giờ. Deep Archive: Standard ≤ 12 giờ, Bulk ≤ 48 giờ.
-- **Lifecycle rule** (theo prefix/tag): *Transition actions* chuyển class sau N ngày; *Expiration actions* xoá object, noncurrent version, delete marker hết hạn, multipart upload dở dang.
+**Lifecycle → Tự động hoá**
+- **Transition actions** đổi storage class theo tuổi; **Expiration actions** xoá object, **noncurrent version** hoặc **multipart upload dở dang**.
+- Chuyển chỉ đi **xuống tầng lạnh hơn** (waterfall), không tự quay ngược; Standard → IA/One Zone-IA yêu cầu object đã ở Standard ít nhất **30 ngày**.
 
-```json
-{
-  "Rules": [{
-    "ID": "logs-tiering",
-    "Filter": { "Prefix": "logs/" },
-    "Status": "Enabled",
-    "Transitions": [
-      { "Days": 30, "StorageClass": "STANDARD_IA" },
-      { "Days": 90, "StorageClass": "GLACIER" }
-    ],
-    "Expiration": { "Days": 365 },
-    "AbortIncompleteMultipartUpload": { "DaysAfterInitiation": 7 }
-  }]
-}
+```xml
+<Rule><Status>Enabled</Status>
+  <Transition><Days>30</Days><StorageClass>STANDARD_IA</StorageClass></Transition>
+  <Transition><Days>180</Days><StorageClass>DEEP_ARCHIVE</StorageClass></Transition>
+  <AbortIncompleteMultipartUpload><DaysAfterInitiation>7</DaysAfterInitiation></AbortIncompleteMultipartUpload>
+</Rule>
 ```
+
+**Ví dụ chi phí ngầm:** 1 triệu file 10 KB chuyển sang Standard-IA bị tính như 128 KB mỗi file, nên có thể **đắt hơn** Standard.
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart TD
-    S[Standard] -->|">= 30 days"| IA[Standard-IA]
-    IA --> GIR[Glacier Instant]
-    GIR --> GFR[Glacier Flexible]
-    GFR --> GDA[Glacier Deep Archive]
-    GDA -->|Expiration| DEL[Deleted]
+    D{Mẫu truy cập?} -->|"Thường xuyên"| STD[Standard]
+    D -->|"Không đoán được"| IT[Intelligent-Tiering]
+    D -->|"Hiếm, cần mili-giây"| IA["Standard-IA / Glacier Instant"]
+    D -->|"Hiếm, tái tạo được, 1 AZ"| OZ[One Zone-IA]
+    D -->|"Lưu trữ, chờ phút đến giờ"| GF[Glacier Flexible]
+    D -->|"Kiểm toán nhiều năm, chờ giờ"| DA[Deep Archive]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Không biết pattern truy cập → **Intelligent-Tiering**. Biết rõ dữ liệu nguội theo tuổi (log, backup) → **Lifecycle** rẻ hơn.
-- Dữ liệu có thể tái tạo (thumbnail, bản sao phụ) → **One Zone-IA**.
-- Archive cần lấy ngay trong ms → **Glacier Instant**; compliance lưu 7–10 năm → **Deep Archive**.
-- Trade-off cốt lõi: *Storage cost vs. Retrieval cost/latency*; class lạnh mà truy cập thường xuyên lại đắt hơn Standard.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Truy cập thường xuyên | Standard |
+| Mẫu truy cập không đoán được, không muốn phí truy xuất | Intelligent-Tiering |
+| Hiếm truy cập nhưng cần nhanh | Standard-IA hoặc Glacier Instant |
+| Bản sao thứ cấp, tái tạo được | One Zone-IA |
+| Log kiểm toán 7 năm, chờ nhiều giờ chấp nhận được | Glacier Deep Archive |
+
+- **Được gì:** chi phí lưu trữ giảm mạnh. **Mất gì:** phí truy xuất, thời gian chờ, thời gian lưu tối thiểu và phí monitoring/transition.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Minimum storage duration**: xoá/chuyển trước hạn vẫn bị tính đủ (IA 30, Glacier 90, Deep Archive 180 ngày).
-- IA tính tối thiểu **128 KB/object** → nhiều file nhỏ chuyển sang IA có thể *tăng* chi phí.
-- Transition theo chiều "waterfall" xuống lạnh hơn; không chuyển ngược lên bằng lifecycle. Object phải ở Standard ≥ 30 ngày mới chuyển sang Standard-IA/One Zone-IA.
-- Object trong Glacier Flexible/Deep Archive phải **restore** tạo bản tạm trước khi đọc.
-- Luôn thêm rule `AbortIncompleteMultipartUpload` để tránh phí ẩn.
+- **Chuyển file nhỏ sang IA → bị tính tối thiểu 128 KB mỗi object → chi phí tăng → gộp file hoặc giữ Standard**.
+- **Xoá hoặc chuyển sớm hơn thời gian tối thiểu → vẫn bị tính đủ ngày** (IA 30, Glacier 90, Deep Archive 180).
+- **Dung lượng "ma" tăng → multipart upload dở dang không được dọn → thêm rule AbortIncompleteMultipartUpload**.
+- **Object cũ của bucket có versioning phình → version noncurrent không bị expire → rule expire noncurrent version**.
+- **Cần lấy dữ liệu Glacier gấp → tốn phí Expedited hoặc phải chờ → dùng Glacier Instant nếu có nhu cầu đọc bất chợt**.
+- Exam trap: "mẫu truy cập không đoán được" → **Intelligent-Tiering**; "log 7 năm hiếm đọc, chấp nhận chờ nhiều giờ, rẻ nhất" → **Deep Archive**.
 
 ## 6. Search Hooks
 
-- `S3 storage classes comparison` — bảng so sánh chi phí, latency, độ bền.
-- `S3 Intelligent-Tiering monitoring fee` — phí theo object của tầng tự động.
-- `S3 Glacier retrieval options expedited standard bulk` — các tốc độ restore.
-- `S3 Lifecycle transition constraints` — ràng buộc 30 ngày và thứ tự waterfall.
-- `S3 minimum storage duration charge` — phí lưu tối thiểu khi xoá sớm.
+- `S3 storage classes comparison` — so sánh giá, độ trễ, số AZ các class.
+- `S3 Intelligent-Tiering` — tự chuyển tầng, không phí truy xuất.
+- `S3 Glacier retrieval options` — Expedited, Standard, Bulk của Glacier.
+- `S3 Lifecycle configuration` — rule transition và expiration.
+- `S3 minimum storage duration charge` — thời gian lưu tối thiểu theo class.

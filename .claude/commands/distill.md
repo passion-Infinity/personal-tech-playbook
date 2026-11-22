@@ -31,7 +31,7 @@ If the raw notes are empty, stop and ask the user to run `/distill <notes>` with
 3. **Decide the action.**
    - `UPDATE_EXISTING` if an existing playbook already covers the same concept (or the notes are a
      sub-aspect of it). Merge the new insight into the correct sections; remove anything now
-     redundant; stay within 300–600 words.
+     redundant; stay within 800–1,100 words.
    - `CREATE_NEW` only if no existing playbook covers the concept. Choose an existing topic when
      reasonable; add a new topic to `topics.json` only for a genuinely new area. Choose a stable
      kebab-case `id`.

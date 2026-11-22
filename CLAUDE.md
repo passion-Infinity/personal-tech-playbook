@@ -13,7 +13,7 @@ knowledge index consistent.
 
 ## Core Philosophy
 
-- **Short, Deep, Actionable**: 300–600 words per playbook (excluding code blocks and diagrams).
+- **Short, Deep, Actionable**: 800–1,100 words per playbook (excluding code blocks and diagrams), ~5–7 minutes to read.
 - **High-signal, zero-fluff**: no lengthy introductions, no history lessons, no generic tutorials,
   no "In today's world…". Every sentence must change how the reader designs, debugs or answers.
 - **Language**: Vietnamese prose that **preserves 100% of original English technical terminology**
@@ -36,9 +36,8 @@ from `playbooks.json`). Use exactly these six `##` headings, in this order:
    when it is the clearest explanation (always tag the language: `sql`, `java`, `ts`, `python`,
    `go`, `bash`, `yaml`, `json`).
 3. `## 3. Visual Diagram`
-   Optional. A simple Mermaid diagram (` ```mermaid `), **max 10 lines**, ONLY when it clarifies
-   system flow, sequence, state or architecture. If no diagram helps, write a single line:
-   `_No diagram needed._` — keep the heading so the structure stays uniform.
+   **Required.** A simple Mermaid diagram (` ```mermaid `), **max 10 lines** (8–10 nodes), showing
+   data flow, step order or the decision tree for choosing a solution.
    Mermaid gotchas: do not use `;` inside labels/messages (it ends a statement); quote labels that
    contain `()[]{}` e.g. `A["Cache (L1)"]`.
 4. `## 4. Rules of Thumb & Trade-offs`
@@ -112,7 +111,7 @@ Whenever adding or updating knowledge:
      standalone hook.
 4. **Validate before finishing**: `npm run validate` (also runs automatically before `npm run build`).
    It fails on broken references, prerequisite cycles, bad question shapes and a non-standard
-   playbook structure, and warns on word count (300–600) and Mermaid size (≤ 10 lines).
+   playbook structure, and warns on word count (800–1,100) and a missing diagram and Mermaid size (≤ 10 lines).
    Then run `npm run build` for larger changes.
 
 ## Daily Workflow
