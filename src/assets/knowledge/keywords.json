@@ -3260,5 +3260,292 @@
     "meaning": "Kết nối lại ồ ạt gây quá tải",
     "definition": "Sau sự cố nhiều client kết nối lại cùng lúc; cần jitter và giới hạn tốc độ chấp nhận.",
     "topicId": "backend"
+  },
+  {
+    "id": "ebs-volume-types",
+    "term": "EBS Volume Types (gp3, io2)",
+    "meaning": "Các loại volume EBS",
+    "definition": "gp3 là SSD mặc định, io2 cho DB cần IOPS cao, st1/sc1 là HDD không làm boot volume.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ebs-multi-attach",
+    "term": "EBS Multi-Attach",
+    "meaning": "Gắn io2 vào nhiều instance",
+    "definition": "Chỉ io1/io2 trong cùng một AZ, ứng dụng phải tự xử lý ghi đồng thời.",
+    "topicId": "aws"
+  },
+  {
+    "id": "efs-performance-modes",
+    "term": "EFS Performance and Throughput Modes",
+    "meaning": "Chế độ hiệu năng EFS",
+    "definition": "General Purpose vs Max I/O, Bursting/Provisioned/Elastic throughput.",
+    "topicId": "aws"
+  },
+  {
+    "id": "fsx-lustre-s3",
+    "term": "FSx for Lustre",
+    "meaning": "File system HPC liên kết S3",
+    "definition": "Throughput rất cao cho HPC và ML, có thể nạp và ghi lại dữ liệu từ S3.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ec2-instance-store",
+    "term": "EC2 Instance Store",
+    "meaning": "Đĩa tạm gắn vật lý",
+    "definition": "IOPS rất cao nhưng mất dữ liệu khi stop hoặc terminate.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudwatch-logs-insights",
+    "term": "CloudWatch Logs Insights",
+    "meaning": "Truy vấn log trên CloudWatch",
+    "definition": "Ngôn ngữ truy vấn để lọc và tổng hợp log group.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudwatch-agent-custom-metrics",
+    "term": "CloudWatch Agent and Custom Metrics",
+    "meaning": "Thu thập RAM và disk",
+    "definition": "EC2 mặc định không có metric RAM, cần agent hoặc custom metric.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudtrail-events",
+    "term": "CloudTrail Management and Data Events",
+    "meaning": "Hai loại sự kiện audit",
+    "definition": "Management events mặc định, data events như S3 object phải bật riêng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-config-rules",
+    "term": "AWS Config Rules and Remediation",
+    "meaning": "Đánh giá tuân thủ cấu hình",
+    "definition": "Ghi lịch sử cấu hình và tự động sửa vi phạm qua SSM.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudwatch-composite-alarms",
+    "term": "CloudWatch Composite Alarms",
+    "meaning": "Kết hợp nhiều alarm",
+    "definition": "Giảm nhiễu bằng điều kiện AND/OR giữa các alarm.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ecs-task-role-execution-role",
+    "term": "ECS Task Role vs Execution Role",
+    "meaning": "Hai role của ECS",
+    "definition": "Task role cấp quyền cho ứng dụng; execution role cho ECS pull image và ghi log.",
+    "topicId": "aws"
+  },
+  {
+    "id": "fargate-vs-ec2-launch-type",
+    "term": "Fargate vs EC2 Launch Type",
+    "meaning": "Serverless hay tự quản node",
+    "definition": "Fargate không quản server nhưng đắt hơn với tải ổn định.",
+    "topicId": "aws"
+  },
+  {
+    "id": "eks-irsa",
+    "term": "EKS IRSA (IAM Roles for Service Accounts)",
+    "meaning": "Quyền IAM theo pod",
+    "definition": "Cấp role cho từng pod thay vì role của node, theo least privilege.",
+    "topicId": "aws"
+  },
+  {
+    "id": "karpenter-vs-cluster-autoscaler",
+    "term": "Karpenter vs Cluster Autoscaler",
+    "meaning": "Scale node cho EKS",
+    "definition": "Karpenter tạo node vừa đủ trực tiếp, nhanh hơn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "amazon-ecr",
+    "term": "Amazon ECR",
+    "meaning": "Registry container của AWS",
+    "definition": "Lưu image, quét lỗ hổng và lifecycle policy.",
+    "topicId": "aws"
+  },
+  {
+    "id": "api-gateway-rest-vs-http",
+    "term": "API Gateway REST vs HTTP API",
+    "meaning": "Hai loại API",
+    "definition": "REST nhiều tính năng, HTTP API rẻ và nhanh hơn.",
+    "topicId": "aws"
+  },
+  {
+    "id": "api-gateway-lambda-authorizer",
+    "term": "API Gateway Lambda Authorizer",
+    "meaning": "Xác thực tuỳ biến",
+    "definition": "Lambda quyết định cho phép request.",
+    "topicId": "aws"
+  },
+  {
+    "id": "step-functions-standard-vs-express",
+    "term": "Step Functions Standard vs Express",
+    "meaning": "Hai kiểu workflow",
+    "definition": "Standard chạy dài exactly-once; Express ngắn at-least-once, throughput cao.",
+    "topicId": "aws"
+  },
+  {
+    "id": "api-gateway-throttling-usage-plans",
+    "term": "API Gateway Throttling and Usage Plans",
+    "meaning": "Giới hạn tốc độ và hạn mức",
+    "definition": "Giới hạn theo stage và theo API key.",
+    "topicId": "aws"
+  },
+  {
+    "id": "kinesis-shards-partition-key",
+    "term": "Kinesis Shards and Partition Key",
+    "meaning": "Phân phối dữ liệu theo shard",
+    "definition": "Mỗi shard 1 MB/s ghi, thứ tự chỉ đảm bảo trong shard.",
+    "topicId": "aws"
+  },
+  {
+    "id": "kinesis-enhanced-fan-out",
+    "term": "Kinesis Enhanced Fan-Out",
+    "meaning": "Băng thông riêng mỗi consumer",
+    "definition": "2 MB/s mỗi consumer, push qua HTTP/2.",
+    "topicId": "aws"
+  },
+  {
+    "id": "kinesis-firehose",
+    "term": "Kinesis Data Firehose",
+    "meaning": "Giao hàng gần real-time",
+    "definition": "Buffer rồi đẩy vào S3, Redshift, OpenSearch, không replay.",
+    "topicId": "aws"
+  },
+  {
+    "id": "kinesis-vs-sqs-vs-msk",
+    "term": "Kinesis vs SQS vs MSK",
+    "meaning": "So sánh messaging và streaming",
+    "definition": "Chọn theo replay, thứ tự và số consumer.",
+    "topicId": "aws"
+  },
+  {
+    "id": "athena-partitioning-parquet",
+    "term": "Athena Partitioning and Parquet",
+    "meaning": "Giảm dữ liệu quét",
+    "definition": "Trả tiền theo dữ liệu quét nên dùng Parquet và partition.",
+    "topicId": "aws"
+  },
+  {
+    "id": "glue-data-catalog",
+    "term": "AWS Glue Data Catalog",
+    "meaning": "Catalog metadata dùng chung",
+    "definition": "Schema dùng cho Athena, EMR, Redshift Spectrum.",
+    "topicId": "aws"
+  },
+  {
+    "id": "redshift-distribution-sort-keys",
+    "term": "Redshift Distribution and Sort Keys",
+    "meaning": "Thiết kế bảng MPP",
+    "definition": "Distribution key sai gây shuffle giữa node.",
+    "topicId": "aws"
+  },
+  {
+    "id": "redshift-spectrum",
+    "term": "Redshift Spectrum",
+    "meaning": "Truy vấn S3 từ Redshift",
+    "definition": "Mở rộng warehouse sang dữ liệu trong data lake.",
+    "topicId": "aws"
+  },
+  {
+    "id": "lake-formation",
+    "term": "AWS Lake Formation",
+    "meaning": "Phân quyền data lake",
+    "definition": "Quyền mức cột và dòng trên catalog.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudformation-change-sets",
+    "term": "CloudFormation Change Sets",
+    "meaning": "Xem trước thay đổi stack",
+    "definition": "Biết tài nguyên nào bị cập nhật hoặc thay thế.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudformation-drift-detection",
+    "term": "CloudFormation Drift Detection",
+    "meaning": "Phát hiện cấu hình bị sửa tay",
+    "definition": "So sánh thực tế với template.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cloudformation-stacksets",
+    "term": "CloudFormation StackSets",
+    "meaning": "Triển khai đa account và Region",
+    "definition": "Một template triển khai trên nhiều account.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-cdk-constructs",
+    "term": "AWS CDK Constructs",
+    "meaning": "Các mức trừu tượng",
+    "definition": "L1 gần CloudFormation, L2 có mặc định hợp lý, L3 là pattern.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-sam",
+    "term": "AWS SAM",
+    "meaning": "Framework serverless",
+    "definition": "Mở rộng CloudFormation cho Lambda và API.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-organizations-scp",
+    "term": "AWS Organizations SCP",
+    "meaning": "Guardrail quyền tối đa",
+    "definition": "SCP giới hạn quyền, không cấp quyền.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-control-tower",
+    "term": "AWS Control Tower",
+    "meaning": "Landing zone đa account",
+    "definition": "Dựng môi trường chuẩn với guardrail.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-ram",
+    "term": "AWS Resource Access Manager",
+    "meaning": "Chia sẻ tài nguyên",
+    "definition": "Chia sẻ subnet, Transit Gateway giữa account.",
+    "topicId": "aws"
+  },
+  {
+    "id": "multi-account-strategy",
+    "term": "Multi-Account Strategy",
+    "meaning": "Tách account theo workload",
+    "definition": "Blast radius nhỏ và hoá đơn rõ ràng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-well-architected-pillars",
+    "term": "AWS Well-Architected Six Pillars",
+    "meaning": "Sáu trụ cột kiến trúc",
+    "definition": "Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability.",
+    "topicId": "aws"
+  },
+  {
+    "id": "well-architected-tool-lenses",
+    "term": "Well-Architected Tool and Lenses",
+    "meaning": "Công cụ đánh giá",
+    "definition": "Lens cho Serverless, SaaS, ML.",
+    "topicId": "aws"
+  },
+  {
+    "id": "trusted-advisor",
+    "term": "AWS Trusted Advisor",
+    "meaning": "Gợi ý tối ưu",
+    "definition": "Kiểm tra chi phí, bảo mật, hiệu năng, giới hạn dịch vụ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "shared-responsibility-model",
+    "term": "Shared Responsibility Model",
+    "meaning": "Phân chia trách nhiệm",
+    "definition": "AWS bảo mật của cloud, khách hàng bảo mật trong cloud.",
+    "topicId": "aws"
   }
 ]

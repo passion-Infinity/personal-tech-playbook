@@ -1641,5 +1641,168 @@
       "http-https-tls",
       "io-models-async-event-loop"
     ]
+  },
+  {
+    "id": "ebs-efs-fsx-storage",
+    "title": "EBS, EFS & FSx Storage",
+    "summary": "Chọn đúng block, file hay Instance Store cho EC2 theo AZ, IOPS và khả năng chia sẻ.",
+    "topicId": "aws",
+    "keywordIds": [
+      "ebs-volume-types",
+      "ebs-multi-attach",
+      "efs-performance-modes",
+      "fsx-lustre-s3",
+      "ec2-instance-store"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/ebs-efs-fsx-storage.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ec2-security-groups-networking"
+    ]
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config",
+    "title": "CloudWatch, CloudTrail & AWS Config",
+    "summary": "Phân biệt monitor hiệu năng, audit API và theo dõi cấu hình để điều tra và tuân thủ trên AWS.",
+    "topicId": "aws",
+    "keywordIds": [
+      "cloudwatch-logs-insights",
+      "cloudwatch-agent-custom-metrics",
+      "cloudtrail-events",
+      "aws-config-rules",
+      "cloudwatch-composite-alarms"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/cloudwatch-cloudtrail-config.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "iam-fundamentals"
+    ]
+  },
+  {
+    "id": "ecs-eks-fargate",
+    "title": "ECS, EKS & Fargate",
+    "summary": "Chọn orchestrator container (ECS/EKS) và compute (EC2/Fargate) cùng cách cấp quyền task/pod.",
+    "topicId": "aws",
+    "keywordIds": [
+      "ecs-task-role-execution-role",
+      "fargate-vs-ec2-launch-type",
+      "eks-irsa",
+      "karpenter-vs-cluster-autoscaler",
+      "amazon-ecr"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/ecs-eks-fargate.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ec2-security-groups-networking",
+      "vpc-networking"
+    ]
+  },
+  {
+    "id": "api-gateway-step-functions",
+    "title": "API Gateway & Step Functions",
+    "summary": "Dùng API Gateway làm cửa vào và Step Functions điều phối workflow thay cho chuỗi Lambda.",
+    "topicId": "aws",
+    "keywordIds": [
+      "api-gateway-rest-vs-http",
+      "api-gateway-lambda-authorizer",
+      "step-functions-standard-vs-express",
+      "api-gateway-throttling-usage-plans"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/api-gateway-step-functions.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "lambda-serverless"
+    ]
+  },
+  {
+    "id": "kinesis-streaming",
+    "title": "Amazon Kinesis (Streams, Firehose, Flink)",
+    "summary": "Chọn Kinesis Data Streams, Firehose hay Flink cho nạp và xử lý dữ liệu streaming.",
+    "topicId": "aws",
+    "keywordIds": [
+      "kinesis-shards-partition-key",
+      "kinesis-enhanced-fan-out",
+      "kinesis-firehose",
+      "kinesis-vs-sqs-vs-msk"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/kinesis-streaming.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "message-queues-streaming-basics",
+      "sqs-sns-eventbridge"
+    ]
+  },
+  {
+    "id": "aws-data-analytics",
+    "title": "AWS Data Analytics (Glue, Athena, Redshift, EMR)",
+    "summary": "Dựng data lake trên S3 và chọn Athena, Redshift hay EMR cho từng nhu cầu truy vấn.",
+    "topicId": "aws",
+    "keywordIds": [
+      "athena-partitioning-parquet",
+      "glue-data-catalog",
+      "redshift-distribution-sort-keys",
+      "redshift-spectrum",
+      "lake-formation"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-data-analytics.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "s3-storage-classes-lifecycle",
+      "batch-vs-stream-processing"
+    ]
+  },
+  {
+    "id": "cloudformation-cdk-iac",
+    "title": "CloudFormation & CDK (IaC)",
+    "summary": "Quản lý hạ tầng AWS bằng template và CDK với change set, drift detection và DeletionPolicy.",
+    "topicId": "aws",
+    "keywordIds": [
+      "cloudformation-change-sets",
+      "cloudformation-drift-detection",
+      "cloudformation-stacksets",
+      "aws-cdk-constructs",
+      "aws-sam"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/cloudformation-cdk-iac.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "iam-fundamentals"
+    ]
+  },
+  {
+    "id": "aws-organizations-governance",
+    "title": "AWS Organizations, SCP & Control Tower",
+    "summary": "Quản trị đa account bằng OU, SCP guardrail, Control Tower và IAM Identity Center.",
+    "topicId": "aws",
+    "keywordIds": [
+      "aws-organizations-scp",
+      "aws-control-tower",
+      "iam-identity-center",
+      "aws-ram",
+      "multi-account-strategy"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-organizations-governance.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "iam-fundamentals"
+    ]
+  },
+  {
+    "id": "aws-well-architected-framework",
+    "title": "AWS Well-Architected Framework",
+    "summary": "Đánh giá kiến trúc theo 6 trụ cột và cân bằng trade-off giữa chúng, đồng thời là khung lập luận cho đề thi.",
+    "topicId": "aws",
+    "keywordIds": [
+      "aws-well-architected-pillars",
+      "well-architected-tool-lenses",
+      "trusted-advisor",
+      "shared-responsibility-model"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-well-architected-framework.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "disaster-recovery-strategies",
+      "ec2-pricing-models"
+    ]
   }
 ]

@@ -340,7 +340,7 @@
     background-image: linear-gradient(135deg, var(--t-from, #8b5cf6), var(--t-to, #22d3ee));
   }
   .chip {
-    @apply inline-flex max-w-full items-center gap-1 truncate rounded-lg px-2 py-0.5 text-xs text-muted transition-colors;
+    @apply inline-flex max-w-full items-start gap-1 text-left leading-snug break-words rounded-lg px-2 py-0.5 text-xs text-muted transition-colors;
     background: var(--color-surface-strong);
     border: 1px solid var(--color-line);
   }

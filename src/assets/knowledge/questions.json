@@ -5105,5 +5105,581 @@
       "Backoff và jitter phía client",
       "Giới hạn chấp nhận kết nối, drain khi deploy"
     ]
+  },
+  {
+    "id": "ebs-efs-fsx-storage-01",
+    "playbookId": "ebs-efs-fsx-storage",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cần file system dùng chung cho EC2 Linux ở nhiều AZ. Chọn?",
+    "options": [
+      "EBS gp3",
+      "EFS",
+      "Instance Store",
+      "S3 Glacier"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "EFS là NFS multi-AZ, gắn đồng thời nhiều instance."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-02",
+    "playbookId": "ebs-efs-fsx-storage",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "EBS volume muốn chuyển sang AZ khác thì làm sao?",
+    "options": [
+      "Detach rồi attach",
+      "Tạo snapshot rồi restore ở AZ đích",
+      "Không thể",
+      "Đổi security group"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "EBS gắn theo AZ; snapshot lưu ở Region nên restore được ở AZ khác."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-03",
+    "playbookId": "ebs-efs-fsx-storage",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Dữ liệu trên Instance Store khi instance bị stop?",
+    "options": [
+      "Được giữ",
+      "Bị mất",
+      "Chuyển sang EBS",
+      "Chuyển sang S3"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Instance Store là đĩa tạm, mất khi stop/terminate hoặc phần cứng lỗi."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-04",
+    "playbookId": "ebs-efs-fsx-storage",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "So sánh EBS, EFS và S3 để chọn nơi lưu dữ liệu.",
+    "modelAnswer": "EBS là block storage gắn một instance trong một AZ, độ trễ thấp cho OS và database. EFS là file system NFS dùng chung nhiều instance và nhiều AZ nhưng đắt hơn theo GB. S3 là object storage rẻ, bền, truy cập qua API, không phải ổ đĩa. Chọn theo giao thức truy cập, mức chia sẻ và chi phí.",
+    "keyPoints": [
+      "EBS block theo AZ",
+      "EFS file chia sẻ multi-AZ",
+      "S3 object qua API"
+    ]
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-01",
+    "playbookId": "cloudwatch-cloudtrail-config",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Ai đã terminate một EC2 instance? Xem ở đâu?",
+    "options": [
+      "CloudWatch",
+      "CloudTrail",
+      "Config",
+      "Inspector"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "CloudTrail ghi lại lời gọi API và danh tính."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-02",
+    "playbookId": "cloudwatch-cloudtrail-config",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Muốn theo dõi RAM của EC2 trong CloudWatch, cần gì?",
+    "options": [
+      "Không cần gì",
+      "Cài CloudWatch Agent",
+      "Bật detailed monitoring",
+      "Dùng CloudTrail"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Metric RAM và disk không có sẵn."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-03",
+    "playbookId": "cloudwatch-cloudtrail-config",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Phát hiện S3 bucket bị chuyển sang public theo thời gian và tự khắc phục?",
+    "options": [
+      "CloudWatch Logs",
+      "AWS Config rule + remediation",
+      "VPC Flow Logs",
+      "Cost Explorer"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Config theo dõi thay đổi cấu hình và có auto-remediation."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-04",
+    "playbookId": "cloudwatch-cloudtrail-config",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Phân biệt CloudWatch, CloudTrail và Config.",
+    "modelAnswer": "CloudWatch cho biết hệ thống chạy thế nào qua metric, log và alarm. CloudTrail ghi ai đã gọi API nào, khi nào, từ đâu để audit. Config ghi trạng thái cấu hình tài nguyên theo thời gian và đánh giá tuân thủ bằng rule. Ba dịch vụ bổ trợ nhau trong điều tra sự cố.",
+    "keyPoints": [
+      "CloudWatch hiệu năng",
+      "CloudTrail audit API",
+      "Config lịch sử và tuân thủ cấu hình"
+    ]
+  },
+  {
+    "id": "ecs-eks-fargate-01",
+    "playbookId": "ecs-eks-fargate",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Chạy container không muốn quản server. Chọn?",
+    "options": [
+      "EC2 launch type",
+      "Fargate",
+      "Dedicated Host",
+      "Snowball"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Fargate là compute serverless cho container."
+  },
+  {
+    "id": "ecs-eks-fargate-02",
+    "playbookId": "ecs-eks-fargate",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Container ECS cần ghi vào S3. Cấp quyền ở đâu?",
+    "options": [
+      "Execution role",
+      "Task role",
+      "Role của người deploy",
+      "Security group"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Task role là role ứng dụng dùng."
+  },
+  {
+    "id": "ecs-eks-fargate-03",
+    "playbookId": "ecs-eks-fargate",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Pod EKS cần quyền DynamoDB theo least privilege?",
+    "options": [
+      "Gắn quyền vào role của node",
+      "IRSA / Pod Identity",
+      "Hard-code access key",
+      "Mở security group"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "IRSA cấp role riêng cho service account của pod."
+  },
+  {
+    "id": "ecs-eks-fargate-04",
+    "playbookId": "ecs-eks-fargate",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào chọn ECS thay vì EKS?",
+    "modelAnswer": "ECS đơn giản, tích hợp sâu với AWS (ALB, IAM, CloudWatch) và không có phí control plane, hợp khi không cần hệ sinh thái Kubernetes. EKS chọn khi cần Kubernetes API, công cụ cộng đồng, portability đa cloud hoặc team đã quen K8s, đổi lại phức tạp và phí hơn.",
+    "keyPoints": [
+      "ECS đơn giản",
+      "EKS cho hệ sinh thái K8s",
+      "Đánh đổi vận hành"
+    ]
+  },
+  {
+    "id": "api-gateway-step-functions-01",
+    "playbookId": "api-gateway-step-functions",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Thời gian tích hợp tối đa mặc định của API Gateway?",
+    "options": [
+      "3 giây",
+      "29 giây",
+      "5 phút",
+      "15 phút"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Việc dài phải bất đồng bộ."
+  },
+  {
+    "id": "api-gateway-step-functions-02",
+    "playbookId": "api-gateway-step-functions",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Workflow đặt hàng nhiều bước có retry và compensation. Chọn?",
+    "options": [
+      "Lambda gọi Lambda",
+      "Step Functions",
+      "SNS",
+      "CloudFront"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Step Functions quản lý trạng thái, retry và Catch."
+  },
+  {
+    "id": "api-gateway-step-functions-03",
+    "playbookId": "api-gateway-step-functions",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Express workflow cần chú ý gì?",
+    "options": [
+      "Exactly-once",
+      "At-least-once nên cần idempotent",
+      "Chạy tối đa 1 năm",
+      "Không có log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Express có thể chạy lặp."
+  },
+  {
+    "id": "api-gateway-step-functions-04",
+    "playbookId": "api-gateway-step-functions",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao tránh Lambda gọi Lambda đồng bộ?",
+    "modelAnswer": "Hai Lambda cùng bị tính tiền trong lúc một cái chờ cái kia, dễ chạm timeout và khó xử lý lỗi, retry hay rollback. Step Functions hoặc hàng đợi cho phép tách bước, retry có cấu hình và theo dõi trạng thái.",
+    "keyPoints": [
+      "Trả tiền chờ",
+      "Khó xử lý lỗi",
+      "Dùng Step Functions hoặc queue"
+    ]
+  },
+  {
+    "id": "kinesis-streaming-01",
+    "playbookId": "kinesis-streaming",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần replay dữ liệu 7 ngày và nhiều consumer?",
+    "options": [
+      "SQS",
+      "Kinesis Data Streams",
+      "Firehose",
+      "SNS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Streams giữ retention và nhiều consumer."
+  },
+  {
+    "id": "kinesis-streaming-02",
+    "playbookId": "kinesis-streaming",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Nạp log vào S3 định dạng Parquet đơn giản nhất?",
+    "options": [
+      "Data Streams + KCL",
+      "Firehose",
+      "SQS",
+      "Lambda tự viết"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Firehose có chuyển đổi định dạng sẵn."
+  },
+  {
+    "id": "kinesis-streaming-03",
+    "playbookId": "kinesis-streaming",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Lỗi ProvisionedThroughputExceeded dù tổng shard đủ. Nguyên nhân?",
+    "options": [
+      "Hot shard do partition key lệch",
+      "Hết retention",
+      "Sai IAM",
+      "Thiếu VPC"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Một key quá nóng dồn vào một shard."
+  },
+  {
+    "id": "kinesis-streaming-04",
+    "playbookId": "kinesis-streaming",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Giải thích thứ tự bản ghi trong Kinesis.",
+    "modelAnswer": "Thứ tự chỉ được đảm bảo trong từng shard. Partition key băm tới shard, nên các bản ghi cùng key giữ thứ tự. Không có thứ tự toàn cục giữa các shard, và resharding làm thay đổi ánh xạ key.",
+    "keyPoints": [
+      "Thứ tự theo shard",
+      "Cùng key cùng shard",
+      "Không có thứ tự toàn cục"
+    ]
+  },
+  {
+    "id": "aws-data-analytics-01",
+    "playbookId": "aws-data-analytics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Giảm chi phí Athena trên CSV lớn?",
+    "options": [
+      "Thêm RAM",
+      "Chuyển Parquet và partition",
+      "Dùng Redshift",
+      "Tăng timeout"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giảm dữ liệu cần quét."
+  },
+  {
+    "id": "aws-data-analytics-02",
+    "playbookId": "aws-data-analytics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "BI cho nhiều người, join phức tạp, hiệu năng ổn định?",
+    "options": [
+      "Athena",
+      "Redshift",
+      "S3 Select",
+      "Glue crawler"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Redshift là warehouse MPP."
+  },
+  {
+    "id": "aws-data-analytics-03",
+    "playbookId": "aws-data-analytics",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Phân quyền mức cột cho data lake trên nhiều dịch vụ?",
+    "options": [
+      "Bucket policy",
+      "Lake Formation",
+      "Security group",
+      "KMS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lake Formation quản lý quyền tập trung theo catalog."
+  },
+  {
+    "id": "aws-data-analytics-04",
+    "playbookId": "aws-data-analytics",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào chọn Athena, khi nào Redshift?",
+    "modelAnswer": "Athena là serverless trả theo dữ liệu quét, hợp truy vấn ad-hoc không thường xuyên trên S3. Redshift là warehouse cluster với storage columnar tối ưu cho workload BI thường xuyên, nhiều người dùng và join phức tạp, chi phí dự đoán được hơn khi tải cao.",
+    "keyPoints": [
+      "Athena ad-hoc",
+      "Redshift BI thường xuyên",
+      "Chi phí theo mô hình dùng"
+    ]
+  },
+  {
+    "id": "cloudformation-cdk-iac-01",
+    "playbookId": "cloudformation-cdk-iac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Giữ lại DB khi xoá stack?",
+    "options": [
+      "Không thể",
+      "DeletionPolicy Retain hoặc Snapshot",
+      "Tắt rollback",
+      "Dùng Export"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "DeletionPolicy bảo vệ dữ liệu."
+  },
+  {
+    "id": "cloudformation-cdk-iac-02",
+    "playbookId": "cloudformation-cdk-iac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xem trước tác động trước khi cập nhật production?",
+    "options": [
+      "Update trực tiếp",
+      "Change Set",
+      "Drift detection",
+      "Nested stack"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Change set liệt kê thay đổi."
+  },
+  {
+    "id": "cloudformation-cdk-iac-03",
+    "playbookId": "cloudformation-cdk-iac",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Triển khai cùng template cho 30 account?",
+    "options": [
+      "Chạy tay từng account",
+      "StackSets",
+      "CloudTrail",
+      "Config"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "StackSets triển khai đa account."
+  },
+  {
+    "id": "cloudformation-cdk-iac-04",
+    "playbookId": "cloudformation-cdk-iac",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Drift là gì và xử lý ra sao?",
+    "modelAnswer": "Drift là khi tài nguyên bị sửa ngoài CloudFormation nên khác template. Phát hiện bằng drift detection, xử lý bằng cách cập nhật template cho khớp hoặc khôi phục tài nguyên, và hạn chế sửa tay bằng quyền và quy trình.",
+    "keyPoints": [
+      "Sửa tay gây lệch",
+      "Drift detection",
+      "Cập nhật template hoặc khôi phục"
+    ]
+  },
+  {
+    "id": "aws-organizations-governance-01",
+    "playbookId": "aws-organizations-governance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "SCP có cấp quyền cho IAM user không?",
+    "options": [
+      "Có",
+      "Không, chỉ giới hạn tối đa",
+      "Chỉ cho root",
+      "Chỉ cho S3"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Quyền thực là giao của SCP và IAM policy."
+  },
+  {
+    "id": "aws-organizations-governance-02",
+    "playbookId": "aws-organizations-governance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chặn mọi account dùng Region ngoài ap-southeast-1?",
+    "options": [
+      "IAM của từng user",
+      "SCP deny theo aws:RequestedRegion",
+      "Security group",
+      "NACL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SCP deny theo điều kiện Region."
+  },
+  {
+    "id": "aws-organizations-governance-03",
+    "playbookId": "aws-organizations-governance",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "SCP không áp dụng cho?",
+    "options": [
+      "Member account",
+      "Management account",
+      "OU",
+      "Root user của member"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Management account không bị SCP giới hạn."
+  },
+  {
+    "id": "aws-organizations-governance-04",
+    "playbookId": "aws-organizations-governance",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao tách nhiều account?",
+    "modelAnswer": "Account là ranh giới cô lập mạnh nhất: giới hạn blast radius, tách quyền và chi phí theo môi trường hoặc workload, đặt guardrail bằng SCP và đáp ứng compliance. Đổi lại cần quản lý mạng và truy cập chéo account.",
+    "keyPoints": [
+      "Cô lập blast radius",
+      "Tách quyền và chi phí",
+      "Guardrail SCP"
+    ]
+  },
+  {
+    "id": "aws-well-architected-framework-01",
+    "playbookId": "aws-well-architected-framework",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Trụ cột nào gồm right-sizing và Savings Plans?",
+    "options": [
+      "Security",
+      "Cost Optimization",
+      "Reliability",
+      "Sustainability"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tối ưu chi phí."
+  },
+  {
+    "id": "aws-well-architected-framework-02",
+    "playbookId": "aws-well-architected-framework",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Multi-AZ thuộc trụ cột nào?",
+    "options": [
+      "Cost",
+      "Reliability",
+      "Security",
+      "Sustainability"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chịu lỗi nằm ở Reliability."
+  },
+  {
+    "id": "aws-well-architected-framework-03",
+    "playbookId": "aws-well-architected-framework",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Phát biểu đúng về HA và DR?",
+    "options": [
+      "Giống nhau",
+      "HA là multi-AZ, DR là phục hồi thảm hoạ thường multi-Region",
+      "DR luôn rẻ hơn",
+      "HA cần backup thôi"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Nhầm hai khái niệm này rất phổ biến."
+  },
+  {
+    "id": "aws-well-architected-framework-04",
+    "playbookId": "aws-well-architected-framework",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Cách dùng Well-Architected khi chọn đáp án đề thi?",
+    "modelAnswer": "Khi đề không nói khác, chọn đáp án managed, loosely coupled, multi-AZ, least privilege và tối ưu chi phí hợp lý. Đọc kỹ ràng buộc về chi phí, độ trễ hay RTO vì chúng quyết định trụ cột nào được ưu tiên.",
+    "keyPoints": [
+      "Managed và loosely coupled",
+      "Multi-AZ và least privilege",
+      "Đọc kỹ ràng buộc"
+    ]
   }
 ]
