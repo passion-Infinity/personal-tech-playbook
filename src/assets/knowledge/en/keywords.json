@@ -1563,5 +1563,85 @@
     "id": "aws-skill-builder",
     "meaning": "Official learning and practice exams",
     "definition": "Practice exams and courses."
+  },
+  {
+    "id": "azure-regions-availability-zones",
+    "meaning": "Azure's physical infrastructure",
+    "definition": "A Region is a set of low-latency datacenters; Availability Zones are locations independent in power, cooling and networking (at least 3 zones in a supporting Region)."
+  },
+  {
+    "id": "azure-region-pairs",
+    "meaning": "Region pairs for DR",
+    "definition": "Each Region is paired with another in the same geography; Azure updates them sequentially and prioritizes recovery within a pair."
+  },
+  {
+    "id": "azure-management-hierarchy",
+    "meaning": "Azure's management hierarchy",
+    "definition": "A Management Group groups subscriptions; a Subscription is the billing and quota boundary; a Resource Group is a logical container; policy and permissions inherit downward."
+  },
+  {
+    "id": "azure-resource-manager",
+    "meaning": "Azure's management layer and declarative IaC",
+    "definition": "ARM handles every management operation and deploys templates/Bicep declaratively."
+  },
+  {
+    "id": "azure-shared-responsibility",
+    "meaning": "Responsibility split by service model",
+    "definition": "From on-premises to IaaS, PaaS and SaaS, the higher you go the more Azure manages, but data and identity are always the customer's responsibility."
+  },
+  {
+    "id": "entra-id",
+    "meaning": "Identity management service (formerly Azure AD)",
+    "definition": "Authenticates users and applications with MFA, SSO and passwordless; a tenant can be linked to many subscriptions."
+  },
+  {
+    "id": "azure-rbac",
+    "meaning": "Resource authorization by role and scope",
+    "definition": "A role assignment consists of a principal, a role definition and a scope; permissions inherit from the management group down to the resource; Owner, Contributor and Reader are the basic roles."
+  },
+  {
+    "id": "conditional-access",
+    "meaning": "Conditional access policy",
+    "definition": "If conditions (location, device, risk) are met then require MFA or block; needs an Entra ID P1 license."
+  },
+  {
+    "id": "managed-identity",
+    "meaning": "Azure-managed identity, no secrets",
+    "definition": "System-assigned is tied to the resource lifecycle; user-assigned is shared across resources; it replaces storing connection strings in code."
+  },
+  {
+    "id": "azure-pim",
+    "meaning": "Just-in-time privileged access",
+    "definition": "Temporary access with approval and expiry, reducing the risk of permanent Owner access; needs Entra ID P2."
+  },
+  {
+    "id": "azure-vm-sizes",
+    "meaning": "VM size families by purpose",
+    "definition": "General purpose (D), compute (F), memory (E), storage (L), GPU (N), HPC (H) — choose by CPU/RAM/IO ratio."
+  },
+  {
+    "id": "azure-availability-sets",
+    "meaning": "Spread VMs against hardware failure and maintenance",
+    "definition": "A fault domain separates power/hardware, an update domain separates maintenance waves within one datacenter (reference SLA 99.95%)."
+  },
+  {
+    "id": "azure-vmss",
+    "meaning": "Identical VMs that autoscale",
+    "definition": "Autoscale by metric or schedule, combined with a Load Balancer or Application Gateway."
+  },
+  {
+    "id": "azure-reserved-vs-savings-plan",
+    "meaning": "Two 1–3 year commitments to cut cost",
+    "definition": "Reserved is tied to a specific VM configuration; Savings Plan commits to an hourly spend and is more flexible."
+  },
+  {
+    "id": "azure-spot-vms",
+    "meaning": "Low-cost VMs on spare capacity, can be reclaimed",
+    "definition": "Up to ~90% cheaper but evicted when capacity is needed; suited to batch, CI and stateless workloads."
+  },
+  {
+    "id": "azure-hybrid-benefit",
+    "meaning": "Use existing licenses to cut cost",
+    "definition": "Applies Windows Server/SQL Server licenses with Software Assurance to Azure resources."
   }
 ]

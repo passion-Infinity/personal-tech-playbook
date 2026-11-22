@@ -318,5 +318,20 @@
     "id": "aws-certification-roadmap",
     "title": "AWS Certification Roadmap & Exam Technique",
     "summary": "Choose a certification by role, study by domain and read the exam's constraints to pick the right answer."
+  },
+  {
+    "id": "azure-core-architecture",
+    "title": "Azure Core Architecture",
+    "summary": "Understand Azure's Region/Availability Zone infrastructure and the Management Group → Subscription → Resource Group hierarchy."
+  },
+  {
+    "id": "entra-id-rbac",
+    "title": "Entra ID & Azure RBAC",
+    "summary": "Distinguish authentication with Microsoft Entra ID from authorization with Azure RBAC, and use managed identity instead of secrets."
+  },
+  {
+    "id": "azure-virtual-machines",
+    "title": "Azure Virtual Machines",
+    "summary": "Choose size, availability and pricing model for Azure VMs with Availability Zones, scale sets and discount commitments."
   }
 ]

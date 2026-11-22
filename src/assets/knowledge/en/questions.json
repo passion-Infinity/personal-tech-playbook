@@ -3430,5 +3430,167 @@
       "Eliminate wrong answers",
       "Prefer managed"
     ]
+  },
+  {
+    "id": "azure-core-architecture-01",
+    "question": "A company has 12 subscriptions for its departments and wants to enforce one common Azure Policy (for example, only allow Regions in Southeast Asia). What is the correct management hierarchy and where should the policy be applied?",
+    "options": [
+      "Resource → Resource Group → Subscription, applied on each resource",
+      "Management Group → Subscription → Resource Group → Resource, applied at the Management Group",
+      "Subscription → Management Group, applied on the Resource Group",
+      "Region → Subscription, applied on the Region"
+    ],
+    "explanation": "A Management Group groups subscriptions and policy inherits downward. Applying it on each resource is tempting as strict, but it does not scale."
+  },
+  {
+    "id": "azure-core-architecture-02",
+    "question": "Finance needs separate invoices for production and dev, plus a vCPU limit for each environment. Which boundary meets this?",
+    "options": [
+      "Resource Group",
+      "Subscription",
+      "Region",
+      "VNet"
+    ],
+    "explanation": "A Subscription is the billing and quota boundary. A Resource Group is tempting because it also groups resources, but it neither separates invoices nor sets quotas."
+  },
+  {
+    "id": "azure-core-architecture-03",
+    "question": "A system must survive the failure of a single datacenter and also needs a plan for when a whole Region has an incident. Explain how an Availability Zone differs from a Region pair and how you would use each.",
+    "modelAnswer": "An Availability Zone is a physically independent location (power, cooling, networking) within the same Region, used to tolerate datacenter-level failures through zone-redundant deployment. A Region pair is two Regions in the same geography, far apart, used for DR when a whole Region fails; Azure updates them sequentially and prioritizes recovery within a pair. Use AZs for HA inside a Region and a Region pair (or another Region) for DR.",
+    "keyPoints": [
+      "AZ: same Region, tolerates datacenter failure",
+      "Region pair: different Regions, DR for Region loss",
+      "Sequential updates within a pair"
+    ]
+  },
+  {
+    "id": "azure-core-architecture-04",
+    "question": "An admin accidentally deletes a Resource Group and loses the database inside it. Which two statements about Resource Groups are correct? (choose 2)",
+    "options": [
+      "It is a logical container for resources with a shared lifecycle",
+      "Deleting a Resource Group deletes every resource inside it",
+      "A resource can belong to multiple Resource Groups",
+      "A Resource Group is a network boundary"
+    ],
+    "explanation": "An RG is a logical container and deleting it deletes everything inside. Each resource belongs to only one RG, and an RG is not a network boundary, which is easily confused with a VNet."
+  },
+  {
+    "id": "azure-core-architecture-05",
+    "question": "An application must survive a power outage in one datacenter of a Region but does not need to survive a whole-Region incident. What is the right choice?",
+    "options": [
+      "Availability Zones",
+      "Single instance",
+      "Region pair",
+      "Tag"
+    ],
+    "explanation": "AZs are separate datacenters within the same Region. A Region pair is tempting because it is also redundancy, but it targets whole-Region incidents."
+  },
+  {
+    "id": "entra-id-rbac-01",
+    "question": "An auditor needs to see every resource in a subscription but must absolutely not modify or delete anything. Which role?",
+    "options": [
+      "Owner",
+      "Contributor",
+      "Reader",
+      "User Access Administrator"
+    ],
+    "explanation": "Reader is view-only. Contributor is tempting as a common role, but it allows create/modify/delete."
+  },
+  {
+    "id": "entra-id-rbac-02",
+    "question": "A web app on App Service must read secrets from Key Vault and the team does not want passwords or connection strings in configuration. What should they use?",
+    "options": [
+      "A connection string in code",
+      "Managed identity",
+      "An account key",
+      "Public access"
+    ],
+    "explanation": "A managed identity is managed by Azure and needs no secret. An account key is tempting as simple, but it is a long-lived secret you must rotate yourself and is easily leaked."
+  },
+  {
+    "id": "entra-id-rbac-03",
+    "question": "A team grants developers Global Administrator so they can create VMs, and uses RBAC to force every resource to have a tag. Distinguish Azure RBAC, Entra roles and Azure Policy and point out these two mistakes.",
+    "modelAnswer": "Azure RBAC authorizes users on Azure resources by scope (creating VMs is RBAC, using Contributor at the right scope). Entra roles manage identity and the tenant, like Global Administrator, and are not for creating VMs. Azure Policy controls what resources are allowed to look like (for example mandatory tags), not who may do what. The two mistakes are granting an Entra role instead of an RBAC role and using RBAC instead of Policy to enforce tags.",
+    "keyPoints": [
+      "RBAC: who can do what on resources by scope",
+      "Entra roles: identity and tenant",
+      "Policy: what resources may look like"
+    ]
+  },
+  {
+    "id": "entra-id-rbac-04",
+    "question": "You need to give an audit group read-only access to a single resource group. What is the best approach?",
+    "options": [
+      "Entra role Global Reader",
+      "Azure RBAC Reader at the resource group scope",
+      "Owner on the subscription",
+      "Azure Policy"
+    ],
+    "explanation": "RBAC at the smallest sufficient scope. Global Reader is tempting because of the word Reader, but it is an Entra role that reads tenant configuration, not Azure resources."
+  },
+  {
+    "id": "entra-id-rbac-05",
+    "question": "Which two statements about Azure RBAC are correct? (choose 2)",
+    "options": [
+      "Permissions inherit down to child scopes",
+      "Entra roles and Azure RBAC are one system",
+      "A deny assignment can block access even with a role assignment",
+      "Owner cannot assign access to others"
+    ],
+    "explanation": "Scope inherits downward and a deny assignment wins over a role assignment. Entra roles and RBAC are two different systems; Owner does have the right to assign roles."
+  },
+  {
+    "id": "azure-virtual-machines-01",
+    "question": "A payments system needs the highest possible SLA for VMs within one Region. Which structure achieves it?",
+    "options": [
+      "A single Premium SSD VM",
+      "Availability Set",
+      "VMs spread across multiple Availability Zones",
+      "Spot VM"
+    ],
+    "explanation": "VMs in ≥ 2 zones give a 99.99% SLA. An Availability Set is tempting because it is also HA, but it is only 99.95% and within one datacenter."
+  },
+  {
+    "id": "azure-virtual-machines-02",
+    "question": "A dev shuts a VM down with the shutdown command inside the OS and sees the status Stopped, yet the compute bill keeps running. Why?",
+    "options": [
+      "No charge",
+      "It was not deallocated so compute is still billed",
+      "The VM was deleted",
+      "Only the disks are billed"
+    ],
+    "explanation": "You must deallocate to stop compute charges. 'Only the disks are billed' is tempting because it is true of the Stopped (deallocated) state."
+  },
+  {
+    "id": "azure-virtual-machines-03",
+    "question": "A company has a web app running steadily all year, an interruptible CI pipeline, and Windows servers that already have Software Assurance licenses. Choose a pricing model for each part.",
+    "modelAnswer": "The long-running stable workload uses a Reserved Instance or Savings Plan; the interruptible CI uses Spot VMs for up to ~90% savings because eviction is acceptable; the Windows machines additionally use Azure Hybrid Benefit to reuse their licenses. Anything else, or unpredictable load, uses pay-as-you-go.",
+    "keyPoints": [
+      "Reserved/Savings Plan for steady load",
+      "Spot for interruptible load",
+      "Hybrid Benefit for existing licenses"
+    ]
+  },
+  {
+    "id": "azure-virtual-machines-04",
+    "question": "You need to survive a single datacenter failure in a Region for a web tier of 3 VMs. What is the right structure?",
+    "options": [
+      "Availability Set",
+      "Spread the VMs across Availability Zones",
+      "One larger VM",
+      "Add a tag"
+    ],
+    "explanation": "AZs tolerate datacenter-level failure. An Availability Set is tempting because it separates fault domains, but it is still within one datacenter."
+  },
+  {
+    "id": "azure-virtual-machines-05",
+    "question": "Web traffic spikes at peak hours and then drops, and the team wants VMs added and removed automatically by CPU. What should they use?",
+    "options": [
+      "A single VM",
+      "Virtual Machine Scale Set",
+      "Snapshot",
+      "Image"
+    ],
+    "explanation": "VMSS has autoscale by metric or schedule. An image is tempting because it is used to create VMs, but it does not scale by itself."
   }
 ]
