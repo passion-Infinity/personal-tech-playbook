@@ -6466,7 +6466,7 @@
     "playbookId": "fine-tuning-lora-distillation",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Muốn model trả lời theo tài liệu công ty thay đổi hằng tuần?",
+    "question": "Công ty muốn chatbot trả lời theo tài liệu nội bộ cập nhật hằng tuần. Cách đúng?",
     "options": [
       "Fine-tune lại hằng tuần",
       "RAG",
@@ -6476,31 +6476,31 @@
     "answer": [
       1
     ],
-    "explanation": "Kiến thức đổi thường xuyên thuộc về RAG."
+    "explanation": "Kiến thức đổi thường xuyên thuộc về RAG. Fine-tune hằng tuần dễ nhầm vì có vẻ 'dạy model', nhưng tốn kém và kém tin cậy với dữ kiện."
   },
   {
     "id": "fine-tuning-lora-distillation-02",
     "playbookId": "fine-tuning-lora-distillation",
     "type": "mcq",
     "difficulty": 2,
-    "question": "LoRA huấn luyện gì?",
+    "question": "Khi dùng LoRA để fine-tune, phần nào của model được huấn luyện?",
     "options": [
       "Toàn bộ trọng số",
-      "Ma trận hạng thấp gắn thêm",
+      "Các ma trận hạng thấp gắn thêm, trọng số gốc đóng băng",
       "Chỉ embedding",
       "Tokenizer"
     ],
     "answer": [
       1
     ],
-    "explanation": "Trọng số gốc đóng băng."
+    "explanation": "LoRA học cập nhật hạng thấp nên rẻ. Huấn luyện toàn bộ trọng số là full fine-tuning, dễ nhầm với PEFT."
   },
   {
     "id": "fine-tuning-lora-distillation-03",
     "playbookId": "fine-tuning-lora-distillation",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Rủi ro khi fine-tune quá tay?",
+    "question": "Sau khi fine-tune mạnh trên dữ liệu hẹp, model xử lý tốt tác vụ mới nhưng tụt rõ ở các câu hỏi chung. Hiện tượng này gọi là gì?",
     "options": [
       "Không có",
       "Catastrophic forgetting",
@@ -6510,19 +6510,19 @@
     "answer": [
       1
     ],
-    "explanation": "Mất khả năng chung."
+    "explanation": "Mất năng lực chung do học quá tay."
   },
   {
     "id": "fine-tuning-lora-distillation-04",
     "playbookId": "fine-tuning-lora-distillation",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao thử prompt và RAG trước khi fine-tune?",
-    "modelAnswer": "Prompt và RAG rẻ, nhanh, đảo ngược được và giải quyết phần lớn vấn đề. Fine-tune tốn dữ liệu sạch, huấn luyện, bảo trì khi model nền đổi, và kém ở việc học kiến thức mới. Chỉ dùng khi cần đổi hành vi hay định dạng ổn định.",
+    "question": "Một team cần thêm hai tính năng: trả lời theo bộ chính sách mới mỗi tuần và luôn trả đúng định dạng JSON riêng. Giải thích khi nào dùng fine-tune, khi nào dùng RAG và vì sao thử prompt/RAG trước.",
+    "modelAnswer": "Prompt và RAG rẻ, nhanh, đảo ngược được và giải quyết phần lớn vấn đề; chính sách đổi hằng tuần nên dùng RAG. Fine-tune tốn dữ liệu sạch, huấn luyện, bảo trì khi model nền đổi và kém ở việc học kiến thức mới; chỉ dùng khi cần đổi hành vi hay định dạng ổn định. Định dạng JSON riêng ổn định có thể là ứng viên fine-tune sau khi structured output/few-shot không đủ.",
     "keyPoints": [
-      "Rẻ và đảo ngược được",
-      "Fine-tune tốn bảo trì",
-      "Dùng cho hành vi/định dạng"
+      "RAG cho kiến thức thay đổi",
+      "Fine-tune cho hành vi/định dạng",
+      "Thử prompt/RAG trước vì rẻ và đảo ngược được"
     ]
   },
   {
@@ -6530,41 +6530,41 @@
     "playbookId": "build-agent-end-to-end",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Yếu tố bắt buộc trong vòng lặp agent để tránh đốt tiền?",
+    "question": "Agent chạy qua đêm và hoá đơn token tăng bất thường. Yếu tố bắt buộc trong vòng lặp để tránh đốt tiền?",
     "options": [
       "Temperature cao",
-      "Giới hạn bước/ngân sách",
+      "Giới hạn bước và ngân sách",
       "Nhiều tool",
       "Prompt dài"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần điều kiện dừng cứng."
+    "explanation": "Cần điều kiện dừng cứng. Thêm tool dễ nhầm là tăng khả năng hoàn thành, nhưng không chặn vòng lặp."
   },
   {
     "id": "build-agent-end-to-end-02",
     "playbookId": "build-agent-end-to-end",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tool lỗi nên trả về?",
+    "question": "Một tool gọi API trả lỗi 404 vì id sai. Nên xử lý thế nào để agent tự sửa?",
     "options": [
-      "Crash",
-      "Thông báo lỗi dạng văn bản để model tự sửa",
+      "Crash chương trình",
+      "Trả thông báo lỗi dạng văn bản rõ ràng cho model",
       "Im lặng",
-      "Reset"
+      "Reset phiên"
     ],
     "answer": [
       1
     ],
-    "explanation": "Model có thể điều chỉnh tham số."
+    "explanation": "Model có thể điều chỉnh tham số khi thấy lỗi cụ thể. Crash làm mất tiến độ."
   },
   {
     "id": "build-agent-end-to-end-03",
     "playbookId": "build-agent-end-to-end",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Tool ghi dữ liệu cần?",
+    "question": "Agent có tool tạo đơn hàng và đôi khi gọi lặp do retry. Tool ghi dữ liệu cần gì?",
     "options": [
       "Không cần gì",
       "Dry-run, xác nhận và idempotent",
@@ -6574,15 +6574,15 @@
     "answer": [
       1
     ],
-    "explanation": "Model có thể gọi lặp."
+    "explanation": "Model hoặc ứng dụng có thể gọi lặp nên cần idempotent."
   },
   {
     "id": "build-agent-end-to-end-04",
     "playbookId": "build-agent-end-to-end",
     "type": "explain",
     "difficulty": 2,
-    "question": "Agent bị kẹt lặp cùng một tool call. Xử lý?",
-    "modelAnswer": "Phát hiện lặp (cùng tool và tham số), giới hạn số lần, trả phản hồi lỗi rõ hơn hoặc gợi ý hướng khác, tóm tắt context và nếu vẫn kẹt thì dừng chuyển cho người.",
+    "question": "Agent của bạn kẹt gọi lại cùng một tool với cùng tham số nhiều lần. Nêu cách phát hiện và xử lý.",
+    "modelAnswer": "Phát hiện lặp bằng cách băm tên tool và tham số và đếm; giới hạn số lần; trả phản hồi lỗi rõ hơn hoặc gợi ý hướng khác; tóm tắt context; nếu vẫn kẹt thì dừng và chuyển cho người.",
     "keyPoints": [
       "Phát hiện lặp",
       "Phản hồi rõ hơn",
@@ -6594,7 +6594,7 @@
     "playbookId": "speech-voice-ai",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Pipeline voice agent cơ bản?",
+    "question": "Một voice bot trả lời khách hàng qua điện thoại. Pipeline cơ bản đúng?",
     "options": [
       "TTS → STT → LLM",
       "STT → LLM → TTS",
@@ -6611,45 +6611,45 @@
     "playbookId": "speech-voice-ai",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Giảm độ trễ voice bot nhiều nhất bằng?",
+    "question": "Voice bot trả lời mất gần 3 giây sau khi người dùng nói xong. Cách giảm độ trễ nhiều nhất?",
     "options": [
-      "Chờ STT xong rồi mới chạy tiếp",
+      "Chờ STT xong hoàn toàn rồi mới chạy tiếp",
       "Streaming ở mọi tầng",
-      "Model lớn hơn",
+      "Dùng model lớn hơn",
       "Giảm chất lượng mic"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chồng lấp các bước."
+    "explanation": "Chồng lấp các tầng bằng streaming. Model lớn hơn thường làm chậm thêm."
   },
   {
     "id": "speech-voice-ai-03",
     "playbookId": "speech-voice-ai",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Barge-in là?",
+    "question": "Người dùng nói chen khi bot đang trả lời và bot vẫn nói tiếp. Cơ chế cần có?",
     "options": [
       "Ghi âm",
-      "Người dùng ngắt lời và hệ thống dừng nói",
+      "Barge-in: dừng TTS và huỷ sinh của LLM",
       "Tăng âm lượng",
       "Dịch giọng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần dừng TTS ngay."
+    "explanation": "Cần dừng phát, huỷ lượt sinh và xả bộ đệm âm thanh."
   },
   {
     "id": "speech-voice-ai-04",
     "playbookId": "speech-voice-ai",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao đo WER trên dữ liệu thật?",
-    "modelAnswer": "Benchmark chung không chứa tên riêng, số, thuật ngữ, giọng vùng miền và nhiễu nền của bạn. Đo WER trên dữ liệu thật cho thấy lỗi nào ảnh hưởng nhất để thêm từ vựng hay đổi model.",
+    "question": "Hệ STT đạt kết quả tốt trên benchmark nhưng sai nhiều tên riêng và số điện thoại của khách. Vì sao nên đo WER trên dữ liệu thật?",
+    "modelAnswer": "Benchmark chung không chứa tên riêng, số, thuật ngữ, giọng vùng miền và nhiễu nền của bạn. Đo WER trên dữ liệu thật cho thấy lỗi nào ảnh hưởng nhất để thêm từ vựng tuỳ chỉnh, đổi model hoặc thêm bước xác nhận.",
     "keyPoints": [
       "Dữ liệu thật khác benchmark",
-      "Tên riêng và nhiễu",
+      "Tên riêng, số và nhiễu",
       "Chọn cải tiến đúng"
     ]
   },
@@ -9382,7 +9382,7 @@
     "playbookId": "fine-tuning-lora-distillation",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần model luôn trả lời theo một định dạng và giọng điệu cố định cho tác vụ hẹp. Hướng?",
+    "question": "Cần model luôn trả lời đúng một định dạng và giọng điệu cố định cho tác vụ hẹp, khối lượng lớn. Hướng nào hợp lý?",
     "options": [
       "Fine-tune",
       "Chỉ RAG",
@@ -9392,14 +9392,14 @@
     "answer": [
       0
     ],
-    "explanation": "Fine-tune đổi hành vi/định dạng."
+    "explanation": "Fine-tune đổi hành vi/định dạng. RAG dễ nhầm vì đưa thêm thông tin, nhưng không bảo đảm phong cách ổn định."
   },
   {
     "id": "build-agent-end-to-end-05",
     "playbookId": "build-agent-end-to-end",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai thứ nên log cho mỗi bước agent? (chọn 2)",
+    "question": "Hai thứ nên log cho mỗi bước của agent? (chọn 2)",
     "options": [
       "Tool call và kết quả",
       "Token và độ trễ",
@@ -9410,7 +9410,7 @@
       0,
       1
     ],
-    "explanation": "Trace phục vụ debug và chi phí."
+    "explanation": "Trace phục vụ debug và chi phí. Mật khẩu người dùng tuyệt đối không log."
   },
   {
     "id": "speech-voice-ai-05",
@@ -9420,7 +9420,7 @@
     "question": "Hai cách giảm độ trễ voice agent? (chọn 2)",
     "options": [
       "Streaming ở STT/LLM/TTS",
-      "VAD tốt để ngắt lượt nhanh",
+      "VAD tốt để chốt lượt nói nhanh",
       "Chờ câu hoàn chỉnh rồi mới xử lý",
       "Dùng model lớn nhất"
     ],
@@ -9428,7 +9428,7 @@
       0,
       1
     ],
-    "explanation": "Chồng lấp các tầng."
+    "explanation": "Chồng lấp và chốt lượt nhanh. Chờ câu hoàn chỉnh làm tăng độ trễ."
   },
   {
     "id": "ai-ml-fundamentals-04",
@@ -10551,9 +10551,9 @@
     "playbookId": "advanced-rag-patterns",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Bước nào giúp chọn lại top-K chính xác hơn?",
+    "question": "Top-K từ vector search chứa nhiều đoạn gần nghĩa nhưng không đúng ý. Bước nào giúp chọn lại chính xác hơn?",
     "options": [
-      "Reranker",
+      "Reranker (cross-encoder)",
       "Tăng temperature",
       "Giảm chunk",
       "Bỏ filter"
@@ -10561,53 +10561,53 @@
     "answer": [
       0
     ],
-    "explanation": "Cross-encoder chấm lại."
+    "explanation": "Reranker chấm lại cặp câu hỏi–đoạn kỹ hơn. Tăng temperature không ảnh hưởng truy xuất."
   },
   {
     "id": "advanced-rag-patterns-02",
     "playbookId": "advanced-rag-patterns",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Parent-document retriever làm gì?",
+    "question": "Parent-document retriever giải quyết vấn đề nào?",
     "options": [
-      "Tìm đoạn nhỏ rồi đưa đoạn cha lớn hơn vào context",
-      "Xoá chunk",
+      "Tìm bằng đoạn nhỏ rồi đưa đoạn cha lớn hơn vào context để đủ ngữ cảnh",
+      "Xoá chunk trùng",
       "Nén vector",
       "Dịch văn bản"
     ],
     "answer": [
       0
     ],
-    "explanation": "Cân bằng độ chính xác tìm và đủ ngữ cảnh."
+    "explanation": "Cân bằng độ chính xác khi tìm và đủ ngữ cảnh khi trả lời."
   },
   {
     "id": "advanced-rag-patterns-03",
     "playbookId": "advanced-rag-patterns",
     "type": "mcq",
     "difficulty": 3,
-    "question": "RAG bịa khi không có tài liệu. Giải pháp?",
+    "question": "RAG trả lời một cách tự tin dù kho tài liệu không có thông tin. Giải pháp?",
     "options": [
       "Tăng temperature",
-      "Chính sách trả lời \"không đủ thông tin\" kèm trích dẫn",
+      "Chính sách trả lời 'không đủ thông tin' kèm trích dẫn và kiểm tra faithfulness",
       "Giảm top-K về 0",
       "Bỏ RAG"
     ],
     "answer": [
       1
     ],
-    "explanation": "Buộc bám căn cứ."
+    "explanation": "Buộc bám căn cứ. Tăng temperature làm bịa nhiều hơn."
   },
   {
     "id": "advanced-rag-patterns-04",
     "playbookId": "advanced-rag-patterns",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào thêm Graph RAG hoặc agentic RAG?",
-    "modelAnswer": "Khi câu hỏi cần liên kết nhiều thực thể hoặc nhiều bước và RAG thường không đủ, sau khi đo cho thấy lỗi nằm ở đó. Mỗi tầng thêm độ trễ và chi phí nên cần chứng minh bằng eval.",
+    "question": "Câu hỏi 'so sánh chính sách hoàn tiền của ba nhà cung cấp trong hợp đồng' cần liên kết nhiều tài liệu. Khi nào thêm Graph RAG hoặc agentic RAG thay vì RAG cơ bản?",
+    "modelAnswer": "Khi câu hỏi cần liên kết nhiều thực thể hoặc nhiều bước và đo cho thấy RAG cơ bản thường không đủ. Mỗi tầng thêm độ trễ và chi phí nên cần chứng minh bằng eval; nếu lỗi nằm ở chunking hoặc ranking thì sửa ở đó trước.",
     "keyPoints": [
-      "Câu hỏi nhiều bước",
-      "Sau khi đo lỗi",
-      "Đánh đổi độ trễ"
+      "Câu hỏi nhiều thực thể/bước",
+      "Chỉ thêm sau khi đo lỗi",
+      "Đánh đổi độ trễ và chi phí"
     ]
   },
   {
@@ -10615,7 +10615,7 @@
     "playbookId": "llm-app-architecture-gateway",
     "type": "mcq",
     "difficulty": 1,
-    "question": "API key của nhà cung cấp LLM nên ở đâu?",
+    "question": "Một ứng dụng web gọi trực tiếp API nhà cung cấp LLM từ trình duyệt bằng key nhúng sẵn. API key nên đặt ở đâu?",
     "options": [
       "Trong client",
       "Ở server/gateway, không lộ cho client",
@@ -10625,31 +10625,31 @@
     "answer": [
       1
     ],
-    "explanation": "Giữ bí mật phía server."
+    "explanation": "Key phía client có thể bị lấy. Đặt trong prompt dễ nhầm là ẩn, nhưng vẫn lộ."
   },
   {
     "id": "llm-app-architecture-gateway-02",
     "playbookId": "llm-app-architecture-gateway",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Một người dùng đốt hết ngân sách. Biện pháp?",
+    "question": "Một người dùng chạy script gọi liên tục làm hết ngân sách token của cả công ty. Biện pháp đúng?",
     "options": [
-      "Không có",
-      "Quota và rate limit theo người dùng",
+      "Không làm gì",
+      "Quota và rate limit theo người dùng ở gateway",
       "Tăng token",
       "Tắt log"
     ],
     "answer": [
       1
     ],
-    "explanation": "Gateway áp hạn mức."
+    "explanation": "Gateway áp hạn mức theo người dùng."
   },
   {
     "id": "llm-app-architecture-gateway-03",
     "playbookId": "llm-app-architecture-gateway",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Nhà cung cấp lỗi diện rộng. Thiết kế tốt?",
+    "question": "Nhà cung cấp LLM chính gặp sự cố diện rộng. Thiết kế tốt nhất?",
     "options": [
       "Chờ mãi",
       "Timeout, fallback sang model/nhà cung cấp khác, degrade chức năng",
@@ -10659,15 +10659,15 @@
     "answer": [
       1
     ],
-    "explanation": "Chịu lỗi."
+    "explanation": "Chịu lỗi bằng dự phòng. Retry vô hạn nhân chi phí và có thể làm nghẽn thêm."
   },
   {
     "id": "llm-app-architecture-gateway-04",
     "playbookId": "llm-app-architecture-gateway",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao cần gateway thay vì gọi LLM trực tiếp từ mỗi service?",
-    "modelAnswer": "Gateway tập trung xác thực, quota, routing, fallback, log và guardrail, giúp đổi model dễ và kiểm soát chi phí. Gọi trực tiếp làm lặp logic và khó quan sát.",
+    "question": "Nhiều dịch vụ trong công ty gọi LLM trực tiếp và mỗi nơi tự viết retry, log, quota. Vì sao cần gateway thay vì gọi LLM trực tiếp từ mỗi service?",
+    "modelAnswer": "Gateway tập trung xác thực, quota, routing, fallback, log và guardrail, giúp đổi model dễ, kiểm soát chi phí và quan sát thống nhất. Gọi trực tiếp làm lặp logic ở mỗi dịch vụ, khó đổi nhà cung cấp và khó quan sát.",
     "keyPoints": [
       "Tập trung kiểm soát",
       "Đổi model dễ",
