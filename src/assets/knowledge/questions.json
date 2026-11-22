@@ -6656,62 +6656,62 @@
     "playbookId": "aws-security-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Mã hoá file lớn bằng KMS?",
+    "question": "Ứng dụng cần mã hoá file backup 20 GB bằng khoá do KMS quản lý. Cách đúng?",
     "options": [
-      "Gửi cả file lên KMS",
-      "Envelope encryption",
+      "Gửi cả file lên KMS để mã hoá",
+      "Envelope encryption: lấy data key từ KMS rồi mã hoá file cục bộ",
       "Không thể",
       "Dùng SSH"
     ],
     "answer": [
       1
     ],
-    "explanation": "Data key mã hoá file, KMS bảo vệ data key."
+    "explanation": "KMS chỉ mã hoá trực tiếp tối đa 4 KB nên dùng data key. Gửi cả file lên KMS dễ nhầm là cách trực tiếp nhưng vượt giới hạn."
   },
   {
     "id": "aws-security-services-02",
     "playbookId": "aws-security-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chặn SQL injection ở ALB?",
+    "question": "Web app sau ALB đang bị tấn công SQL injection và bot gọi API dồn dập. Chặn ở đâu?",
     "options": [
       "Security group",
-      "AWS WAF",
+      "AWS WAF với managed rule và rate-based rule",
       "GuardDuty",
       "Shield Standard"
     ],
     "answer": [
       1
     ],
-    "explanation": "WAF kiểm tra nội dung request L7."
+    "explanation": "WAF kiểm tra nội dung request ở L7. Shield Standard dễ nhầm vì chống tấn công, nhưng chỉ chặn DDoS L3/L4."
   },
   {
     "id": "aws-security-services-03",
     "playbookId": "aws-security-services",
     "type": "mcq",
     "difficulty": 3,
-    "question": "GuardDuty làm gì?",
+    "question": "Team kỳ vọng GuardDuty tự chặn truy cập đáng ngờ nhưng không thấy gì bị chặn. Vì sao?",
     "options": [
-      "Chặn tấn công",
-      "Phát hiện hành vi bất thường",
-      "Mã hoá",
-      "Quản lý khoá"
+      "GuardDuty lỗi",
+      "GuardDuty chỉ phát hiện, cần EventBridge/Lambda để phản ứng",
+      "Chưa bật WAF",
+      "Chưa dùng KMS"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chỉ phát hiện, cần phản ứng tự động."
+    "explanation": "GuardDuty tạo finding, không tự chặn. WAF dễ nhầm là phần chặn, nhưng không đọc finding của GuardDuty."
   },
   {
     "id": "aws-security-services-04",
     "playbookId": "aws-security-services",
     "type": "explain",
     "difficulty": 2,
-    "question": "Phân biệt Cognito User Pool và Identity Pool.",
-    "modelAnswer": "User Pool quản lý người dùng ứng dụng, đăng ký đăng nhập và cấp JWT. Identity Pool đổi danh tính (từ User Pool hay IdP khác) thành AWS credentials tạm thời để truy cập dịch vụ AWS trực tiếp.",
+    "question": "Ứng dụng mobile cần đăng ký đăng nhập và cho người dùng tải ảnh thẳng lên S3. Phân biệt Cognito User Pool và Identity Pool và cách phối hợp.",
+    "modelAnswer": "User Pool quản lý người dùng ứng dụng, đăng ký đăng nhập và cấp JWT. Identity Pool đổi danh tính (từ User Pool hay IdP khác) thành AWS credentials tạm thời để truy cập dịch vụ AWS như S3 trực tiếp. Dùng User Pool để xác thực rồi Identity Pool để lấy credential giới hạn quyền.",
     "keyPoints": [
       "User Pool cấp JWT",
-      "Identity Pool cấp credential AWS",
+      "Identity Pool cấp AWS credentials tạm",
       "Dùng phối hợp"
     ]
   },
@@ -6720,7 +6720,7 @@
     "playbookId": "elasticache-caching",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Cần cấu trúc dữ liệu, replication và failover?",
+    "question": "Team cần cache có cấu trúc dữ liệu sorted set cho leaderboard, replication và failover tự động. Chọn?",
     "options": [
       "Memcached",
       "Redis",
@@ -6730,31 +6730,31 @@
     "answer": [
       1
     ],
-    "explanation": "Redis hỗ trợ cả ba."
+    "explanation": "Redis hỗ trợ cấu trúc dữ liệu, replication và Multi-AZ failover. Memcached dễ nhầm vì cũng là cache, nhưng không có replication hay persistence."
   },
   {
     "id": "elasticache-caching-02",
     "playbookId": "elasticache-caching",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cache-aside nghĩa là?",
+    "question": "Một API đọc user profile: kiểm tra cache, nếu miss thì đọc DB rồi lưu vào cache với TTL. Đây là chiến lược gì?",
     "options": [
-      "Ghi cache trước",
-      "Đọc miss thì nạp từ DB rồi lưu vào cache",
+      "Write-through",
+      "Cache-aside (lazy loading)",
       "Không dùng TTL",
       "Cache là DB chính"
     ],
     "answer": [
       1
     ],
-    "explanation": "Lazy loading."
+    "explanation": "Cache-aside nạp khi miss. Write-through dễ nhầm vì cũng liên quan cache, nhưng ghi cache cùng lúc với DB khi ghi."
   },
   {
     "id": "elasticache-caching-03",
     "playbookId": "elasticache-caching",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Key nóng hết hạn gây nhiều request cùng nạp DB. Gọi là?",
+    "question": "Một key trending hết hạn đúng giờ cao điểm và hàng nghìn request cùng gọi xuống DB làm DB quá tải. Hiện tượng này tên là gì?",
     "options": [
       "Cache stampede",
       "Sharding",
@@ -6764,15 +6764,15 @@
     "answer": [
       0
     ],
-    "explanation": "Cần khoá nạp hoặc TTL ngẫu nhiên."
+    "explanation": "Nhiều request cùng nạp lại khi key hết hạn gọi là cache stampede; giảm bằng TTL ngẫu nhiên và khoá nạp. Eviction dễ nhầm nhưng là xoá do hết bộ nhớ."
   },
   {
     "id": "elasticache-caching-04",
     "playbookId": "elasticache-caching",
     "type": "explain",
     "difficulty": 2,
-    "question": "Rủi ro của cache là gì?",
-    "modelAnswer": "Dữ liệu cũ nếu không invalidate, stampede khi key nóng hết hạn, hot key dồn vào một shard và việc coi cache như nguồn dữ liệu chính. Giảm bằng TTL, khoá nạp, và giữ DB là nguồn sự thật.",
+    "question": "Hãy nêu rủi ro của việc dùng cache và cách giảm cho một hệ thống thương mại điện tử.",
+    "modelAnswer": "Rủi ro gồm dữ liệu cũ nếu không invalidate, stampede khi key nóng hết hạn, hot key dồn vào một shard và việc coi cache là nguồn dữ liệu chính. Giảm bằng TTL hợp lý, write-through hoặc xoá key khi ghi, TTL ngẫu nhiên và khoá nạp, và giữ DB là nguồn sự thật.",
     "keyPoints": [
       "Dữ liệu cũ",
       "Stampede",
@@ -6784,7 +6784,7 @@
     "playbookId": "aws-hybrid-connectivity-migration",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Cần kết nối on-prem với AWS ngay hôm nay, rẻ?",
+    "question": "Công ty cần kết nối on-prem với AWS ngay trong hôm nay với chi phí thấp. Chọn?",
     "options": [
       "Direct Connect",
       "Site-to-Site VPN",
@@ -6794,31 +6794,31 @@
     "answer": [
       1
     ],
-    "explanation": "VPN dựng trong vài phút."
+    "explanation": "VPN dựng trong vài phút qua Internet. Direct Connect dễ nhầm vì tốt hơn, nhưng mất vài tuần lắp đặt."
   },
   {
     "id": "aws-hybrid-connectivity-migration-02",
     "playbookId": "aws-hybrid-connectivity-migration",
     "type": "mcq",
     "difficulty": 2,
-    "question": "VPC Peering có bắc cầu không?",
+    "question": "VPC A peering với B, B peering với C. A có tự truy cập được C không và dùng gì để bắc cầu nhiều VPC?",
     "options": [
       "Có",
-      "Không",
+      "Không, dùng Transit Gateway",
       "Chỉ cùng Region",
       "Chỉ cùng account"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần Transit Gateway cho bắc cầu."
+    "explanation": "Peering không bắc cầu; Transit Gateway có định tuyến transitive."
   },
   {
     "id": "aws-hybrid-connectivity-migration-03",
     "playbookId": "aws-hybrid-connectivity-migration",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Di chuyển 200 TB, băng thông thấp?",
+    "question": "Công ty có 200 TB dữ liệu và đường truyền chỉ 1 Gbps. Cách nhanh và thực tế nhất để chuyển lên S3?",
     "options": [
       "Upload qua Internet",
       "Snowball",
@@ -6828,15 +6828,15 @@
     "answer": [
       1
     ],
-    "explanation": "Vận chuyển vật lý nhanh hơn."
+    "explanation": "Truyền 200 TB qua 1 Gbps mất hơn 23 ngày; Snowball vận chuyển vật lý nhanh hơn. VPN dễ nhầm vì bảo mật, nhưng không tăng băng thông."
   },
   {
     "id": "aws-hybrid-connectivity-migration-04",
     "playbookId": "aws-hybrid-connectivity-migration",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao Direct Connect cần dự phòng?",
-    "modelAnswer": "Một đường DX là điểm lỗi đơn, không mã hoá mặc định và lắp mất nhiều tuần. Thường thêm DX thứ hai hoặc VPN backup, cộng mã hoá nếu cần.",
+    "question": "Công ty dùng một đường Direct Connect cho hệ thống thanh toán. Vì sao cần dự phòng và dự phòng bằng cách nào?",
+    "modelAnswer": "Một đường DX là điểm lỗi đơn, không mã hoá mặc định và mất nhiều tuần để lắp. Thường thêm DX thứ hai ở location khác hoặc VPN backup, cộng mã hoá bằng VPN hoặc MACsec nếu cần.",
     "keyPoints": [
       "Điểm lỗi đơn",
       "Thêm VPN hoặc DX thứ hai",
@@ -6848,7 +6848,7 @@
     "playbookId": "aws-cicd-devops-tools",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy cập EC2 không mở cổng 22?",
+    "question": "Security yêu cầu đóng cổng 22 hoàn toàn nhưng admin vẫn cần shell vào EC2 có audit. Dùng gì?",
     "options": [
       "Mở cổng khác",
       "SSM Session Manager",
@@ -6858,53 +6858,53 @@
     "answer": [
       1
     ],
-    "explanation": "Qua agent SSM và IAM."
+    "explanation": "Session Manager dùng IAM và agent, có audit, không cần cổng 22. Mở cổng khác dễ nhầm là giải pháp nhưng vẫn mở bề mặt tấn công."
   },
   {
     "id": "aws-cicd-devops-tools-02",
     "playbookId": "aws-cicd-devops-tools",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Triển khai production ít rủi ro nhất?",
+    "question": "Team muốn release production với rủi ro thấp nhất và có thể quay lại nhanh. Chiến lược nào?",
     "options": [
-      "In-place thẳng",
+      "In-place thẳng lên server",
       "Blue/green hoặc canary",
-      "Sửa trên server",
+      "Sửa trực tiếp trên server",
       "Tắt health check"
     ],
     "answer": [
       1
     ],
-    "explanation": "Có thể chuyển lại nhanh."
+    "explanation": "Blue/green chuyển traffic sang môi trường mới và có thể chuyển lại. In-place dễ nhầm vì đơn giản nhưng ghi đè phiên bản chạy nên rollback khó."
   },
   {
     "id": "aws-cicd-devops-tools-03",
     "playbookId": "aws-cicd-devops-tools",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Secret trong buildspec là vấn đề gì?",
+    "question": "Một dev đặt DB password trực tiếp trong buildspec.yml. Vấn đề và cách đúng?",
     "options": [
       "Không vấn đề",
-      "Lộ secret; dùng Secrets Manager/Parameter Store",
-      "Chậm",
+      "Secret có thể lộ qua repo và log; dùng Secrets Manager hoặc Parameter Store",
+      "Build chậm hơn",
       "Mất cache"
     ],
     "answer": [
       1
     ],
-    "explanation": "Secret không nằm trong code."
+    "explanation": "Secret không nên nằm trong mã hay log. 'Không vấn đề' dễ nhầm vì build vẫn chạy được."
   },
   {
     "id": "aws-cicd-devops-tools-04",
     "playbookId": "aws-cicd-devops-tools",
     "type": "explain",
     "difficulty": 2,
-    "question": "Pipeline CI/CD tốt cần những gì?",
-    "modelAnswer": "Các stage build, test, cổng duyệt, triển khai theo chiến lược blue/green hoặc canary, health check và rollback tự động, role tối thiểu quyền, secret từ kho bí mật, artifact mã hoá.",
+    "question": "Hãy mô tả các thành phần cần có của một pipeline CI/CD production trên AWS.",
+    "modelAnswer": "Pipeline cần các stage build và test, cổng duyệt cho production, triển khai theo chiến lược blue/green hoặc canary kèm health check và rollback tự động theo CloudWatch alarm, role theo least privilege, secret lấy từ Secrets Manager/Parameter Store và artifact được mã hoá.",
     "keyPoints": [
       "Test và duyệt",
-      "Blue/green + rollback",
-      "Least privilege và secret"
+      "Blue/green + rollback tự động",
+      "Least privilege và secret an toàn"
     ]
   },
   {
@@ -6912,7 +6912,7 @@
     "playbookId": "aws-advanced-networking",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy cập S3 từ private subnet không qua Internet, rẻ nhất?",
+    "question": "EC2 ở private subnet tải dữ liệu S3 mỗi ngày và hoá đơn NAT tăng. Cách rẻ nhất để truy cập S3 mà không qua Internet?",
     "options": [
       "NAT Gateway",
       "Gateway endpoint",
@@ -6922,31 +6922,31 @@
     "answer": [
       1
     ],
-    "explanation": "Gateway endpoint cho S3 miễn phí."
+    "explanation": "Gateway endpoint cho S3 miễn phí. Interface endpoint dễ nhầm vì cũng riêng tư, nhưng tính phí theo giờ và GB."
   },
   {
     "id": "aws-advanced-networking-02",
     "playbookId": "aws-advanced-networking",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "NACL khác security group ở điểm nào?",
+    "difficulty": 3,
+    "question": "Sau khi thêm NACL cho subnet, khách vào được trang nhưng không nhận được dữ liệu. Điểm khác chính giữa NACL và security group giải thích hiện tượng này?",
     "options": [
-      "Stateful",
-      "Stateless và cấp subnet",
-      "Chỉ allow",
-      "Cấp instance"
+      "NACL là stateful",
+      "NACL là stateless và cấp subnet nên cần rule chiều về",
+      "NACL chỉ có Allow",
+      "NACL cấp instance"
     ],
     "answer": [
       1
     ],
-    "explanation": "NACL cần rule chiều về."
+    "explanation": "NACL stateless nên phải mở ephemeral port chiều về. SG mới là stateful, dễ nhầm hai lớp lọc."
   },
   {
     "id": "aws-advanced-networking-03",
     "playbookId": "aws-advanced-networking",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cần IP tĩnh toàn cầu và failover nhanh cho TCP?",
+    "question": "Game cần IP tĩnh toàn cầu và failover nhanh cho traffic TCP/UDP. Chọn?",
     "options": [
       "CloudFront",
       "Global Accelerator",
@@ -6956,15 +6956,15 @@
     "answer": [
       1
     ],
-    "explanation": "Anycast IP và health check."
+    "explanation": "Global Accelerator cấp anycast IP tĩnh và hỗ trợ TCP/UDP. CloudFront dễ nhầm vì tăng tốc, nhưng cache HTTP."
   },
   {
     "id": "aws-advanced-networking-04",
     "playbookId": "aws-advanced-networking",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao tạo NAT Gateway mỗi AZ?",
-    "modelAnswer": "NAT Gateway nằm trong một AZ; nếu AZ đó lỗi thì subnet private ở các AZ khác mất đường ra Internet. Mỗi AZ một NAT giữ độ sẵn sàng và tránh phí cross-AZ.",
+    "question": "Hạ tầng có ba AZ nhưng chỉ một NAT Gateway ở AZ-a. Vì sao nên tạo NAT Gateway mỗi AZ?",
+    "modelAnswer": "NAT Gateway nằm trong một AZ; nếu AZ đó lỗi thì subnet private ở AZ khác mất đường ra Internet. Mỗi AZ một NAT giữ độ sẵn sàng và tránh phí traffic cross-AZ.",
     "keyPoints": [
       "NAT thuộc một AZ",
       "Giữ độ sẵn sàng",
@@ -6976,7 +6976,7 @@
     "playbookId": "aws-database-portfolio",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Truy vấn bạn của bạn bè nhiều bước, dữ liệu quan hệ sâu?",
+    "question": "Mạng xã hội cần truy vấn 'bạn của bạn bè của bạn' qua nhiều bước với dữ liệu quan hệ sâu. Chọn?",
     "options": [
       "DynamoDB",
       "Neptune",
@@ -6986,53 +6986,53 @@
     "answer": [
       1
     ],
-    "explanation": "Graph database."
+    "explanation": "Neptune là graph database duyệt quan hệ nhiều bước. DynamoDB dễ nhầm vì scale tốt, nhưng không hỗ trợ truy vấn quan hệ sâu."
   },
   {
     "id": "aws-database-portfolio-02",
     "playbookId": "aws-database-portfolio",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Multi-AZ RDS dùng để?",
+    "question": "Team nói 'bật Multi-AZ để scale đọc'. Multi-AZ RDS thực sự dùng để làm gì?",
     "options": [
       "Scale đọc",
-      "Chịu lỗi HA đồng bộ",
+      "Chịu lỗi HA với standby đồng bộ",
       "Giảm chi phí",
       "Backup"
     ],
     "answer": [
       1
     ],
-    "explanation": "Failover tự động."
+    "explanation": "Multi-AZ cho HA, standby không phục vụ đọc. Scale đọc là việc của Read Replica."
   },
   {
     "id": "aws-database-portfolio-03",
     "playbookId": "aws-database-portfolio",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Dùng DynamoDB cho truy vấn ad-hoc nhiều join?",
+    "question": "Một team dùng DynamoDB cho báo cáo ad-hoc với nhiều join. Đánh giá đúng nhất?",
     "options": [
       "Tốt",
       "Sai công cụ, nên dùng SQL/warehouse",
-      "Chỉ cần GSI",
+      "Chỉ cần thêm GSI",
       "Chỉ cần DAX"
     ],
     "answer": [
       1
     ],
-    "explanation": "DynamoDB tối ưu truy cập theo khoá."
+    "explanation": "DynamoDB tối ưu truy cập theo key. GSI dễ nhầm là giải pháp, nhưng không tạo ra join hay truy vấn ad-hoc."
   },
   {
     "id": "aws-database-portfolio-04",
     "playbookId": "aws-database-portfolio",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào chọn Aurora thay vì DynamoDB?",
-    "modelAnswer": "Khi cần quan hệ, join, giao dịch ACID và truy vấn linh hoạt. DynamoDB hợp truy cập theo khoá với scale và độ trễ dự đoán được, nhưng truy vấn ad-hoc kém.",
+    "question": "Hệ thống đơn hàng có giao dịch ACID và báo cáo; một hệ thống khác lưu giỏ hàng cần scale lớn theo key. Khi nào chọn Aurora và khi nào DynamoDB?",
+    "modelAnswer": "Aurora khi cần quan hệ, join, giao dịch ACID và truy vấn linh hoạt như hệ thống đơn hàng. DynamoDB khi truy cập theo khoá với scale và độ trễ dự đoán được như giỏ hàng, đổi lại truy vấn ad-hoc kém.",
     "keyPoints": [
-      "Quan hệ và join",
-      "ACID",
-      "Truy vấn linh hoạt"
+      "Aurora: quan hệ, join, ACID",
+      "DynamoDB: truy cập theo key, scale lớn",
+      "Chọn theo access pattern"
     ]
   },
   {
@@ -8512,7 +8512,7 @@
     "playbookId": "aws-security-services",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Phát hiện hoạt động đáng ngờ từ CloudTrail và Flow Logs?",
+    "question": "Dịch vụ nào phân tích CloudTrail, VPC Flow Logs và DNS logs để phát hiện hành vi đáng ngờ mà không cần agent?",
     "options": [
       "Inspector",
       "GuardDuty",
@@ -8522,14 +8522,14 @@
     "answer": [
       1
     ],
-    "explanation": "GuardDuty phân tích các nguồn log."
+    "explanation": "GuardDuty phân tích các nguồn log này. Inspector dễ nhầm vì cũng là dịch vụ bảo mật, nhưng quét lỗ hổng phần mềm, không phân tích hành vi."
   },
   {
     "id": "elasticache-caching-05",
     "playbookId": "elasticache-caching",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Lưu session để ứng dụng stateless?",
+    "question": "Ứng dụng web chạy sau ASG cần lưu session để scale ngang mà không mất đăng nhập. Chọn nơi lưu?",
     "options": [
       "Local disk",
       "ElastiCache Redis",
@@ -8539,41 +8539,41 @@
     "answer": [
       1
     ],
-    "explanation": "Redis chia sẻ giữa instance."
+    "explanation": "Redis chia sẻ giữa các instance. Local disk dễ nhầm vì đơn giản, nhưng mất khi instance bị thay thế và không chia sẻ được."
   },
   {
     "id": "aws-hybrid-connectivity-migration-05",
     "playbookId": "aws-hybrid-connectivity-migration",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Di chuyển DB Oracle sang Aurora PostgreSQL gồm chuyển schema?",
+    "question": "Di chuyển DB Oracle sang Aurora PostgreSQL gồm chuyển cả schema và code. Dùng gì?",
     "options": [
       "DMS thuần",
-      "SCT + DMS",
+      "SCT kết hợp DMS",
       "Snowball",
       "DataSync"
     ],
     "answer": [
       1
     ],
-    "explanation": "SCT chuyển schema, DMS chuyển dữ liệu."
+    "explanation": "SCT chuyển schema, DMS chuyển dữ liệu. DMS thuần dễ nhầm là đủ, nhưng không chuyển hết schema khác engine."
   },
   {
     "id": "aws-cicd-devops-tools-05",
     "playbookId": "aws-cicd-devops-tools",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Pipeline cần tự rollback khi alarm kích hoạt?",
+    "question": "Pipeline cần tự động quay lại phiên bản trước khi một CloudWatch alarm về lỗi 5xx kích hoạt sau deploy. Dịch vụ nào hỗ trợ?",
     "options": [
       "CodeBuild",
-      "CodeDeploy với alarm rollback",
-      "CodeCommit",
+      "CodeDeploy với rollback theo alarm",
+      "CodeArtifact",
       "ECR"
     ],
     "answer": [
       1
     ],
-    "explanation": "CodeDeploy hỗ trợ rollback theo alarm."
+    "explanation": "CodeDeploy hỗ trợ rollback tự động theo alarm. CodeBuild dễ nhầm vì nằm trong pipeline, nhưng chỉ build và test."
   },
   {
     "id": "aws-advanced-networking-05",
@@ -8582,7 +8582,7 @@
     "difficulty": 2,
     "question": "Hai điều nào đúng về Gateway endpoint? (chọn 2)",
     "options": [
-      "Chỉ S3 và DynamoDB",
+      "Chỉ hỗ trợ S3 và DynamoDB",
       "Miễn phí",
       "Dùng ENI",
       "Tính phí theo giờ"
@@ -8591,14 +8591,14 @@
       0,
       1
     ],
-    "explanation": "Gateway endpoint chỉ cho hai dịch vụ này."
+    "explanation": "Gateway endpoint chỉ cho S3/DynamoDB và miễn phí. ENI và tính phí theo giờ là đặc điểm của interface endpoint."
   },
   {
     "id": "aws-database-portfolio-05",
     "playbookId": "aws-database-portfolio",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dữ liệu IoT chuỗi thời gian khối lượng lớn?",
+    "question": "Hàng triệu cảm biến IoT gửi metric chuỗi thời gian cần lưu và truy vấn theo khoảng thời gian. Chọn?",
     "options": [
       "Neptune",
       "Timestream",
@@ -8608,7 +8608,7 @@
     "answer": [
       1
     ],
-    "explanation": "Timestream chuyên time-series."
+    "explanation": "Timestream chuyên cho time-series. Redshift dễ nhầm vì phân tích tốt, nhưng không tối ưu ingest chuỗi thời gian liên tục."
   },
   {
     "id": "aws-cost-optimization-billing-05",

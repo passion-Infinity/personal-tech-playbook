@@ -1,45 +1,60 @@
 ## 1. Core Concept
 
-Sau VPC cơ bản, các bài toán mạng nâng cao của AWS xoay quanh **truy cập dịch vụ riêng tư** (VPC Endpoint, PrivateLink), **tăng tốc toàn cầu** (Global Accelerator, CloudFront) và **quan sát/kiểm soát lưu lượng** (Flow Logs, NACL, Network Firewall). Mental model: *giữ traffic trong mạng AWS thay vì đi qua Internet, và biết từng lớp lọc hoạt động ở đâu.*
+Sau VPC cơ bản, các bài toán mạng nâng cao của AWS xoay quanh ba việc: **truy cập dịch vụ riêng tư** (VPC Endpoint, PrivateLink), **tăng tốc và chịu lỗi toàn cầu** (Global Accelerator) và **quan sát/kiểm soát lưu lượng** (Flow Logs, NACL, Network Firewall). Chúng giải quyết nỗi đau traffic đi vòng qua Internet, tốn phí NAT và khó biết vì sao gói tin bị rớt.
+
+**Mental model:** giữ traffic **trong mạng nội bộ của AWS** thay vì ra đường công cộng; mỗi lớp lọc có nhiệm vụ riêng — SG là bảo vệ từng phòng, NACL là cổng từng tầng, Network Firewall là trạm kiểm soát cả khu.
 
 ## 2. How It Works
 
-- **Gateway endpoint**: chỉ **S3 và DynamoDB**, miễn phí, thêm route vào route table.
-- **Interface endpoint (PrivateLink)**: ENI có IP riêng trong subnet tới dịch vụ AWS/đối tác/dịch vụ của bạn, tính phí theo giờ và GB; kiểm soát bằng security group.
-- **PrivateLink** cho phép công bố dịch vụ cho VPC khác mà **không cần peering hay chồng lấn CIDR**.
-- **Global Accelerator**: 2 **anycast IP** tĩnh, đưa traffic vào mạng backbone AWS tại edge gần nhất, health check và failover nhanh; hợp **TCP/UDP**; khác **CloudFront** (cache nội dung HTTP).
-- **Security Group** (stateful, chỉ allow, cấp instance) vs **NACL** (stateless, có allow/deny, cấp subnet, theo số thứ tự rule, cần cả chiều về).
-- **NAT Gateway** (managed, theo AZ) cho subnet private ra Internet; **Egress-only IGW** cho IPv6.
-- **VPC Flow Logs**: ghi metadata lưu lượng (không có payload) vào CloudWatch/S3.
-- **AWS Network Firewall**, **Route 53 Resolver** (DNS lai), **Traffic Mirroring**.
+**VPC Endpoint → Không qua Internet**
+- **Gateway endpoint**: chỉ **S3 và DynamoDB**, **miễn phí**, thêm route (prefix list) vào route table. **Interface endpoint (PrivateLink)**: một **ENI có IP riêng** trong subnet tới dịch vụ AWS/đối tác/dịch vụ của bạn, tính phí theo giờ và GB, có **private DNS**, kiểm soát bằng **security group** và **endpoint policy**.
+- Ví dụ: S3 qua NAT tốn phí xử lý theo GB; qua Gateway endpoint thì **miễn phí**.
+
+**PrivateLink → Công bố dịch vụ**
+- Công bố dịch vụ sau **NLB** thành **endpoint service**, consumer tạo interface endpoint từ VPC của họ mà **không cần peering và không lo CIDR chồng lấn**, chỉ lộ đúng dịch vụ, không lộ cả mạng.
+
+**Global Accelerator → Anycast IP tĩnh**
+- Cấp **2 IP anycast tĩnh**, đưa traffic vào **backbone AWS** tại edge gần nhất, **health check** và failover nhanh sang endpoint khỏe; hỗ trợ **TCP/UDP**; **không cache** (khác CloudFront cache HTTP).
+
+**Lọc lưu lượng → SG và NACL**
+- **Security Group**: stateful, chỉ Allow, cấp instance. **NACL**: stateless, có Allow/Deny, cấp subnet, đánh giá theo số thứ tự, phải mở **ephemeral port 1024–65535** chiều về.
+
+**Quan sát và bảo vệ**
+- **VPC Flow Logs** ghi metadata (IP, port, `ACCEPT/REJECT`, byte) vào CloudWatch/S3/Firehose, **không có payload**. **AWS Network Firewall** lọc stateful/stateless cho cả VPC; **Route 53 Resolver endpoint** cho DNS lai; **Reachability Analyzer** kiểm tra đường đi.
+- **NAT Gateway** gắn một AZ (cần một cái mỗi AZ); **Egress-only IGW** cho IPv6.
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    EC2["EC2 in private subnet"] -->|"Gateway endpoint"| S3[(S3)]
-    EC2 -->|"Interface endpoint"| SVC["AWS service / PrivateLink"]
-    USER[Users] --> GA["Global Accelerator (anycast IP)"] --> ALB[ALB]
+    EC2["EC2 private subnet"] -->|"Gateway endpoint: miễn phí"| S3[(S3)]
+    EC2 -->|"Interface endpoint ENI"| SVC["Dịch vụ AWS / PrivateLink"]
+    U[Người dùng toàn cầu] --> GA["Global Accelerator: 2 anycast IP"] --> ALB[ALB vùng khỏe]
+    EC2 -.->|"Flow Logs: ACCEPT/REJECT"| CW[CloudWatch / S3]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Nhu cầu | Chọn |
+| Tình huống / Nhu cầu | Chọn gì |
 | --- | --- |
-| Truy cập S3/DynamoDB riêng tư, rẻ | Gateway endpoint |
-| Dịch vụ khác riêng tư | Interface endpoint |
+| Truy cập S3/DynamoDB riêng tư, rẻ nhất | Gateway endpoint |
+| Dịch vụ AWS khác riêng tư | Interface endpoint |
+| Công bố dịch vụ cho VPC khác, không peering | PrivateLink |
 | IP tĩnh toàn cầu, TCP/UDP, failover nhanh | Global Accelerator |
 | Cache nội dung HTTP | CloudFront |
+| Chặn một IP | NACL |
+| Điều tra vì sao gói bị rớt | VPC Flow Logs |
 
-- Trade-off: endpoint giảm phí NAT và tăng bảo mật nhưng thêm chi phí theo giờ.
+- **Được gì:** riêng tư, giảm phí NAT, failover nhanh. **Mất gì:** interface endpoint tính phí theo giờ/GB; thêm thành phần cần quản lý.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **NACL stateless**: quên rule chiều về (ephemeral ports 1024–65535) gây rớt kết nối.
-- NAT Gateway đặt **một AZ** → AZ lỗi là mất egress; tạo mỗi AZ một cái.
-- Lưu lượng S3 qua NAT tốn tiền; dùng **Gateway endpoint**.
-- Flow Logs không chứa nội dung gói tin.
-- Interview trap: "Truy cập S3 từ private subnet không qua Internet, rẻ nhất?" → Gateway endpoint.
+- **Kết nối vào được nhưng phản hồi rớt → NACL stateless thiếu chiều về → mở ephemeral port 1024–65535**.
+- **Mất đường ra Internet khi một AZ lỗi → chỉ một NAT Gateway → mỗi AZ một NAT**.
+- **Hoá đơn NAT cao → S3 đi qua NAT → Gateway endpoint**.
+- **Khó biết nguyên nhân REJECT → chưa bật Flow Logs → bật Flow Logs ở VPC/subnet/ENI**; nhớ Flow Logs không có payload.
+- **Endpoint không resolve đúng → private DNS tắt hoặc VPC thiếu DNS support → bật private DNS và `enableDnsSupport`**.
+- Exam trap: "S3 từ private subnet không qua Internet, rẻ nhất" → **Gateway endpoint**; "IP tĩnh toàn cầu, TCP/UDP" → **Global Accelerator**; "NACL hay SG" → **NACL stateless, có Deny, cấp subnet**.
 
 ## 6. Search Hooks
 
