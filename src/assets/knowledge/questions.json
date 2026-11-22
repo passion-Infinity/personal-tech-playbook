@@ -6385,5 +6385,517 @@
       "Giảm output và caching",
       "Model nhỏ và song song"
     ]
+  },
+  {
+    "id": "vector-databases-embeddings-01",
+    "playbookId": "vector-databases-embeddings",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Đổi embedding model thì phải làm gì?",
+    "options": [
+      "Không gì",
+      "Re-index toàn bộ vector",
+      "Chỉ đổi truy vấn",
+      "Xoá cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Vector từ hai model không tương thích."
+  },
+  {
+    "id": "vector-databases-embeddings-02",
+    "playbookId": "vector-databases-embeddings",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tìm theo mã sản phẩm chính xác, vector tìm yếu. Giải pháp?",
+    "options": [
+      "Tăng chiều vector",
+      "Hybrid search với BM25",
+      "Giảm chunk",
+      "Bỏ tìm kiếm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Từ khoá bắt khớp chính xác."
+  },
+  {
+    "id": "vector-databases-embeddings-03",
+    "playbookId": "vector-databases-embeddings",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Nhiều khách hàng dùng chung index. Rủi ro lớn nhất?",
+    "options": [
+      "Chậm",
+      "Rò rỉ dữ liệu nếu không lọc theo tenant",
+      "Tốn đĩa",
+      "Không có"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần metadata filter bắt buộc."
+  },
+  {
+    "id": "vector-databases-embeddings-04",
+    "playbookId": "vector-databases-embeddings",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "RAG trả sai dù có tài liệu đúng. Kiểm tra gì trước?",
+    "modelAnswer": "Kiểm tra khâu truy xuất trước: chunking có cắt mất ngữ cảnh không, embedding và hybrid search có đưa đúng đoạn vào top-K không, đo recall@K trên bộ truy vấn có đáp án. Chỉ khi truy xuất tốt mới xem prompt và LLM.",
+    "keyPoints": [
+      "Đo recall truy xuất",
+      "Xem chunking",
+      "Sau đó mới xét LLM"
+    ]
+  },
+  {
+    "id": "fine-tuning-lora-distillation-01",
+    "playbookId": "fine-tuning-lora-distillation",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Muốn model trả lời theo tài liệu công ty thay đổi hằng tuần?",
+    "options": [
+      "Fine-tune lại hằng tuần",
+      "RAG",
+      "Tăng temperature",
+      "Dùng model nhỏ hơn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Kiến thức đổi thường xuyên thuộc về RAG."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-02",
+    "playbookId": "fine-tuning-lora-distillation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "LoRA huấn luyện gì?",
+    "options": [
+      "Toàn bộ trọng số",
+      "Ma trận hạng thấp gắn thêm",
+      "Chỉ embedding",
+      "Tokenizer"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Trọng số gốc đóng băng."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-03",
+    "playbookId": "fine-tuning-lora-distillation",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Rủi ro khi fine-tune quá tay?",
+    "options": [
+      "Không có",
+      "Catastrophic forgetting",
+      "Tăng độ chính xác mãi",
+      "Giảm kích thước"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mất khả năng chung."
+  },
+  {
+    "id": "fine-tuning-lora-distillation-04",
+    "playbookId": "fine-tuning-lora-distillation",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao thử prompt và RAG trước khi fine-tune?",
+    "modelAnswer": "Prompt và RAG rẻ, nhanh, đảo ngược được và giải quyết phần lớn vấn đề. Fine-tune tốn dữ liệu sạch, huấn luyện, bảo trì khi model nền đổi, và kém ở việc học kiến thức mới. Chỉ dùng khi cần đổi hành vi hay định dạng ổn định.",
+    "keyPoints": [
+      "Rẻ và đảo ngược được",
+      "Fine-tune tốn bảo trì",
+      "Dùng cho hành vi/định dạng"
+    ]
+  },
+  {
+    "id": "build-agent-end-to-end-01",
+    "playbookId": "build-agent-end-to-end",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Yếu tố bắt buộc trong vòng lặp agent để tránh đốt tiền?",
+    "options": [
+      "Temperature cao",
+      "Giới hạn bước/ngân sách",
+      "Nhiều tool",
+      "Prompt dài"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần điều kiện dừng cứng."
+  },
+  {
+    "id": "build-agent-end-to-end-02",
+    "playbookId": "build-agent-end-to-end",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tool lỗi nên trả về?",
+    "options": [
+      "Crash",
+      "Thông báo lỗi dạng văn bản để model tự sửa",
+      "Im lặng",
+      "Reset"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Model có thể điều chỉnh tham số."
+  },
+  {
+    "id": "build-agent-end-to-end-03",
+    "playbookId": "build-agent-end-to-end",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Tool ghi dữ liệu cần?",
+    "options": [
+      "Không cần gì",
+      "Dry-run, xác nhận và idempotent",
+      "Chạy song song",
+      "Tắt log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Model có thể gọi lặp."
+  },
+  {
+    "id": "build-agent-end-to-end-04",
+    "playbookId": "build-agent-end-to-end",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Agent bị kẹt lặp cùng một tool call. Xử lý?",
+    "modelAnswer": "Phát hiện lặp (cùng tool và tham số), giới hạn số lần, trả phản hồi lỗi rõ hơn hoặc gợi ý hướng khác, tóm tắt context và nếu vẫn kẹt thì dừng chuyển cho người.",
+    "keyPoints": [
+      "Phát hiện lặp",
+      "Phản hồi rõ hơn",
+      "Dừng chuyển người"
+    ]
+  },
+  {
+    "id": "speech-voice-ai-01",
+    "playbookId": "speech-voice-ai",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Pipeline voice agent cơ bản?",
+    "options": [
+      "TTS → STT → LLM",
+      "STT → LLM → TTS",
+      "LLM → STT",
+      "Chỉ TTS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Nghe, hiểu, nói."
+  },
+  {
+    "id": "speech-voice-ai-02",
+    "playbookId": "speech-voice-ai",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Giảm độ trễ voice bot nhiều nhất bằng?",
+    "options": [
+      "Chờ STT xong rồi mới chạy tiếp",
+      "Streaming ở mọi tầng",
+      "Model lớn hơn",
+      "Giảm chất lượng mic"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chồng lấp các bước."
+  },
+  {
+    "id": "speech-voice-ai-03",
+    "playbookId": "speech-voice-ai",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Barge-in là?",
+    "options": [
+      "Ghi âm",
+      "Người dùng ngắt lời và hệ thống dừng nói",
+      "Tăng âm lượng",
+      "Dịch giọng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần dừng TTS ngay."
+  },
+  {
+    "id": "speech-voice-ai-04",
+    "playbookId": "speech-voice-ai",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao đo WER trên dữ liệu thật?",
+    "modelAnswer": "Benchmark chung không chứa tên riêng, số, thuật ngữ, giọng vùng miền và nhiễu nền của bạn. Đo WER trên dữ liệu thật cho thấy lỗi nào ảnh hưởng nhất để thêm từ vựng hay đổi model.",
+    "keyPoints": [
+      "Dữ liệu thật khác benchmark",
+      "Tên riêng và nhiễu",
+      "Chọn cải tiến đúng"
+    ]
+  },
+  {
+    "id": "aws-security-services-01",
+    "playbookId": "aws-security-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Mã hoá file lớn bằng KMS?",
+    "options": [
+      "Gửi cả file lên KMS",
+      "Envelope encryption",
+      "Không thể",
+      "Dùng SSH"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Data key mã hoá file, KMS bảo vệ data key."
+  },
+  {
+    "id": "aws-security-services-02",
+    "playbookId": "aws-security-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chặn SQL injection ở ALB?",
+    "options": [
+      "Security group",
+      "AWS WAF",
+      "GuardDuty",
+      "Shield Standard"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "WAF kiểm tra nội dung request L7."
+  },
+  {
+    "id": "aws-security-services-03",
+    "playbookId": "aws-security-services",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "GuardDuty làm gì?",
+    "options": [
+      "Chặn tấn công",
+      "Phát hiện hành vi bất thường",
+      "Mã hoá",
+      "Quản lý khoá"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Chỉ phát hiện, cần phản ứng tự động."
+  },
+  {
+    "id": "aws-security-services-04",
+    "playbookId": "aws-security-services",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Phân biệt Cognito User Pool và Identity Pool.",
+    "modelAnswer": "User Pool quản lý người dùng ứng dụng, đăng ký đăng nhập và cấp JWT. Identity Pool đổi danh tính (từ User Pool hay IdP khác) thành AWS credentials tạm thời để truy cập dịch vụ AWS trực tiếp.",
+    "keyPoints": [
+      "User Pool cấp JWT",
+      "Identity Pool cấp credential AWS",
+      "Dùng phối hợp"
+    ]
+  },
+  {
+    "id": "elasticache-caching-01",
+    "playbookId": "elasticache-caching",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cần cấu trúc dữ liệu, replication và failover?",
+    "options": [
+      "Memcached",
+      "Redis",
+      "S3",
+      "CloudFront"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Redis hỗ trợ cả ba."
+  },
+  {
+    "id": "elasticache-caching-02",
+    "playbookId": "elasticache-caching",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cache-aside nghĩa là?",
+    "options": [
+      "Ghi cache trước",
+      "Đọc miss thì nạp từ DB rồi lưu vào cache",
+      "Không dùng TTL",
+      "Cache là DB chính"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Lazy loading."
+  },
+  {
+    "id": "elasticache-caching-03",
+    "playbookId": "elasticache-caching",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Key nóng hết hạn gây nhiều request cùng nạp DB. Gọi là?",
+    "options": [
+      "Cache stampede",
+      "Sharding",
+      "Failover",
+      "Eviction"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Cần khoá nạp hoặc TTL ngẫu nhiên."
+  },
+  {
+    "id": "elasticache-caching-04",
+    "playbookId": "elasticache-caching",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Rủi ro của cache là gì?",
+    "modelAnswer": "Dữ liệu cũ nếu không invalidate, stampede khi key nóng hết hạn, hot key dồn vào một shard và việc coi cache như nguồn dữ liệu chính. Giảm bằng TTL, khoá nạp, và giữ DB là nguồn sự thật.",
+    "keyPoints": [
+      "Dữ liệu cũ",
+      "Stampede",
+      "DB là nguồn sự thật"
+    ]
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-01",
+    "playbookId": "aws-hybrid-connectivity-migration",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cần kết nối on-prem với AWS ngay hôm nay, rẻ?",
+    "options": [
+      "Direct Connect",
+      "Site-to-Site VPN",
+      "Snowball",
+      "DMS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VPN dựng trong vài phút."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-02",
+    "playbookId": "aws-hybrid-connectivity-migration",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "VPC Peering có bắc cầu không?",
+    "options": [
+      "Có",
+      "Không",
+      "Chỉ cùng Region",
+      "Chỉ cùng account"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần Transit Gateway cho bắc cầu."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-03",
+    "playbookId": "aws-hybrid-connectivity-migration",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Di chuyển 200 TB, băng thông thấp?",
+    "options": [
+      "Upload qua Internet",
+      "Snowball",
+      "VPN",
+      "CloudFront"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Vận chuyển vật lý nhanh hơn."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-04",
+    "playbookId": "aws-hybrid-connectivity-migration",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao Direct Connect cần dự phòng?",
+    "modelAnswer": "Một đường DX là điểm lỗi đơn, không mã hoá mặc định và lắp mất nhiều tuần. Thường thêm DX thứ hai hoặc VPN backup, cộng mã hoá nếu cần.",
+    "keyPoints": [
+      "Điểm lỗi đơn",
+      "Thêm VPN hoặc DX thứ hai",
+      "Mã hoá riêng"
+    ]
+  },
+  {
+    "id": "aws-cicd-devops-tools-01",
+    "playbookId": "aws-cicd-devops-tools",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy cập EC2 không mở cổng 22?",
+    "options": [
+      "Mở cổng khác",
+      "SSM Session Manager",
+      "Telnet",
+      "FTP"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Qua agent SSM và IAM."
+  },
+  {
+    "id": "aws-cicd-devops-tools-02",
+    "playbookId": "aws-cicd-devops-tools",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Triển khai production ít rủi ro nhất?",
+    "options": [
+      "In-place thẳng",
+      "Blue/green hoặc canary",
+      "Sửa trên server",
+      "Tắt health check"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Có thể chuyển lại nhanh."
+  },
+  {
+    "id": "aws-cicd-devops-tools-03",
+    "playbookId": "aws-cicd-devops-tools",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Secret trong buildspec là vấn đề gì?",
+    "options": [
+      "Không vấn đề",
+      "Lộ secret; dùng Secrets Manager/Parameter Store",
+      "Chậm",
+      "Mất cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Secret không nằm trong code."
+  },
+  {
+    "id": "aws-cicd-devops-tools-04",
+    "playbookId": "aws-cicd-devops-tools",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Pipeline CI/CD tốt cần những gì?",
+    "modelAnswer": "Các stage build, test, cổng duyệt, triển khai theo chiến lược blue/green hoặc canary, health check và rollback tự động, role tối thiểu quyền, secret từ kho bí mật, artifact mã hoá.",
+    "keyPoints": [
+      "Test và duyệt",
+      "Blue/green + rollback",
+      "Least privilege và secret"
+    ]
   }
 ]

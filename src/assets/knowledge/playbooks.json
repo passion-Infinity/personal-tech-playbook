@@ -2000,5 +2000,149 @@
     "prerequisites": [
       "context-engineering-memory"
     ]
+  },
+  {
+    "id": "vector-databases-embeddings",
+    "title": "Embeddings & Vector Databases",
+    "summary": "Hiểu embedding, ANN (HNSW), chunking, hybrid search và reranking để RAG truy xuất đúng.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "hnsw-ann",
+      "hybrid-search-rrf",
+      "reranker-cross-encoder",
+      "chunking-strategies",
+      "pgvector"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/vector-databases-embeddings.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "rag-retrieval-augmented-generation"
+    ]
+  },
+  {
+    "id": "fine-tuning-lora-distillation",
+    "title": "Fine-tuning, LoRA & Distillation",
+    "summary": "Biết khi nào fine-tune (hành vi/định dạng) thay vì RAG (kiến thức) và cách LoRA, DPO, distillation hoạt động.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "lora-qlora-peft",
+      "supervised-fine-tuning",
+      "dpo",
+      "llm-distillation",
+      "finetuning-vs-rag"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/fine-tuning-lora-distillation.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "generative-ai-llm-concepts",
+      "rag-retrieval-augmented-generation"
+    ]
+  },
+  {
+    "id": "build-agent-end-to-end",
+    "title": "Xây Agent từ A đến Z",
+    "summary": "Vòng lặp agent tối giản có giới hạn, tool an toàn, kiểm chứng, trace và eval.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "building-effective-agents",
+      "agent-observability",
+      "agent-sandbox",
+      "agent-evals"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/build-agent-end-to-end.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ai-agents-agentic-loop"
+    ]
+  },
+  {
+    "id": "speech-voice-ai",
+    "title": "Speech & Voice AI (STT, TTS, Voice Agent)",
+    "summary": "Pipeline STT-LLM-TTS, độ trễ thời gian thực, WebRTC và các bẫy của voice agent.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "whisper-stt",
+      "webrtc-voice",
+      "vad",
+      "word-error-rate",
+      "speech-to-speech"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/speech-voice-ai.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "generative-ai-llm-concepts"
+    ]
+  },
+  {
+    "id": "aws-security-services",
+    "title": "AWS Security Services (KMS, GuardDuty, WAF, Cognito)",
+    "summary": "Mã hoá bằng KMS, quản lý secret, phát hiện đe doạ và bảo vệ web/đăng nhập trên AWS.",
+    "topicId": "aws",
+    "keywordIds": [
+      "kms-envelope-encryption",
+      "secrets-manager-rotation",
+      "guardduty",
+      "aws-waf-rules",
+      "cognito-pools"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-security-services.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "iam-fundamentals",
+      "s3-security-encryption"
+    ]
+  },
+  {
+    "id": "elasticache-caching",
+    "title": "ElastiCache, DAX & Chiến lược Cache",
+    "summary": "Chọn Redis hay Memcached, cache-aside và write-through, TTL và các bẫy stampede/dữ liệu cũ.",
+    "topicId": "aws",
+    "keywordIds": [
+      "elasticache-redis-memcached",
+      "cache-strategies",
+      "dynamodb-dax",
+      "redis-cluster-sharding"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/elasticache-caching.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "rds-aurora",
+      "vpc-networking"
+    ]
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration",
+    "title": "Hybrid Connectivity & Migration (VPN, Direct Connect, DMS)",
+    "summary": "Nối on-prem với AWS bằng VPN/Direct Connect/Transit Gateway và di chuyển dữ liệu bằng DMS, DataSync, Snowball.",
+    "topicId": "aws",
+    "keywordIds": [
+      "direct-connect-vs-vpn",
+      "transit-gateway",
+      "dms-cdc",
+      "snowball",
+      "six-rs-migration"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-hybrid-connectivity-migration.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "vpc-networking"
+    ]
+  },
+  {
+    "id": "aws-cicd-devops-tools",
+    "title": "AWS CI/CD & Systems Manager",
+    "summary": "Dựng pipeline với CodePipeline/CodeBuild/CodeDeploy và vận hành đội máy bằng Systems Manager.",
+    "topicId": "aws",
+    "keywordIds": [
+      "codepipeline-codebuild",
+      "codedeploy-blue-green",
+      "ssm-session-manager",
+      "deployment-strategies-canary"
+    ],
+    "filePath": "assets/knowledge/playbooks/aws/aws-cicd-devops-tools.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "iam-fundamentals"
+    ]
   }
 ]

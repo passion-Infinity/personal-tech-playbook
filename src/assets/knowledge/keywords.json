@@ -3890,5 +3890,250 @@
     "meaning": "Giảm chi phí token",
     "definition": "Prompt gọn, caching, routing, giới hạn output.",
     "topicId": "ai-engineering"
+  },
+  {
+    "id": "hnsw-ann",
+    "term": "HNSW Approximate Nearest Neighbor",
+    "meaning": "Chỉ mục đồ thị tìm vector gần",
+    "definition": "Nhanh nhưng tốn RAM, đánh đổi recall lấy tốc độ.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "hybrid-search-rrf",
+    "term": "Hybrid Search (BM25 + Vector, RRF)",
+    "meaning": "Kết hợp từ khoá và ngữ nghĩa",
+    "definition": "Gộp hai danh sách bằng Reciprocal Rank Fusion.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "reranker-cross-encoder",
+    "term": "Reranker (Cross-Encoder)",
+    "meaning": "Chấm lại top-K",
+    "definition": "Tăng độ chính xác sau bước truy xuất.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "chunking-strategies",
+    "term": "Chunking Strategies for RAG",
+    "meaning": "Cách cắt tài liệu",
+    "definition": "Kích thước và chồng lấp ảnh hưởng chất lượng truy xuất.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "pgvector",
+    "term": "pgvector",
+    "meaning": "Vector search trong PostgreSQL",
+    "definition": "Đủ dùng cho quy mô vừa khi đã có Postgres.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "lora-qlora-peft",
+    "term": "LoRA, QLoRA and PEFT",
+    "meaning": "Fine-tune tham số hiệu quả",
+    "definition": "Học ma trận hạng thấp gắn thêm, rẻ và hoán đổi được.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "supervised-fine-tuning",
+    "term": "Supervised Fine-Tuning (SFT)",
+    "meaning": "Huấn luyện bằng cặp mẫu",
+    "definition": "Chất lượng dữ liệu quan trọng hơn số lượng.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "dpo",
+    "term": "DPO (Direct Preference Optimization)",
+    "meaning": "Học từ cặp ưa thích",
+    "definition": "Thay thế đơn giản cho RLHF.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-distillation",
+    "term": "Knowledge Distillation for LLMs",
+    "meaning": "Chưng cất model",
+    "definition": "Model lớn dạy model nhỏ cho tác vụ hẹp.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "finetuning-vs-rag",
+    "term": "Fine-tuning vs RAG",
+    "meaning": "Khi nào dùng cách nào",
+    "definition": "RAG cho kiến thức, fine-tune cho hành vi.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "building-effective-agents",
+    "term": "Building Effective Agents",
+    "meaning": "Hướng dẫn thiết kế agent",
+    "definition": "Bắt đầu đơn giản, thêm độ phức tạp khi eval chứng minh.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agent-observability",
+    "term": "Agent Observability and Tracing",
+    "meaning": "Theo dõi từng bước agent",
+    "definition": "Log prompt, tool, token, độ trễ.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agent-sandbox",
+    "term": "Agent Code Execution Sandbox",
+    "meaning": "Chạy mã an toàn",
+    "definition": "Cô lập mã do model sinh.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agent-evals",
+    "term": "Agent Evals",
+    "meaning": "Đo agent bằng nhiệm vụ mẫu",
+    "definition": "Tỷ lệ hoàn thành, số bước, chi phí.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "whisper-stt",
+    "term": "Whisper Speech-to-Text",
+    "meaning": "STT mã nguồn mở",
+    "definition": "Nhận dạng giọng nói đa ngôn ngữ.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "webrtc-voice",
+    "term": "WebRTC for Voice Agents",
+    "meaning": "Truyền âm thanh thấp trễ",
+    "definition": "UDP trong trình duyệt.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "vad",
+    "term": "Voice Activity Detection",
+    "meaning": "Phát hiện lúc người dùng nói",
+    "definition": "Quyết định điểm ngắt lượt.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "word-error-rate",
+    "term": "Word Error Rate (WER)",
+    "meaning": "Đo độ chính xác STT",
+    "definition": "Đánh giá trên dữ liệu thật.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "speech-to-speech",
+    "term": "Speech-to-Speech Models",
+    "meaning": "Model xử lý âm thanh trực tiếp",
+    "definition": "Độ trễ thấp, giữ ngữ điệu.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "kms-envelope-encryption",
+    "term": "AWS KMS Envelope Encryption",
+    "meaning": "Mã hoá bằng data key",
+    "definition": "CMK mã hoá data key, data key mã hoá dữ liệu.",
+    "topicId": "aws"
+  },
+  {
+    "id": "secrets-manager-rotation",
+    "term": "Secrets Manager Rotation",
+    "meaning": "Tự xoay secret",
+    "definition": "Tích hợp RDS và Lambda.",
+    "topicId": "aws"
+  },
+  {
+    "id": "guardduty",
+    "term": "Amazon GuardDuty",
+    "meaning": "Phát hiện đe doạ",
+    "definition": "Phân tích CloudTrail, Flow Logs, DNS.",
+    "topicId": "aws"
+  },
+  {
+    "id": "aws-waf-rules",
+    "term": "AWS WAF Rules",
+    "meaning": "Luật bảo vệ web",
+    "definition": "SQLi, XSS, rate-based trên ALB/CloudFront.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cognito-pools",
+    "term": "Cognito User Pool vs Identity Pool",
+    "meaning": "Xác thực vs cấp credential",
+    "definition": "User pool cấp JWT, identity pool cấp AWS credentials.",
+    "topicId": "aws"
+  },
+  {
+    "id": "elasticache-redis-memcached",
+    "term": "ElastiCache Redis vs Memcached",
+    "meaning": "Chọn engine cache",
+    "definition": "Redis có cấu trúc dữ liệu, HA; Memcached đơn giản.",
+    "topicId": "aws"
+  },
+  {
+    "id": "cache-strategies",
+    "term": "Cache-Aside and Write-Through",
+    "meaning": "Chiến lược cache",
+    "definition": "Lazy loading vs ghi qua.",
+    "topicId": "aws"
+  },
+  {
+    "id": "redis-cluster-sharding",
+    "term": "Redis Cluster Mode Sharding",
+    "meaning": "Shard Redis",
+    "definition": "Mở rộng dung lượng và throughput.",
+    "topicId": "aws"
+  },
+  {
+    "id": "direct-connect-vs-vpn",
+    "term": "Direct Connect vs Site-to-Site VPN",
+    "meaning": "Hai kiểu kết nối lai",
+    "definition": "VPN qua Internet; DX là đường riêng.",
+    "topicId": "aws"
+  },
+  {
+    "id": "dms-cdc",
+    "term": "AWS DMS and CDC",
+    "meaning": "Di chuyển DB ít downtime",
+    "definition": "Change data capture đồng bộ liên tục.",
+    "topicId": "aws"
+  },
+  {
+    "id": "snowball",
+    "term": "AWS Snowball",
+    "meaning": "Chuyển dữ liệu lớn bằng thiết bị",
+    "definition": "Khi băng thông không đủ.",
+    "topicId": "aws"
+  },
+  {
+    "id": "six-rs-migration",
+    "term": "6 Rs of Migration",
+    "meaning": "Sáu chiến lược di chuyển",
+    "definition": "Rehost, Replatform, Refactor, Repurchase, Retire, Retain.",
+    "topicId": "aws"
+  },
+  {
+    "id": "codepipeline-codebuild",
+    "term": "CodePipeline and CodeBuild",
+    "meaning": "CI/CD managed của AWS",
+    "definition": "Pipeline các stage với buildspec.",
+    "topicId": "aws"
+  },
+  {
+    "id": "codedeploy-blue-green",
+    "term": "CodeDeploy Blue/Green",
+    "meaning": "Triển khai không downtime",
+    "definition": "Chuyển traffic và rollback theo alarm.",
+    "topicId": "aws"
+  },
+  {
+    "id": "ssm-session-manager",
+    "term": "Systems Manager Session Manager",
+    "meaning": "Shell không cần SSH",
+    "definition": "Không mở cổng 22, có audit.",
+    "topicId": "aws"
+  },
+  {
+    "id": "deployment-strategies-canary",
+    "term": "Canary vs Blue/Green Deployment",
+    "meaning": "Các chiến lược triển khai",
+    "definition": "Giảm rủi ro khi release.",
+    "topicId": "aws"
   }
 ]
