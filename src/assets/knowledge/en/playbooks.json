@@ -413,5 +413,20 @@
     "id": "generative-ai-llm-concepts",
     "title": "Generative AI & LLM Concepts",
     "summary": "Grasp tokens, the context window, sampling parameters, embeddings and how to steer an LLM with prompts before reaching for RAG or fine-tuning."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation",
+    "title": "Retrieval-Augmented Generation (RAG)",
+    "summary": "Let an LLM answer from private and up-to-date data by retrieving relevant passages and placing them in the prompt."
+  },
+  {
+    "id": "responsible-ai",
+    "title": "Responsible AI",
+    "summary": "Make AI fair, safe, transparent and accountable with principles, bias-detection tools and guardrails."
+  },
+  {
+    "id": "amazon-bedrock",
+    "title": "Amazon Bedrock",
+    "summary": "Use many foundation models through one serverless API and build RAG, agents and guardrails without managing infrastructure."
   }
 ]

@@ -2013,5 +2013,90 @@
     "id": "prompt-injection",
     "meaning": "An attack that injects instructions into a prompt",
     "definition": "Untrusted content can hijack model behavior; separate instructions from data and limit agent permissions."
+  },
+  {
+    "id": "rag",
+    "meaning": "Retrieve documents then put them in the prompt for the LLM",
+    "definition": "Solves stale knowledge, private data and hallucination without retraining the model."
+  },
+  {
+    "id": "vector-database",
+    "meaning": "Store for embeddings and similarity search",
+    "definition": "Finds the top-k nearest vectors by cosine similarity; for example OpenSearch, Aurora pgvector, Azure AI Search."
+  },
+  {
+    "id": "rag-chunking",
+    "meaning": "How documents are split affects retrieval quality",
+    "definition": "Small chunks are precise but lack context; large chunks have enough context but add noise and cost tokens."
+  },
+  {
+    "id": "bedrock-knowledge-bases",
+    "meaning": "Managed RAG on AWS",
+    "definition": "Automatically chunks, embeds, stores vectors, retrieves and generates answers with citations."
+  },
+  {
+    "id": "azure-ai-search",
+    "meaning": "Full-text, vector and hybrid search service",
+    "definition": "Indexes documents, enriches them with AI (skillsets), commonly used as the RAG store for Azure OpenAI."
+  },
+  {
+    "id": "rag-vs-fine-tuning",
+    "meaning": "Choose between updating knowledge and changing model behavior",
+    "definition": "RAG suits private data that changes often; fine-tuning suits a stable specialized style or task."
+  },
+  {
+    "id": "ms-responsible-ai-principles",
+    "meaning": "Microsoft's six Responsible AI principles",
+    "definition": "Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, Accountability."
+  },
+  {
+    "id": "aws-responsible-ai-dimensions",
+    "meaning": "AWS's Responsible AI dimensions",
+    "definition": "Fairness, explainability, privacy & security, safety, controllability, veracity & robustness, governance, transparency."
+  },
+  {
+    "id": "sagemaker-clarify",
+    "meaning": "Detect bias and explain predictions",
+    "definition": "Measures bias in data and models and provides explainability for each prediction."
+  },
+  {
+    "id": "bedrock-guardrails",
+    "meaning": "Filter content, denied topics and PII for LLMs",
+    "definition": "Applied to inputs and outputs: denied topics, word filters, PII masking, grounding checks."
+  },
+  {
+    "id": "azure-ai-content-safety",
+    "meaning": "Harmful content moderation service",
+    "definition": "Detects hate, sexual, violence and self-harm content in text and images."
+  },
+  {
+    "id": "amazon-a2i",
+    "meaning": "Put humans in the loop to review AI results",
+    "definition": "Routes low-confidence predictions to human reviewers."
+  },
+  {
+    "id": "amazon-bedrock",
+    "meaning": "Access many foundation models through one API",
+    "definition": "A managed serverless service; customer data is not used to train the foundation models."
+  },
+  {
+    "id": "bedrock-converse-api",
+    "meaning": "A unified conversational API for many models",
+    "definition": "Supports multi-turn conversation, streaming and tool use with the same interface."
+  },
+  {
+    "id": "bedrock-provisioned-throughput",
+    "meaning": "Buy committed capacity for a model",
+    "definition": "Required for customized models; suited to stable high load compared with on-demand."
+  },
+  {
+    "id": "bedrock-agents",
+    "meaning": "Agents that plan and call actions",
+    "definition": "The LLM breaks down tasks, calls action groups (Lambda/API) and Knowledge Bases to reach the goal."
+  },
+  {
+    "id": "bedrock-model-customization",
+    "meaning": "Ways to customize foundation models",
+    "definition": "Fine-tuning uses labeled data; continued pre-training uses unlabeled data to add domain knowledge."
   }
 ]

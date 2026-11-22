@@ -4401,5 +4401,134 @@
       "It needs no context"
     ],
     "explanation": "It is a probabilistic model, not a database. 'Always retrieves facts' is tempting because answers sound confident."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-01",
+    "question": "A company wants a chatbot to answer from internal documents updated daily without retraining the model. What do they use?",
+    "options": [
+      "Fine-tuning",
+      "RAG",
+      "Pre-training",
+      "Raise the temperature"
+    ],
+    "explanation": "RAG retrieves relevant passages and puts them into the prompt. Fine-tuning is tempting because it 'teaches the model', but it does not suit data that changes daily."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-02",
+    "question": "A team switches to a new embedding model but keeps the old vector index, and queries start returning nonsense. Why?",
+    "options": [
+      "No effect",
+      "The vectors of the two models do not share a space so you must re-index",
+      "It is faster",
+      "It converts automatically"
+    ],
+    "explanation": "Queries and documents must use the same embedding model."
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-03",
+    "question": "Describe the RAG pipeline and the points to watch in each phase.",
+    "modelAnswer": "Ingestion: split documents into chunks, create embeddings and store them in a vector database with metadata. Query: embed the question with the same model, find the top-k nearest chunks, assemble them into the prompt and let the LLM generate an answer with citations. Watch chunking, embedding-model consistency, permission filtering and the answer policy when information is missing.",
+    "keyPoints": [
+      "Chunk, embed, store vectors",
+      "Embed the question, top-k, assemble the prompt",
+      "Citations and permission filtering"
+    ]
+  },
+  {
+    "id": "rag-retrieval-augmented-generation-04",
+    "question": "RAG answers wrongly because it does not fetch the right document passage. What do you check first?",
+    "options": [
+      "Change the LLM",
+      "Chunking, embeddings and the recall of the retrieval step",
+      "Raise the temperature",
+      "Shorten the prompt"
+    ],
+    "explanation": "Errors usually lie in retrieval; the LLM can only use what you give it."
+  },
+  {
+    "id": "responsible-ai-01",
+    "question": "A bank needs to detect bias in a loan-approval model and explain why an application was rejected, on AWS. What do they use?",
+    "options": [
+      "Bedrock Guardrails",
+      "SageMaker Clarify",
+      "Lambda",
+      "CloudTrail"
+    ],
+    "explanation": "Clarify measures bias and provides explainability. Bedrock Guardrails is tempting because it is also AI safety, but it is for LLM content, not for measuring bias in a tabular model."
+  },
+  {
+    "id": "responsible-ai-02",
+    "question": "What are Microsoft's six Responsible AI principles?",
+    "options": [
+      "Only Fairness",
+      "Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, Accountability",
+      "Speed, Cost, Scale",
+      "Only Privacy"
+    ],
+    "explanation": "These are the six official principles. Speed/Cost/Scale are technical criteria, not ethical principles."
+  },
+  {
+    "id": "responsible-ai-03",
+    "question": "A team removed the 'gender' column from the data but its hiring model still gives gender-skewed results. Why is dropping a sensitive column not enough and what should be done?",
+    "modelAnswer": "Other features can act as proxies for the sensitive attribute (for example schools or postal codes correlated with gender or race), so the model still learns the bias. You need to evaluate performance by subgroup, check correlations, use tools such as Clarify/Fairlearn, rebalance the data and monitor continuously.",
+    "keyPoints": [
+      "Proxy attributes",
+      "Evaluate by subgroup",
+      "Fairness measurement tools and monitoring"
+    ]
+  },
+  {
+    "id": "responsible-ai-04",
+    "question": "Which two measures reduce bias? (choose 2)",
+    "options": [
+      "Evaluate by subgroup",
+      "Representative data",
+      "Only raise overall accuracy",
+      "Hide the results"
+    ],
+    "explanation": "Measure fairness by group and use representative data. Looking only at overall accuracy hides harm to small groups."
+  },
+  {
+    "id": "amazon-bedrock-01",
+    "question": "A company wants a chatbot answering from internal documents in S3 with the least operations on AWS. What do they choose?",
+    "options": [
+      "SageMaker training",
+      "Knowledge Bases for Amazon Bedrock",
+      "Self-hosted EC2",
+      "Lex only"
+    ],
+    "explanation": "Knowledge Bases is managed RAG. Self-hosting on EC2 is tempting because it is flexible, but it carries operations work."
+  },
+  {
+    "id": "amazon-bedrock-02",
+    "question": "You need to block sensitive topics and mask PII in both the input and output of an LLM on Bedrock. What do you use?",
+    "options": [
+      "IAM",
+      "Guardrails for Amazon Bedrock",
+      "VPC",
+      "KMS"
+    ],
+    "explanation": "Guardrails filters topics, harmful content and PII. IAM/VPC/KMS are access control and encryption, they do not filter content."
+  },
+  {
+    "id": "amazon-bedrock-03",
+    "question": "A team is weighing Bedrock against SageMaker for a document-summarization app using a ready-made model. How does Bedrock differ from SageMaker and which do they choose?",
+    "modelAnswer": "Bedrock is a serverless service for using ready-made foundation models through an API, along with RAG, agents and guardrails. SageMaker is an end-to-end ML platform for training, tuning, deploying and monitoring your own models. For summarization with a ready-made model choose Bedrock; use SageMaker only when you need to train/deploy your own model.",
+    "keyPoints": [
+      "Bedrock: ready-made models via API",
+      "SageMaker: train/deploy your own",
+      "Choose by customization need"
+    ]
+  },
+  {
+    "id": "amazon-bedrock-04",
+    "question": "An application wants to call foundation models from different vendors through one managed API on AWS. What do they use?",
+    "options": [
+      "SageMaker training",
+      "Amazon Bedrock",
+      "Lambda",
+      "Glue"
+    ],
+    "explanation": "Bedrock offers models from many providers through a unified API."
   }
 ]
