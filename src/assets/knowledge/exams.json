@@ -1,0 +1,47 @@
+[
+  {
+    "id": "aws-architect-practice",
+    "title": "AWS Solutions Architect — luyện đề",
+    "description": "Câu hỏi tình huống về IAM, VPC, EC2, S3, database, messaging, bảo mật, chi phí và Well-Architected.",
+    "topicIds": ["aws"],
+    "questionCount": 30,
+    "minutes": 45,
+    "passPercent": 72
+  },
+  {
+    "id": "aws-quick-15",
+    "title": "AWS — kiểm tra nhanh 15 câu",
+    "description": "Bản rút gọn để ôn mỗi ngày.",
+    "topicIds": ["aws"],
+    "questionCount": 15,
+    "minutes": 20,
+    "passPercent": 70
+  },
+  {
+    "id": "azure-practice",
+    "title": "Azure — luyện đề (AZ-900/104/305)",
+    "description": "Compute, networking, storage, Entra ID/RBAC, database, messaging, bảo mật, IaC.",
+    "topicIds": ["azure"],
+    "questionCount": 25,
+    "minutes": 40,
+    "passPercent": 70
+  },
+  {
+    "id": "ai-engineering-practice",
+    "title": "AI Engineering — luyện đề",
+    "description": "LLM, prompt, context/memory, tool/MCP, agent, multi-agent, eval và chi phí.",
+    "topicIds": ["ai-ml", "ai-engineering"],
+    "questionCount": 25,
+    "minutes": 35,
+    "passPercent": 70
+  },
+  {
+    "id": "system-design-backend-practice",
+    "title": "System Design & Backend — luyện đề",
+    "description": "Caching, database, hệ phân tán, API và thiết kế hệ thống.",
+    "topicIds": ["system-design", "caching", "backend", "distributed"],
+    "questionCount": 30,
+    "minutes": 45,
+    "passPercent": 70
+  }
+]

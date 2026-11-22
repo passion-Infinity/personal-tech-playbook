@@ -167,6 +167,9 @@ const MESSAGES = [
             kb.challenges().length
           }})</a
         >
+        <a routerLink="/practice/exam" class="btn-secondary justify-start"
+          ><app-icon name="target" [size]="16" /> Thi thử đặt giờ ({{ kb.exams().length }} đề)</a
+        >
         <a routerLink="/flashcards" class="btn-secondary justify-start"
           ><app-icon name="cards" [size]="16" /> Flashcards từ khoá</a
         >

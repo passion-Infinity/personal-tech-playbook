@@ -36,6 +36,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/drill').then((m) => m.Drill),
   },
   {
+    path: 'practice/exam',
+    title: 'Thi thử · Playbook',
+    loadComponent: () => import('./pages/exam').then((m) => m.ExamPage),
+  },
+  {
+    path: 'practice/exam/:id',
+    title: 'Thi thử · Playbook',
+    loadComponent: () => import('./pages/exam').then((m) => m.ExamPage),
+  },
+  {
     path: 'practice/challenges',
     title: 'Design Challenge · Playbook',
     loadComponent: () => import('./pages/challenges').then((m) => m.Challenges),

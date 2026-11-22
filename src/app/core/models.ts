@@ -75,3 +75,13 @@ export interface Challenge {
   solution: string;
   pitfalls: string[];
 }
+
+export interface Exam {
+  id: string;
+  title: string;
+  description: string;
+  topicIds: string[];
+  questionCount: number;
+  minutes: number;
+  passPercent: number;
+}

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, forkJoin, of, shareReplay } from 'rxjs';
-import { Challenge, Keyword, Playbook, Question, Topic } from './models';
+import { Challenge, Exam, Keyword, Playbook, Question, Topic } from './models';
 
 const BASE = 'assets/knowledge';
 
@@ -20,6 +20,7 @@ export class KnowledgeService {
   readonly playbooks = signal<Playbook[]>([]);
   readonly questions = signal<Question[]>([]);
   readonly challenges = signal<Challenge[]>([]);
+  readonly exams = signal<Exam[]>([]);
   readonly loaded = signal(false);
   readonly error = signal<string | null>(null);
 
@@ -193,8 +194,10 @@ export class KnowledgeService {
       challenges: this.http
         .get<Challenge[]>(`${BASE}/challenges.json`)
         .pipe(catchError(() => of([]))),
+      exams: this.http.get<Exam[]>(`${BASE}/exams.json`).pipe(catchError(() => of([]))),
     }).subscribe({
-      next: ({ topics, keywords, playbooks, questions, challenges }) => {
+      next: ({ topics, keywords, playbooks, questions, challenges, exams }) => {
+        this.exams.set(exams);
         this.topics.set(topics);
         this.keywords.set(keywords);
         this.playbooks.set(playbooks);
