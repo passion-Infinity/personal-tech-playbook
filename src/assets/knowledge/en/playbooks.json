@@ -518,5 +518,20 @@
     "id": "kafka-fundamentals",
     "title": "Kafka Fundamentals",
     "summary": "Grasp Kafka's partitions, offsets, consumer groups, replication and durability configuration."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow",
+    "title": "ETL/ELT & Orchestration (Airflow)",
+    "summary": "Build idempotent pipelines, schedule with DAGs and backfill safely by data interval."
+  },
+  {
+    "id": "data-warehouse-lakehouse",
+    "title": "Data Warehouse, Lake & Lakehouse",
+    "summary": "Choose an analytical storage architecture and understand Parquet, table formats, medallion and common problems."
+  },
+  {
+    "id": "stream-processing-flink",
+    "title": "Stream Processing with Flink",
+    "summary": "Stateful computation over event streams with event time, checkpoints and exactly-once within the framework."
   }
 ]

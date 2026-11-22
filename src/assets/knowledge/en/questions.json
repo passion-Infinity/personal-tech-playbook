@@ -5351,5 +5351,178 @@
       "A random record"
     ],
     "explanation": "Used for changelogs/state; a tombstone deletes the key."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-01",
+    "question": "A company uses Snowflake and wants to load raw data and transform it with SQL inside the warehouse. Which model?",
+    "options": [
+      "ETL",
+      "ELT",
+      "Streaming",
+      "Lambda"
+    ],
+    "explanation": "ELT loads raw and then transforms in the warehouse."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-02",
+    "question": "An Airflow task uses an appending INSERT and duplicates data on retry. How do you fix it?",
+    "options": [
+      "Disable retries",
+      "Make the task idempotent: overwrite by partition/MERGE",
+      "Add workers",
+      "Use XCom"
+    ],
+    "explanation": "Idempotence makes retries/backfills safe."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-03",
+    "question": "Why should you not use now() in an Airflow task?",
+    "options": [
+      "It is slow",
+      "Results are non-deterministic on reruns/backfills; use data_interval",
+      "It is unsupported",
+      "It costs RAM"
+    ],
+    "explanation": "Use data_interval_start/end so reruns give the same result."
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-04",
+    "question": "Incremental loading with updated_at > watermark misses some changes. Explain the cause and the remedy.",
+    "modelAnswer": "A watermark on updated_at cannot catch hard deletes and late updates (an updated_at lower than the watermark because the transaction committed late). Remedy with a lookback window reloading the last N hours, log-based CDC and a periodic full refresh to reconcile.",
+    "keyPoints": [
+      "Does not catch hard deletes",
+      "Late updates",
+      "Lookback, CDC, full refresh"
+    ]
+  },
+  {
+    "id": "etl-elt-orchestration-airflow-05",
+    "question": "How does Dagster differ from Airflow?",
+    "options": [
+      "Asset-centric: it models datasets and lineage",
+      "It only runs on Windows",
+      "It has no scheduling",
+      "It does not support Python"
+    ],
+    "explanation": "Dagster emphasizes assets; Airflow is task-centric."
+  },
+  {
+    "id": "data-warehouse-lakehouse-01",
+    "question": "You need a cheap place for diverse data that serves both BI and ML with ACID transactions. Which architecture?",
+    "options": [
+      "A pure warehouse",
+      "A lakehouse (lake + table format)",
+      "A small relational database",
+      "Only CSV files"
+    ],
+    "explanation": "A table format adds ACID to a lake."
+  },
+  {
+    "id": "data-warehouse-lakehouse-02",
+    "question": "Queries on a lake get slower as streaming writes thousands of small files. What is the fix?",
+    "options": [
+      "Add RAM",
+      "Compaction merging files to ~128–512 MB",
+      "Delete partitions",
+      "Use CSV"
+    ],
+    "explanation": "File-opening overhead slows things down; compaction reduces the file count."
+  },
+  {
+    "id": "data-warehouse-lakehouse-03",
+    "question": "Why does a Parquet query with WHERE dt = ... scan little data?",
+    "options": [
+      "Because of compression",
+      "Partition pruning, column pruning and predicate pushdown",
+      "Because of cache",
+      "Because of SQL"
+    ],
+    "explanation": "It skips irrelevant partitions/row groups."
+  },
+  {
+    "id": "data-warehouse-lakehouse-04",
+    "question": "Explain the medallion architecture and the benefit of separating storage from compute.",
+    "modelAnswer": "Medallion splits data into Bronze (raw), Silver (cleaned) and Gold (business models), with quality rising step by step and rebuildable from the layer below. Separating storage from compute lets each scale independently, lets many engines read the same data on cheap object storage and lets you pay for compute by usage.",
+    "keyPoints": [
+      "Bronze/Silver/Gold",
+      "Independent scaling",
+      "Many engines, cheap object storage"
+    ]
+  },
+  {
+    "id": "data-warehouse-lakehouse-05",
+    "question": "What is the drawback of a raw data lake without a table format?",
+    "options": [
+      "Too fast",
+      "No ACID, messy schemas, concurrent writes easily corrupt",
+      "Too expensive",
+      "Cannot store files"
+    ],
+    "explanation": "A table format solves these problems."
+  },
+  {
+    "id": "stream-processing-flink-01",
+    "question": "A Flink job fails midway. Which approach recovers state precisely?",
+    "options": [
+      "Rerun from the beginning",
+      "Restore from the latest checkpoint and rewind the source offsets",
+      "Skip the data",
+      "Raise parallelism"
+    ],
+    "explanation": "A checkpoint stores state together with the source offsets. Rerunning from the start is costly and may duplicate."
+  },
+  {
+    "id": "stream-processing-flink-02",
+    "question": "The state of a two-stream join job grows forever. What is the cause and the remedy?",
+    "options": [
+      "The network",
+      "There is no state TTL or interval join",
+      "The savepoint",
+      "Kafka"
+    ],
+    "explanation": "State must be cleaned with TTL/an interval join; a savepoint does not grow state."
+  },
+  {
+    "id": "stream-processing-flink-03",
+    "question": "You need to upgrade a job without losing state. What do you use?",
+    "options": [
+      "An automatic checkpoint",
+      "A savepoint, then restart from the savepoint",
+      "Delete the state",
+      "Add RAM"
+    ],
+    "explanation": "A savepoint is a manual snapshot used for upgrades; automatic checkpoints are mainly for recovery."
+  },
+  {
+    "id": "stream-processing-flink-04",
+    "question": "Explain end-to-end exactly-once in Flink.",
+    "modelAnswer": "Checkpoints guarantee exactly-once for Flink's state. For the output to be exactly-once too you need a transactional sink (two-phase commit) or an idempotent one, because an external sink can receive duplicate writes when replaying after a failure.",
+    "keyPoints": [
+      "Checkpoints for state",
+      "A transactional/idempotent sink",
+      "Replay after failure causes duplicates"
+    ]
+  },
+  {
+    "id": "stream-processing-flink-05",
+    "question": "Among the three engines, which is an embedded library tightly bound to Kafka and the simplest?",
+    "options": [
+      "Flink",
+      "Kafka Streams",
+      "Spark Structured Streaming",
+      "Airflow"
+    ],
+    "explanation": "Kafka Streams is a library running inside the application; Flink is a separate cluster for large state; Spark is micro-batch."
+  },
+  {
+    "id": "stream-processing-flink-06",
+    "question": "Which two concepts are important in time-based stream processing? (choose 2)",
+    "options": [
+      "Event time",
+      "Watermark",
+      "Bubble sort",
+      "Cache aside"
+    ],
+    "explanation": "They handle late-arriving data."
   }
 ]

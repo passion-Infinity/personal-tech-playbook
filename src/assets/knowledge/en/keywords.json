@@ -2598,5 +2598,90 @@
     "id": "kraft",
     "meaning": "Kafka's new metadata architecture",
     "definition": "Kafka manages metadata itself with Raft, removing the ZooKeeper dependency."
+  },
+  {
+    "id": "etl-vs-elt",
+    "meaning": "Transform before or after loading into the target",
+    "definition": "ELT loads raw data into the warehouse then transforms it with SQL, using the warehouse's compute power."
+  },
+  {
+    "id": "airflow-dag-data-interval",
+    "meaning": "Airflow's scheduling and rerun concepts",
+    "definition": "A DAG consists of tasks and dependencies; each run covers one data interval; backfill reruns past intervals."
+  },
+  {
+    "id": "idempotent-data-pipelines",
+    "meaning": "Pipelines whose reruns do not duplicate data",
+    "definition": "Overwrite a partition or MERGE by key and use the logical date instead of now()."
+  },
+  {
+    "id": "dbt-models-tests",
+    "meaning": "SQL transforms, testing and incremental loads",
+    "definition": "A model is versioned SQL; tests check not_null, unique and referential relationships."
+  },
+  {
+    "id": "incremental-load-watermark",
+    "meaning": "Load only the changed data",
+    "definition": "Use an updated_at column or CDC to load incrementally instead of reloading everything."
+  },
+  {
+    "id": "orchestrator-comparison",
+    "meaning": "Comparing orchestration tools",
+    "definition": "They differ in task versus asset model, developer experience and operations."
+  },
+  {
+    "id": "lake-vs-warehouse-vs-lakehouse",
+    "meaning": "Three distributed storage architectures",
+    "definition": "A lake is cheap and flexible; a warehouse is fast and managed; a lakehouse adds an ACID table layer to a lake."
+  },
+  {
+    "id": "table-formats-iceberg-delta",
+    "meaning": "An ACID table layer on object storage",
+    "definition": "Adds transactions, schema evolution and time travel to Parquet files."
+  },
+  {
+    "id": "parquet-predicate-pushdown",
+    "meaning": "A columnar format that speeds up queries",
+    "definition": "Reads only the needed columns and skips data blocks that fail the condition thanks to min/max statistics."
+  },
+  {
+    "id": "small-files-compaction",
+    "meaning": "The small files problem and its remedy",
+    "definition": "Too many small files slow queries; compaction merges them into files of a sensible size."
+  },
+  {
+    "id": "storage-compute-separation",
+    "meaning": "Scale storage and compute independently",
+    "definition": "Data lives in object storage; compute engines are switched on/off and scaled separately."
+  },
+  {
+    "id": "flink-checkpoints-exactly-once",
+    "meaning": "Snapshots and the exactly-once guarantee",
+    "definition": "Periodically snapshot state and source offsets to recover without losing or duplicating effects."
+  },
+  {
+    "id": "chandy-lamport-barriers",
+    "meaning": "Taking a consistent snapshot on a data stream",
+    "definition": "Barriers inserted into the stream let every operator snapshot its state at the same logical point."
+  },
+  {
+    "id": "flink-watermarks-idle",
+    "meaning": "Closing windows when a source emits no data",
+    "definition": "One idle partition stalls the watermark; configure idleness."
+  },
+  {
+    "id": "flink-state-backend-rocksdb",
+    "meaning": "Keep large state on disk",
+    "definition": "RocksDB lets state exceed memory and supports incremental checkpoints."
+  },
+  {
+    "id": "two-phase-commit-sink",
+    "meaning": "A transactional sink to achieve exactly-once",
+    "definition": "Prepare and commit the sink in step with checkpoints so external effects happen only once."
+  },
+  {
+    "id": "stream-engines-comparison",
+    "meaning": "Choosing a stream processing engine",
+    "definition": "Kafka Streams is an embedded library, Flink is true streaming with large state, Spark is micro-batch."
   }
 ]
