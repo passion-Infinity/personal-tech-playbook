@@ -6274,24 +6274,24 @@
     "playbookId": "llm-evaluation-guardrails-security",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Thiết kế tốt trước prompt injection là?",
+    "question": "Một agent hỗ trợ khách hàng đọc email đến và có tool gửi email ra ngoài. Thiết kế nào tốt nhất trước prompt injection?",
     "options": [
-      "Tin model sẽ từ chối",
+      "Tin model sẽ từ chối chỉ dẫn độc",
       "Giả định model có thể bị lừa và giới hạn quyền của tool",
-      "Viết system prompt dài",
+      "Viết system prompt thật dài",
       "Tắt tool"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giảm thiệt hại khi bị lừa."
+    "explanation": "Không có biện pháp ở tầng prompt chặn tuyệt đối, nên giới hạn thiệt hại bằng quyền tối thiểu và xác nhận. Viết prompt dài dễ nhầm là phòng thủ, nhưng có thể bị ghi đè."
   },
   {
     "id": "llm-evaluation-guardrails-security-02",
     "playbookId": "llm-evaluation-guardrails-security",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cách đo chất lượng RAG?",
+    "question": "Một chatbot RAG trả lời sai và team chỉ đo chất lượng câu trả lời cuối. Cách đo hợp lý hơn?",
     "options": [
       "Chỉ đo câu trả lời",
       "Tách đo truy xuất và sinh câu trả lời",
@@ -6301,36 +6301,36 @@
     "answer": [
       1
     ],
-    "explanation": "Hai thành phần lỗi khác nhau."
+    "explanation": "Hai thành phần lỗi khác nhau nên tách đo (recall truy xuất và faithfulness khi sinh). Đo số token chỉ phản ánh chi phí."
   },
   {
     "id": "llm-evaluation-guardrails-security-03",
     "playbookId": "llm-evaluation-guardrails-security",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Rủi ro của LLM-as-judge?",
+    "question": "Team dùng một LLM mạnh để chấm điểm hai đáp án và thấy nó thường chọn đáp án dài hơn. Đây là rủi ro nào của LLM-as-judge?",
     "options": [
-      "Không có",
-      "Thiên vị câu dài hoặc của chính nó",
+      "Không có rủi ro",
+      "Thiên vị câu dài hoặc đầu ra giống chính nó",
       "Quá rẻ",
       "Không chấm được"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần rubric rõ và hiệu chuẩn."
+    "explanation": "Cần rubric rõ, hoán đổi thứ tự và hiệu chuẩn với nhãn của người."
   },
   {
     "id": "llm-evaluation-guardrails-security-04",
     "playbookId": "llm-evaluation-guardrails-security",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao đổi model phải chạy lại eval?",
-    "modelAnswer": "Mỗi model phản ứng khác với cùng prompt nên chất lượng có thể thay đổi âm thầm. Eval phát hiện hồi quy trước khi đưa lên production và cho phép so sánh chất lượng cùng chi phí.",
+    "question": "Công ty muốn chuyển sang model mới rẻ hơn. Vì sao phải chạy lại eval và nên so sánh những gì?",
+    "modelAnswer": "Mỗi model phản ứng khác với cùng prompt nên chất lượng có thể thay đổi âm thầm. Eval phát hiện hồi quy trước khi lên production và cho phép so sánh chất lượng, độ trễ và chi phí giữa model cũ và mới trên cùng bộ ca thật.",
     "keyPoints": [
       "Model phản ứng khác nhau",
       "Phát hiện hồi quy",
-      "So sánh có số liệu"
+      "So sánh chất lượng, độ trễ, chi phí"
     ]
   },
   {
@@ -6338,24 +6338,24 @@
     "playbookId": "llm-cost-latency-optimization",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Phần nào của độ trễ thường lớn nhất?",
+    "question": "Người dùng phàn nàn chatbot trả lời chậm dù prompt ngắn. Thành phần nào thường chiếm phần lớn độ trễ?",
     "options": [
-      "Input",
-      "Sinh output tuần tự",
+      "Token input",
+      "Sinh token output tuần tự",
       "Mạng",
       "Đăng nhập"
     ],
     "answer": [
       1
     ],
-    "explanation": "Output sinh từng token."
+    "explanation": "Output sinh từng token nên câu trả lời dài chậm hơn. Input dễ nhầm là nguyên nhân chính nhưng chỉ ảnh hưởng chủ yếu tới TTFT."
   },
   {
     "id": "llm-cost-latency-optimization-02",
     "playbookId": "llm-cost-latency-optimization",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Xử lý 1 triệu tài liệu không gấp, cách rẻ?",
+    "question": "Cần phân loại 1 triệu tài liệu cũ, không cần kết quả ngay và muốn chi phí thấp. Cách nào hợp lý?",
     "options": [
       "Gọi đồng bộ từng cái",
       "Batch API",
@@ -6365,16 +6365,16 @@
     "answer": [
       1
     ],
-    "explanation": "Batch rẻ hơn."
+    "explanation": "Batch bất đồng bộ giá thấp hơn. Model lớn nhất tăng chi phí không cần thiết."
   },
   {
     "id": "llm-cost-latency-optimization-03",
     "playbookId": "llm-cost-latency-optimization",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Prompt caching không hiệu quả vì?",
+    "question": "Prompt caching bật nhưng chi phí không giảm. Prompt bắt đầu bằng dòng 'Giờ hiện tại: ...'. Vì sao?",
     "options": [
-      "Đặt timestamp ở đầu prompt",
+      "Phần động ở đầu làm prefix đổi mỗi lần",
       "Prompt quá ngắn",
       "Dùng JSON",
       "Dùng streaming"
@@ -6382,15 +6382,15 @@
     "answer": [
       0
     ],
-    "explanation": "Prefix thay đổi làm mất cache."
+    "explanation": "Cache cần prefix giống hệt; đưa phần động xuống cuối."
   },
   {
     "id": "llm-cost-latency-optimization-04",
     "playbookId": "llm-cost-latency-optimization",
     "type": "explain",
     "difficulty": 2,
-    "question": "Các cách giảm độ trễ cho chat AI?",
-    "modelAnswer": "Dùng streaming để hiển thị sớm, giảm độ dài output, prompt caching cho prefix lặp lại, chọn model nhỏ hơn cho tác vụ dễ và song song hoá các lời gọi độc lập.",
+    "question": "Hãy liệt kê và giải thích các cách giảm độ trễ cho một chat AI hướng người dùng.",
+    "modelAnswer": "Dùng streaming để hiển thị sớm và giảm độ trễ cảm nhận, giảm độ dài output vì decode tuần tự là nguồn trễ chính, prompt caching cho prefix lặp lại để giảm TTFT, chọn model nhỏ hơn cho tác vụ dễ (routing) và song song hoá các lời gọi độc lập.",
     "keyPoints": [
       "Streaming",
       "Giảm output và caching",
@@ -6402,41 +6402,41 @@
     "playbookId": "vector-databases-embeddings",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Đổi embedding model thì phải làm gì?",
+    "question": "Team đổi sang embedding model mới có chất lượng tốt hơn nhưng vẫn giữ vector cũ trong DB. Điều gì cần làm?",
     "options": [
-      "Không gì",
-      "Re-index toàn bộ vector",
-      "Chỉ đổi truy vấn",
+      "Không cần làm gì",
+      "Re-index toàn bộ vector bằng model mới",
+      "Chỉ đổi model cho truy vấn",
       "Xoá cache"
     ],
     "answer": [
       1
     ],
-    "explanation": "Vector từ hai model không tương thích."
+    "explanation": "Vector từ hai model không tương thích. Chỉ đổi model cho truy vấn dễ nhầm là đủ, nhưng làm so sánh vô nghĩa."
   },
   {
     "id": "vector-databases-embeddings-02",
     "playbookId": "vector-databases-embeddings",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Tìm theo mã sản phẩm chính xác, vector tìm yếu. Giải pháp?",
+    "question": "Người dùng tìm 'SKU-48213' nhưng kết quả vector không trả đúng sản phẩm. Giải pháp?",
     "options": [
       "Tăng chiều vector",
       "Hybrid search với BM25",
-      "Giảm chunk",
+      "Giảm kích thước chunk",
       "Bỏ tìm kiếm"
     ],
     "answer": [
       1
     ],
-    "explanation": "Từ khoá bắt khớp chính xác."
+    "explanation": "Từ khoá bắt khớp chính xác mã/tên riêng; vector yếu ở điểm này."
   },
   {
     "id": "vector-databases-embeddings-03",
     "playbookId": "vector-databases-embeddings",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Nhiều khách hàng dùng chung index. Rủi ro lớn nhất?",
+    "question": "Một SaaS dùng chung một chỉ mục vector cho nhiều khách hàng. Rủi ro lớn nhất?",
     "options": [
       "Chậm",
       "Rò rỉ dữ liệu nếu không lọc theo tenant",
@@ -6446,15 +6446,15 @@
     "answer": [
       1
     ],
-    "explanation": "Cần metadata filter bắt buộc."
+    "explanation": "Cần metadata filter bắt buộc theo tenant ở tầng truy vấn."
   },
   {
     "id": "vector-databases-embeddings-04",
     "playbookId": "vector-databases-embeddings",
     "type": "explain",
     "difficulty": 2,
-    "question": "RAG trả sai dù có tài liệu đúng. Kiểm tra gì trước?",
-    "modelAnswer": "Kiểm tra khâu truy xuất trước: chunking có cắt mất ngữ cảnh không, embedding và hybrid search có đưa đúng đoạn vào top-K không, đo recall@K trên bộ truy vấn có đáp án. Chỉ khi truy xuất tốt mới xem prompt và LLM.",
+    "question": "Một chatbot RAG trả lời sai dù tài liệu đúng nằm trong kho. Kiểm tra gì trước và vì sao?",
+    "modelAnswer": "Kiểm tra khâu truy xuất trước: chunking có cắt mất ngữ cảnh không, embedding và hybrid search có đưa đúng đoạn vào top-K không, đo recall@K trên bộ truy vấn có đáp án. Chỉ khi truy xuất tốt mới xét prompt và LLM vì LLM chỉ dùng được thứ bạn đưa vào.",
     "keyPoints": [
       "Đo recall truy xuất",
       "Xem chunking",
@@ -9322,14 +9322,14 @@
       0,
       1
     ],
-    "explanation": "Cần rubric và hiệu chuẩn."
+    "explanation": "Hai thiên vị đã biết. 'Luôn chính xác' là phương án sai dễ gây nhiễu."
   },
   {
     "id": "llm-evaluation-guardrails-security-06",
     "playbookId": "llm-evaluation-guardrails-security",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Đổi sang model mới rẻ hơn. Bước đầu tiên?",
+    "question": "Team muốn đổi sang model rẻ hơn để giảm chi phí. Bước đầu tiên đúng?",
     "options": [
       "Triển khai ngay",
       "Chạy bộ eval so với model cũ",
@@ -9339,14 +9339,14 @@
     "answer": [
       1
     ],
-    "explanation": "Eval phát hiện hồi quy."
+    "explanation": "Đo trước khi đổi. Giảm prompt hay tắt guardrail đều làm rủi ro thêm."
   },
   {
     "id": "llm-cost-latency-optimization-05",
     "playbookId": "llm-cost-latency-optimization",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai cách giảm chi phí khối lượng lớn không gấp? (chọn 2)",
+    "question": "Hai cách giảm chi phí cho khối lượng lớn không gấp? (chọn 2)",
     "options": [
       "Batch API",
       "Model nhỏ hơn đủ chất lượng",
@@ -9357,7 +9357,7 @@
       0,
       1
     ],
-    "explanation": "Batch và routing."
+    "explanation": "Batch và routing/model nhỏ. Tăng max_tokens làm tăng chi phí."
   },
   {
     "id": "vector-databases-embeddings-05",
@@ -9375,7 +9375,7 @@
       0,
       1
     ],
-    "explanation": "Hybrid và rerank cải thiện top-K."
+    "explanation": "Hybrid và rerank cải thiện top-K. Giảm chiều tuỳ ý có thể làm giảm chất lượng."
   },
   {
     "id": "fine-tuning-lora-distillation-05",
