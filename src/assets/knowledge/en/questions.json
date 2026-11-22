@@ -5017,5 +5017,177 @@
       "O(1) index access",
       "Linked-list pointer jumping causes cache misses"
     ]
+  },
+  {
+    "id": "memory-management-gc-01",
+    "question": "In a GC language, when is an object reclaimed?",
+    "options": [
+      "When the function ends",
+      "When it is no longer reachable from GC roots",
+      "When free() is called",
+      "After 1 minute"
+    ],
+    "explanation": "GC is based on reachability from roots. 'When the function ends' is tempting because of local variables on the stack."
+  },
+  {
+    "id": "memory-management-gc-02",
+    "question": "A Java application's heap grows by the day and does not shrink after a full GC. What is a likely cause?",
+    "options": [
+      "GC is broken",
+      "Holding unnecessary references, for example an unbounded cache",
+      "Too many threads",
+      "Low CPU"
+    ],
+    "explanation": "GC does not reclaim objects that are still referenced. Find it with a heap dump."
+  },
+  {
+    "id": "memory-management-gc-03",
+    "question": "A Java container is OOMKilled although -Xmx is below the memory limit. Why?",
+    "options": [
+      "The heap does not count toward the limit",
+      "The total of heap, metaspace, thread stacks and native memory exceeds the limit",
+      "Kubernetes is broken",
+      "GC runs too little"
+    ],
+    "explanation": "The memory limit counts the whole process, not just the heap."
+  },
+  {
+    "id": "memory-management-gc-04",
+    "question": "Explain why generational GC is effective and the risk of holding extra references.",
+    "modelAnswer": "Based on the hypothesis that most objects die young, the heap is split into young and old. Young is collected often and cheaply because few objects survive; only long-lived objects are promoted to old and collected less often, so total GC work falls. Holding extra references means objects are never reclaimed, the heap swells and leads to long pauses or OOM.",
+    "keyPoints": [
+      "Most objects die young",
+      "Young is collected often and cheaply",
+      "Extra references cause leaks"
+    ]
+  },
+  {
+    "id": "io-models-async-event-loop-01",
+    "question": "A Node.js handler uses pbkdf2Sync on every request and the whole server freezes when a few requests arrive. What happens?",
+    "options": [
+      "No effect",
+      "A synchronous CPU operation blocks the event loop so every other connection hangs",
+      "Node scales itself",
+      "The network"
+    ],
+    "explanation": "The event loop is single-threaded; heavy CPU work needs a worker thread or an asynchronous API."
+  },
+  {
+    "id": "io-models-async-event-loop-02",
+    "question": "Which kind of load does async/await improve the most?",
+    "options": [
+      "CPU-bound",
+      "I/O-bound",
+      "Both equally",
+      "Neither"
+    ],
+    "explanation": "Async only helps when most time is spent waiting on I/O; CPU-bound work needs more cores."
+  },
+  {
+    "id": "io-models-async-event-loop-03",
+    "question": "A reactive service uses a blocking JDBC driver inside the event loop. What is the consequence and the remedy?",
+    "options": [
+      "No problem",
+      "It blocks the loop so you need an asynchronous driver or to run it on a separate pool",
+      "It is faster",
+      "It becomes asynchronous automatically"
+    ],
+    "explanation": "A blocking call inside the event loop hangs other connections."
+  },
+  {
+    "id": "io-models-async-event-loop-04",
+    "question": "Explain why epoll lets one thread handle tens of thousands of connections.",
+    "modelAnswer": "Instead of one blocking thread per connection, epoll lets one thread register many sockets and have the kernel report only the ones ready to read or write. The thread only processes ready sockets, so it wastes no time or memory (stacks, context switches) on idle connections.",
+    "keyPoints": [
+      "One thread watches many sockets",
+      "The kernel reports ready sockets",
+      "No thread is spent on waiting connections"
+    ]
+  },
+  {
+    "id": "linux-debugging-toolbox-01",
+    "question": "The server is slow, uptime shows a load average of 20 on a 4-core machine but the CPU is nearly idle. What does this suggest?",
+    "options": [
+      "Always a RAM shortage",
+      "Many processes are waiting on I/O or locks",
+      "A broken CPU",
+      "The network is fine"
+    ],
+    "explanation": "Load includes processes in an I/O-wait state. A RAM shortage is tempting but usually shows up as swap/OOM."
+  },
+  {
+    "id": "linux-debugging-toolbox-02",
+    "question": "df -h shows plenty of free space but the application cannot create new files. What do you check?",
+    "options": [
+      "df -i to see if inodes ran out",
+      "free -m",
+      "ping",
+      "uptime"
+    ],
+    "explanation": "Running out of inodes prevents creating files despite free space."
+  },
+  {
+    "id": "linux-debugging-toolbox-03",
+    "question": "You want to know which system call a process is stuck in. What do you use?",
+    "options": [
+      "top",
+      "strace -p <pid>",
+      "df",
+      "uname"
+    ],
+    "explanation": "strace shows the syscall the process is performing or waiting on, but it has overhead so use it briefly."
+  },
+  {
+    "id": "linux-debugging-toolbox-04",
+    "question": "Describe the diagnostic process when a server is slow, using the USE method.",
+    "modelAnswer": "Check each resource for Utilization, Saturation and Errors: CPU (top, vmstat), memory (free, dmesg for OOM), disk (iostat, df -i) and network (ss, tcpdump). Identify which resource is saturated, then dig into the responsible process with strace, lsof or a profiler, and collect evidence before restarting.",
+    "keyPoints": [
+      "USE for each resource",
+      "Find the saturated resource",
+      "Dig into the process, do not restart in a hurry"
+    ]
+  },
+  {
+    "id": "time-timezones-clocks-01",
+    "question": "A global scheduling system needs to store the instant an event happened. How should it be stored in the DB?",
+    "options": [
+      "Local time without a time zone",
+      "UTC (timestamptz or epoch)",
+      "A dd/mm/yyyy string",
+      "A fixed +07:00 offset"
+    ],
+    "explanation": "UTC is an absolute point, converted to a time zone for display. A fixed offset is tempting as enough, but it does not encode DST rules."
+  },
+  {
+    "id": "time-timezones-clocks-02",
+    "question": "Which clock should you use to time how long a function runs for reporting latency?",
+    "options": [
+      "Wall clock",
+      "Monotonic clock",
+      "Another machine's clock",
+      "None needed"
+    ],
+    "explanation": "The wall clock can jump when NTP adjusts it, giving wrong or negative results."
+  },
+  {
+    "id": "time-timezones-clocks-03",
+    "question": "What can a cron job scheduled in local time cause on a DST change day?",
+    "options": [
+      "No effect",
+      "Running 0 or 2 times",
+      "Running faster",
+      "Losing logs"
+    ],
+    "explanation": "The hour may not exist or may occur twice; run in UTC."
+  },
+  {
+    "id": "time-timezones-clocks-04",
+    "question": "Why should you not store a +07:00 offset instead of an IANA time zone name?",
+    "modelAnswer": "An offset is just a value at one moment; it does not encode DST rules or future changes to a region's time zone rules, so it cannot compute other moments correctly. An IANA zone name is tied to a rules database, so the correct offset can be computed for each date.",
+    "keyPoints": [
+      "An offset has no DST rules",
+      "Time zone rules can change",
+      "IANA computes the offset per date"
+    ]
   }
 ]

@@ -2408,5 +2408,105 @@
     "id": "amortized-analysis",
     "meaning": "The average cost of an operation",
     "definition": "Appending to a dynamic array is O(1) amortized even though it occasionally reallocates."
+  },
+  {
+    "id": "stack-vs-heap",
+    "meaning": "Two memory regions and their lifetimes",
+    "definition": "The stack follows function calls automatically, fast and limited; the heap holds objects that outlive a single call."
+  },
+  {
+    "id": "generational-gc",
+    "meaning": "Generational collection",
+    "definition": "Most objects die young, so the young generation is collected often and cheaply, the old generation rarely and expensively."
+  },
+  {
+    "id": "stop-the-world-pauses",
+    "meaning": "GC pauses",
+    "definition": "Low-latency GCs reduce pause time by working concurrently with the application."
+  },
+  {
+    "id": "gc-memory-leak",
+    "meaning": "A leak from holding references",
+    "definition": "Objects remain referenced unnecessarily, such as an unbounded cache or listeners that are never removed."
+  },
+  {
+    "id": "rust-ownership",
+    "meaning": "Memory safety without GC",
+    "definition": "Ownership is checked at compile time to prevent use-after-free and data races."
+  },
+  {
+    "id": "blocking-vs-nonblocking-io",
+    "meaning": "Two ways a thread handles waiting for I/O",
+    "definition": "Blocking hangs the thread until data arrives; non-blocking returns immediately so it can do other work."
+  },
+  {
+    "id": "epoll-io-multiplexing",
+    "meaning": "The kernel reports which sockets are ready",
+    "definition": "One thread watches tens of thousands of connections, solving the C10K problem."
+  },
+  {
+    "id": "event-loop-reactor",
+    "meaning": "The event loop",
+    "definition": "The foundation of Node.js and Nginx: wait for events and then call the matching handler."
+  },
+  {
+    "id": "virtual-threads-goroutines",
+    "meaning": "Lightweight threads managed by the runtime",
+    "definition": "Let you write simple blocking code that still scales to millions of tasks."
+  },
+  {
+    "id": "reactive-backpressure",
+    "meaning": "Controlling producer and consumer speed",
+    "definition": "Pauses or limits when the consumer is slow to avoid swelling in-memory queues."
+  },
+  {
+    "id": "linux-perf-60-seconds",
+    "meaning": "A quick-check command sequence",
+    "definition": "uptime, vmstat, iostat, free, top and ss give an overview in one minute."
+  },
+  {
+    "id": "strace-lsof-ss-tcpdump",
+    "meaning": "Tracing syscalls, files, sockets and packets",
+    "definition": "A toolset to see what a process is doing and which connections are open."
+  },
+  {
+    "id": "load-average-vs-cpu",
+    "meaning": "Why load is high while CPU is idle",
+    "definition": "Load counts processes waiting on I/O too, so high load with low CPU usually means an I/O bottleneck."
+  },
+  {
+    "id": "iostat-disk-bottleneck",
+    "meaning": "Diagnose disk I/O bottlenecks",
+    "definition": "Look at await and %util to see whether the disk is saturated."
+  },
+  {
+    "id": "ebpf-bpftrace",
+    "meaning": "Low-intrusion observation of the Linux kernel",
+    "definition": "Run small programs in the kernel to trace syscalls and events with low overhead."
+  },
+  {
+    "id": "utc-vs-local-time",
+    "meaning": "Store absolute instants, display by time zone",
+    "definition": "Store UTC or epoch and convert to the user's time zone only for display."
+  },
+  {
+    "id": "iana-time-zones-dst",
+    "meaning": "Use zone names instead of offsets",
+    "definition": "Offsets change with DST and each country's rules, so use names like Asia/Ho_Chi_Minh."
+  },
+  {
+    "id": "monotonic-vs-wall-clock",
+    "meaning": "The duration clock and the wall clock",
+    "definition": "Monotonic only moves forward and is used to measure timeouts; the wall clock can jump when NTP adjusts it."
+  },
+  {
+    "id": "iso-8601-rfc-3339",
+    "meaning": "Standard time formats for APIs",
+    "definition": "For example 2026-11-21T09:30:00Z, unambiguous unlike 03/04/2026."
+  },
+  {
+    "id": "falsehoods-about-time",
+    "meaning": "Wrong assumptions about time",
+    "definition": "A list of false beliefs such as every day having 24 hours or clocks always moving forward."
   }
 ]

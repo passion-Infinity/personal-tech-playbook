@@ -483,5 +483,25 @@
     "id": "data-structures-complexity",
     "title": "Data Structures & Complexity (Big-O)",
     "summary": "Choose the right data structure and read Big-O to know how a system behaves as data grows."
+  },
+  {
+    "id": "memory-management-gc",
+    "title": "Memory Management & Garbage Collection",
+    "summary": "Understand the stack, the heap and GC to diagnose memory leaks, latency spikes and OOM."
+  },
+  {
+    "id": "io-models-async-event-loop",
+    "title": "I/O Models, Async & Event Loop",
+    "summary": "Understand blocking, non-blocking, epoll and the event loop to serve tens of thousands of connections with few threads."
+  },
+  {
+    "id": "linux-debugging-toolbox",
+    "title": "Linux Debugging Toolbox",
+    "summary": "Diagnose production incidents quickly using the USE method and tools such as top, ss, strace and tcpdump."
+  },
+  {
+    "id": "time-timezones-clocks",
+    "title": "Time, Time Zones & Clocks",
+    "summary": "Store instants in UTC and understand DST and clock skew to avoid silent time bugs."
   }
 ]
