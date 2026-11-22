@@ -3138,5 +3138,75 @@
     "id": "human-in-the-loop",
     "meaning": "Humans approve at risky steps",
     "definition": "Pause for confirmation before sensitive actions."
+  },
+  {
+    "id": "orchestrator-worker",
+    "meaning": "The main agent delegates to sub-agents",
+    "definition": "The orchestrator decomposes, workers work, and results are synthesized."
+  },
+  {
+    "id": "multi-agent-frameworks",
+    "meaning": "Frameworks for building multi-agent systems",
+    "definition": "State graphs, conversation between agents, roles."
+  },
+  {
+    "id": "a2a-protocol",
+    "meaning": "A protocol for agents to talk to agents",
+    "definition": "A standard for agents in different systems to coordinate."
+  },
+  {
+    "id": "agent-handoff",
+    "meaning": "Passing control between agents",
+    "definition": "An agent passes control to a specialized agent."
+  },
+  {
+    "id": "subagent-context-isolation",
+    "meaning": "Isolating context with sub-agents",
+    "definition": "Only a summary returns to the main agent."
+  },
+  {
+    "id": "agents-md-claude-md",
+    "meaning": "Instruction files for coding agents",
+    "definition": "Build and test commands and project conventions."
+  },
+  {
+    "id": "claude-code-extensibility",
+    "meaning": "Agent extension mechanisms",
+    "definition": "Skills, hooks, slash commands, subagents, MCP, plugins."
+  },
+  {
+    "id": "ai-pair-programming",
+    "meaning": "Workflow with a coding assistant",
+    "definition": "A clear spec, the agent tests itself, a human reviews the diff."
+  },
+  {
+    "id": "git-worktree-agents",
+    "meaning": "Run many agents in parallel",
+    "definition": "One separate worktree per agent."
+  },
+  {
+    "id": "latent-diffusion",
+    "meaning": "Diffusion in a compressed space",
+    "definition": "Denoise in latent space and then decode with a VAE."
+  },
+  {
+    "id": "diffusion-transformer",
+    "meaning": "The foundation architecture of many video models",
+    "definition": "Uses a Transformer instead of a U-Net for diffusion."
+  },
+  {
+    "id": "controlnet",
+    "meaning": "Control image generation by conditions",
+    "definition": "Pose, depth and edges as conditions."
+  },
+  {
+    "id": "comfyui",
+    "meaning": "A node-based image/video pipeline",
+    "definition": "Build custom workflows on open models."
+  },
+  {
+    "id": "temporal-consistency",
+    "meaning": "Consistency between frames",
+    "definition": "The main challenge of AI video."
   }
 ]

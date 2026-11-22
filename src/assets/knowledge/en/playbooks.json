@@ -628,5 +628,20 @@
     "id": "ai-agents-agentic-loop",
     "title": "AI Agents & the Agentic Loop",
     "summary": "Distinguish workflows from agents, understand the ReAct loop, planning and the limits that make agents trustworthy."
+  },
+  {
+    "id": "multi-agent-orchestration",
+    "title": "Multi-Agent & Orchestrator",
+    "summary": "Design multi-agent systems with an orchestrator, handoffs, parallelization and context management between agents."
+  },
+  {
+    "id": "ai-coding-assistants-workflow",
+    "title": "AI Coding Assistants: Workflow & Tools",
+    "summary": "Use Claude Code, Codex, Gemini CLI and Copilot effectively with clear specs, self-verification through tests and strict review."
+  },
+  {
+    "id": "ai-video-image-generation",
+    "title": "AI Image & Video Generation (Diffusion)",
+    "summary": "Understand diffusion, DiT and the practical workflow for creating video with AI, plus its limits and legal risks."
   }
 ]

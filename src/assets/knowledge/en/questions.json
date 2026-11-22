@@ -6474,5 +6474,190 @@
       "No LLM"
     ],
     "explanation": "A fixed process fits a workflow. Multi-agent is tempting as modern, but it adds unnecessary cost and risk."
+  },
+  {
+    "id": "multi-agent-orchestration-01",
+    "question": "A team proposes multi-agent for a market-research task with many independent sources. What is the main reason to use multi-agent?",
+    "options": [
+      "It looks modern",
+      "Clean context split and parallel execution",
+      "It is always cheaper",
+      "No prompts needed"
+    ],
+    "explanation": "Each agent has its own context and works in parallel. 'Always cheaper' is tempting, but multi-agent usually costs many times the tokens."
+  },
+  {
+    "id": "multi-agent-orchestration-02",
+    "question": "Two agents are both assigned to modify the payments module in one repo. What is likely to happen?",
+    "options": [
+      "Twice as fast",
+      "Overwrite conflicts",
+      "No effect",
+      "Fewer tokens"
+    ],
+    "explanation": "You need resource partitioning, separate worktrees or serialization. 'Twice as fast' is tempting because of parallelism, but with tight coupling it is the opposite."
+  },
+  {
+    "id": "multi-agent-orchestration-03",
+    "question": "A team moves from a single agent to an orchestrator system with 5 workers and sees the token bill rise many times over. Is this normal?",
+    "options": [
+      "It is always lower",
+      "Usually many times higher because each agent has its own context and many calls",
+      "Equal",
+      "No charge"
+    ],
+    "explanation": "Cost rises with the number of agents and calls; it is only worth it when the task value is high enough."
+  },
+  {
+    "id": "multi-agent-orchestration-04",
+    "question": "A team plans to use 4 agents to fix a small bug that is tightly related across a few files. When should you not use multi-agent?",
+    "modelAnswer": "When the task is small, its parts are tightly dependent or it needs a lot of shared context, the coordination cost exceeds the benefit. When cost and latency matter more than coverage, a single agent is better. Multi-agent suits broad tasks that can be split and parallelized.",
+    "keyPoints": [
+      "A small or tightly coupled task",
+      "Coordination cost",
+      "Suits broad, parallel work"
+    ]
+  },
+  {
+    "id": "multi-agent-orchestration-05",
+    "question": "Which two are real benefits of multi-agent? (choose 2)",
+    "options": [
+      "Clean context for each agent",
+      "Parallel execution",
+      "Always cheaper",
+      "No prompts needed"
+    ],
+    "explanation": "Context splitting and parallelization. The other two are wrong and distracting."
+  },
+  {
+    "id": "multi-agent-orchestration-06",
+    "question": "Two agents editing the same module cause conflicts. What is the solution?",
+    "options": [
+      "Add a third agent",
+      "Partition resources or serialize, one worktree per agent",
+      "Increase tokens",
+      "Turn off logs"
+    ],
+    "explanation": "Avoid overwrites through isolation. Adding a third agent only complicates things."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-01",
+    "question": "A team wants agent-generated code to be more trustworthy. What is the biggest quality lever?",
+    "options": [
+      "A longer prompt",
+      "Give the agent a way to verify itself such as tests and builds",
+      "A high temperature",
+      "Skip review"
+    ],
+    "explanation": "Verifiable feedback creates a fix loop. A longer prompt is tempting as more detail, but it cannot replace verification."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-02",
+    "question": "AI-written code calls a function that does not exist in the library but looks plausible. What is this phenomenon and what should be done?",
+    "options": [
+      "Normal, trust it",
+      "Hallucination, run the build/tests and review",
+      "A network error",
+      "An IDE error"
+    ],
+    "explanation": "Models can invent APIs. Run the build/tests and check the real documentation."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-03",
+    "question": "An agent is allowed to run arbitrary shell commands on a dev machine containing production credentials. How do you reduce the risk?",
+    "options": [
+      "Turn off logs",
+      "A sandbox, a command allowlist, least privilege",
+      "Use a bigger model",
+      "Do nothing"
+    ],
+    "explanation": "Limit the blast radius. A bigger model is tempting as safer, but it does not stop dangerous commands."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-04",
+    "question": "A large agent-generated PR has passed CI. How do you trust AI-written code and what else should you check?",
+    "modelAnswer": "Do not trust it because of its confidence; rely on automated tests, a working build, linters, human diff review and small commits so you can roll back easily. Also check test quality (is everything mocked), whether libraries/APIs are real, security and duplication. Give the agent verifiable completion criteria.",
+    "keyPoints": [
+      "Tests and builds",
+      "Diff review",
+      "Small commits",
+      "Check for fake tests and invented libraries"
+    ]
+  },
+  {
+    "id": "ai-coding-assistants-workflow-05",
+    "question": "Which two things belong in a project instruction file for a coding agent? (choose 2)",
+    "options": [
+      "Build and test commands",
+      "Conventions and change boundaries",
+      "Production passwords",
+      "The entire source code"
+    ],
+    "explanation": "Practical guidance. Production passwords are easy to put in by mistake, but never do."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-06",
+    "question": "CI is green but in review you see the tests written by the agent mock every dependency and assert no behavior. What is the risk?",
+    "options": [
+      "None",
+      "Fake tests give a false sense of safety",
+      "Slow runs",
+      "Token cost"
+    ],
+    "explanation": "The tests do not protect real behavior. You need to review test quality, not just the green status."
+  },
+  {
+    "id": "ai-video-image-generation-01",
+    "question": "A designer asks how a diffusion model creates images. Which description is correct?",
+    "options": [
+      "It generates pixel by pixel sequentially",
+      "It iteratively denoises from random noise under conditions",
+      "It looks up an image database",
+      "It stitches together existing images"
+    ],
+    "explanation": "Diffusion learns to reverse the noise-adding process. Sequential pixel generation is the behavior of some autoregressive models, so it is easy to confuse."
+  },
+  {
+    "id": "ai-video-image-generation-02",
+    "question": "A character must appear consistently across 12 scenes. What is a reasonable approach?",
+    "options": [
+      "Completely change the prompt each scene",
+      "Consistent reference images and seed/LoRA",
+      "Lower the resolution",
+      "There is no way"
+    ],
+    "explanation": "Conditioning with references preserves identity."
+  },
+  {
+    "id": "ai-video-image-generation-03",
+    "question": "A company wants to use AI video in a commercial ad that contains real people. What risks need checking?",
+    "options": [
+      "None",
+      "Copyright, terms of use and image rights",
+      "Only resolution",
+      "Only file size"
+    ],
+    "explanation": "The legal risks are real; check licenses, terms and image rights."
+  },
+  {
+    "id": "ai-video-image-generation-04",
+    "question": "Explain how diffusion differs from an autoregressive LLM and why video is harder than images.",
+    "modelAnswer": "An LLM generates tokens sequentially, each step based on the previous tokens. Diffusion starts from noise and refines the whole sample across many denoising steps, which suits continuous data such as images. Video is harder because it adds the time dimension, so frames must stay consistent and it costs far more GPU.",
+    "keyPoints": [
+      "Sequential vs global iterative",
+      "Starts from noise",
+      "Video needs temporal consistency and heavy compute"
+    ]
+  },
+  {
+    "id": "ai-video-image-generation-05",
+    "question": "Which two risks need checking when using AI images/video commercially? (choose 2)",
+    "options": [
+      "Terms of use and copyright",
+      "Image rights of real people",
+      "Resolution",
+      "Model name"
+    ],
+    "explanation": "The two main legal risks. Resolution and model name are tempting to care about, but they are not legal risks."
   }
 ]
