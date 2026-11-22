@@ -308,5 +308,15 @@
     "id": "aws-developer-toolkit",
     "title": "AWS for Developers: SDK, X-Ray, STS, Presigned URL",
     "summary": "Authenticate with roles, retry/paginate correctly and trace distributed requests with X-Ray."
+  },
+  {
+    "id": "aws-backup-data-protection",
+    "title": "AWS Backup & Data Protection",
+    "summary": "Immutable backups, cross-account copies and DR by RPO/RTO; replication does not replace backup."
+  },
+  {
+    "id": "aws-certification-roadmap",
+    "title": "AWS Certification Roadmap & Exam Technique",
+    "summary": "Choose a certification by role, study by domain and read the exam's constraints to pick the right answer."
   }
 ]

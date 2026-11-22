@@ -1533,5 +1533,35 @@
     "id": "aws-appsync",
     "meaning": "Managed GraphQL",
     "definition": "Resolvers and subscriptions."
+  },
+  {
+    "id": "aws-backup-vault-lock",
+    "meaning": "Immutable backups",
+    "definition": "WORM protection against deletion."
+  },
+  {
+    "id": "s3-object-lock",
+    "meaning": "WORM for S3",
+    "definition": "Compliance and governance modes."
+  },
+  {
+    "id": "pilot-light-warm-standby",
+    "meaning": "DR strategies",
+    "definition": "The trade-off between RTO and cost."
+  },
+  {
+    "id": "aws-certification-paths",
+    "meaning": "Paths by role",
+    "definition": "Foundational, Associate, Professional, Specialty."
+  },
+  {
+    "id": "saa-exam-guide",
+    "meaning": "Domains and weightings",
+    "definition": "Secure, resilient, performant, cost-optimized."
+  },
+  {
+    "id": "aws-skill-builder",
+    "meaning": "Official learning and practice exams",
+    "definition": "Practice exams and courses."
   }
 ]

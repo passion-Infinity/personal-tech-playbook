@@ -3333,5 +3333,102 @@
       "A root key"
     ],
     "explanation": "Roles and STS issue temporary credentials. An access key in code and a root key are dangerous options that leak easily."
+  },
+  {
+    "id": "aws-backup-data-protection-01",
+    "question": "A team enables replication to another Region and then a developer runs DROP TABLE by mistake. What happens and does replication replace backup?",
+    "options": [
+      "Yes, the copy stays intact",
+      "No, the accidental delete is replicated to the copy too",
+      "Only true for S3",
+      "Only true for RDS"
+    ],
+    "explanation": "Replication copies mistakes too. You need point-in-time backups."
+  },
+  {
+    "id": "aws-backup-data-protection-02",
+    "question": "A company wants to protect against ransomware deleting even its own backups. What is the solution?",
+    "options": [
+      "Backups in the same account",
+      "Vault Lock and a cross-account copy",
+      "Turn off backups",
+      "Reduce retention"
+    ],
+    "explanation": "Vault Lock keeps backups immutable and cross-account isolates them from a compromised account. Backups in the same account are tempting as convenient but are lost at the same time."
+  },
+  {
+    "id": "aws-backup-data-protection-03",
+    "question": "Which DR strategy runs only a minimal core such as a database replica, with the application tier started and scaled up on a disaster?",
+    "options": [
+      "Backup & Restore",
+      "Pilot Light",
+      "Multi-site active-active",
+      "No DR"
+    ],
+    "explanation": "Pilot Light keeps the core running. Warm Standby is easy to confuse because it also keeps things ready, but it runs a full scaled-down copy."
+  },
+  {
+    "id": "aws-backup-data-protection-04",
+    "question": "A company has had nightly backups for 2 years but has never tried restoring. Why is periodic restore rehearsal needed?",
+    "modelAnswer": "A backup never restored is not guaranteed to be usable: it may be corrupt, lack the encryption key or its recovery time may exceed the RTO. Regular rehearsal validates the procedure and measures the real RTO.",
+    "keyPoints": [
+      "Backups can be corrupt",
+      "A missing key or permissions",
+      "Measure the real RTO"
+    ]
+  },
+  {
+    "id": "aws-backup-data-protection-05",
+    "question": "You must guarantee backups cannot be deleted or modified during the retention period, even by an admin. What do you use?",
+    "options": [
+      "An ordinary snapshot",
+      "AWS Backup Vault Lock",
+      "A tag",
+      "An IAM deny"
+    ],
+    "explanation": "Vault Lock provides WORM. An IAM deny is tempting because it blocks deletion, but an admin can remove the policy."
+  },
+  {
+    "id": "aws-certification-roadmap-01",
+    "question": "A person completely new to cloud wants a starter certification. What do you choose?",
+    "options": [
+      "Cloud Practitioner",
+      "Professional",
+      "Specialty",
+      "DevOps Professional"
+    ],
+    "explanation": "Cloud Practitioner is the Foundational tier. Professional/Specialty are tempting for their prestige, but require foundational experience."
+  },
+  {
+    "id": "aws-certification-roadmap-02",
+    "question": "In an exam, two answers are both technically right. How do you choose?",
+    "options": [
+      "The most expensive",
+      "The one that meets all constraints with the least operational effort",
+      "Random",
+      "The longest"
+    ],
+    "explanation": "Exams favor managed solutions that satisfy the constraints. Choosing the most expensive is tempting as 'safe', but it usually violates the cost requirement."
+  },
+  {
+    "id": "aws-certification-roadmap-03",
+    "question": "A question requires the system to survive a whole-Region failure and you choose Multi-AZ. Which common mistake happened?",
+    "options": [
+      "Confusing HA with DR",
+      "Confusing S3 with S3",
+      "Confusing IAM with IAM",
+      "No mistake"
+    ],
+    "explanation": "Multi-AZ is HA within one Region; surviving the loss of a whole Region needs cross-Region DR."
+  },
+  {
+    "id": "aws-certification-roadmap-04",
+    "question": "Describe how to approach a long scenario question in an AWS exam.",
+    "modelAnswer": "Underline constraint keywords such as cheapest, least operational effort, low latency or compliance, eliminate answers that violate a constraint, and then prefer managed, loosely coupled, multi-AZ and least-privilege solutions.",
+    "keyPoints": [
+      "Find the constraints",
+      "Eliminate wrong answers",
+      "Prefer managed"
+    ]
   }
 ]
