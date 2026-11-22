@@ -7793,5 +7793,1243 @@
       "Tổng thấp hơn",
       "Song song tăng"
     ]
+  },
+  {
+    "id": "iam-fundamentals-04",
+    "playbookId": "iam-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ứng dụng chạy trên EC2 cần đọc một S3 bucket. Cách an toàn nhất?",
+    "options": [
+      "Nhúng access key của IAM user vào code",
+      "Gắn IAM role với quyền tối thiểu qua instance profile",
+      "Dùng root account access key",
+      "Mở bucket public"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Role cấp credential tạm thời tự xoay, không có key dài hạn để lộ."
+  },
+  {
+    "id": "iam-fundamentals-05",
+    "playbookId": "iam-fundamentals",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai điều nào đúng về đánh giá quyền của IAM? (chọn 2)",
+    "options": [
+      "Mặc định là deny",
+      "Explicit deny thắng mọi allow",
+      "Allow ở một policy luôn thắng deny ở policy khác",
+      "Root user không bị giới hạn bởi bất kỳ điều gì"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Mặc định từ chối ngầm; một explicit deny luôn ghi đè allow."
+  },
+  {
+    "id": "s3-security-encryption-04",
+    "playbookId": "s3-security-encryption",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần bảo đảm mọi object trong bucket được mã hoá bằng khoá KMS do công ty quản lý. Cách nào hợp lý?",
+    "options": [
+      "Chỉ bật Block Public Access",
+      "Đặt default encryption SSE-KMS và bucket policy từ chối PUT không mã hoá",
+      "Dùng ACL",
+      "Bật versioning"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Default encryption cộng policy deny ép buộc đúng khoá."
+  },
+  {
+    "id": "s3-security-encryption-05",
+    "playbookId": "s3-security-encryption",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Muốn cho một đối tác tải file lên trong 15 phút mà không tạo IAM user. Chọn?",
+    "options": [
+      "Mở bucket public",
+      "Presigned URL hết hạn sau 15 phút",
+      "Chia sẻ access key",
+      "Bật CRR"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Presigned URL mang quyền của người ký và có hạn dùng."
+  },
+  {
+    "id": "s3-versioning-replication-04",
+    "playbookId": "s3-versioning-replication",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ai đó xoá nhầm object khi bucket bật versioning. Điều gì xảy ra?",
+    "options": [
+      "Object mất vĩnh viễn",
+      "Tạo delete marker, các phiên bản cũ vẫn khôi phục được",
+      "Bucket bị khoá",
+      "Object chuyển sang Glacier"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Xoá không chỉ định version chỉ thêm delete marker."
+  },
+  {
+    "id": "s3-versioning-replication-05",
+    "playbookId": "s3-versioning-replication",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai yêu cầu bắt buộc để bật S3 Replication? (chọn 2)",
+    "options": [
+      "Versioning bật ở cả nguồn và đích",
+      "Bucket đích cùng Region",
+      "IAM role cho S3 thực hiện replication",
+      "Bucket phải public"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "CRR cần versioning hai phía và role; đích có thể khác Region (CRR) hoặc cùng (SRR)."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-04",
+    "playbookId": "s3-storage-classes-lifecycle",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dữ liệu truy cập không đoán trước, cần tối ưu chi phí tự động?",
+    "options": [
+      "S3 Standard-IA",
+      "S3 Intelligent-Tiering",
+      "S3 One Zone-IA",
+      "Glacier Deep Archive"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Intelligent-Tiering tự chuyển tầng theo mẫu truy cập."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-05",
+    "playbookId": "s3-storage-classes-lifecycle",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Log cần giữ 7 năm để kiểm toán, hiếm khi đọc, chấp nhận chờ nhiều giờ để lấy ra, rẻ nhất?",
+    "options": [
+      "Standard",
+      "Glacier Instant Retrieval",
+      "Glacier Deep Archive",
+      "One Zone-IA"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Deep Archive rẻ nhất, thời gian lấy dữ liệu tính bằng giờ."
+  },
+  {
+    "id": "s3-performance-04",
+    "playbookId": "s3-performance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tải lên file 5 GB nhanh và chịu lỗi mạng tốt?",
+    "options": [
+      "PUT một lần",
+      "Multipart upload",
+      "Dùng ACL",
+      "Chia bucket"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Multipart song song và thử lại từng phần; bắt buộc trên 5 GB."
+  },
+  {
+    "id": "s3-performance-05",
+    "playbookId": "s3-performance",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Client ở xa Region cần upload nhanh hơn qua mạng backbone AWS?",
+    "options": [
+      "Transfer Acceleration",
+      "Versioning",
+      "Lifecycle",
+      "Requester Pays"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Transfer Acceleration đi qua edge location gần nhất."
+  },
+  {
+    "id": "ec2-pricing-models-04",
+    "playbookId": "ec2-pricing-models",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Batch xử lý ảnh ban đêm chịu được gián đoạn, cần rẻ nhất?",
+    "options": [
+      "On-Demand",
+      "Spot Instances",
+      "Dedicated Host",
+      "Reserved 3 năm"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Spot giảm giá sâu, có thể bị thu hồi."
+  },
+  {
+    "id": "ec2-pricing-models-05",
+    "playbookId": "ec2-pricing-models",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Giấy phép phần mềm theo socket/core cần máy vật lý riêng. Chọn?",
+    "options": [
+      "Spot",
+      "Dedicated Host",
+      "Savings Plans",
+      "Capacity Reservation"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dedicated Host cho kiểm soát socket/core và BYOL."
+  },
+  {
+    "id": "ec2-security-groups-networking-04",
+    "playbookId": "ec2-security-groups-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về Security Group? (chọn 2)",
+    "options": [
+      "Stateful",
+      "Có thể có rule deny",
+      "Chỉ có rule allow",
+      "Áp dụng ở cấp subnet"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "SG stateful, chỉ allow, gắn với ENI."
+  },
+  {
+    "id": "ec2-security-groups-networking-05",
+    "playbookId": "ec2-security-groups-networking",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Web tier cần nhận traffic từ ALB, DB tier chỉ nhận từ web tier. Cách tham chiếu gọn?",
+    "options": [
+      "Dùng IP cố định",
+      "Rule nguồn là security group của tầng trước",
+      "Mở 0.0.0.0/0",
+      "Dùng NACL deny"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tham chiếu SG tự cập nhật khi instance đổi."
+  },
+  {
+    "id": "ec2-placement-groups-04",
+    "playbookId": "ec2-placement-groups",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "HPC cần độ trễ mạng thấp nhất giữa các node?",
+    "options": [
+      "Spread",
+      "Cluster",
+      "Partition",
+      "Không cần"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cluster đặt gần nhau trong một AZ."
+  },
+  {
+    "id": "ec2-placement-groups-05",
+    "playbookId": "ec2-placement-groups",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Ít instance cực kỳ quan trọng cần tránh lỗi phần cứng chung?",
+    "options": [
+      "Cluster",
+      "Spread",
+      "Partition",
+      "Dedicated"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Spread đặt trên phần cứng riêng biệt (giới hạn mỗi AZ)."
+  },
+  {
+    "id": "vpc-networking-04",
+    "playbookId": "vpc-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Instance ở private subnet cần cập nhật gói từ Internet nhưng không nhận kết nối vào?",
+    "options": [
+      "Internet Gateway trực tiếp",
+      "NAT Gateway ở public subnet",
+      "VPC peering",
+      "Direct Connect"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "NAT cho outbound only."
+  },
+  {
+    "id": "vpc-networking-05",
+    "playbookId": "vpc-networking",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai VPC chồng lấn CIDR có peering được không?",
+    "options": [
+      "Có",
+      "Không",
+      "Chỉ cùng Region",
+      "Chỉ cùng account"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Peering yêu cầu CIDR không chồng lấn."
+  },
+  {
+    "id": "elb-auto-scaling-04",
+    "playbookId": "elb-auto-scaling",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Định tuyến theo đường dẫn URL tới các service khác nhau?",
+    "options": [
+      "NLB",
+      "ALB",
+      "Classic LB",
+      "Gateway LB"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "ALB hỗ trợ path/host-based routing ở L7."
+  },
+  {
+    "id": "elb-auto-scaling-05",
+    "playbookId": "elb-auto-scaling",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Cần scale theo CPU trung bình giữ quanh 50%?",
+    "options": [
+      "Simple scaling",
+      "Target tracking scaling",
+      "Scheduled",
+      "Manual"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Target tracking tự điều chỉnh về giá trị mục tiêu."
+  },
+  {
+    "id": "rds-aurora-04",
+    "playbookId": "rds-aurora",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chịu lỗi AZ cho RDS với failover tự động?",
+    "options": [
+      "Read replica",
+      "Multi-AZ",
+      "Snapshot",
+      "Parameter group"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Multi-AZ có standby đồng bộ và failover tự động."
+  },
+  {
+    "id": "rds-aurora-05",
+    "playbookId": "rds-aurora",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Tăng thông lượng đọc cho ứng dụng nhiều đọc, chấp nhận trễ nhỏ?",
+    "options": [
+      "Multi-AZ",
+      "Read replica (Aurora Replica)",
+      "Tăng backup",
+      "Giảm storage"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Replica phục vụ đọc, bất đồng bộ."
+  },
+  {
+    "id": "dynamodb-04",
+    "playbookId": "dynamodb",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn theo thuộc tính không phải partition key hiệu quả bằng?",
+    "options": [
+      "Scan",
+      "Global Secondary Index",
+      "Tăng RCU",
+      "DAX"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "GSI cho khoá truy cập thay thế."
+  },
+  {
+    "id": "dynamodb-05",
+    "playbookId": "dynamodb",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai điều nào đúng về DynamoDB on-demand? (chọn 2)",
+    "options": [
+      "Không cần dự đoán dung lượng",
+      "Trả theo request",
+      "Luôn rẻ hơn provisioned",
+      "Không hỗ trợ GSI"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "On-demand tự co giãn và tính theo request, nhưng không phải lúc nào cũng rẻ hơn."
+  },
+  {
+    "id": "route53-cloudfront-04",
+    "playbookId": "route53-cloudfront",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chuyển traffic sang Region dự phòng khi Region chính lỗi?",
+    "options": [
+      "Simple routing",
+      "Failover routing với health check",
+      "Weighted 50/50",
+      "Geolocation"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Failover dùng health check."
+  },
+  {
+    "id": "route53-cloudfront-05",
+    "playbookId": "route53-cloudfront",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Ngăn người dùng truy cập trực tiếp S3, chỉ qua CloudFront?",
+    "options": [
+      "Mở bucket public",
+      "Origin Access Control",
+      "Versioning",
+      "Presigned"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "OAC giới hạn S3 chỉ cho CloudFront."
+  },
+  {
+    "id": "sqs-sns-eventbridge-04",
+    "playbookId": "sqs-sns-eventbridge",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một sự kiện cần gửi tới nhiều hệ thống độc lập (fan-out)?",
+    "options": [
+      "SQS standard",
+      "SNS topic với nhiều SQS subscribe",
+      "Step Functions",
+      "S3"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SNS fan-out tới nhiều queue."
+  },
+  {
+    "id": "sqs-sns-eventbridge-05",
+    "playbookId": "sqs-sns-eventbridge",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai điều nào đúng về SQS Standard? (chọn 2)",
+    "options": [
+      "At-least-once delivery",
+      "Có thể giao trùng",
+      "Đảm bảo FIFO tuyệt đối",
+      "Exactly-once"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Standard có thể giao lặp và không đảm bảo thứ tự."
+  },
+  {
+    "id": "lambda-serverless-04",
+    "playbookId": "lambda-serverless",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hạn chế khi Lambda gọi API mất 20 phút?",
+    "options": [
+      "Không có",
+      "Timeout tối đa 15 phút",
+      "Không dùng được mạng",
+      "Chỉ 1 giây"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giới hạn 15 phút; việc dài dùng Step Functions/ECS."
+  },
+  {
+    "id": "lambda-serverless-05",
+    "playbookId": "lambda-serverless",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Giảm cold start cho Lambda quan trọng về độ trễ?",
+    "options": [
+      "Tăng timeout",
+      "Provisioned Concurrency",
+      "Giảm memory",
+      "Tắt VPC"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giữ sẵn môi trường đã khởi tạo."
+  },
+  {
+    "id": "disaster-recovery-strategies-04",
+    "playbookId": "disaster-recovery-strategies",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "RPO gần 0 và RTO vài phút, chấp nhận chi phí cao?",
+    "options": [
+      "Backup & Restore",
+      "Pilot Light",
+      "Multi-site active-active",
+      "Chỉ snapshot"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Active-active chạy đầy đủ ở nhiều Region."
+  },
+  {
+    "id": "disaster-recovery-strategies-05",
+    "playbookId": "disaster-recovery-strategies",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "RTO tính bằng giờ, ngân sách thấp?",
+    "options": [
+      "Active-active",
+      "Backup & Restore",
+      "Warm Standby",
+      "Hot site"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Rẻ nhất, RTO dài nhất."
+  },
+  {
+    "id": "ebs-efs-fsx-storage-05",
+    "playbookId": "ebs-efs-fsx-storage",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "DB cần IOPS ổn định rất cao?",
+    "options": [
+      "gp3 mặc định",
+      "io2",
+      "st1",
+      "sc1"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "io2 cho IOPS cao ổn định."
+  },
+  {
+    "id": "cloudwatch-cloudtrail-config-05",
+    "playbookId": "cloudwatch-cloudtrail-config",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai dịch vụ nào giúp điều tra \"ai thay đổi security group\"? (chọn 2)",
+    "options": [
+      "CloudTrail",
+      "AWS Config",
+      "CloudWatch metrics CPU",
+      "Cost Explorer"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "CloudTrail cho ai gọi API, Config cho lịch sử cấu hình."
+  },
+  {
+    "id": "ecs-eks-fargate-05",
+    "playbookId": "ecs-eks-fargate",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Container ECS ghi DynamoDB, nhưng lỗi AccessDenied. Role nào cần sửa?",
+    "options": [
+      "Execution role",
+      "Task role",
+      "Role của người deploy",
+      "Role của ALB"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ứng dụng dùng task role."
+  },
+  {
+    "id": "api-gateway-step-functions-05",
+    "playbookId": "api-gateway-step-functions",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lambda sau API Gateway xử lý 40 giây thì?",
+    "options": [
+      "Chạy bình thường",
+      "Có thể gặp timeout 29 giây của API Gateway",
+      "Tự tăng",
+      "Không ảnh hưởng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Thiết kế bất đồng bộ."
+  },
+  {
+    "id": "kinesis-streaming-05",
+    "playbookId": "kinesis-streaming",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Nhiều consumer mỗi cái cần băng thông 2 MB/s riêng?",
+    "options": [
+      "Shared throughput",
+      "Enhanced Fan-Out",
+      "Firehose",
+      "SQS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "EFO cấp băng thông riêng."
+  },
+  {
+    "id": "aws-data-analytics-05",
+    "playbookId": "aws-data-analytics",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn SQL ad-hoc trên log Parquet trong S3, serverless?",
+    "options": [
+      "Redshift",
+      "Athena",
+      "EMR",
+      "RDS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Athena trả theo dữ liệu quét."
+  },
+  {
+    "id": "cloudformation-cdk-iac-05",
+    "playbookId": "cloudformation-cdk-iac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xem trước tác động của cập nhật stack?",
+    "options": [
+      "Update thẳng",
+      "Change Set",
+      "Drift detection",
+      "Delete stack"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Change Set liệt kê thay đổi."
+  },
+  {
+    "id": "aws-organizations-governance-05",
+    "playbookId": "aws-organizations-governance",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chặn mọi account tắt CloudTrail?",
+    "options": [
+      "IAM policy từng user",
+      "SCP deny cloudtrail:StopLogging",
+      "Security group",
+      "NACL"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SCP áp cho cả account."
+  },
+  {
+    "id": "aws-well-architected-framework-05",
+    "playbookId": "aws-well-architected-framework",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai trụ cột nào của Well-Architected? (chọn 2)",
+    "options": [
+      "Reliability",
+      "Cost Optimization",
+      "Marketing",
+      "Procurement"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Sáu trụ cột chính thức."
+  },
+  {
+    "id": "aws-security-services-05",
+    "playbookId": "aws-security-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Phát hiện hoạt động đáng ngờ từ CloudTrail và Flow Logs?",
+    "options": [
+      "Inspector",
+      "GuardDuty",
+      "Macie",
+      "Shield"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "GuardDuty phân tích các nguồn log."
+  },
+  {
+    "id": "elasticache-caching-05",
+    "playbookId": "elasticache-caching",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lưu session để ứng dụng stateless?",
+    "options": [
+      "Local disk",
+      "ElastiCache Redis",
+      "S3 Glacier",
+      "Instance Store"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Redis chia sẻ giữa instance."
+  },
+  {
+    "id": "aws-hybrid-connectivity-migration-05",
+    "playbookId": "aws-hybrid-connectivity-migration",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Di chuyển DB Oracle sang Aurora PostgreSQL gồm chuyển schema?",
+    "options": [
+      "DMS thuần",
+      "SCT + DMS",
+      "Snowball",
+      "DataSync"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "SCT chuyển schema, DMS chuyển dữ liệu."
+  },
+  {
+    "id": "aws-cicd-devops-tools-05",
+    "playbookId": "aws-cicd-devops-tools",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Pipeline cần tự rollback khi alarm kích hoạt?",
+    "options": [
+      "CodeBuild",
+      "CodeDeploy với alarm rollback",
+      "CodeCommit",
+      "ECR"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "CodeDeploy hỗ trợ rollback theo alarm."
+  },
+  {
+    "id": "aws-advanced-networking-05",
+    "playbookId": "aws-advanced-networking",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về Gateway endpoint? (chọn 2)",
+    "options": [
+      "Chỉ S3 và DynamoDB",
+      "Miễn phí",
+      "Dùng ENI",
+      "Tính phí theo giờ"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Gateway endpoint chỉ cho hai dịch vụ này."
+  },
+  {
+    "id": "aws-database-portfolio-05",
+    "playbookId": "aws-database-portfolio",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dữ liệu IoT chuỗi thời gian khối lượng lớn?",
+    "options": [
+      "Neptune",
+      "Timestream",
+      "Redshift",
+      "QLDB"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Timestream chuyên time-series."
+  },
+  {
+    "id": "aws-cost-optimization-billing-05",
+    "playbookId": "aws-cost-optimization-billing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Tải ổn định chạy EC2 và Fargate, muốn linh hoạt?",
+    "options": [
+      "EC2 Instance Savings Plan",
+      "Compute Savings Plans",
+      "Spot",
+      "Dedicated"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Compute SP áp cho nhiều dịch vụ."
+  },
+  {
+    "id": "aws-developer-toolkit-05",
+    "playbookId": "aws-developer-toolkit",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai cách đúng để ứng dụng AWS xác thực không lưu key dài hạn? (chọn 2)",
+    "options": [
+      "IAM role gắn compute",
+      "STS credential tạm",
+      "Access key trong code",
+      "Root key"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Credential tạm thời an toàn hơn."
+  },
+  {
+    "id": "aws-backup-data-protection-05",
+    "playbookId": "aws-backup-data-protection",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Backup không thể bị xoá kể cả bởi admin trong thời hạn?",
+    "options": [
+      "Snapshot thường",
+      "Backup Vault Lock",
+      "Tag",
+      "IAM deny"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Vault Lock cung cấp WORM."
+  },
+  {
+    "id": "azure-core-architecture-04",
+    "playbookId": "azure-core-architecture",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về Azure Resource Group? (chọn 2)",
+    "options": [
+      "Là container logic của tài nguyên",
+      "Xoá resource group xoá toàn bộ tài nguyên bên trong",
+      "Tài nguyên không thể chuyển nhóm",
+      "Mỗi tài nguyên thuộc nhiều nhóm"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "RG là ranh giới vòng đời, mỗi tài nguyên thuộc đúng một RG."
+  },
+  {
+    "id": "azure-core-architecture-05",
+    "playbookId": "azure-core-architecture",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Bảo vệ khỏi lỗi một datacenter trong Region?",
+    "options": [
+      "Availability Zones",
+      "Single instance",
+      "Region pair",
+      "Tag"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "AZ là các datacenter tách biệt trong Region."
+  },
+  {
+    "id": "entra-id-rbac-04",
+    "playbookId": "entra-id-rbac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cấp quyền chỉ đọc cho một resource group?",
+    "options": [
+      "Entra role Global Reader",
+      "Azure RBAC Reader tại phạm vi RG",
+      "Owner subscription",
+      "Policy"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "RBAC theo phạm vi tài nguyên."
+  },
+  {
+    "id": "entra-id-rbac-05",
+    "playbookId": "entra-id-rbac",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai điều nào đúng? (chọn 2)",
+    "options": [
+      "RBAC kế thừa xuống phạm vi con",
+      "Entra roles và Azure RBAC là một",
+      "Deny assignment có thể chặn",
+      "Owner không thể gán quyền"
+    ],
+    "answer": [
+      0,
+      2
+    ],
+    "explanation": "Phạm vi kế thừa; Entra roles và RBAC là hai hệ khác nhau."
+  },
+  {
+    "id": "azure-virtual-machines-04",
+    "playbookId": "azure-virtual-machines",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chịu lỗi VM giữa các datacenter trong Region?",
+    "options": [
+      "Availability Set",
+      "Availability Zones",
+      "Một VM lớn",
+      "Tag"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "AZ chịu lỗi datacenter."
+  },
+  {
+    "id": "azure-virtual-machines-05",
+    "playbookId": "azure-virtual-machines",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Tải thay đổi, tự thêm bớt VM?",
+    "options": [
+      "VM đơn",
+      "Virtual Machine Scale Set",
+      "Snapshot",
+      "Image"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "VMSS autoscale."
+  },
+  {
+    "id": "azure-storage-04",
+    "playbookId": "azure-storage",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dữ liệu lưu trữ lâu dài, hiếm truy cập, chấp nhận độ trễ lấy?",
+    "options": [
+      "Hot",
+      "Cool/Archive",
+      "Premium",
+      "Local SSD"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cool/Archive rẻ hơn khi lưu."
+  },
+  {
+    "id": "azure-storage-05",
+    "playbookId": "azure-storage",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Bảo vệ khỏi lỗi cả Region?",
+    "options": [
+      "LRS",
+      "ZRS",
+      "GRS/GZRS",
+      "Không cần"
+    ],
+    "answer": [
+      2
+    ],
+    "explanation": "Geo-redundant sao chép sang Region khác."
+  },
+  {
+    "id": "azure-networking-load-balancing-04",
+    "playbookId": "azure-networking-load-balancing",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cân bằng tải L4 trong Region?",
+    "options": [
+      "Application Gateway",
+      "Azure Load Balancer",
+      "Front Door",
+      "Traffic Manager"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Load Balancer ở L4."
+  },
+  {
+    "id": "azure-networking-load-balancing-05",
+    "playbookId": "azure-networking-load-balancing",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hai điều nào đúng về NSG? (chọn 2)",
+    "options": [
+      "Lọc theo subnet hoặc NIC",
+      "Có rule allow và deny",
+      "Chỉ có allow",
+      "Không có priority"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "NSG có priority, allow và deny."
+  },
+  {
+    "id": "azure-governance-cost-04",
+    "playbookId": "azure-governance-cost",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Ép mọi tài nguyên phải có tag CostCenter?",
+    "options": [
+      "RBAC",
+      "Azure Policy",
+      "Lock",
+      "Defender"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Policy ép quy tắc."
+  },
+  {
+    "id": "azure-governance-cost-05",
+    "playbookId": "azure-governance-cost",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Ngăn xoá nhầm tài nguyên quan trọng?",
+    "options": [
+      "Resource lock (CanNotDelete)",
+      "Tag",
+      "Budget",
+      "Reader"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Lock chặn xoá/sửa."
+  },
+  {
+    "id": "azure-compute-serverless-containers-04",
+    "playbookId": "azure-compute-serverless-containers",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Chạy container không quản cluster?",
+    "options": [
+      "AKS tự quản node",
+      "Azure Container Apps",
+      "VM",
+      "Batch"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Container Apps là serverless containers."
+  },
+  {
+    "id": "azure-compute-serverless-containers-05",
+    "playbookId": "azure-compute-serverless-containers",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Hàm chạy theo sự kiện, trả theo thực thi?",
+    "options": [
+      "App Service Plan cố định",
+      "Azure Functions Consumption",
+      "VM",
+      "AKS"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Consumption tính theo thực thi."
+  },
+  {
+    "id": "azure-monitor-security-04",
+    "playbookId": "azure-monitor-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Truy vấn log tập trung bằng KQL?",
+    "options": [
+      "Log Analytics workspace",
+      "Blob",
+      "Key Vault",
+      "Event Grid"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "KQL chạy trên Log Analytics."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-05",
+    "playbookId": "azure-databases-cosmos-sql",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai điều nào đúng về Cosmos DB? (chọn 2)",
+    "options": [
+      "Throughput tính bằng RU/s",
+      "Partition key ảnh hưởng hiệu năng",
+      "Chỉ có một API",
+      "Không hỗ trợ đa Region"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "RU và partition key là cốt lõi."
+  },
+  {
+    "id": "azure-messaging-event-services-05",
+    "playbookId": "azure-messaging-event-services",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dịch vụ phù hợp nhất để ingest telemetry khối lượng lớn?",
+    "options": [
+      "Event Hubs",
+      "Service Bus queue",
+      "Storage Queue",
+      "Logic Apps"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Event Hubs cho streaming."
+  },
+  {
+    "id": "azure-devops-bicep-iac-05",
+    "playbookId": "azure-devops-bicep-iac",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xem trước thay đổi Bicep?",
+    "options": [
+      "what-if",
+      "Xoá rồi tạo",
+      "Portal",
+      "Không thể"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "what-if hiển thị thay đổi."
+  },
+  {
+    "id": "azure-data-platform-05",
+    "playbookId": "azure-data-platform",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Orchestrate pipeline ETL theo lịch?",
+    "options": [
+      "Data Factory",
+      "Event Grid",
+      "Key Vault",
+      "Bastion"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Data Factory điều phối."
+  },
+  {
+    "id": "azure-security-keyvault-defender-05",
+    "playbookId": "azure-security-keyvault-defender",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai biện pháp bảo vệ Key Vault? (chọn 2)",
+    "options": [
+      "Soft delete và purge protection",
+      "Private Endpoint",
+      "Công khai Internet",
+      "Chia sẻ key admin"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "Chống xoá và hạn chế mạng."
+  },
+  {
+    "id": "azure-hybrid-connectivity-05",
+    "playbookId": "azure-hybrid-connectivity",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Kết nối riêng tư ổn định, không qua Internet?",
+    "options": [
+      "VPN Gateway",
+      "ExpressRoute",
+      "Bastion",
+      "Front Door"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "ExpressRoute là đường riêng."
+  },
+  {
+    "id": "azure-app-service-api-management-05",
+    "playbookId": "azure-app-service-api-management",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Rate limit và xác thực JWT cho API?",
+    "options": [
+      "App Service Plan",
+      "API Management policies",
+      "Blob",
+      "NSG"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "APIM policy."
   }
 ]
