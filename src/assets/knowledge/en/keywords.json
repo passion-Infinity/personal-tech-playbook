@@ -1723,5 +1723,80 @@
     "id": "azure-pricing-vs-tco",
     "meaning": "Estimate cost and compare with on-premises",
     "definition": "The Pricing Calculator estimates Azure service cost; the TCO Calculator compares total cost of ownership with on-premises infrastructure."
+  },
+  {
+    "id": "azure-app-service",
+    "meaning": "PaaS for running web apps and APIs",
+    "definition": "The App Service Plan determines resources and price; deployment slots let you swap staging into production with no downtime."
+  },
+  {
+    "id": "azure-functions-triggers-bindings",
+    "meaning": "How Functions connect events and data",
+    "definition": "A trigger starts the function (HTTP, Timer, Queue, Blob, Event Grid); bindings declaratively read/write data."
+  },
+  {
+    "id": "azure-functions-plans",
+    "meaning": "Trade-off between cost, cold start and VNet",
+    "definition": "Consumption pays per execution and scales to 0 but has cold starts; Premium avoids cold starts and supports VNet."
+  },
+  {
+    "id": "azure-container-apps-vs-aks",
+    "meaning": "Serverless containers versus self-managed Kubernetes",
+    "definition": "Container Apps hides Kubernetes and scales on events (KEDA); AKS gives full Kubernetes control but takes operational effort."
+  },
+  {
+    "id": "azure-aci",
+    "meaning": "Run a single container quickly, no cluster",
+    "definition": "Billed per second, suited to short tasks or batch."
+  },
+  {
+    "id": "azure-monitor-metrics-logs",
+    "meaning": "The two kinds of Azure Monitor observability data",
+    "definition": "Metrics are lightweight, near real-time numbers; Logs are more detailed, stored in Log Analytics and queried with KQL."
+  },
+  {
+    "id": "log-analytics-kql",
+    "meaning": "Log store queried with Kusto Query Language",
+    "definition": "Collects logs from resources via diagnostic settings for analysis and alerts."
+  },
+  {
+    "id": "application-insights",
+    "meaning": "APM for applications on Azure Monitor",
+    "definition": "Tracks requests, dependencies, exceptions and distributed tracing."
+  },
+  {
+    "id": "defender-for-cloud",
+    "meaning": "Assess and protect security posture",
+    "definition": "CSPM with Secure Score and recommendations, plus CWP to protect workloads; supports multicloud."
+  },
+  {
+    "id": "azure-key-vault",
+    "meaning": "Store for secrets, keys and certificates",
+    "definition": "Accessed via RBAC and managed identity; enable soft delete and purge protection to avoid permanently losing secrets."
+  },
+  {
+    "id": "cosmos-consistency-levels",
+    "meaning": "Five consistency levels",
+    "definition": "Strong, Bounded Staleness, Session, Consistent Prefix, Eventual."
+  },
+  {
+    "id": "cosmos-partition-key-ru",
+    "meaning": "Partition and RU design",
+    "definition": "A hot partition causes 429 throttling."
+  },
+  {
+    "id": "azure-sql-pool-vs-mi",
+    "meaning": "SQL deployment options",
+    "definition": "A pool shares resources, MI is SQL Server compatible."
+  },
+  {
+    "id": "azure-sql-failover-groups",
+    "meaning": "Multi-Region failover",
+    "definition": "A group connection string."
+  },
+  {
+    "id": "cosmos-change-feed",
+    "meaning": "Change stream",
+    "definition": "Triggers processing after writes."
   }
 ]

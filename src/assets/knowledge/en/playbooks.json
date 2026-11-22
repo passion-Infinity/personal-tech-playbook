@@ -348,5 +348,20 @@
     "id": "azure-governance-cost",
     "title": "Azure Governance & Cost",
     "summary": "Set rules with Azure Policy, protect with locks, classify with tags and control cost with Cost Management."
+  },
+  {
+    "id": "azure-compute-serverless-containers",
+    "title": "Azure App Service, Functions & Containers",
+    "summary": "Choose among App Service, Functions, Container Apps, ACI and AKS by how much of the operations you want to run yourself."
+  },
+  {
+    "id": "azure-monitor-security",
+    "title": "Azure Monitor, Defender & Key Vault",
+    "summary": "Observe systems with Azure Monitor, assess security with Defender for Cloud and keep secrets in Key Vault."
+  },
+  {
+    "id": "azure-databases-cosmos-sql",
+    "title": "Azure SQL & Cosmos DB",
+    "summary": "Choose between Azure SQL and Cosmos DB, and understand RUs, partition keys and the five consistency levels."
   }
 ]

@@ -3754,5 +3754,156 @@
       "The Reader role is missing"
     ],
     "explanation": "ReadOnly forbids every write operation, including stopping a VM. CanNotDelete is enough for the goal of preventing accidental deletion."
+  },
+  {
+    "id": "azure-compute-serverless-containers-01",
+    "question": "You need to run a piece of code whenever a new file arrives in Blob and pay only per execution. What do you choose?",
+    "options": [
+      "App Service",
+      "Azure Functions",
+      "AKS",
+      "VM"
+    ],
+    "explanation": "Functions run on events with a blob trigger and are billed per execution. App Service is tempting because it runs code, but it is billed on a fixed plan."
+  },
+  {
+    "id": "azure-compute-serverless-containers-02",
+    "question": "A team wants to deploy a new version to staging, test it and then move it to production with no downtime. What do they use?",
+    "options": [
+      "Deployment slots",
+      "Resource lock",
+      "Availability Set",
+      "Tag"
+    ],
+    "explanation": "A slot swap moves staging into production. An Availability Set is tempting because it relates to HA, but it does not serve deployment."
+  },
+  {
+    "id": "azure-compute-serverless-containers-03",
+    "question": "A team must run 12 container microservices, scaling on a queue, but has no Kubernetes engineers. Compare Container Apps and AKS and choose.",
+    "modelAnswer": "Container Apps is a serverless container platform that hides Kubernetes, scales on events with KEDA and scales to 0, with little operational work. AKS gives full Kubernetes control (operators, custom networking) but you manage node pools, upgrades and patching. For a team without Kubernetes engineers, choose Container Apps.",
+    "keyPoints": [
+      "Container Apps hides Kubernetes, KEDA, scale to 0",
+      "AKS gives full control but costs operations",
+      "Choose by team capability"
+    ]
+  },
+  {
+    "id": "azure-compute-serverless-containers-04",
+    "question": "You need to run containers without managing a cluster or nodes. What do you choose?",
+    "options": [
+      "AKS with self-managed nodes",
+      "Azure Container Apps",
+      "VM",
+      "Batch"
+    ],
+    "explanation": "Container Apps is serverless containers. AKS is tempting because it is a container service, but you still manage node pools."
+  },
+  {
+    "id": "azure-compute-serverless-containers-05",
+    "question": "A function runs on sparse events and the team wants to pay per execution and accepts cold starts. Which plan?",
+    "options": [
+      "A fixed App Service Plan",
+      "Azure Functions Consumption",
+      "VM",
+      "AKS"
+    ],
+    "explanation": "Consumption pays per execution and scales to 0. Premium is tempting because it avoids cold starts, but it keeps instances warm and so carries a fixed cost."
+  },
+  {
+    "id": "azure-monitor-security-01",
+    "question": "A team needs to write a query to find failed requests in Log Analytics. What is the query language?",
+    "options": [
+      "SQL",
+      "KQL",
+      "GraphQL",
+      "PromQL"
+    ],
+    "explanation": "Log Analytics uses the Kusto Query Language. SQL is tempting because the basic syntax is similar."
+  },
+  {
+    "id": "azure-monitor-security-02",
+    "question": "An application needs to store a connection string and an API key, and the team keeps them in plaintext app settings. What is the right way to manage them?",
+    "options": [
+      "Keep the plaintext",
+      "Azure Key Vault with managed identity",
+      "Put them in the repo",
+      "Store them in tags"
+    ],
+    "explanation": "Key Vault holds the secrets and a managed identity retrieves them without a secret. Tags are tempting because they are metadata, but they are widely visible."
+  },
+  {
+    "id": "azure-monitor-security-03",
+    "question": "During a slowness incident the team needs a fast alert on CPU and also needs to investigate individual requests in detail. Compare Azure Monitor metrics and logs.",
+    "modelAnswer": "Metrics are lightweight, near real-time numbers kept for about 93 days, used for dashboards and threshold alerts such as CPU. Logs are detailed data in Log Analytics, queried with KQL to investigate individual requests, at a higher storage cost. Use metrics for quick detection and logs for investigation.",
+    "keyPoints": [
+      "Metrics: lightweight, near real-time, threshold alerts",
+      "Logs: detailed, KQL, investigation",
+      "Ingestion cost for logs"
+    ]
+  },
+  {
+    "id": "azure-monitor-security-04",
+    "question": "You need to query the logs of many resources centrally with KQL. Which service holds that data?",
+    "options": [
+      "Log Analytics workspace",
+      "Blob",
+      "Key Vault",
+      "Event Grid"
+    ],
+    "explanation": "KQL runs on Log Analytics. Blob is tempting because it can store logs, but it cannot be queried directly with KQL."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-01",
+    "question": "An app uses Cosmos DB without specifying a consistency level and the team asks what the default is and why it suits most applications.",
+    "options": [
+      "Strong",
+      "Session",
+      "Eventual",
+      "Bounded Staleness"
+    ],
+    "explanation": "Session guarantees consistent reads within a single client's session at low cost. Strong is tempting because it is the safest, but it costs latency/RU and lowers multi-Region availability."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-02",
+    "question": "A company wants to move an on-premises SQL Server that uses SQL Agent and cross-database queries to Azure with minimal changes. What do they choose?",
+    "options": [
+      "Azure SQL Database",
+      "Managed Instance",
+      "Cosmos DB",
+      "Table Storage"
+    ],
+    "explanation": "Managed Instance has near-full instance-level compatibility. Azure SQL Database is tempting because it is the same family, but it lacks some instance-level features."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-03",
+    "question": "A Cosmos DB container has country as its partition key and keeps returning 429 even though the container's total RU remains, with most data belonging to one country. What is the cause?",
+    "options": [
+      "The disk is full",
+      "A hot partition because of a skewed key",
+      "Wrong DNS",
+      "A TTL error"
+    ],
+    "explanation": "Load concentrates on one logical partition so it is throttled even though the total remains. A full disk is tempting but does not cause 429."
+  },
+  {
+    "id": "azure-databases-cosmos-sql-04",
+    "question": "Explain why the partition key matters in Cosmos DB and the criteria for a good key.",
+    "modelAnswer": "The partition key decides how data and load are distributed across logical partitions. A poor key causes hot partitions, wasted RU and throttling; cross-partition queries are expensive too. A good key has high cardinality, even distribution and appears in most queries.",
+    "keyPoints": [
+      "Distributes data and load",
+      "A hot partition causes 429",
+      "High cardinality, even distribution, present in queries"
+    ]
+  },
+  {
+    "id": "azure-databases-cosmos-sql-05",
+    "question": "Which two statements about Cosmos DB are correct? (choose 2)",
+    "options": [
+      "Throughput is measured in RU/s",
+      "The partition key affects performance",
+      "It has only one API",
+      "It does not support multi-Region"
+    ],
+    "explanation": "RUs and the partition key are core. Cosmos supports multiple APIs and multi-Region, so those two wrong options are distractors."
   }
 ]
