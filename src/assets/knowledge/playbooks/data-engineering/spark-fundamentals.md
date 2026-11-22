@@ -1,52 +1,81 @@
 ## 1. Core Concept
 
-**Apache Spark** là engine xử lý dữ liệu phân tán trong bộ nhớ: bạn mô tả phép biến đổi trên **DataFrame**, Spark biến chúng thành kế hoạch và chạy song song trên nhiều executor. Mental model: *Spark = lập kế hoạch lười (lazy) rồi chia dữ liệu thành partition để xử lý song song; chi phí chính nằm ở shuffle.*
+**Apache Spark** là engine xử lý dữ liệu **phân tán trong bộ nhớ** cho batch và streaming, mô hình hoá bằng **DataFrame/SQL**. Spark chia dữ liệu thành **partition** xử lý song song trên cluster và dựng **kế hoạch thực thi tối ưu (Catalyst)** — giải quyết bài toán xử lý hàng TB mà một máy không làm nổi. Hiệu năng quyết định bởi **shuffle, partition, skew**.
+
+**Mental model:** Spark như **nhóm nhiều đầu bếp chia nhau nguyên liệu**: mỗi người xử lý **phần của mình (partition)**, nhưng khi cần **gộp theo nhóm (group/join)** thì phải **chuyển nguyên liệu qua lại giữa các bếp (shuffle)** — chậm nhất. Nếu một đầu bếp bị dồn quá nhiều (skew) cả nhóm phải đợi.
 
 ## 2. How It Works
 
-- **Kiến trúc**: **driver** (điều phối) + **executor** (chạy task) trên cluster manager (YARN, Kubernetes, Databricks, EMR).
-- **Transformation vs action**: `filter/select/join` là **lazy**; `count/collect/write` (action) mới kích hoạt chạy. Chuỗi biến đổi thành **DAG**, chia thành **stage** tại ranh giới shuffle.
-- **Narrow vs wide**: narrow (map, filter) không di chuyển dữ liệu; **wide** (groupBy, join, repartition) gây **shuffle** qua mạng và đĩa.
-- **Catalyst optimizer** tối ưu kế hoạch (predicate pushdown, chọn join); **Tungsten** quản lý bộ nhớ hiệu quả.
-- **Join**: **broadcast hash join** khi một bảng nhỏ (gửi tới mọi executor), **sort-merge join** cho hai bảng lớn.
-- **Partition**: số partition quyết định song song; `spark.sql.shuffle.partitions` mặc định 200.
-- **Định dạng**: Parquet (columnar, nén, pushdown) thay vì CSV/JSON.
-- **Structured Streaming**: xử lý stream với cùng API.
+**Driver, executor, job, stage, task**
+- **Driver** lập kế hoạch; **executor** chạy **task** trên partition. Một **action** (count, write) kích hoạt **job**, chia thành **stage** tại ranh giới **shuffle**, mỗi stage gồm nhiều **task** (1 task/partition).
+
+**Lazy evaluation và narrow vs wide**
+- **Transformation** (filter, select) là **lazy**; chỉ **action** mới chạy. **Narrow** (filter/map): không cần dữ liệu từ partition khác. **Wide** (groupBy, join, repartition): **shuffle** dữ liệu qua mạng và đĩa → tốn kém.
+
+**Catalyst và Tungsten**
+- **Catalyst** tối ưu logic (predicate/projection pushdown, đổi thứ tự join) và chọn **kế hoạch vật lý**; **Tungsten** quản lý bộ nhớ/codegen. Ưu tiên **DataFrame/SQL** hơn RDD và hạn chế **Python UDF** (chậm, chặn tối ưu); dùng hàm built-in/Pandas UDF.
+
+**Join strategy**
+- **Broadcast hash join**: bảng nhỏ (< `spark.sql.autoBroadcastJoinThreshold`, mặc định ~10 MB) **gửi tới mọi executor** → **không shuffle** bảng lớn. **Sort-merge join**: cả hai lớn → shuffle + sort. Dùng hint `broadcast()` khi biết bảng nhỏ.
+
+**Partition và `spark.sql.shuffle.partitions`**
+- Mặc định **200** partition sau shuffle: quá ít → task lớn, spill; quá nhiều → overhead. Mục tiêu partition **~100–200 MB**. **AQE** (Adaptive Query Execution) tự gộp partition nhỏ, xử lý skew join, đổi chiến lược join lúc chạy.
+
+**Data skew**
+- Một vài key chiếm phần lớn dữ liệu → **một task chạy rất lâu** trong khi phần còn lại xong. Cách xử lý: **AQE skew join**, **salting** (thêm hậu tố ngẫu nhiên vào key), **broadcast**, lọc key nóng riêng.
+
+**Cache/persist, coalesce vs repartition**
+- `cache()` khi **tái sử dụng** DataFrame nhiều lần; nhớ `unpersist`. **`coalesce(n)`** giảm partition **không shuffle**; **`repartition(n)`** shuffle, cân bằng lại; ghi file: cẩn thận **small files**.
 
 ```python
-df = spark.read.parquet("s3://lake/orders")
-res = df.filter("dt >= '2026-01-01'").groupBy("country").sum("amount")
-res.write.mode("overwrite").parquet("s3://lake/agg")
+orders = spark.read.parquet("s3://lake/orders")
+dims   = spark.read.parquet("s3://lake/dim_product")
+res = (orders.join(F.broadcast(dims), "product_id")      # bảng nhỏ -> không shuffle bảng lớn
+             .where("order_date >= '2026-11-01'")
+             .groupBy("category").agg(F.sum("amount").alias("rev")))
+res.write.mode("overwrite").parquet("s3://lake/gold/rev_by_cat")
 ```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    D["Driver: build DAG"] --> S1["Stage 1: narrow ops"]
-    S1 -->|shuffle| S2["Stage 2: groupBy / join"]
-    S2 --> E["Executors write output"]
+    DR["Driver: Catalyst plan"] --> S1["Stage 1: scan + filter (narrow)"]
+    S1 -->|"Shuffle"| S2["Stage 2: join / groupBy (wide)"]
+    S2 --> EX1["Executor: task / partition"]
+    S2 --> EX2["Executor: task / partition"]
+    EX1 --> OUT[("Parquet / Delta")]
+    EX2 --> OUT
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- **Lọc và chọn cột sớm**; dùng Parquet và **partition theo cột lọc**.
-- Bảng nhỏ → **broadcast join**.
-- Trade-off: **song song cao** vs **overhead shuffle/lập lịch**.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Join bảng lớn với bảng nhỏ | Broadcast join |
+| Một vài key quá nóng | AQE skew / salting |
+| Task spill ra đĩa, OOM | Tăng partition/memory, giảm dữ liệu per task |
+| Tái sử dụng DataFrame nhiều lần | `cache()` / `persist()` |
+| Giảm số file khi ghi | `coalesce` (không shuffle) |
+| Logic tuỳ biến nặng | Pandas UDF, tránh Python UDF thường |
+
+- **Được gì:** mở rộng ngang, API cấp cao, tối ưu tự động. **Mất gì:** shuffle tốn mạng/đĩa, tuning partition/memory, chi phí cluster, khó debug skew.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Data skew**: một key chiếm phần lớn dữ liệu làm một task chạy rất lâu; dùng salting hoặc AQE.
-- **Small files**: quá nhiều file nhỏ làm chậm đọc.
-- `collect()` bản lớn về driver gây **OOM**.
-- **UDF Python** chậm hơn hàm built-in.
-- Quá ít partition → không tận dụng cluster; quá nhiều → overhead.
-- Interview trap: "Vì sao job chậm dù cluster lớn?" → kiểm tra **shuffle và skew** trong Spark UI.
+- **Job chậm vì một task kéo dài → data skew → AQE skew join, salting, lọc key nóng**.
+- **OOM/spill ra đĩa → partition quá lớn hoặc ít → tăng `shuffle.partitions`, bật AQE**.
+- **Join bảng nhỏ vẫn shuffle → vượt ngưỡng/không hint → `broadcast()`**.
+- **Nhiều file nhỏ khi ghi → quá nhiều partition → `coalesce`/compaction**.
+- **Python UDF chậm → tuần tự hoá từng dòng, chặn tối ưu → hàm built-in/Pandas UDF**.
+- **Cache tràn bộ nhớ → quên `unpersist` → chỉ cache khi tái dùng, giải phóng sau**.
+- Interview trap: "narrow vs wide transformation?" → **wide gây shuffle**; "vì sao job có một task chậm?" → **data skew**; "broadcast join làm gì?" → **gửi bảng nhỏ tới mọi executor, tránh shuffle bảng lớn**.
 
 ## 6. Search Hooks
 
-- `Spark shuffle data skew` — shuffle và lệch dữ liệu.
-- `Spark broadcast join vs sort merge join` — chọn thuật toán join.
+- `Spark shuffle partitions` — dịch chuyển dữ liệu giữa partition và cách tinh chỉnh.
 - `Spark Catalyst optimizer` — tối ưu kế hoạch truy vấn.
-- `Spark adaptive query execution AQE` — tự tối ưu lúc chạy.
-- `Spark partitioning` — chia dữ liệu để song song hoá.
+- `Spark data skew salting` — xử lý key lệch.
+- `Spark broadcast join` — join không shuffle cho bảng nhỏ.
+- `Spark Adaptive Query Execution AQE` — tối ưu lúc chạy.
+- `Spark cache persist` — lưu DataFrame tái sử dụng.

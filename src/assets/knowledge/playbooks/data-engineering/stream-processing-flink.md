@@ -1,48 +1,80 @@
 ## 1. Core Concept
 
-**Apache Flink** là engine **stateful stream processing**: xử lý dòng sự kiện vô hạn với **trạng thái** (đếm, join, cửa sổ) bền vững, độ trễ thấp và ngữ nghĩa **exactly-once** trong phạm vi framework. Nó là bước tiếp theo sau khi hiểu batch vs stream và Kafka: *cách thực sự tính toán trên stream mà không mất hay nhân đôi dữ liệu khi có lỗi.* Mental model: *một đồ thị toán tử chạy liên tục, mỗi toán tử giữ state riêng theo key, và hệ thống định kỳ **chụp ảnh nhất quán** toàn bộ để phục hồi.*
+**Apache Flink** là engine **stream processing có trạng thái (stateful)**, xử lý **từng sự kiện** với độ trễ mili-giây và đảm bảo **exactly-once cho state** nhờ **checkpoint**. Nó giải quyết bài toán tính toán liên tục trên dòng dữ liệu vô hạn (đếm theo cửa sổ, join luồng, phát hiện gian lận) mà vẫn **phục hồi chính xác sau sự cố**.
+
+**Mental model:** Flink như **dây chuyền có ghi chú trạng thái**: mỗi trạm nhớ thông tin (state) về những gì đã thấy, và định kỳ **chụp ảnh toàn bộ dây chuyền (checkpoint)**. Khi trạm hỏng, quay về **ảnh gần nhất** và phát lại sự kiện từ vị trí đã ghi trong ảnh, nên kết quả như chưa từng hỏng.
 
 ## 2. How It Works
 
-- **Mô hình**: **source → toán tử (map/filter/keyBy/window/join) → sink**, chạy song song theo **parallelism**; `keyBy(key)` chia dữ liệu theo key để mỗi key được xử lý bởi đúng một instance (cùng **keyed state**).
-- **State backend**: state trong bộ nhớ hoặc **RocksDB** (trên đĩa, hỗ trợ state rất lớn).
-- **Event time & watermark**: xử lý theo thời gian xảy ra sự kiện; watermark báo "đã thấy hết dữ liệu đến T" để đóng **window** (tumbling, sliding, session); **allowed lateness** và **side output** cho dữ liệu muộn.
-- **Checkpoint**: định kỳ chèn **barrier** vào dòng dữ liệu (thuật toán **Chandy–Lamport**) để chụp **snapshot nhất quán** của mọi state và **offset nguồn** vào lưu trữ bền (S3/HDFS). Lỗi → quay về checkpoint gần nhất và **phát lại** từ offset đó.
-- **Exactly-once end-to-end**: checkpoint + **sink hỗ trợ transaction hoặc idempotent** (**two-phase commit sink**, ví dụ Kafka transaction), commit khi checkpoint hoàn tất.
-- **Savepoint**: snapshot do người vận hành kích hoạt để **nâng cấp/đổi code/đổi parallelism** mà giữ state.
-- **So sánh**: **Kafka Streams** (thư viện nhúng, gắn Kafka, đơn giản), **Spark Structured Streaming** (micro-batch, hệ sinh thái Spark), **Flink** (true streaming, state lớn, event time mạnh).
+**Dataflow và parallelism**
+- Job là đồ thị **source → operator → sink**, chia thành nhiều **subtask song song**. `keyBy(key)` phân phối sự kiện cùng key tới **cùng subtask**, cho phép **keyed state** cục bộ.
+
+**State và state backend**
+- **Keyed state** (ValueState, MapState…) lưu theo key. **HashMap backend**: state trong heap, nhanh nhưng giới hạn RAM. **RocksDB backend**: state trên **đĩa cục bộ** (hàng trăm GB–TB), chậm hơn một chút, hỗ trợ **incremental checkpoint**.
+
+**Checkpoint và barrier**
+- Flink chèn **checkpoint barrier** vào dòng; khi operator nhận barrier, nó **snapshot state** lên storage bền (S3/HDFS), cùng **offset nguồn** (Kafka). Khi lỗi: **restore state + rewind source offset** → xử lý lại từ điểm chụp. Đây là **exactly-once cho state**; để **end-to-end exactly-once** cần sink **transactional/idempotent** (two-phase commit, Kafka transactions).
+- **Savepoint** = checkpoint **thủ công, bền**, dùng để **nâng cấp job/đổi parallelism** rồi khởi động lại từ đúng trạng thái.
+
+**Event time, window, watermark**
+- Dùng **event time**; **watermark** báo tiến độ để đóng **window** (tumbling/sliding/session). `allowedLateness` + **side output** xử lý dữ liệu đến trễ.
+
+**Backpressure**
+- Khi sink/operator chậm, hệ thống **truyền áp lực ngược** làm nguồn đọc chậm lại (không mất dữ liệu). Dấu hiệu: buffer đầy, checkpoint kéo dài. Xử lý: tìm **operator nút cổ chai**, tăng parallelism, tối ưu I/O.
+
+**Join và state TTL**
+- Stream–stream join giữ state cả hai phía → **state phình vô hạn** nếu không có **state TTL**/interval join. Cấu hình TTL cho state không còn cần.
+
+```java
+env.enableCheckpointing(60_000);                 // chụp mỗi 60s
+env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+env.setStateBackend(new EmbeddedRocksDBStateBackend(true)); // incremental
+stream.keyBy(Order::getUserId)
+      .window(TumblingEventTimeWindows.of(Time.minutes(5)))
+      .allowedLateness(Time.minutes(1))
+      .sum("amount");
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    K[(Kafka source)] --> M[map / filter]
-    M --> KB["keyBy(user_id)"]
-    KB --> W["window + keyed state"]
-    W --> S[("Sink: transactional")]
-    W -.->|"periodic checkpoint barriers"| CK[("Checkpoint store S3")]
+    K[("Kafka source")] --> OP["keyBy + window + keyed state"]
+    OP --> SK["Sink transactional"]
+    JM["JobManager: kích hoạt checkpoint"] -.->|barrier| K
+    OP -->|snapshot| CP[("Checkpoint: S3 / HDFS")]
+    CP -.->|"restore khi lỗi"| OP
+    OP -.->|"backpressure"| K
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Cần **độ trễ thấp + state lớn + event time chính xác** (gian lận, giám sát thời gian thực) → Flink; xử lý đơn giản gắn Kafka → Kafka Streams; đã có Spark và chấp nhận vài giây → Structured Streaming.
-- Luôn đặt **`uid`** cho mỗi toán tử để có thể khôi phục state sau nâng cấp.
-- Trade-off: **Exactly-once & độ trễ thấp** đổi lấy **độ phức tạp vận hành** (state, checkpoint, backpressure).
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Độ trễ mili-giây, state phức tạp | Flink |
+| State lớn (>GB) | RocksDB + incremental checkpoint |
+| State nhỏ, cần tốc độ | HashMap backend |
+| Nâng cấp job không mất state | Savepoint |
+| End-to-end exactly-once | Sink transactional/idempotent |
+| Gần real-time, đã dùng Spark | Spark Structured Streaming |
+
+- **Được gì:** độ trễ thấp, state mạnh, phục hồi chính xác. **Mất gì:** vận hành phức tạp (state, checkpoint, watermark), chi phí hạ tầng 24/7, đường cong học.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **State phình không kiểm soát** (key mới liên tục) → đặt **TTL** cho state, dọn key cũ.
-- **Watermark kẹt** vì một partition nguồn **idle** → cửa sổ không bao giờ đóng; cấu hình **idleness**.
-- **Data skew / hot key** làm một task quá tải trong khi các task khác rảnh.
-- **Đổi hoặc bỏ `uid`/schema state** làm không khôi phục được savepoint.
-- **Sink không idempotent** vẫn ghi trùng dù engine "exactly-once".
-- Interview trap: "Flink exactly-once nghĩa là mỗi sự kiện chỉ xử lý một lần?" → **hiệu ứng lên state/sink như một lần**; sự kiện có thể được xử lý lại nội bộ sau khi phục hồi.
+- **Checkpoint chậm/thất bại liên tục → backpressure hoặc state quá lớn → RocksDB incremental, giảm state, tăng parallelism**.
+- **State phình vô hạn → join/keyed state không dọn → state TTL, interval join**.
+- **Kết quả trùng ở sink dù Flink exactly-once → sink không transactional → two-phase commit/idempotent sink**.
+- **Không nâng cấp được job → không có savepoint/uid operator → đặt `uid` cho operator, dùng savepoint**.
+- **Cửa sổ không đóng → watermark kẹt do partition idle → cấu hình idleness**.
+- **Hot key làm một subtask quá tải → key lệch → thêm salt/hai pha aggregate**.
+- Interview trap: "exactly-once của Flink?" → **checkpoint (state) + sink transactional (end-to-end)**; "savepoint vs checkpoint?" → **savepoint thủ công để nâng cấp, checkpoint tự động để phục hồi**; "backpressure là gì?" → **áp lực ngược làm nguồn chậm lại, không mất dữ liệu**.
 
 ## 6. Search Hooks
 
-- `Apache Flink checkpoints exactly-once` — cơ chế snapshot và đảm bảo exactly-once.
-- `Chandy-Lamport snapshot barriers` — thuật toán chụp snapshot nhất quán trên dòng dữ liệu.
-- `Flink watermarks idle sources` — đóng cửa sổ khi có nguồn không phát dữ liệu.
-- `Flink state backend RocksDB` — lưu state lớn trên đĩa.
-- `two-phase commit sink Kafka transactions` — sink transaction để đạt exactly-once.
-- `Kafka Streams vs Flink vs Spark Structured Streaming` — chọn engine stream processing.
+- `Flink checkpointing exactly-once` — snapshot state để phục hồi chính xác.
+- `Flink state backends RocksDB` — nơi lưu state và đánh đổi.
+- `Flink savepoints` — snapshot thủ công để nâng cấp job.
+- `Flink watermarks event time` — cửa sổ theo event time.
+- `Flink backpressure` — cơ chế truyền áp lực ngược.
+- `Flink state TTL` — dọn state không còn cần.

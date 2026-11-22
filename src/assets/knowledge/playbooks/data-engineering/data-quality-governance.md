@@ -1,48 +1,85 @@
 ## 1. Core Concept
 
-Pipeline chạy xanh không có nghĩa dữ liệu **đúng**. **Data quality** là mức độ dữ liệu **đáng tin để ra quyết định**; **data governance** là tập luật, vai trò và công cụ để dữ liệu **có chủ sở hữu, truy vết được, bảo mật và tuân thủ**. Mental model: *dữ liệu là một sản phẩm có hợp đồng — người tạo chịu trách nhiệm chất lượng tại nguồn, người dùng được bảo đảm bằng kiểm thử và cảnh báo tự động.*
+**Data quality** đảm bảo dữ liệu **đúng, đủ, mới, nhất quán** trước khi người dùng ra quyết định; **data governance** quy định **ai sở hữu, ai được truy cập, dữ liệu đi đâu** (lineage, catalog, PII, tuân thủ). Hai thứ này giải quyết vấn đề "**số liệu sai mà không ai biết**" — lỗi dữ liệu thường **âm thầm** và đắt hơn lỗi code vì lan sang báo cáo, ML và quyết định kinh doanh.
+
+**Mental model:** pipeline dữ liệu như **nhà máy nước**: quality checks là **trạm kiểm tra chất lượng nước** ở mỗi công đoạn; governance là **sổ đăng ký đường ống + quy định ai được mở van**. Không có trạm kiểm tra, nước bẩn chảy đến tận vòi mới có người phát hiện.
 
 ## 2. How It Works
 
-- **Chiều chất lượng**: **completeness** (đủ), **accuracy** (đúng), **consistency** (nhất quán giữa hệ thống), **timeliness/freshness** (kịp thời), **uniqueness** (không trùng), **validity** (đúng định dạng/khoảng giá trị).
-- **Kiểm thử dữ liệu**: **schema** (cột/kiểu), `not_null`, `unique`, `accepted_values`, **referential integrity**, **freshness** (dữ liệu mới nhất không quá N giờ), **volume anomaly** (số dòng đổi bất thường), **distribution drift** (phân bố giá trị lệch). Công cụ: **dbt tests**, **Great Expectations**, **Soda**.
-- **Chặn và cách ly**: bản ghi vi phạm đi vào **quarantine/dead-letter** thay vì làm hỏng toàn bộ; quyết định **fail fast** (dừng pipeline) hay **warn** theo mức nghiêm trọng.
-- **Data contract**: thoả thuận giữa **producer** và **consumer** về schema, ngữ nghĩa, SLA; thay đổi phá vỡ phải được thông báo/kiểm tra trong CI.
-- **Governance**: **ownership** (ai chịu trách nhiệm từng dataset), **catalog** (tìm và hiểu dữ liệu), **lineage** (dữ liệu đi từ đâu tới đâu, để đánh giá tác động), **phân loại dữ liệu**.
-- **Bảo mật & tuân thủ**: **masking/tokenization** PII, **column/row-level security**, **retention** theo chính sách, hỗ trợ **quyền xoá (GDPR)**, audit truy cập.
-- **Data observability**: giám sát liên tục freshness, volume, schema và phân bố để **phát hiện sự cố trước người dùng**.
+**Các chiều chất lượng**
+- **Completeness** (không thiếu), **Validity** (đúng định dạng/miền giá trị), **Uniqueness** (không trùng khoá), **Freshness/Timeliness** (đủ mới), **Consistency** (nhất quán giữa hệ thống), **Accuracy** (khớp thực tế).
+
+**Kiểm tra theo lớp**
+- **Schema checks** (kiểu, cột bắt buộc), **constraint checks** (not null, unique, giá trị cho phép, khoá ngoại), **volume/anomaly** (số dòng bất thường), **freshness** (dữ liệu mới nhất không quá N giờ), **reconciliation** (tổng khớp với nguồn). Công cụ: **dbt tests**, **Great Expectations**, **Soda**, Deequ.
+
+**Shift-left và Data Contract**
+- **Shift-left**: kiểm tra **sớm** (tại nguồn/ingest) thay vì cuối chuỗi. **Data contract**: thoả thuận bằng văn bản giữa **producer và consumer** về schema, ngữ nghĩa, SLA, chủ sở hữu; thay đổi phá vỡ phải qua review → ngăn nguồn đổi cột làm hỏng downstream.
+
+**Lineage và Catalog**
+- **Lineage**: bảng/cột này **đến từ đâu, đi đâu** → đánh giá **tác động** khi đổi/sửa và **truy nguyên** số liệu sai. **Data catalog** (DataHub, Amundsen, Glue/Unity Catalog): tìm dữ liệu, mô tả, owner, mức độ tin cậy.
+
+**PII và bảo mật**
+- Phân loại **PII**, **mask/hash/tokenize**, **column-level security**, **row-level security**, **mã hoá**, **audit log**, **retention/xoá theo yêu cầu** (GDPR "right to be forgotten"). Nguyên tắc **least privilege** và **ownership** rõ ràng.
+
+**Xử lý khi kiểm tra thất bại**
+- **Fail fast** (dừng pipeline để không lan dữ liệu xấu) cho lỗi nghiêm trọng; **quarantine** (đưa bản ghi lỗi sang bảng riêng) cho lỗi cục bộ; **cảnh báo** cho lỗi nhẹ. Phân mức **severity**.
+
+```yaml
+# dbt schema tests: kiểm tra ngay trong pipeline transform
+models:
+  - name: orders
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: status
+        tests:
+          - accepted_values: {values: [placed, paid, shipped, cancelled]}
+      - name: customer_id
+        tests:
+          - relationships: {to: ref('customers'), field: customer_id}
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
 flowchart LR
-    SRC[Source] --> V{Validate: contract + tests}
-    V -->|pass| P[Publish to consumers]
-    V -->|fail| Q[Quarantine + alert owner]
-    P --> L[Catalog + lineage]
-    P --> OBS[Observability: freshness, volume, drift]
+    SRC["Nguồn + data contract"] --> ING["Ingest: schema + freshness check"]
+    ING --> TF["Transform: dbt tests"]
+    TF --> OK{"Đạt?"}
+    OK -->|Có| MART[("Mart / BI / ML")]
+    OK -->|"Lỗi nặng"| STOP["Fail fast + cảnh báo"]
+    OK -->|"Lỗi cục bộ"| QU["Quarantine"]
+    MART -.-> LIN["Catalog + Lineage"]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- **Kiểm tra càng gần nguồn càng tốt**; sửa ở hạ nguồn chỉ che vấn đề và lặp lại ở mọi consumer.
-- Bắt đầu với vài kiểm thử **giá trị cao** (khoá duy nhất, not null, freshness, tổng khớp nguồn) trên dataset quan trọng, rồi mở rộng.
-- Trade-off: **kiểm tra chặt (fail fast)** bảo vệ chất lượng nhưng có thể **làm chậm/ngừng** giao hàng; **cảnh báo mềm** giữ dòng chảy nhưng rủi ro dữ liệu xấu lọt qua.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Ngăn nguồn đổi schema phá downstream | Data contract |
+| Bắt lỗi sớm | Shift-left checks tại ingest |
+| Lỗi nghiêm trọng làm báo cáo sai | Fail fast |
+| Vài bản ghi hỏng | Quarantine |
+| Biết tác động khi đổi bảng | Lineage |
+| Dữ liệu nhạy cảm | Mask/hash/tokenize + RLS/CLS |
+
+- **Được gì:** tin cậy số liệu, phát hiện sớm, tuân thủ. **Mất gì:** thêm chi phí xây/duy trì kiểm tra, quá nhiều cảnh báo gây "alert fatigue", cần văn hoá ownership.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Chỉ kiểm tra ở cuối** (dashboard) thì lỗi đã lan khắp nơi; người dùng là người phát hiện đầu tiên.
-- **Alert fatigue**: quá nhiều kiểm thử nhiễu khiến cảnh báo thật bị bỏ qua.
-- **Thay đổi schema âm thầm** ở nguồn là nguyên nhân phổ biến nhất làm vỡ pipeline và số liệu.
-- **Không có owner** → sự cố không ai xử lý; tài liệu và catalog lỗi thời.
-- **PII lan khắp** các bảng/bản sao làm không thể đáp ứng yêu cầu xoá.
-- Interview trap: "Pipeline thành công nhưng số liệu sai — bạn kiểm tra gì?" → **freshness, volume, schema, trùng lặp, đối chiếu tổng với nguồn, thay đổi ở upstream**.
+- **Báo cáo sai âm thầm → không có kiểm tra → test unique/not_null/freshness ngay trong pipeline**.
+- **Downstream vỡ khi nguồn đổi cột → không có hợp đồng → data contract và review thay đổi phá vỡ**.
+- **Không biết ai chịu trách nhiệm khi lỗi → thiếu ownership → gán owner trong catalog**.
+- **Quá nhiều cảnh báo bị bỏ qua → không phân severity → phân mức, chỉ page lỗi nghiêm trọng**.
+- **Rò rỉ PII ở bảng phân tích → không mask → phân loại PII, mask/CLS, audit**.
+- **Dữ liệu cũ nhưng pipeline "xanh" → chỉ kiểm tra thành công job, không kiểm tra freshness → freshness SLA**.
+- Interview trap: "data quality gồm những chiều nào?" → **completeness, validity, uniqueness, freshness, consistency, accuracy**; "data contract là gì?" → **thoả thuận schema/SLA producer–consumer**; "lineage dùng làm gì?" → **đánh giá tác động và truy nguyên lỗi**.
 
 ## 6. Search Hooks
 
-- `data quality dimensions completeness accuracy timeliness` — các chiều đánh giá chất lượng dữ liệu.
-- `dbt tests Great Expectations Soda` — công cụ kiểm thử dữ liệu.
-- `data contracts producer consumer` — hợp đồng dữ liệu giữa bên tạo và bên dùng.
-- `data lineage data catalog` — truy vết nguồn gốc và tìm hiểu dữ liệu.
-- `data observability freshness volume drift` — giám sát liên tục sức khoẻ dữ liệu.
-- `PII masking GDPR right to erasure` — bảo vệ dữ liệu cá nhân và quyền xoá.
+- `data quality dimensions` — các chiều chất lượng dữ liệu.
+- `data contracts` — thoả thuận schema và SLA giữa producer và consumer.
+- `Great Expectations dbt tests` — công cụ kiểm tra chất lượng trong pipeline.
+- `data lineage catalog` — nguồn gốc dữ liệu và danh mục.
+- `PII masking tokenization` — bảo vệ dữ liệu cá nhân.
+- `data observability freshness volume` — giám sát độ mới và khối lượng.

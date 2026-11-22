@@ -2280,63 +2280,63 @@
     "playbookId": "stream-processing-flink",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Flink \"exactly-once\" nghĩa chính xác là gì?",
+    "question": "Job Flink bị lỗi giữa chừng. Cách nào giúp phục hồi chính xác trạng thái?",
     "options": [
-      "Mỗi sự kiện chỉ được xử lý đúng một lần về mặt vật lý",
-      "Hiệu ứng lên state (và sink hỗ trợ) như xử lý một lần dù có phục hồi và phát lại",
-      "Không bao giờ có checkpoint",
-      "Không cần sink idempotent"
+      "Chạy lại từ đầu",
+      "Restore từ checkpoint gần nhất và rewind offset nguồn",
+      "Bỏ qua dữ liệu",
+      "Tăng parallelism"
     ],
     "answer": [
       1
     ],
-    "explanation": "Sự kiện có thể được xử lý lại nội bộ sau lỗi nhưng kết quả quan sát được như một lần."
+    "explanation": "Checkpoint lưu state cùng offset nguồn. Chạy lại từ đầu tốn kém và có thể trùng."
   },
   {
     "id": "stream-processing-flink-02",
     "playbookId": "stream-processing-flink",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cửa sổ không bao giờ đóng vì một partition Kafka không có dữ liệu. Giải pháp?",
+    "question": "State của job join hai luồng phình mãi. Nguyên nhân và cách xử lý?",
     "options": [
-      "Tăng parallelism",
-      "Cấu hình idleness cho nguồn để watermark vẫn tiến",
-      "Xoá checkpoint",
-      "Dùng processing time cho mọi thứ"
+      "Do mạng",
+      "Không có state TTL hay interval join",
+      "Do savepoint",
+      "Do Kafka"
     ],
     "answer": [
       1
     ],
-    "explanation": "Partition idle làm watermark kẹt ở giá trị cũ."
+    "explanation": "State phải được dọn bằng TTL/interval join; savepoint không làm phình state."
   },
   {
     "id": "stream-processing-flink-03",
     "playbookId": "stream-processing-flink",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Vì sao cần đặt uid cho các toán tử Flink?",
+    "question": "Cần nâng cấp job mà không mất state. Dùng gì?",
     "options": [
-      "Để tăng tốc độ",
-      "Để khôi phục đúng state từ savepoint sau khi đổi code",
-      "Để mã hoá state",
-      "Để giảm checkpoint"
+      "Checkpoint tự động",
+      "Savepoint rồi khởi động lại từ savepoint",
+      "Xoá state",
+      "Tăng RAM"
     ],
     "answer": [
       1
     ],
-    "explanation": "Không có uid ổn định, Flink không map được state cũ vào toán tử mới."
+    "explanation": "Savepoint là snapshot thủ công dùng để nâng cấp; checkpoint tự động chủ yếu để phục hồi."
   },
   {
     "id": "stream-processing-flink-04",
     "playbookId": "stream-processing-flink",
     "type": "explain",
     "difficulty": 3,
-    "question": "Checkpoint của Flink hoạt động thế nào để phục hồi sau lỗi?",
-    "modelAnswer": "Flink định kỳ chèn barrier vào dòng dữ liệu để chụp snapshot nhất quán của state mọi toán tử cùng offset của nguồn rồi lưu bền. Khi có lỗi, job quay về checkpoint gần nhất, khôi phục state và đọc lại từ offset đã lưu, nên không mất dữ liệu. Kết hợp sink transaction hoặc idempotent để hiệu ứng ra ngoài chỉ xảy ra một lần.",
+    "question": "Giải thích exactly-once end-to-end trong Flink.",
+    "modelAnswer": "Checkpoint đảm bảo exactly-once cho state của Flink. Để đầu ra cũng exactly-once cần sink transactional (two-phase commit) hoặc idempotent, vì sink ngoài có thể nhận ghi trùng khi replay sau lỗi.",
     "keyPoints": [
-      "Barrier chụp snapshot nhất quán",
-      "Khôi phục state và offset",
-      "Cần sink transaction/idempotent"
+      "Checkpoint cho state",
+      "Sink transactional/idempotent",
+      "Replay sau lỗi gây trùng"
     ]
   },
   {
@@ -2344,63 +2344,63 @@
     "playbookId": "change-data-capture",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Vì sao CDC log-based tốt hơn polling cột updated_at?",
+    "question": "Cần đồng bộ cả thao tác xoá sang kho phân tích gần real-time. Cách phù hợp?",
     "options": [
-      "Dễ cài hơn",
-      "Bắt được cả delete và không bỏ lỡ thay đổi giữa hai lần poll, ít tải lên DB",
-      "Không cần DB",
-      "Luôn nhanh hơn 10 lần"
+      "Polling updated_at",
+      "Log-based CDC (Debezium)",
+      "Dump hằng đêm",
+      "Dual-write"
     ],
     "answer": [
       1
     ],
-    "explanation": "Log chứa mọi thay đổi theo thứ tự commit kể cả xoá."
+    "explanation": "Polling không thấy xoá cứng; log-based CDC bắt đầy đủ."
   },
   {
     "id": "change-data-capture-02",
     "playbookId": "change-data-capture",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Connector Debezium chết nhiều ngày với PostgreSQL replication slot. Rủi ro lớn nhất?",
+    "question": "Đĩa DB PostgreSQL đầy dần sau khi connector Debezium dừng. Nguyên nhân?",
     "options": [
-      "Mất bảng",
-      "WAL tích tụ làm đầy đĩa của DB vì slot giữ log chưa được tiêu thụ",
-      "DB tự khoá",
-      "Mất mật khẩu"
+      "Binlog",
+      "Replication slot giữ WAL chưa được tiêu thụ",
+      "Index",
+      "Autovacuum"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần giám sát lag của slot và có cảnh báo."
+    "explanation": "Slot giữ WAL cho tới khi connector xác nhận; cần giám sát lag slot."
   },
   {
     "id": "change-data-capture-03",
     "playbookId": "change-data-capture",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Consumer của CDC cần xử lý ra sao khi nhận trùng event?",
+    "question": "Consumer nhận trùng sự kiện CDC. Cách xử lý?",
     "options": [
-      "Bỏ qua mọi lỗi",
-      "Dùng sink idempotent (upsert theo khoá)",
-      "Xoá toàn bộ bảng",
-      "Tắt CDC"
+      "Tắt retry",
+      "Upsert idempotent theo primary key",
+      "Thêm partition",
+      "Giảm replication"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giao nhận at-least-once nên cần idempotent."
+    "explanation": "CDC thường at-least-once nên consumer phải idempotent."
   },
   {
     "id": "change-data-capture-04",
     "playbookId": "change-data-capture",
     "type": "explain",
     "difficulty": 2,
-    "question": "CDC log-based hoạt động thế nào, và vì sao cần bước snapshot ban đầu?",
-    "modelAnswer": "CDC đọc transaction log của DB (WAL hoặc binlog) và phát mỗi thay đổi thành event có before, after và vị trí log. Snapshot ban đầu đọc trạng thái hiện tại của bảng để consumer có dữ liệu nền, rồi chuyển sang streaming từ đúng vị trí log đã snapshot nên không mất hay trùng thay đổi nào.",
+    "question": "So sánh polling và log-based CDC.",
+    "modelAnswer": "Polling truy vấn updated_at định kỳ nên bỏ sót xoá cứng và thay đổi giữa hai lần poll, lại tải thêm lên DB. Log-based CDC đọc WAL/binlog nên bắt đầy đủ insert/update/delete theo thứ tự commit, độ trễ thấp và ít tải.",
     "keyPoints": [
-      "Đọc WAL/binlog, phát event before/after",
-      "Snapshot cho trạng thái nền",
-      "Chuyển sang streaming từ đúng vị trí log"
+      "Polling bỏ sót xoá",
+      "Log-based đầy đủ và theo thứ tự",
+      "Tải DB thấp hơn"
     ]
   },
   {
@@ -2408,63 +2408,63 @@
     "playbookId": "data-quality-governance",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Kiểm thử chất lượng dữ liệu nên đặt ở đâu hiệu quả nhất?",
+    "question": "Báo cáo sai âm thầm dù pipeline thành công. Biện pháp đầu tiên?",
     "options": [
-      "Chỉ ở dashboard cuối cùng",
-      "Càng gần nguồn càng tốt",
-      "Không cần",
-      "Chỉ khi có khiếu nại"
+      "Thêm tests (unique, not_null, freshness) vào pipeline",
+      "Tăng RAM",
+      "Đổi BI",
+      "Xoá báo cáo"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Lỗi phát hiện sớm không lan ra mọi consumer hạ nguồn."
+    "explanation": "Job xanh không bằng dữ liệu đúng; cần kiểm tra chất lượng."
   },
   {
     "id": "data-quality-governance-02",
     "playbookId": "data-quality-governance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Data contract giữa producer và consumer dùng để làm gì?",
+    "question": "Nguồn đổi tên cột làm downstream vỡ. Giải pháp tổ chức?",
     "options": [
-      "Mã hoá dữ liệu",
-      "Thoả thuận schema, ngữ nghĩa và SLA để thay đổi phá vỡ bị phát hiện sớm",
-      "Tăng tốc truy vấn",
-      "Xoá dữ liệu cũ"
+      "Data contract và review thay đổi phá vỡ",
+      "Tăng retry",
+      "Bỏ schema",
+      "Cache"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Thay đổi schema âm thầm là nguyên nhân phổ biến làm vỡ pipeline."
+    "explanation": "Contract ràng buộc producer và consumer."
   },
   {
     "id": "data-quality-governance-03",
     "playbookId": "data-quality-governance",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Pipeline chạy thành công nhưng số liệu doanh thu cao bất thường. Bạn kiểm tra gì đầu tiên?",
+    "question": "Chỉ vài bản ghi hỏng trong lô lớn. Xử lý hợp lý?",
     "options": [
-      "Chỉ màu dashboard",
-      "Freshness, volume, trùng lặp, schema và đối chiếu tổng với nguồn",
-      "Khởi động lại máy chủ",
-      "Xoá cache"
+      "Dừng toàn bộ",
+      "Quarantine bản ghi lỗi và cảnh báo",
+      "Bỏ qua",
+      "Xoá bảng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Thành công kỹ thuật không đồng nghĩa với đúng nghiệp vụ."
+    "explanation": "Fail fast dành cho lỗi nghiêm trọng; lỗi cục bộ nên quarantine."
   },
   {
     "id": "data-quality-governance-04",
     "playbookId": "data-quality-governance",
     "type": "explain",
     "difficulty": 2,
-    "question": "Data quality gồm những chiều nào và làm sao tự động kiểm tra?",
-    "modelAnswer": "Các chiều gồm completeness, accuracy, consistency, timeliness, uniqueness và validity. Tự động kiểm tra bằng test schema, not_null, unique, accepted_values, referential integrity, freshness, volume anomaly và phân bố bằng dbt tests, Great Expectations hoặc Soda, kèm quarantine bản ghi lỗi và cảnh báo cho owner.",
+    "question": "Lineage giúp gì cho data governance?",
+    "modelAnswer": "Lineage cho biết dữ liệu đến từ đâu và đi đâu, giúp đánh giá tác động khi đổi hoặc sửa bảng và truy nguyên nguyên nhân khi số liệu sai.",
     "keyPoints": [
-      "Sáu chiều chất lượng",
-      "Tests tự động trong pipeline",
-      "Quarantine và cảnh báo owner"
+      "Đánh giá tác động",
+      "Truy nguyên lỗi",
+      "Hỗ trợ audit"
     ]
   },
   {
@@ -10159,29 +10159,12 @@
     "playbookId": "spark-fundamentals",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Action nào kích hoạt Spark thực thi?",
+    "question": "Join bảng 50 GB với bảng 5 MB. Cách tối ưu?",
     "options": [
-      "filter",
-      "select",
-      "count",
-      "withColumn"
-    ],
-    "answer": [
-      2
-    ],
-    "explanation": "Transformation là lazy; action mới chạy."
-  },
-  {
-    "id": "spark-fundamentals-02",
-    "playbookId": "spark-fundamentals",
-    "type": "mcq",
-    "difficulty": 2,
-    "question": "Một bảng nhỏ join với bảng rất lớn, cách tối ưu?",
-    "options": [
-      "Sort-merge",
+      "Sort-merge join",
       "Broadcast join",
-      "Cartesian",
-      "Repartition 1"
+      "Repartition 1",
+      "Cache cả hai"
     ],
     "answer": [
       1
@@ -10189,33 +10172,50 @@
     "explanation": "Broadcast tránh shuffle bảng lớn."
   },
   {
+    "id": "spark-fundamentals-02",
+    "playbookId": "spark-fundamentals",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Một task chạy rất lâu trong khi các task khác xong sớm. Nguyên nhân?",
+    "options": [
+      "Data skew",
+      "Thiếu RAM driver",
+      "Parquet",
+      "Catalyst"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Một vài key nóng dồn vào một partition."
+  },
+  {
     "id": "spark-fundamentals-03",
     "playbookId": "spark-fundamentals",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Một task chạy hơn các task khác 50 lần. Nguyên nhân khả dĩ?",
+    "question": "Transformation nào gây shuffle?",
     "options": [
-      "Hết đĩa",
-      "Data skew",
-      "Sai schema",
-      "Lỗi mạng"
+      "filter",
+      "groupBy",
+      "select",
+      "map"
     ],
     "answer": [
       1
     ],
-    "explanation": "Một key chiếm đa số dữ liệu."
+    "explanation": "groupBy là wide transformation cần gom theo key."
   },
   {
     "id": "spark-fundamentals-04",
     "playbookId": "spark-fundamentals",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao shuffle là điểm tốn kém nhất của Spark?",
-    "modelAnswer": "Shuffle phải ghi dữ liệu trung gian ra đĩa, truyền qua mạng giữa các executor và gộp lại, nên tốn I/O, mạng và dễ gây skew. Giảm bằng lọc sớm, broadcast join, partition hợp lý và tránh wide transformation thừa.",
+    "question": "Giải thích lazy evaluation và vì sao nó có lợi.",
+    "modelAnswer": "Transformation chỉ dựng kế hoạch, chỉ action mới chạy. Nhờ đó Catalyst có toàn bộ kế hoạch để tối ưu như pushdown, đổi thứ tự join và tránh tính toán thừa.",
     "keyPoints": [
-      "Ghi đĩa và mạng",
-      "Dễ skew",
-      "Giảm wide transformation"
+      "Chỉ action chạy",
+      "Catalyst tối ưu",
+      "Tránh tính thừa"
     ]
   },
   {
@@ -10223,63 +10223,63 @@
     "playbookId": "dbt-analytics-engineering",
     "type": "mcq",
     "difficulty": 1,
-    "question": "dbt thực hiện bước nào của ELT?",
+    "question": "Bảng fact hàng tỷ dòng chỉ thêm dữ liệu mới mỗi ngày. Materialization hợp lý?",
     "options": [
-      "Extract",
-      "Load",
-      "Transform",
-      "Cả ba"
+      "view",
+      "incremental",
+      "ephemeral",
+      "table mỗi lần"
     ],
     "answer": [
-      2
+      1
     ],
-    "explanation": "dbt biến đổi trong warehouse."
+    "explanation": "Incremental chỉ xử lý phần mới."
   },
   {
     "id": "dbt-analytics-engineering-02",
     "playbookId": "dbt-analytics-engineering",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hàm nào tạo phụ thuộc giữa các model?",
+    "question": "ref() trong dbt dùng để làm gì?",
     "options": [
-      "source()",
-      "ref()",
-      "var()",
-      "env_var()"
+      "Tạo phụ thuộc và DAG",
+      "Mã hoá",
+      "Lập lịch",
+      "Tạo index"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "ref xây DAG."
+    "explanation": "ref khai báo phụ thuộc giữa model."
   },
   {
     "id": "dbt-analytics-engineering-03",
     "playbookId": "dbt-analytics-engineering",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Incremental model sinh dòng trùng. Nguyên nhân khả dĩ?",
+    "question": "Incremental model bỏ sót dòng cập nhật muộn. Cách khắc phục?",
     "options": [
-      "Thiếu unique_key hoặc điều kiện sai",
-      "Dùng view",
-      "Thiếu test",
-      "Tên model dài"
+      "Lookback window và full-refresh định kỳ",
+      "Xoá bảng",
+      "Tăng worker",
+      "Dùng view"
     ],
     "answer": [
       0
     ],
-    "explanation": "Cần khoá để merge."
+    "explanation": "Lọc chặt theo updated_at bỏ sót cập nhật trễ."
   },
   {
     "id": "dbt-analytics-engineering-04",
     "playbookId": "dbt-analytics-engineering",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao phân lớp staging/intermediate/marts?",
-    "modelAnswer": "Staging làm sạch 1-1 nguồn, intermediate chứa logic tái dùng, marts phục vụ BI. Phân lớp giúp kiểm thử sớm, tái dùng và tách logic nghiệp vụ khỏi dashboard.",
+    "question": "dbt làm phần nào trong ELT và vì sao quan trọng?",
+    "modelAnswer": "dbt chỉ làm phần T bằng SQL trong kho, mang version control, test, tài liệu và CI vào transform nên pipeline đáng tin và dễ cộng tác.",
     "keyPoints": [
-      "Làm sạch sớm",
-      "Tái dùng logic",
-      "Tách khỏi BI"
+      "Chỉ transform",
+      "Test + lineage",
+      "CI/version control"
     ]
   },
   {
@@ -10415,63 +10415,63 @@
     "playbookId": "lakehouse-table-formats",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Time travel dựa trên?",
+    "question": "Data lake thô không ACID. Thành phần nào bổ sung giao dịch?",
     "options": [
-      "Backup",
-      "Giữ snapshot metadata cũ trỏ tới file cũ",
-      "Log ứng dụng",
-      "Cache"
+      "Open table format như Iceberg/Delta",
+      "Thêm node",
+      "CSV",
+      "Index"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Snapshot bất biến."
+    "explanation": "Metadata và commit nguyên tử tạo ACID."
   },
   {
     "id": "lakehouse-table-formats-02",
     "playbookId": "lakehouse-table-formats",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hiện tượng chậm dần do nhiều file nhỏ xử lý bằng?",
+    "question": "Cần cập nhật tần suất cao và chấp nhận đọc chậm hơn. Chọn?",
     "options": [
-      "Compaction",
-      "Thêm cột",
-      "Giảm snapshot",
-      "Đổi engine"
+      "Merge-on-read",
+      "Copy-on-write",
+      "Không cập nhật",
+      "Xoá hết"
     ],
     "answer": [
       0
     ],
-    "explanation": "Gộp file."
+    "explanation": "MoR ghi delta nhỏ, compaction sau."
   },
   {
     "id": "lakehouse-table-formats-03",
     "playbookId": "lakehouse-table-formats",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Upsert từ CDC lên data lake cần?",
+    "question": "Dung lượng storage không giảm dù đã xoá dữ liệu. Nguyên nhân?",
     "options": [
-      "CSV",
-      "Table format hỗ trợ MERGE (Iceberg/Delta/Hudi)",
-      "Parquet thuần",
-      "Cache"
+      "Snapshot cũ còn giữ file",
+      "Do Parquet",
+      "Do nén",
+      "Do partition"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Cần giao dịch trên file."
+    "explanation": "Cần expire snapshots và remove orphan files."
   },
   {
     "id": "lakehouse-table-formats-04",
     "playbookId": "lakehouse-table-formats",
     "type": "explain",
     "difficulty": 2,
-    "question": "Table format khác Parquet thuần ở điểm nào?",
-    "modelAnswer": "Parquet chỉ là định dạng file. Table format thêm lớp metadata có giao dịch ACID, snapshot, schema evolution, partition evolution và row-level update/delete, cho phép nhiều engine truy cập nhất quán.",
+    "question": "Table format đạt ACID như thế nào?",
+    "modelAnswer": "Writer ghi file Parquet mới rồi commit nguyên tử một phiên bản metadata. Hai writer đồng thời dùng optimistic concurrency, ai commit trước thắng, người sau kiểm tra xung đột. Reader đọc snapshot nhất quán nên không bị chặn.",
     "keyPoints": [
-      "Metadata và giao dịch",
-      "Snapshot và time travel",
-      "Row-level update"
+      "Commit metadata nguyên tử",
+      "Optimistic concurrency",
+      "Snapshot isolation"
     ]
   },
   {
