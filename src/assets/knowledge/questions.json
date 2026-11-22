@@ -4607,58 +4607,58 @@
     "playbookId": "data-structures-complexity",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Độ phức tạp trung bình của tìm kiếm trong hash map?",
+    "question": "Một API lọc danh sách 100.000 id khỏi danh sách khác bằng `x in list` trong vòng lặp và chạy rất chậm. Độ phức tạp trung bình của tìm kiếm trong hash set là gì và cách sửa?",
     "options": [
-      "O(n)",
-      "O(1)",
+      "O(n), giữ nguyên",
+      "O(1) trung bình, chuyển sang set",
       "O(log n)",
       "O(n log n)"
     ],
     "answer": [
       1
     ],
-    "explanation": "Trung bình O(1), xấu nhất O(n) khi va chạm nhiều."
+    "explanation": "Chuyển list thành set để mỗi lần kiểm tra O(1) trung bình, tổng O(n+m). Dùng `in` trên list là O(n) mỗi lần nên tổng O(n·m)."
   },
   {
     "id": "data-structures-complexity-02",
     "playbookId": "data-structures-complexity",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần lấy dữ liệu theo thứ tự khoá và truy vấn khoảng. Chọn cấu trúc nào?",
+    "question": "Cần lấy các bản ghi theo thứ tự khoá và truy vấn khoảng (từ 10 đến 50). Chọn cấu trúc nào?",
     "options": [
       "Hash map",
-      "Cây cân bằng (hoặc B-Tree)",
+      "Cây cân bằng hoặc B-Tree",
       "Linked list",
       "Stack"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cây cân bằng có thứ tự và hỗ trợ range query với O(log n)."
+    "explanation": "Cây cân bằng giữ thứ tự và hỗ trợ truy vấn khoảng O(log n). Hash map nhanh theo khoá nhưng không có thứ tự."
   },
   {
     "id": "data-structures-complexity-03",
     "playbookId": "data-structures-complexity",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Một vòng lặp gọi list.contains() trên list lớn mỗi vòng có độ phức tạp tổng?",
+    "question": "Cần lấy 10 bản ghi lớn nhất từ luồng 100 triệu phần tử và bộ nhớ hạn chế. Cách tốt nhất?",
     "options": [
-      "O(n)",
-      "O(n²)",
-      "O(log n)",
-      "O(1)"
+      "Sắp xếp toàn bộ rồi lấy 10 đầu",
+      "Min-heap kích thước 10, O(n log 10)",
+      "Hash map",
+      "Linked list"
     ],
     "answer": [
       1
     ],
-    "explanation": "Vòng lặp O(n) nhân thao tác O(n) thành bậc hai; nên dùng set."
+    "explanation": "Heap giữ 10 phần tử và chỉ tốn O(K) bộ nhớ. Sắp xếp toàn bộ tốn O(n log n) và nhiều bộ nhớ."
   },
   {
     "id": "data-structures-complexity-04",
     "playbookId": "data-structures-complexity",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào array thắng linked list trong thực tế dù cùng độ phức tạp?",
+    "question": "Vì sao trong thực tế array thường nhanh hơn linked list dù cùng độ phức tạp ở nhiều thao tác?",
     "modelAnswer": "Array lưu liên tiếp trong bộ nhớ nên thân thiện với cache CPU và prefetch, truy cập theo chỉ số O(1), trong khi linked list nhảy con trỏ làm cache miss liên tục. Vì vậy với dữ liệu nhỏ và vừa array thường nhanh hơn dù lý thuyết chèn giữa của linked list tốt hơn.",
     "keyPoints": [
       "Locality của cache CPU",
@@ -4671,7 +4671,7 @@
     "playbookId": "memory-management-gc",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Với GC, object bị thu hồi khi nào?",
+    "question": "Trong ngôn ngữ có GC, một object bị thu hồi khi nào?",
     "options": [
       "Khi hết hàm",
       "Khi không còn truy cập được từ GC roots",
@@ -4681,30 +4681,30 @@
     "answer": [
       1
     ],
-    "explanation": "GC dựa trên khả năng truy cập từ roots như biến stack, static, thread."
+    "explanation": "GC dựa trên khả năng truy cập từ roots. 'Khi hết hàm' dễ nhầm với biến cục bộ trên stack."
   },
   {
     "id": "memory-management-gc-02",
     "playbookId": "memory-management-gc",
     "type": "mcq",
-    "difficulty": 2,
-    "question": "Heap ứng dụng tăng dần dù có GC. Nguyên nhân khả dĩ?",
+    "difficulty": 3,
+    "question": "Heap của ứng dụng Java tăng dần theo ngày và sau full GC vẫn không giảm. Nguyên nhân khả dĩ?",
     "options": [
       "GC hỏng",
-      "Giữ tham chiếu không cần thiết như cache không giới hạn",
+      "Giữ tham chiếu không cần thiết, ví dụ cache không giới hạn",
       "Dùng quá nhiều thread",
       "CPU thấp"
     ],
     "answer": [
       1
     ],
-    "explanation": "Rò rỉ logic: GC không thu hồi object vẫn còn được tham chiếu."
+    "explanation": "GC không thu hồi đối tượng vẫn còn được tham chiếu. Tìm bằng heap dump."
   },
   {
     "id": "memory-management-gc-03",
     "playbookId": "memory-management-gc",
     "type": "mcq",
-    "difficulty": 3,
+    "difficulty": 2,
     "question": "Container Java bị OOMKilled dù -Xmx nhỏ hơn memory limit. Vì sao?",
     "options": [
       "Heap không tính vào limit",
@@ -4722,12 +4722,12 @@
     "playbookId": "memory-management-gc",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao generational GC hiệu quả?",
-    "modelAnswer": "Dựa trên giả thuyết hầu hết object chết trẻ, heap chia thành young và old. Young được thu gom thường xuyên với chi phí thấp vì ít object sống sót, chỉ object sống lâu mới được đưa sang old và thu gom hiếm hơn nên tổng công việc GC giảm.",
+    "question": "Giải thích vì sao generational GC hiệu quả và nêu rủi ro nếu giữ tham chiếu thừa.",
+    "modelAnswer": "Dựa trên giả thuyết hầu hết đối tượng chết trẻ, heap chia young và old. Young được thu gom thường xuyên với chi phí thấp vì ít đối tượng sống sót, chỉ đối tượng sống lâu mới được promote sang old và thu gom hiếm hơn nên tổng công việc GC giảm. Giữ tham chiếu thừa khiến đối tượng không bao giờ bị thu hồi, heap phình dần và dẫn tới pause dài hoặc OOM.",
     "keyPoints": [
-      "Hầu hết object chết trẻ",
-      "Young thu gom thường xuyên và rẻ",
-      "Old thu gom hiếm"
+      "Hầu hết đối tượng chết trẻ",
+      "Young thu thường xuyên và rẻ",
+      "Tham chiếu thừa gây rò rỉ"
     ]
   },
   {
@@ -4735,17 +4735,17 @@
     "playbookId": "io-models-async-event-loop",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Một lời gọi blocking trong event loop gây hậu quả gì?",
+    "question": "Một handler trong Node.js dùng pbkdf2Sync cho mỗi request và toàn bộ server đứng hình khi có vài request. Điều gì xảy ra?",
     "options": [
       "Không ảnh hưởng",
-      "Chặn mọi kết nối khác dùng cùng loop",
-      "Tăng tốc",
-      "Tự tạo thread mới"
+      "Thao tác CPU đồng bộ chặn event loop nên mọi kết nối khác bị treo",
+      "Node tự scale",
+      "Do mạng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Event loop đơn luồng nên một thao tác chặn làm cả server đứng hình."
+    "explanation": "Event loop đơn luồng; việc CPU nặng cần worker thread hoặc API bất đồng bộ."
   },
   {
     "id": "io-models-async-event-loop-02",
@@ -4762,32 +4762,32 @@
     "answer": [
       1
     ],
-    "explanation": "Async chỉ giúp khi phần lớn thời gian là chờ I/O."
+    "explanation": "Async chỉ giúp khi phần lớn thời gian là chờ I/O; CPU-bound cần nhiều core."
   },
   {
     "id": "io-models-async-event-loop-03",
     "playbookId": "io-models-async-event-loop",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Node.js xử lý tác vụ CPU nặng ra sao để không chặn loop?",
+    "question": "Một service reactive dùng driver JDBC blocking trong event loop. Hậu quả và hướng xử lý?",
     "options": [
-      "Để trong loop",
-      "Đẩy sang worker thread hoặc tiến trình riêng",
-      "Tăng timeout",
-      "Tắt event loop"
+      "Không vấn đề",
+      "Chặn loop nên cần driver bất đồng bộ hoặc chạy trên pool riêng",
+      "Nhanh hơn",
+      "Tự động bất đồng bộ"
     ],
     "answer": [
       1
     ],
-    "explanation": "CPU-bound cần thread pool riêng."
+    "explanation": "Blocking call trong event loop làm treo các kết nối khác."
   },
   {
     "id": "io-models-async-event-loop-04",
     "playbookId": "io-models-async-event-loop",
     "type": "explain",
     "difficulty": 2,
-    "question": "Giải thích vì sao epoll giúp xử lý được hàng chục nghìn kết nối với ít thread.",
-    "modelAnswer": "Thay vì mỗi kết nối một thread chặn, epoll cho phép một thread đăng ký nhiều socket và nhờ kernel báo chỉ những socket nào đã sẵn sàng đọc hoặc ghi. Thread chỉ xử lý các socket sẵn sàng nên không phí thời gian và bộ nhớ cho các kết nối đang chờ.",
+    "question": "Giải thích vì sao epoll giúp một thread xử lý hàng chục nghìn kết nối.",
+    "modelAnswer": "Thay vì mỗi kết nối một thread chặn, epoll cho phép một thread đăng ký nhiều socket và nhờ kernel báo chỉ những socket đã sẵn sàng đọc hoặc ghi. Thread chỉ xử lý các socket sẵn sàng nên không phí thời gian và bộ nhớ (stack, context switch) cho các kết nối đang chờ.",
     "keyPoints": [
       "Một thread theo dõi nhiều socket",
       "Kernel báo socket sẵn sàng",
@@ -4799,24 +4799,24 @@
     "playbookId": "linux-debugging-toolbox",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Load average cao nhưng CPU rảnh gợi ý điều gì?",
+    "question": "Server chậm, uptime cho load average 20 trên máy 4 core nhưng CPU gần như rảnh. Điều gì gợi ý?",
     "options": [
       "Thiếu RAM luôn luôn",
-      "Nhiều tiến trình đang chờ I/O",
+      "Nhiều tiến trình đang chờ I/O hoặc lock",
       "CPU hỏng",
       "Mạng tốt"
     ],
     "answer": [
       1
     ],
-    "explanation": "Load gồm cả tiến trình ở trạng thái chờ I/O."
+    "explanation": "Load gồm cả tiến trình ở trạng thái chờ I/O. Thiếu RAM dễ nhầm nhưng thường thể hiện bằng swap/OOM."
   },
   {
     "id": "linux-debugging-toolbox-02",
     "playbookId": "linux-debugging-toolbox",
     "type": "mcq",
     "difficulty": 2,
-    "question": "df -h còn trống nhưng không tạo được file mới. Kiểm tra gì?",
+    "question": "df -h cho thấy còn nhiều dung lượng nhưng ứng dụng không tạo được file mới. Kiểm tra gì?",
     "options": [
       "df -i để xem hết inode",
       "free -m",
@@ -4833,7 +4833,7 @@
     "playbookId": "linux-debugging-toolbox",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Muốn biết tiến trình đang chờ system call nào, dùng?",
+    "question": "Muốn biết một tiến trình đang bị treo ở system call nào. Dùng gì?",
     "options": [
       "top",
       "strace -p <pid>",
@@ -4843,7 +4843,7 @@
     "answer": [
       1
     ],
-    "explanation": "strace thấy syscall tiến trình đang thực hiện hoặc bị treo."
+    "explanation": "strace cho thấy syscall tiến trình đang thực hiện hoặc chờ, nhưng có overhead nên dùng ngắn hạn."
   },
   {
     "id": "linux-debugging-toolbox-04",
@@ -4851,7 +4851,7 @@
     "type": "explain",
     "difficulty": 2,
     "question": "Mô tả quy trình chẩn đoán khi server chậm theo phương pháp USE.",
-    "modelAnswer": "Kiểm tra từng tài nguyên về Utilization, Saturation và Errors: CPU (top, vmstat), bộ nhớ (free, dmesg cho OOM), đĩa (iostat, df -i) và mạng (ss, tcpdump). Xác định tài nguyên nào bão hoà, rồi đào sâu vào tiến trình gây ra bằng strace, lsof hoặc profiler thay vì đoán hay khởi động lại ngay.",
+    "modelAnswer": "Kiểm tra từng tài nguyên về Utilization, Saturation và Errors: CPU (top, vmstat), bộ nhớ (free, dmesg cho OOM), đĩa (iostat, df -i) và mạng (ss, tcpdump). Xác định tài nguyên nào bão hoà, rồi đào sâu vào tiến trình gây ra bằng strace, lsof hoặc profiler, và thu thập bằng chứng trước khi restart.",
     "keyPoints": [
       "USE cho từng tài nguyên",
       "Tìm tài nguyên bão hoà",
@@ -4863,7 +4863,7 @@
     "playbookId": "time-timezones-clocks",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Nên lưu thời điểm sự kiện trong DB thế nào?",
+    "question": "Hệ thống đặt lịch toàn cầu cần lưu thời điểm một sự kiện đã xảy ra. Cách lưu trong DB?",
     "options": [
       "Giờ địa phương không kèm múi giờ",
       "UTC (timestamptz hoặc epoch)",
@@ -4873,24 +4873,24 @@
     "answer": [
       1
     ],
-    "explanation": "UTC là điểm tuyệt đối, chuyển múi giờ khi hiển thị."
+    "explanation": "UTC là điểm tuyệt đối, chuyển múi giờ khi hiển thị. Offset cố định dễ nhầm là đủ, nhưng không mã hoá luật DST."
   },
   {
     "id": "time-timezones-clocks-02",
     "playbookId": "time-timezones-clocks",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Đo thời gian chạy một hàm nên dùng đồng hồ nào?",
+    "question": "Đo thời gian chạy của một hàm để báo cáo độ trễ nên dùng đồng hồ nào?",
     "options": [
       "Wall clock",
       "Monotonic clock",
-      "Đồng hồ máy khác",
+      "Đồng hồ của máy khác",
       "Không cần"
     ],
     "answer": [
       1
     ],
-    "explanation": "Wall clock có thể nhảy; monotonic chỉ tiến."
+    "explanation": "Wall clock có thể nhảy khi NTP chỉnh, cho kết quả sai hoặc âm."
   },
   {
     "id": "time-timezones-clocks-03",
@@ -4914,8 +4914,8 @@
     "playbookId": "time-timezones-clocks",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao không nên lưu offset +07:00 thay cho tên múi giờ?",
-    "modelAnswer": "Offset chỉ là giá trị tại một thời điểm, không mã hoá luật DST hay thay đổi luật múi giờ trong tương lai của vùng, nên không thể tính đúng các thời điểm khác. Tên múi giờ IANA gắn với cơ sở dữ liệu luật nên tính được offset đúng cho từng ngày.",
+    "question": "Vì sao không nên lưu offset +07:00 thay cho tên múi giờ IANA?",
+    "modelAnswer": "Offset chỉ là giá trị tại một thời điểm, không mã hoá luật DST hay thay đổi luật múi giờ trong tương lai của vùng nên không tính đúng các thời điểm khác. Tên múi giờ IANA gắn với cơ sở dữ liệu luật nên tính được offset đúng cho từng ngày.",
     "keyPoints": [
       "Offset không có luật DST",
       "Luật múi giờ có thể đổi",
