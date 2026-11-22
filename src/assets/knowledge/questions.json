@@ -3106,46 +3106,47 @@
     "playbookId": "sqs-sns-eventbridge",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Một sự kiện cần tới nhiều hệ thống độc lập. Pattern phù hợp?",
+    "question": "Khi có đơn hàng mới, hệ thống thanh toán, kho và gửi email đều phải nhận sự kiện, mỗi hệ thống xử lý độc lập và không được mất nếu bị tạm lỗi. Pattern phù hợp?",
     "options": [
-      "Một SQS queue duy nhất",
+      "Một SQS queue duy nhất cho cả ba",
       "SNS fan-out tới nhiều SQS queue",
-      "Gọi trực tiếp tuần tự",
+      "Gọi trực tiếp tuần tự từng hệ thống",
       "Cron job"
     ],
     "answer": [
       1
     ],
-    "explanation": "SNS phát tới nhiều subscriber, mỗi SQS cho độ bền."
+    "explanation": "SNS phát tới nhiều subscriber, mỗi SQS cho độ bền riêng. Một queue duy nhất dễ nhầm vì đơn giản, nhưng mỗi message chỉ tới một consumer nên các hệ thống tranh nhau."
   },
   {
     "id": "sqs-sns-eventbridge-02",
     "playbookId": "sqs-sns-eventbridge",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần thứ tự đúng và không trùng. Chọn?",
+    "question": "Hệ thống giao dịch cần xử lý lệnh theo đúng thứ tự trong từng tài khoản và không xử lý trùng. Chọn?",
     "options": [
       "SQS Standard",
-      "SQS FIFO",
+      "SQS FIFO với MessageGroupId theo tài khoản",
       "SNS Standard",
       "EventBridge"
     ],
     "answer": [
       1
     ],
-    "explanation": "FIFO đảm bảo thứ tự theo message group và exactly-once processing."
+    "explanation": "FIFO đảm bảo thứ tự theo message group và chống trùng. Standard dễ nhầm vì throughput cao, nhưng at-least-once và thứ tự best-effort."
   },
   {
     "id": "sqs-sns-eventbridge-03",
     "playbookId": "sqs-sns-eventbridge",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao cần dead-letter queue và visibility timeout hợp lý?",
-    "modelAnswer": "Visibility timeout ngắn hơn thời gian xử lý làm message bị xử lý hai lần, quá dài làm phục hồi chậm. DLQ chứa message vượt số lần thử để poison message không chặn luồng chính và để điều tra.",
+    "question": "Một consumer xử lý mất 60 giây nhưng visibility timeout là 30 giây, đồng thời có một message lỗi cứ bị retry mãi. Giải thích vấn đề của visibility timeout và vai trò của DLQ.",
+    "modelAnswer": "Visibility timeout ngắn hơn thời gian xử lý làm message hiện lại khi chưa xử lý xong nên bị xử lý hai lần; đặt quá dài thì phục hồi chậm khi consumer chết. DLQ chứa message vượt maxReceiveCount để poison message không chặn luồng chính và để điều tra. Consumer vẫn phải idempotent vì SQS Standard là at-least-once.",
     "keyPoints": [
-      "Timeout phù hợp thời gian xử lý",
-      "DLQ cho poison message",
-      "Cảnh báo khi DLQ có dữ liệu"
+      "Timeout ngắn gây xử lý trùng",
+      "Timeout quá dài làm phục hồi chậm",
+      "DLQ cô lập poison message",
+      "Consumer idempotent"
     ]
   },
   {
@@ -3153,24 +3154,24 @@
     "playbookId": "lambda-serverless",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Lambda trong VPC cần gọi Internet. Thiếu gì?",
+    "question": "Lambda đặt trong VPC để truy cập RDS nhưng gọi API bên ngoài bị timeout. Thiếu gì?",
     "options": [
       "Thêm memory",
-      "NAT Gateway (hoặc endpoint)",
-      "Layer",
-      "Alias"
+      "NAT Gateway hoặc VPC endpoint",
+      "Thêm Layer",
+      "Tạo Alias"
     ],
     "answer": [
       1
     ],
-    "explanation": "Lambda trong VPC không có Internet mặc định."
+    "explanation": "Lambda trong VPC không có Internet mặc định, cần NAT hoặc endpoint. Thêm memory dễ nhầm vì tăng sức mạnh, nhưng không tạo đường mạng ra ngoài."
   },
   {
     "id": "lambda-serverless-02",
     "playbookId": "lambda-serverless",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Giảm cold start cho hàm quan trọng?",
+    "question": "Hàm thanh toán quan trọng có p99 latency tăng vọt mỗi khi traffic tăng đột ngột. Cách giảm cold start?",
     "options": [
       "Tăng timeout",
       "Provisioned concurrency",
@@ -3180,19 +3181,19 @@
     "answer": [
       1
     ],
-    "explanation": "Provisioned concurrency giữ sẵn môi trường thực thi."
+    "explanation": "Provisioned concurrency giữ sẵn môi trường thực thi. Reserved concurrency dễ nhầm vì có chữ concurrency, nhưng chỉ đảm bảo và giới hạn số song song, không giữ nóng."
   },
   {
     "id": "lambda-serverless-03",
     "playbookId": "lambda-serverless",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào Lambda không phù hợp?",
-    "modelAnswer": "Tác vụ chạy hơn 15 phút, cần kết nối bền, hoặc tải cao đều đặn cả ngày nơi EC2 hoặc Fargate có thể rẻ hơn; ngoài ra cần cân nhắc cold start và giới hạn runtime.",
+    "question": "Một team dự định chạy job xử lý video 40 phút và một API tải cao đều đặn 24/7 trên Lambda. Khi nào Lambda không phù hợp?",
+    "modelAnswer": "Lambda không hợp cho tác vụ dài hơn 15 phút, kết nối bền, hoặc tải cao đều đặn cả ngày nơi EC2/Fargate có thể rẻ hơn; cũng cần cân nhắc cold start và giới hạn runtime. Job 40 phút nên dùng Step Functions, ECS/Fargate hoặc Batch.",
     "keyPoints": [
-      "Quá 15 phút",
-      "Tải cao đều 24/7",
-      "Cold start và giới hạn"
+      "Giới hạn 15 phút",
+      "Tải cao đều đặn có thể rẻ hơn với Fargate/EC2",
+      "Cold start và giới hạn runtime"
     ]
   },
   {
@@ -3200,24 +3201,24 @@
     "playbookId": "disaster-recovery-strategies",
     "type": "mcq",
     "difficulty": 2,
-    "question": "RTO là gì?",
+    "question": "Ban lãnh đạo nói dịch vụ chỉ được ngừng tối đa 30 phút. Chỉ số nào đang được nói tới?",
     "options": [
       "Lượng dữ liệu chấp nhận mất",
-      "Thời gian tối đa chấp nhận dịch vụ ngừng",
+      "RTO",
       "Chi phí backup",
       "Dung lượng DR"
     ],
     "answer": [
       1
     ],
-    "explanation": "RPO là lượng dữ liệu mất; RTO là thời gian phục hồi."
+    "explanation": "RTO là thời gian phục hồi tối đa. RPO dễ nhầm nhưng đo lượng dữ liệu mất, không đo thời gian ngừng."
   },
   {
     "id": "disaster-recovery-strategies-02",
     "playbookId": "disaster-recovery-strategies",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cần RTO vài phút với ngân sách vừa phải. Chọn chiến lược?",
+    "question": "Hệ thống bán hàng cần RTO vài phút nhưng ngân sách chỉ vừa phải, không chạy đầy đủ hai Region. Chọn?",
     "options": [
       "Backup & Restore",
       "Warm Standby",
@@ -3227,19 +3228,20 @@
     "answer": [
       1
     ],
-    "explanation": "Warm Standby giữ bản thu nhỏ chạy sẵn, scale khi sự cố."
+    "explanation": "Warm Standby giữ bản thu nhỏ chạy sẵn và scale khi sự cố. Active/Active dễ nhầm vì RTO tốt nhất, nhưng chạy đầy đủ nên vượt ngân sách."
   },
   {
     "id": "disaster-recovery-strategies-03",
     "playbookId": "disaster-recovery-strategies",
     "type": "explain",
     "difficulty": 2,
-    "question": "So sánh 4 chiến lược DR của AWS.",
-    "modelAnswer": "Backup & Restore rẻ nhất, RTO tính bằng giờ. Pilot Light giữ phần lõi như database replica, RTO hàng chục phút. Warm Standby chạy bản thu nhỏ đầy đủ, RTO vài phút. Active/Active chạy nhiều Region đồng thời, RTO gần bằng 0 nhưng đắt nhất.",
+    "question": "Hãy so sánh 4 chiến lược DR của AWS theo RTO và chi phí để tư vấn cho một công ty có ngân sách trung bình.",
+    "modelAnswer": "Backup & Restore rẻ nhất, RTO tính bằng giờ. Pilot Light giữ phần lõi như database replica luôn chạy, RTO hàng chục phút. Warm Standby chạy bản thu nhỏ đầy đủ, RTO vài phút. Active/Active chạy nhiều Region đồng thời, RTO gần 0 nhưng đắt nhất. Với ngân sách trung bình thường chọn Pilot Light hoặc Warm Standby theo RTO yêu cầu.",
     "keyPoints": [
-      "Chi phí tăng khi RTO giảm",
-      "Pilot Light: lõi chạy sẵn",
-      "Active/Active gần 0 RTO"
+      "Backup & Restore: giờ, rẻ nhất",
+      "Pilot Light: hàng chục phút",
+      "Warm Standby: vài phút",
+      "Active/Active: gần 0, đắt nhất"
     ]
   },
   {
@@ -5117,7 +5119,7 @@
     "playbookId": "ebs-efs-fsx-storage",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Cần file system dùng chung cho EC2 Linux ở nhiều AZ. Chọn?",
+    "question": "Một ứng dụng web chạy trên 6 EC2 Linux ở 3 AZ cần cùng đọc ghi thư mục upload. Chọn lưu trữ nào?",
     "options": [
       "EBS gp3",
       "EFS",
@@ -5127,49 +5129,49 @@
     "answer": [
       1
     ],
-    "explanation": "EFS là NFS multi-AZ, gắn đồng thời nhiều instance."
+    "explanation": "EFS là NFS multi-AZ gắn đồng thời nhiều instance. EBS gp3 dễ nhầm vì quen dùng, nhưng gắn vào một instance trong một AZ."
   },
   {
     "id": "ebs-efs-fsx-storage-02",
     "playbookId": "ebs-efs-fsx-storage",
     "type": "mcq",
     "difficulty": 2,
-    "question": "EBS volume muốn chuyển sang AZ khác thì làm sao?",
+    "question": "Một EBS volume 500 GB ở ap-southeast-1a cần chuyển sang instance ở ap-southeast-1b. Cách làm?",
     "options": [
-      "Detach rồi attach",
-      "Tạo snapshot rồi restore ở AZ đích",
+      "Detach rồi attach sang AZ khác",
+      "Tạo snapshot rồi restore thành volume ở AZ đích",
       "Không thể",
       "Đổi security group"
     ],
     "answer": [
       1
     ],
-    "explanation": "EBS gắn theo AZ; snapshot lưu ở Region nên restore được ở AZ khác."
+    "explanation": "EBS gắn theo AZ, snapshot lưu theo Region nên restore ở AZ khác. Detach/attach dễ nhầm nhưng chỉ gắn được instance cùng AZ."
   },
   {
     "id": "ebs-efs-fsx-storage-03",
     "playbookId": "ebs-efs-fsx-storage",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Dữ liệu trên Instance Store khi instance bị stop?",
+    "question": "Một team lưu dữ liệu xử lý trên Instance Store, sau khi stop rồi start instance thì dữ liệu biến mất. Điều gì đã xảy ra?",
     "options": [
-      "Được giữ",
-      "Bị mất",
-      "Chuyển sang EBS",
-      "Chuyển sang S3"
+      "Được giữ nguyên",
+      "Instance Store là đĩa tạm nên mất khi stop/terminate",
+      "Tự chuyển sang EBS",
+      "Tự chuyển sang S3"
     ],
     "answer": [
       1
     ],
-    "explanation": "Instance Store là đĩa tạm, mất khi stop/terminate hoặc phần cứng lỗi."
+    "explanation": "Instance Store gắn vật lý vào host và mất dữ liệu khi stop/terminate hoặc phần cứng lỗi. Reboot không mất, nên dễ nhầm với stop."
   },
   {
     "id": "ebs-efs-fsx-storage-04",
     "playbookId": "ebs-efs-fsx-storage",
     "type": "explain",
     "difficulty": 2,
-    "question": "So sánh EBS, EFS và S3 để chọn nơi lưu dữ liệu.",
-    "modelAnswer": "EBS là block storage gắn một instance trong một AZ, độ trễ thấp cho OS và database. EFS là file system NFS dùng chung nhiều instance và nhiều AZ nhưng đắt hơn theo GB. S3 là object storage rẻ, bền, truy cập qua API, không phải ổ đĩa. Chọn theo giao thức truy cập, mức chia sẻ và chi phí.",
+    "question": "Hãy so sánh EBS, EFS và S3 để chọn nơi lưu dữ liệu cho ba tình huống: boot volume database, thư mục dùng chung nhiều AZ và kho ảnh.",
+    "modelAnswer": "EBS là block storage gắn một instance trong một AZ với độ trễ thấp, hợp OS và database. EFS là file system NFS dùng chung cho nhiều instance và nhiều AZ nhưng đắt hơn theo GB. S3 là object storage rẻ, bền, truy cập qua API, không phải ổ đĩa. Do đó database dùng EBS, thư mục chung dùng EFS, kho ảnh dùng S3.",
     "keyPoints": [
       "EBS block theo AZ",
       "EFS file chia sẻ multi-AZ",
@@ -5181,7 +5183,7 @@
     "playbookId": "cloudwatch-cloudtrail-config",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Ai đã terminate một EC2 instance? Xem ở đâu?",
+    "question": "Sáng nay một EC2 production bị terminate và không ai nhận. Xem ở đâu để biết ai đã làm?",
     "options": [
       "CloudWatch",
       "CloudTrail",
@@ -5191,53 +5193,53 @@
     "answer": [
       1
     ],
-    "explanation": "CloudTrail ghi lại lời gọi API và danh tính."
+    "explanation": "CloudTrail ghi lời gọi API và danh tính. Config dễ nhầm vì ghi thay đổi tài nguyên, nhưng không ghi ai gọi API."
   },
   {
     "id": "cloudwatch-cloudtrail-config-02",
     "playbookId": "cloudwatch-cloudtrail-config",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Muốn theo dõi RAM của EC2 trong CloudWatch, cần gì?",
+    "question": "Team muốn đặt alarm theo mức RAM sử dụng của EC2 nhưng không thấy metric này. Cần làm gì?",
     "options": [
       "Không cần gì",
-      "Cài CloudWatch Agent",
+      "Cài CloudWatch Agent hoặc gửi custom metric",
       "Bật detailed monitoring",
       "Dùng CloudTrail"
     ],
     "answer": [
       1
     ],
-    "explanation": "Metric RAM và disk không có sẵn."
+    "explanation": "RAM và disk không có sẵn trong metric EC2. Detailed monitoring dễ nhầm vì tăng độ phân giải, nhưng vẫn không thêm metric RAM."
   },
   {
     "id": "cloudwatch-cloudtrail-config-03",
     "playbookId": "cloudwatch-cloudtrail-config",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Phát hiện S3 bucket bị chuyển sang public theo thời gian và tự khắc phục?",
+    "question": "Cần phát hiện mọi S3 bucket bị chuyển sang public theo thời gian và tự khắc phục. Dùng gì?",
     "options": [
       "CloudWatch Logs",
-      "AWS Config rule + remediation",
+      "AWS Config rule kèm remediation",
       "VPC Flow Logs",
       "Cost Explorer"
     ],
     "answer": [
       1
     ],
-    "explanation": "Config theo dõi thay đổi cấu hình và có auto-remediation."
+    "explanation": "Config theo dõi thay đổi cấu hình và có auto-remediation. CloudTrail dễ nhầm vì ghi hành động, nhưng không đánh giá trạng thái tuân thủ theo thời gian."
   },
   {
     "id": "cloudwatch-cloudtrail-config-04",
     "playbookId": "cloudwatch-cloudtrail-config",
     "type": "explain",
     "difficulty": 2,
-    "question": "Phân biệt CloudWatch, CloudTrail và Config.",
-    "modelAnswer": "CloudWatch cho biết hệ thống chạy thế nào qua metric, log và alarm. CloudTrail ghi ai đã gọi API nào, khi nào, từ đâu để audit. Config ghi trạng thái cấu hình tài nguyên theo thời gian và đánh giá tuân thủ bằng rule. Ba dịch vụ bổ trợ nhau trong điều tra sự cố.",
+    "question": "Hãy phân biệt CloudWatch, CloudTrail và Config bằng một sự cố: ai đó mở security group ra Internet và độ trễ tăng.",
+    "modelAnswer": "CloudWatch cho biết độ trễ và lỗi tăng qua metric, log và alarm. CloudTrail ghi ai đã gọi API sửa security group, khi nào và từ đâu để audit. Config ghi trạng thái cấu hình trước và sau của security group và đánh giá tuân thủ bằng rule. Ba dịch vụ bổ trợ nhau khi điều tra.",
     "keyPoints": [
-      "CloudWatch hiệu năng",
-      "CloudTrail audit API",
-      "Config lịch sử và tuân thủ cấu hình"
+      "CloudWatch: hiệu năng",
+      "CloudTrail: ai gọi API",
+      "Config: lịch sử cấu hình và tuân thủ"
     ]
   },
   {
@@ -5245,7 +5247,7 @@
     "playbookId": "ecs-eks-fargate",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Chạy container không muốn quản server. Chọn?",
+    "question": "Team muốn chạy container production mà không phải patch hay quản lý server. Chọn?",
     "options": [
       "EC2 launch type",
       "Fargate",
@@ -5255,14 +5257,14 @@
     "answer": [
       1
     ],
-    "explanation": "Fargate là compute serverless cho container."
+    "explanation": "Fargate là compute serverless cho container. EC2 launch type dễ nhầm vì cũng chạy container, nhưng bạn phải quản node."
   },
   {
     "id": "ecs-eks-fargate-02",
     "playbookId": "ecs-eks-fargate",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Container ECS cần ghi vào S3. Cấp quyền ở đâu?",
+    "question": "Container ECS cần ghi object vào S3 nhưng gọi PutObject bị AccessDenied. Cấp quyền ở role nào?",
     "options": [
       "Execution role",
       "Task role",
@@ -5272,35 +5274,35 @@
     "answer": [
       1
     ],
-    "explanation": "Task role là role ứng dụng dùng."
+    "explanation": "Ứng dụng trong container dùng task role. Execution role dễ nhầm vì có chữ role, nhưng dành cho ECS agent pull image và ghi log."
   },
   {
     "id": "ecs-eks-fargate-03",
     "playbookId": "ecs-eks-fargate",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Pod EKS cần quyền DynamoDB theo least privilege?",
+    "question": "Pod EKS cần đọc một bảng DynamoDB theo least privilege, các pod khác không được có quyền này. Cách đúng?",
     "options": [
       "Gắn quyền vào role của node",
-      "IRSA / Pod Identity",
+      "IRSA / EKS Pod Identity",
       "Hard-code access key",
       "Mở security group"
     ],
     "answer": [
       1
     ],
-    "explanation": "IRSA cấp role riêng cho service account của pod."
+    "explanation": "IRSA cấp role riêng cho service account của pod. Gắn quyền vào node role dễ nhầm vì đơn giản, nhưng mọi pod trên node đều hưởng quyền."
   },
   {
     "id": "ecs-eks-fargate-04",
     "playbookId": "ecs-eks-fargate",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào chọn ECS thay vì EKS?",
-    "modelAnswer": "ECS đơn giản, tích hợp sâu với AWS (ALB, IAM, CloudWatch) và không có phí control plane, hợp khi không cần hệ sinh thái Kubernetes. EKS chọn khi cần Kubernetes API, công cụ cộng đồng, portability đa cloud hoặc team đã quen K8s, đổi lại phức tạp và phí hơn.",
+    "question": "Một startup 5 người, không dùng Kubernetes, cần chạy 8 microservice container. Khi nào chọn ECS thay vì EKS và vì sao?",
+    "modelAnswer": "ECS đơn giản, tích hợp sâu với AWS (ALB, IAM, CloudWatch) và không có phí control plane, hợp khi không cần hệ sinh thái Kubernetes. EKS chọn khi cần Kubernetes API, công cụ cộng đồng, di động đa cloud hoặc team đã quen K8s, đổi lại phức tạp và tốn phí hơn. Với startup này nên chọn ECS trên Fargate.",
     "keyPoints": [
-      "ECS đơn giản",
-      "EKS cho hệ sinh thái K8s",
+      "ECS đơn giản, tích hợp AWS",
+      "EKS cho hệ sinh thái Kubernetes",
       "Đánh đổi vận hành"
     ]
   },
@@ -8251,17 +8253,17 @@
     "playbookId": "sqs-sns-eventbridge",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Một sự kiện cần gửi tới nhiều hệ thống độc lập (fan-out)?",
+    "question": "Hoá đơn SQS cao dù hàng đợi gần như rỗng và consumer gọi ReceiveMessage liên tục. Cách giảm?",
     "options": [
-      "SQS standard",
-      "SNS topic với nhiều SQS subscribe",
-      "Step Functions",
-      "S3"
+      "Chuyển sang FIFO",
+      "Bật long polling (WaitTimeSeconds tới 20 giây)",
+      "Giảm visibility timeout",
+      "Tắt DLQ"
     ],
     "answer": [
       1
     ],
-    "explanation": "SNS fan-out tới nhiều queue."
+    "explanation": "Long polling giảm request rỗng nên giảm chi phí. FIFO dễ nhầm vì liên quan thứ tự, không giảm số request rỗng."
   },
   {
     "id": "sqs-sns-eventbridge-05",
@@ -8270,136 +8272,136 @@
     "difficulty": 3,
     "question": "Hai điều nào đúng về SQS Standard? (chọn 2)",
     "options": [
-      "At-least-once delivery",
-      "Có thể giao trùng",
-      "Đảm bảo FIFO tuyệt đối",
-      "Exactly-once"
+      "Giao ít nhất một lần (at-least-once)",
+      "Có thể giao trùng message",
+      "Đảm bảo thứ tự FIFO tuyệt đối",
+      "Exactly-once processing"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "Standard có thể giao lặp và không đảm bảo thứ tự."
+    "explanation": "Standard at-least-once nên có thể trùng. Exactly-once và thứ tự thuộc về FIFO, dễ nhầm vì đều là SQS."
   },
   {
     "id": "lambda-serverless-04",
     "playbookId": "lambda-serverless",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hạn chế khi Lambda gọi API mất 20 phút?",
+    "question": "Một hàm gọi API xử lý mất 20 phút. Vấn đề và hướng xử lý?",
     "options": [
-      "Không có",
-      "Timeout tối đa 15 phút",
-      "Không dùng được mạng",
-      "Chỉ 1 giây"
+      "Không vấn đề",
+      "Timeout tối đa 15 phút nên cần Step Functions hoặc ECS",
+      "Lambda không dùng được mạng",
+      "Chỉ chạy tối đa 1 giây"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giới hạn 15 phút; việc dài dùng Step Functions/ECS."
+    "explanation": "Giới hạn cứng là 15 phút. Tăng memory dễ nhầm là giải pháp nhưng không nâng được giới hạn thời gian."
   },
   {
     "id": "lambda-serverless-05",
     "playbookId": "lambda-serverless",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Giảm cold start cho Lambda quan trọng về độ trễ?",
+    "question": "Lambda đọc từ SQS và nhiều message bị xử lý lặp sau một batch có 1 message lỗi. Vì sao và cách giảm?",
     "options": [
-      "Tăng timeout",
-      "Provisioned Concurrency",
-      "Giảm memory",
-      "Tắt VPC"
+      "SQS hỏng",
+      "Cả batch bị thử lại, dùng ReportBatchItemFailures và consumer idempotent",
+      "Tăng timeout hàm",
+      "Dùng Reserved concurrency"
     ],
     "answer": [
       1
     ],
-    "explanation": "Giữ sẵn môi trường đã khởi tạo."
+    "explanation": "Lỗi cả batch khiến batch bị thử lại; báo lỗi theo item và idempotent giảm xử lý lặp. Reserved concurrency dễ nhầm nhưng chỉ giới hạn song song."
   },
   {
     "id": "disaster-recovery-strategies-04",
     "playbookId": "disaster-recovery-strategies",
     "type": "mcq",
     "difficulty": 2,
-    "question": "RPO gần 0 và RTO vài phút, chấp nhận chi phí cao?",
+    "question": "Hệ thống thanh toán yêu cầu RPO gần 0 và RTO vài phút, chấp nhận chi phí cao. Chọn?",
     "options": [
       "Backup & Restore",
       "Pilot Light",
-      "Multi-site active-active",
-      "Chỉ snapshot"
+      "Multi-site Active/Active",
+      "Chỉ snapshot hằng ngày"
     ],
     "answer": [
       2
     ],
-    "explanation": "Active-active chạy đầy đủ ở nhiều Region."
+    "explanation": "Active/Active chạy đầy đủ ở nhiều Region. Pilot Light dễ nhầm vì có replica dữ liệu, nhưng phải bật và scale phần ứng dụng nên RTO dài hơn."
   },
   {
     "id": "disaster-recovery-strategies-05",
     "playbookId": "disaster-recovery-strategies",
     "type": "mcq",
     "difficulty": 3,
-    "question": "RTO tính bằng giờ, ngân sách thấp?",
+    "question": "Công ty triển khai Multi-AZ cho mọi dịch vụ và tin rằng đã có DR. Khi cả Region gặp sự cố điều gì xảy ra?",
     "options": [
-      "Active-active",
-      "Backup & Restore",
-      "Warm Standby",
-      "Hot site"
+      "Vẫn chạy bình thường",
+      "Hệ thống sập vì Multi-AZ chỉ bảo vệ khi một datacenter lỗi",
+      "Tự failover sang Region khác",
+      "Chỉ mất database"
     ],
     "answer": [
       1
     ],
-    "explanation": "Rẻ nhất, RTO dài nhất."
+    "explanation": "Multi-AZ là HA trong một Region; DR cần cross-Region. 'Tự failover sang Region khác' dễ nhầm vì tên Multi-AZ nghe rộng, nhưng không vượt ranh giới Region."
   },
   {
     "id": "ebs-efs-fsx-storage-05",
     "playbookId": "ebs-efs-fsx-storage",
     "type": "mcq",
     "difficulty": 2,
-    "question": "DB cần IOPS ổn định rất cao?",
+    "question": "Database OLTP cần IOPS rất cao và ổn định, đang dùng gp2 và thỉnh thoảng IOPS tụt. Hướng xử lý?",
     "options": [
-      "gp3 mặc định",
-      "io2",
-      "st1",
-      "sc1"
+      "Giữ gp2",
+      "Chuyển sang io2 (hoặc gp3 nếu đủ)",
+      "Chuyển sang st1",
+      "Chuyển sang sc1"
     ],
     "answer": [
       1
     ],
-    "explanation": "io2 cho IOPS cao ổn định."
+    "explanation": "io2 cho IOPS cao và ổn định. st1/sc1 dễ nhầm vì rẻ, nhưng là HDD tối ưu throughput và không phù hợp OLTP hay làm boot volume."
   },
   {
     "id": "cloudwatch-cloudtrail-config-05",
     "playbookId": "cloudwatch-cloudtrail-config",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai dịch vụ nào giúp điều tra \"ai thay đổi security group\"? (chọn 2)",
+    "question": "Hai dịch vụ nào giúp điều tra 'ai đã thay đổi security group và trước đó nó ra sao'? (chọn 2)",
     "options": [
       "CloudTrail",
       "AWS Config",
-      "CloudWatch metrics CPU",
+      "CloudWatch metric CPU",
       "Cost Explorer"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "CloudTrail cho ai gọi API, Config cho lịch sử cấu hình."
+    "explanation": "CloudTrail cho biết ai gọi API, Config cho biết cấu hình trước và sau. CloudWatch CPU dễ nhầm vì là công cụ quan sát nhưng không liên quan cấu hình."
   },
   {
     "id": "ecs-eks-fargate-05",
     "playbookId": "ecs-eks-fargate",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Container ECS ghi DynamoDB, nhưng lỗi AccessDenied. Role nào cần sửa?",
+    "question": "Task Fargate ở private subnet khởi động thất bại với lỗi không pull được image từ ECR. Nguyên nhân hợp lý nhất?",
     "options": [
-      "Execution role",
-      "Task role",
-      "Role của người deploy",
-      "Role của ALB"
+      "Thiếu đường ra: cần NAT hoặc VPC endpoint cho ECR và S3",
+      "Thiếu Task role",
+      "Thiếu Reserved concurrency",
+      "Sai Availability Zone"
     ],
     "answer": [
-      1
+      0
     ],
-    "explanation": "Ứng dụng dùng task role."
+    "explanation": "Task ở private subnet cần đường tới ECR. Task role dễ nhầm vì liên quan quyền, nhưng quyền pull image thuộc Execution role."
   },
   {
     "id": "api-gateway-step-functions-05",

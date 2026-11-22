@@ -1,53 +1,67 @@
 ## 1. Core Concept
 
-**Disaster Recovery (DR)** là khả năng khôi phục workload sau sự cố lớn (mất AZ/Region, lỗi dữ liệu). Chiến lược DR được chọn dựa trên **RTO** (thời gian chấp nhận mất dịch vụ) và **RPO** (lượng dữ liệu chấp nhận mất). Mental model: *càng muốn RTO/RPO nhỏ thì càng phải giữ nhiều tài nguyên chạy sẵn ở Region dự phòng, và càng tốn tiền.*
+**Disaster Recovery (DR)** là kế hoạch khôi phục hệ thống khi mất cả datacenter hoặc Region. Mọi quyết định DR xoay quanh hai con số: **RTO** (thời gian tối đa chấp nhận ngừng dịch vụ) và **RPO** (lượng dữ liệu tối đa chấp nhận mất). RTO và RPO càng nhỏ thì **chi phí càng cao**.
+
+**Mental model:** DR như **bảo hiểm**: bạn trả phí đều đặn để đổi lấy tốc độ phục hồi; chọn gói theo mức thiệt hại mà doanh nghiệp chịu được, không phải gói đắt nhất.
 
 ## 2. How It Works
 
-- **RTO (Recovery Time Objective)**: từ lúc sập đến lúc hoạt động lại. **RPO (Recovery Point Objective)**: khoảng thời gian dữ liệu có thể mất, quyết định tần suất backup/replication.
-- Bốn chiến lược theo AWS (chi phí và tốc độ tăng dần):
-  - **Backup & Restore**: chỉ giữ backup (snapshot, **AWS Backup**, S3 CRR); RPO/RTO tính bằng **giờ**.
-  - **Pilot Light**: giữ sẵn phần lõi (database replicate), compute tắt/tối thiểu; bật khi sự cố; RTO **hàng chục phút**.
-  - **Warm Standby**: bản thu nhỏ đầy đủ chạy sẵn, scale lên khi sự cố; RTO **phút**.
-  - **Multi-site Active/Active**: nhiều Region phục vụ đồng thời; RTO/RPO gần **0**.
-- **Dịch vụ hỗ trợ**: **AWS Elastic Disaster Recovery (DRS)** (replicate server liên tục), **Aurora Global Database**, **DynamoDB Global Tables**, **S3 Cross-Region Replication**, **Route 53 Failover** + health check, **CloudFormation** để dựng lại hạ tầng.
-- Phạm vi lỗi: **trong Region** (Multi-AZ) khác với **cross-Region** (DR thực sự).
+**RTO vs RPO → Hai thước đo**
+- **RTO**: bao lâu hệ thống phải chạy lại. **RPO**: dữ liệu mất tối đa tính bằng thời gian (RPO 1 giờ nghĩa là backup/replication ít nhất mỗi giờ).
+
+**Bốn chiến lược → Từ rẻ đến đắt**
+- **Backup & Restore**: sao lưu định kỳ (S3, **AWS Backup**), sự cố mới dựng lại; **RTO tính bằng giờ**, rẻ nhất.
+- **Pilot Light**: giữ **phần lõi** luôn chạy (ví dụ database replica), phần ứng dụng tắt, sự cố mới bật và scale; RTO hàng chục phút.
+- **Warm Standby**: chạy **bản thu nhỏ đầy đủ** ở Region khác, sự cố thì scale lên; **RTO vài phút**.
+- **Multi-site Active/Active**: chạy đầy đủ nhiều Region đồng thời; RTO/RPO gần 0 nhưng **đắt nhất** và phức tạp (đồng bộ dữ liệu, xung đột ghi).
+
+**Công cụ**
+- **AWS Backup**: một policy cho lịch, retention và **copy cross-Region/cross-account**. **AWS Elastic Disaster Recovery (DRS)**: sao chép **block-level liên tục** từ máy nguồn (on-prem hoặc cloud) sang AWS rồi khởi chạy instance khi sự cố.
+- Dữ liệu: **Aurora Global Database** (~1 giây), **S3 CRR**, **DynamoDB Global Tables**. Định tuyến: **Route 53 failover** với health check.
+
+**Multi-AZ vs Multi-Region**
+- Multi-AZ bảo vệ khi **một datacenter** lỗi (**HA**); chỉ triển khai **cross-Region** mới sống sót khi **cả Region** gặp sự cố (**DR**).
 
 ## 3. Visual Diagram
 
 ```mermaid
-flowchart LR
-    A["Backup & Restore (hours)"] --> B["Pilot Light (tens of minutes)"]
-    B --> C["Warm Standby (minutes)"]
-    C --> D["Multi-site Active/Active (near zero)"]
-    A -.->|cost increases| D
+flowchart TD
+    Q{"RTO / RPO yêu cầu?"} -->|"Giờ, ngân sách thấp"| BR["Backup & Restore"]
+    Q -->|"Hàng chục phút"| PL["Pilot Light"]
+    Q -->|"Vài phút"| WS["Warm Standby"]
+    Q -->|"Gần 0, chấp nhận chi phí cao"| AA["Multi-site Active/Active"]
+    BR --> T["Luôn diễn tập định kỳ"]
+    PL --> T
+    WS --> T
+    AA --> T
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-| Chiến lược | RTO | Chi phí | Dùng khi |
-| --- | --- | --- | --- |
-| Backup & Restore | Giờ | Thấp nhất | Hệ thống nội bộ, chịu được downtime |
-| Pilot Light | Hàng chục phút | Thấp | Cần phục hồi khá nhanh, ngân sách vừa |
-| Warm Standby | Phút | Trung bình | Dịch vụ quan trọng |
-| Active/Active | ≈ 0 | Cao nhất | Tài chính, y tế, SLA rất cao |
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| RTO tính bằng giờ, ngân sách thấp | Backup & Restore |
+| RTO hàng chục phút | Pilot Light |
+| RTO vài phút, ngân sách vừa | Warm Standby |
+| RPO/RTO gần 0, chấp nhận đắt | Multi-site Active/Active |
+| Chống lỗi một AZ | Multi-AZ (HA, không phải DR) |
+| Sao lưu tập trung nhiều dịch vụ | AWS Backup |
 
-- Bắt đầu từ **yêu cầu kinh doanh** (RTO/RPO/chi phí downtime) rồi mới chọn chiến lược.
-- Trade-off cốt lõi: *Chi phí* so với *RTO/RPO*; tự động hoá failover giảm RTO nhưng tăng độ phức tạp.
+- **Được gì:** hệ thống sống sót sau thảm hoạ. **Mất gì:** chi phí hạ tầng song song, độ phức tạp đồng bộ dữ liệu và diễn tập.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Backup chưa test restore = chưa có backup**: lên lịch diễn tập DR định kỳ.
-- Multi-AZ **không phải** DR cross-Region; replication **không thay** backup (xoá nhầm cũng được nhân bản).
-- DR Region cần cùng **service quota**, **AMI/Secrets/KMS key** đã được sao chép; thiếu những thứ này failover sẽ nghẽn.
-- Failover DNS bị trễ vì **TTL** → đặt TTL thấp cho bản ghi quan trọng.
-- Exam trap: "RPO gần 0, RTO vài phút, ngân sách hạn chế" → Warm Standby/Pilot Light; "chi phí thấp nhất, chấp nhận vài giờ" → Backup & Restore.
+- **Nhầm HA với DR → chỉ triển khai Multi-AZ rồi tưởng đã có DR → khi cả Region lỗi vẫn sập; cần cross-Region**.
+- **Chọn Active/Active cho hệ thống không cần → chi phí và độ phức tạp thừa → chọn chiến lược theo RTO/RPO thực tế**.
+- **Backup có nhưng không restore được → chưa từng thử → diễn tập restore và failover định kỳ**.
+- **Backup cùng account/Region với dữ liệu gốc → mất cả hai khi bị chiếm → copy cross-Region/cross-account**.
+- **RPO không khớp tần suất backup → backup hằng đêm nhưng yêu cầu RPO 5 phút → dùng replication liên tục**.
+- Exam trap: "RTO vài phút ngân sách vừa" → **Warm Standby**; "RTO tính bằng giờ, ngân sách thấp" → **Backup & Restore**; "RPO gần 0, RTO vài phút, chấp nhận chi phí cao" → **Active/Active**.
 
 ## 6. Search Hooks
 
-- `RTO vs RPO` — thời gian phục hồi và lượng dữ liệu chấp nhận mất.
-- `AWS disaster recovery strategies pilot light warm standby` — các chiến lược DR chính thức của AWS.
-- `AWS Elastic Disaster Recovery DRS` — replicate liên tục server cho DR.
-- `AWS Backup cross-Region copy` — tự động hoá và sao chép backup đa Region.
-- `Route 53 failover routing health check` — chuyển traffic sang Region dự phòng.
-- `Multi-AZ vs multi-Region` — phân biệt chịu lỗi trong Region với DR.
+- `RTO vs RPO` — mục tiêu thời gian phục hồi và lượng dữ liệu chấp nhận mất.
+- `AWS disaster recovery strategies pilot light warm standby` — bốn chiến lược DR.
+- `AWS Elastic Disaster Recovery` — sao chép liên tục và dựng lại server.
+- `AWS Backup cross-region cross-account` — sao lưu tập trung.
+- `Multi-AZ vs Multi-Region` — HA so với DR.
