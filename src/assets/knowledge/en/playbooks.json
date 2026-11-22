@@ -503,5 +503,20 @@
     "id": "time-timezones-clocks",
     "title": "Time, Time Zones & Clocks",
     "summary": "Store instants in UTC and understand DST and clock skew to avoid silent time bugs."
+  },
+  {
+    "id": "oltp-olap-data-modeling",
+    "title": "OLTP vs OLAP & Data Modeling",
+    "summary": "Separate transactional workloads from analytics and model data with a star schema."
+  },
+  {
+    "id": "batch-vs-stream-processing",
+    "title": "Batch vs Stream Processing",
+    "summary": "Choose batch or stream by the freshness required and handle event time, watermarks and late data."
+  },
+  {
+    "id": "kafka-fundamentals",
+    "title": "Kafka Fundamentals",
+    "summary": "Grasp Kafka's partitions, offsets, consumer groups, replication and durability configuration."
   }
 ]

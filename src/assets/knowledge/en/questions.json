@@ -5189,5 +5189,167 @@
       "Time zone rules can change",
       "IANA computes the offset per date"
     ]
+  },
+  {
+    "id": "oltp-olap-data-modeling-01",
+    "question": "A monthly revenue report over billions of rows uses only 3 columns of a 100-column table. Which storage is reasonable?",
+    "options": [
+      "Row store",
+      "Column store",
+      "Key-value",
+      "Graph"
+    ],
+    "explanation": "A column store reads only the needed columns and compresses well. A row store must read whole rows."
+  },
+  {
+    "id": "oltp-olap-data-modeling-02",
+    "question": "A customer changes city and the report needs revenue attributed to the city at the time of purchase. How do you model it?",
+    "options": [
+      "Overwrite (SCD Type 1)",
+      "SCD Type 2: add a new row with valid_from/valid_to",
+      "Delete the customer",
+      "Use the natural key"
+    ],
+    "explanation": "Type 2 preserves point-in-time history; Type 1 loses history."
+  },
+  {
+    "id": "oltp-olap-data-modeling-03",
+    "question": "A fact table contains both order line items and order totals, and revenue figures are double-counted. What is the mistake?",
+    "options": [
+      "A missing index",
+      "Mixing several grains in one fact table",
+      "A missing surrogate key",
+      "Too many dimensions"
+    ],
+    "explanation": "You must declare a single grain for each fact."
+  },
+  {
+    "id": "oltp-olap-data-modeling-04",
+    "question": "Explain why a column store is faster for analytics while a row store suits OLTP.",
+    "modelAnswer": "Analytics typically scans many rows but only a few columns, so a column store reads only the needed columns and compresses well because similar values sit together. OLTP reads/writes a whole row by key, so a row store, where a row's columns sit next to each other, is more efficient.",
+    "keyPoints": [
+      "Column: read only needed columns, compress well",
+      "Row: read/write whole rows",
+      "Choose by access pattern"
+    ]
+  },
+  {
+    "id": "oltp-olap-data-modeling-05",
+    "question": "How does a surrogate key differ from a natural key and why is it needed for SCD Type 2?",
+    "options": [
+      "A meaningless, stable integer key that allows multiple rows for the same customer",
+      "An email",
+      "A name",
+      "It is unnecessary"
+    ],
+    "explanation": "SCD2 has multiple rows per entity so it needs a substitute key."
+  },
+  {
+    "id": "batch-vs-stream-processing-01",
+    "question": "A nightly revenue report for executives, tolerating a few hours of delay. What is a simple, cheap approach?",
+    "options": [
+      "Stream",
+      "Batch",
+      "Micro-batch every second",
+      "Not needed"
+    ],
+    "explanation": "Batch is simple and meets the SLA."
+  },
+  {
+    "id": "batch-vs-stream-processing-02",
+    "question": "A click event at 10:00 reaches the system at 10:07 because of the network. Which time should be used to count clicks per minute?",
+    "options": [
+      "Processing time",
+      "Event time (with a watermark)",
+      "Server time",
+      "Random"
+    ],
+    "explanation": "Event time reflects when it really happened."
+  },
+  {
+    "id": "batch-vs-stream-processing-03",
+    "question": "What is a watermark used for?",
+    "options": [
+      "Encrypting data",
+      "Estimating event-time progress to know when to close a window",
+      "Compressing data",
+      "Backup"
+    ],
+    "explanation": "When the watermark passes the end of a window, the window is closed and emits its result."
+  },
+  {
+    "id": "batch-vs-stream-processing-04",
+    "question": "Compare the Lambda and Kappa architectures and state the trade-offs.",
+    "modelAnswer": "Lambda uses two parallel paths: an accurate but slow batch layer and a fast but approximate speed layer that are then merged; the drawback is writing and synchronizing the logic twice. Kappa uses a single streaming pipeline and recomputes by replaying the log, which is simpler but needs a durable log and efficient replay.",
+    "keyPoints": [
+      "Lambda: two paths, duplicated logic",
+      "Kappa: one pipeline, replay the log",
+      "The trade-off is complexity versus the need for a durable log"
+    ]
+  },
+  {
+    "id": "batch-vs-stream-processing-05",
+    "question": "How does Spark Structured Streaming differ from Flink in processing model?",
+    "options": [
+      "Spark groups small batches (micro-batch), Flink processes each event",
+      "They are the same",
+      "Spark does not support streaming",
+      "Flink is batch only"
+    ],
+    "explanation": "Micro-batch has latency ≥ a second; Flink suits lower latency."
+  },
+  {
+    "id": "kafka-fundamentals-01",
+    "question": "A team wants not to lose acknowledged messages when a broker dies. Which configuration is reasonable?",
+    "options": [
+      "acks=1, RF=1",
+      "acks=all, RF=3, min.insync.replicas=2",
+      "acks=0",
+      "RF=2 without ISR"
+    ],
+    "explanation": "It tolerates losing 1 broker without losing acked data."
+  },
+  {
+    "id": "kafka-fundamentals-02",
+    "question": "A topic has 6 partitions and the group has 10 consumers. What happens?",
+    "options": [
+      "All 10 process",
+      "At most 6 consumers are active",
+      "Kafka increases partitions automatically",
+      "Throughput doubles"
+    ],
+    "explanation": "One consumer per partition within a group."
+  },
+  {
+    "id": "kafka-fundamentals-03",
+    "question": "A producer retry causes a message to be written twice. How do you avoid it?",
+    "options": [
+      "Disable retries",
+      "enable.idempotence=true",
+      "Increase partitions",
+      "Use acks=0"
+    ],
+    "explanation": "An idempotent producer deduplicates using the PID + sequence."
+  },
+  {
+    "id": "kafka-fundamentals-04",
+    "question": "Explain consumer lag and the causes/remedies when lag rises and rebalances continuously.",
+    "modelAnswer": "Lag is the log end position minus the committed offset, measuring how far the consumer is behind. Rising lag with continuous rebalancing is usually caused by processing that takes too long, exceeding max.poll.interval.ms, or by missed heartbeats. Remedies: lighter/asynchronous processing, a higher timeout, cooperative rebalancing, static membership and adding consumers within the partition count.",
+    "keyPoints": [
+      "Lag = log end − committed offset",
+      "Slow processing causes rebalances",
+      "Cooperative rebalancing, add consumers"
+    ]
+  },
+  {
+    "id": "kafka-fundamentals-05",
+    "question": "What does log compaction keep?",
+    "options": [
+      "Every record",
+      "The latest record for each key",
+      "The oldest record",
+      "A random record"
+    ],
+    "explanation": "Used for changelogs/state; a tombstone deletes the key."
   }
 ]

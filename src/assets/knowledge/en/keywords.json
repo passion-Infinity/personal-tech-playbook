@@ -2508,5 +2508,95 @@
     "id": "falsehoods-about-time",
     "meaning": "Wrong assumptions about time",
     "definition": "A list of false beliefs such as every day having 24 hours or clocks always moving forward."
+  },
+  {
+    "id": "oltp-vs-olap",
+    "meaning": "Two kinds of workload and their design consequences",
+    "definition": "OLTP is short row-based transactions; OLAP is large scans and column-based aggregation."
+  },
+  {
+    "id": "star-schema",
+    "meaning": "Dimensional model for analytics",
+    "definition": "A fact table holds measures surrounded by dimension tables holding context."
+  },
+  {
+    "id": "scd-type-2",
+    "meaning": "Keeping dimension change history",
+    "definition": "Add a new row with valid_from and valid_to so past reports do not change."
+  },
+  {
+    "id": "columnar-vs-row-storage",
+    "meaning": "Why column stores are fast for analytics",
+    "definition": "Read only the needed columns, compress well and run vectorized execution; weaker at single-row updates."
+  },
+  {
+    "id": "kimball-grain",
+    "meaning": "Start modeling from the grain",
+    "definition": "The grain defines what one fact row represents; a wrong grain doubles totals."
+  },
+  {
+    "id": "surrogate-keys",
+    "meaning": "Substitute keys in dimensions",
+    "definition": "Artificial keys independent of business keys, required for SCD."
+  },
+  {
+    "id": "batch-vs-stream",
+    "meaning": "Processing finite and infinite data",
+    "definition": "Batch gives high throughput with minute-to-hour latency; stream gives low latency but is more complex to operate."
+  },
+  {
+    "id": "event-time-vs-processing-time",
+    "meaning": "Two notions of time in streams",
+    "definition": "Event time is when the event happened; business figures should be computed by event time."
+  },
+  {
+    "id": "watermarks-windowing",
+    "meaning": "Closing windows and handling late data",
+    "definition": "A watermark estimates that all data up to time T has been seen; windows include tumbling, sliding and session."
+  },
+  {
+    "id": "lambda-vs-kappa",
+    "meaning": "Two architectures combining batch and stream",
+    "definition": "Lambda runs two paths in parallel and duplicates logic; Kappa is stream-only and reprocesses by replay."
+  },
+  {
+    "id": "micro-batch",
+    "meaning": "Stream processing in small batches",
+    "definition": "A middle point between batch and stream with a few seconds of latency and a simpler model."
+  },
+  {
+    "id": "stream-exactly-once",
+    "meaning": "Exactly-once semantics and practical limits",
+    "definition": "Only correct within a framework and sinks that support transactions or are idempotent."
+  },
+  {
+    "id": "kafka-partitions-offsets-groups",
+    "meaning": "Data model and how consumers split work",
+    "definition": "Ordering only within a partition; each partition belongs to one consumer in a group, so maximum parallelism equals the partition count."
+  },
+  {
+    "id": "kafka-acks-isr",
+    "meaning": "Write durability configuration",
+    "definition": "acks=all with min.insync.replicas and replication factor 3 so no data is lost when one broker fails."
+  },
+  {
+    "id": "kafka-idempotent-producer-transactions",
+    "meaning": "Deduplication and read-process-write handling",
+    "definition": "An idempotent producer removes duplicates on retry; transactions give exactly-once within Kafka."
+  },
+  {
+    "id": "kafka-log-compaction",
+    "meaning": "Keep the latest value per key",
+    "definition": "Used for changelogs and state tables; different from time-based retention."
+  },
+  {
+    "id": "kafka-consumer-lag-rebalance",
+    "meaning": "Monitoring lag and handling rebalances",
+    "definition": "Rising lag means a slow consumer; overly long processing causes continuous rebalancing."
+  },
+  {
+    "id": "kraft",
+    "meaning": "Kafka's new metadata architecture",
+    "definition": "Kafka manages metadata itself with Raft, removing the ZooKeeper dependency."
   }
 ]
