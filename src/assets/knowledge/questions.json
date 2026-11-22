@@ -3249,24 +3249,24 @@
     "playbookId": "azure-core-architecture",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Thứ bậc đúng của quản trị Azure từ cao xuống thấp?",
+    "question": "Công ty có 12 subscription cho các phòng ban và muốn ép một Azure Policy chung (ví dụ chỉ cho phép Region ở Đông Nam Á). Thứ bậc quản trị đúng và nơi áp policy hợp lý?",
     "options": [
-      "Resource → Resource Group → Subscription",
-      "Management Group → Subscription → Resource Group → Resource",
-      "Subscription → Management Group",
-      "Tenant → Resource Group → Subscription"
+      "Resource → Resource Group → Subscription, áp trên từng resource",
+      "Management Group → Subscription → Resource Group → Resource, áp ở Management Group",
+      "Subscription → Management Group, áp trên Resource Group",
+      "Region → Subscription, áp trên Region"
     ],
     "answer": [
       1
     ],
-    "explanation": "Chính sách và quyền kế thừa xuống dưới."
+    "explanation": "Management Group gom subscription và kế thừa policy xuống dưới. Phương án áp trên từng resource dễ nhầm là chặt chẽ nhưng không nhân rộng được."
   },
   {
     "id": "azure-core-architecture-02",
     "playbookId": "azure-core-architecture",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ranh giới thanh toán và quota trong Azure là?",
+    "question": "Finance cần hoá đơn tách riêng cho môi trường production và dev, đồng thời giới hạn số vCPU từng môi trường. Ranh giới nào đáp ứng?",
     "options": [
       "Resource Group",
       "Subscription",
@@ -3276,19 +3276,19 @@
     "answer": [
       1
     ],
-    "explanation": "Subscription là ranh giới billing và giới hạn."
+    "explanation": "Subscription là ranh giới thanh toán và quota. Resource Group dễ nhầm vì cũng nhóm tài nguyên, nhưng không tách hoá đơn hay quota."
   },
   {
     "id": "azure-core-architecture-03",
     "playbookId": "azure-core-architecture",
     "type": "explain",
     "difficulty": 2,
-    "question": "Availability Zone khác Region pair thế nào?",
-    "modelAnswer": "Availability Zone là các vị trí vật lý độc lập về điện, làm mát, mạng trong cùng một Region để chịu lỗi data center. Region pair ghép hai Region cùng geography cách xa nhau cho DR và cập nhật tuần tự.",
+    "question": "Một hệ thống cần chịu được lỗi một datacenter và cũng cần kế hoạch khi cả Region gặp sự cố. Hãy giải thích Availability Zone khác Region pair thế nào và dùng mỗi thứ ra sao.",
+    "modelAnswer": "Availability Zone là các vị trí vật lý độc lập về điện, làm mát, mạng trong cùng một Region, dùng để chịu lỗi cấp datacenter bằng cách triển khai zone-redundant. Region pair là hai Region trong cùng geography, cách xa nhau, dùng cho DR khi cả Region lỗi; Azure cập nhật tuần tự và ưu tiên khôi phục trong cặp. Dùng AZ cho HA trong Region và Region pair (hoặc Region khác) cho DR.",
     "keyPoints": [
-      "AZ: trong một Region",
-      "Region pair: giữa hai Region",
-      "AZ lỗi data center, pair lỗi Region"
+      "AZ: cùng Region, chịu lỗi datacenter",
+      "Region pair: khác Region, DR khi mất Region",
+      "Cập nhật tuần tự trong cặp"
     ]
   },
   {
@@ -3296,7 +3296,7 @@
     "playbookId": "entra-id-rbac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Người dùng chỉ được xem tài nguyên, không sửa. Role nào?",
+    "question": "Kiểm toán viên cần xem toàn bộ tài nguyên trong subscription nhưng tuyệt đối không được sửa hay xoá. Role nào?",
     "options": [
       "Owner",
       "Contributor",
@@ -3306,14 +3306,14 @@
     "answer": [
       2
     ],
-    "explanation": "Reader chỉ xem; Contributor không cấp quyền; Owner toàn quyền."
+    "explanation": "Reader chỉ xem. Contributor dễ nhầm vì là role phổ biến, nhưng cho phép tạo/sửa/xoá."
   },
   {
     "id": "entra-id-rbac-02",
     "playbookId": "entra-id-rbac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Ứng dụng trên Azure truy cập Key Vault mà không lưu mật khẩu. Dùng?",
+    "question": "Web app trên App Service cần đọc secret từ Key Vault và team không muốn lưu mật khẩu hay connection string trong cấu hình. Dùng gì?",
     "options": [
       "Connection string trong code",
       "Managed identity",
@@ -3323,19 +3323,19 @@
     "answer": [
       1
     ],
-    "explanation": "Managed identity do Azure quản lý, không cần secret."
+    "explanation": "Managed identity do Azure quản lý, không cần secret. Account key dễ nhầm là đơn giản, nhưng là secret dài hạn cần tự xoay và dễ lộ."
   },
   {
     "id": "entra-id-rbac-03",
     "playbookId": "entra-id-rbac",
     "type": "explain",
     "difficulty": 2,
-    "question": "Azure RBAC khác Entra roles và Azure Policy thế nào?",
-    "modelAnswer": "Azure RBAC phân quyền người dùng trên tài nguyên Azure theo scope. Entra roles quản lý danh tính và tenant như Global Administrator. Azure Policy quy định tài nguyên được phép có cấu hình thế nào, không cấp quyền cho ai.",
+    "question": "Một team cấp Global Administrator cho dev để họ tạo VM, và dùng RBAC để ép mọi tài nguyên phải có tag. Hãy phân biệt Azure RBAC, Entra roles và Azure Policy và chỉ ra hai sai lầm này.",
+    "modelAnswer": "Azure RBAC phân quyền người dùng trên tài nguyên Azure theo scope (tạo VM thuộc RBAC, dùng Contributor ở scope phù hợp). Entra roles quản lý danh tính và tenant như Global Administrator, không phải để tạo VM. Azure Policy kiểm soát tài nguyên được phép trông thế nào (ví dụ bắt buộc tag), không phải ai được làm gì. Hai sai lầm là cấp Entra role thay vì RBAC role và dùng RBAC thay cho Policy để ép tag.",
     "keyPoints": [
-      "RBAC: quyền trên tài nguyên",
-      "Entra roles: danh tính/tenant",
-      "Policy: cấu hình tài nguyên"
+      "RBAC: ai làm gì trên tài nguyên theo scope",
+      "Entra roles: danh tính và tenant",
+      "Policy: tài nguyên được phép trông thế nào"
     ]
   },
   {
@@ -3343,46 +3343,46 @@
     "playbookId": "azure-virtual-machines",
     "type": "mcq",
     "difficulty": 2,
-    "question": "SLA cao nhất cho VM đạt được bằng?",
+    "question": "Hệ thống thanh toán cần SLA cao nhất có thể cho các VM trong một Region. Cấu trúc nào đạt được?",
     "options": [
       "Một VM Premium SSD",
       "Availability Set",
-      "Availability Zones",
-      "Spot"
+      "VM trải qua nhiều Availability Zones",
+      "Spot VM"
     ],
     "answer": [
       2
     ],
-    "explanation": "Triển khai qua nhiều zone cho SLA khoảng 99.99%."
+    "explanation": "Nhiều VM ở ≥ 2 zone cho SLA 99,99%. Availability Set dễ nhầm vì cũng là HA, nhưng chỉ 99,95% và trong một datacenter."
   },
   {
     "id": "azure-virtual-machines-02",
     "playbookId": "azure-virtual-machines",
     "type": "mcq",
     "difficulty": 2,
-    "question": "VM đang ở trạng thái Stopped (chưa deallocate) vẫn?",
+    "question": "Dev tắt VM bằng lệnh shutdown trong OS và thấy trạng thái Stopped, nhưng hoá đơn compute vẫn chạy. Vì sao?",
     "options": [
       "Không tính phí",
-      "Tính phí compute",
-      "Bị xoá",
+      "Chưa deallocate nên vẫn tính phí compute",
+      "VM bị xoá",
       "Chỉ tính phí đĩa"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần deallocate để ngừng tính phí compute."
+    "explanation": "Cần deallocate mới ngừng tính compute. 'Chỉ tính phí đĩa' dễ nhầm vì đúng với trạng thái Stopped (deallocated)."
   },
   {
     "id": "azure-virtual-machines-03",
     "playbookId": "azure-virtual-machines",
     "type": "explain",
     "difficulty": 2,
-    "question": "Chọn mô hình giá cho VM Azure thế nào?",
-    "modelAnswer": "Workload ổn định dài hạn dùng Reserved Instance hoặc Savings Plan, workload chịu gián đoạn dùng Spot, còn lại pay-as-you-go; có thể thêm Azure Hybrid Benefit để tận dụng license sẵn có.",
+    "question": "Một công ty có web app chạy ổn định quanh năm, một pipeline CI chịu gián đoạn và máy chủ Windows đã có license Software Assurance. Hãy chọn mô hình giá cho từng phần.",
+    "modelAnswer": "Workload ổn định dài hạn dùng Reserved Instance hoặc Savings Plan; CI chịu gián đoạn dùng Spot VM tiết kiệm tới ~90% vì bị thu hồi cũng chấp nhận được; máy Windows dùng thêm Azure Hybrid Benefit để tận dụng license sẵn có. Phần còn lại hoặc tải không đoán trước dùng pay-as-you-go.",
     "keyPoints": [
-      "Ổn định: Reserved/Savings Plan",
-      "Chịu gián đoạn: Spot",
-      "Hybrid Benefit cho license"
+      "Reserved/Savings Plan cho tải ổn định",
+      "Spot cho tải chịu gián đoạn",
+      "Hybrid Benefit cho license sẵn có"
     ]
   },
   {
@@ -3390,7 +3390,7 @@
     "playbookId": "azure-storage",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chịu lỗi cả Region và vẫn đọc được từ Region phụ khi sự cố?",
+    "question": "Ứng dụng cần vẫn đọc được dữ liệu từ Region phụ khi Region chính sập hoàn toàn. Chọn redundancy?",
     "options": [
       "LRS",
       "ZRS",
@@ -3400,36 +3400,36 @@
     "answer": [
       3
     ],
-    "explanation": "Phiên bản RA- cho phép đọc từ Region thứ hai."
+    "explanation": "Phiên bản RA- cho phép đọc từ Region phụ. GRS dễ nhầm vì cũng sao chép sang Region khác, nhưng chỉ đọc được sau khi failover."
   },
   {
     "id": "azure-storage-02",
     "playbookId": "azure-storage",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Blob ở tier Archive muốn đọc thì?",
+    "question": "Một blob ở tier Archive cần được đọc ngay để phục vụ yêu cầu của khách. Điều gì xảy ra?",
     "options": [
       "Đọc ngay",
-      "Phải rehydrate (mất hàng giờ)",
+      "Phải rehydrate, mất hàng giờ",
       "Không thể đọc",
-      "Chuyển sang Hot tự động"
+      "Tự chuyển sang Hot"
     ],
     "answer": [
       1
     ],
-    "explanation": "Archive là offline."
+    "explanation": "Archive là offline nên phải rehydrate. 'Tự chuyển sang Hot' dễ nhầm vì tier có thể đổi, nhưng không tự động."
   },
   {
     "id": "azure-storage-03",
     "playbookId": "azure-storage",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khi nào dùng SAS token và loại nào an toàn hơn?",
-    "modelAnswer": "SAS cấp quyền tạm thời có giới hạn cho bên ngoài. User delegation SAS ký bằng Entra ID an toàn hơn account key; nên đặt thời hạn ngắn và quyền tối thiểu, tránh chia sẻ account key.",
+    "question": "Một đối tác cần tải file lên container trong 1 giờ mà bạn không muốn chia sẻ account key. Giải thích khi nào dùng SAS và loại nào an toàn hơn.",
+    "modelAnswer": "SAS cấp quyền tạm thời có giới hạn (phạm vi, quyền, thời hạn) cho bên ngoài mà không chia sẻ account key. User delegation SAS được ký bằng thông tin Entra ID nên an toàn hơn SAS ký bằng account key vì không phụ thuộc key toàn quyền và có thể thu hồi qua Entra ID.",
     "keyPoints": [
-      "SAS: quyền tạm thời",
+      "SAS cấp quyền tạm thời giới hạn",
       "User delegation SAS ký bằng Entra ID",
-      "Hạn ngắn, quyền tối thiểu"
+      "Tránh account key"
     ]
   },
   {
@@ -3437,7 +3437,7 @@
     "playbookId": "azure-networking-load-balancing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cân bằng tải HTTP toàn cầu có WAF và CDN?",
+    "question": "Một ứng dụng web phục vụ người dùng toàn cầu cần cân bằng tải HTTP, tăng tốc bằng CDN và WAF. Chọn?",
     "options": [
       "Load Balancer",
       "Application Gateway",
@@ -3447,36 +3447,36 @@
     "answer": [
       2
     ],
-    "explanation": "Front Door là L7 toàn cầu."
+    "explanation": "Front Door là L7 toàn cầu có CDN và WAF. Application Gateway dễ nhầm vì có WAF, nhưng chỉ trong một Region."
   },
   {
     "id": "azure-networking-load-balancing-02",
     "playbookId": "azure-networking-load-balancing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "NSG xử lý rule theo thứ tự nào?",
+    "question": "NSG có rule priority 100 Allow 443 và priority 200 Deny 443. Hành vi? Và NSG xử lý rule theo thứ tự nào?",
     "options": [
-      "Số priority lớn trước",
-      "Số priority nhỏ trước",
+      "Priority lớn chạy trước",
+      "Priority nhỏ chạy trước, nên 443 được Allow",
       "Ngẫu nhiên",
-      "Theo tên"
+      "Theo tên rule"
     ],
     "answer": [
       1
     ],
-    "explanation": "Priority nhỏ được đánh giá trước."
+    "explanation": "Priority nhỏ chạy trước và dừng khi khớp. 'Priority lớn trước' dễ nhầm với một số hệ khác."
   },
   {
     "id": "azure-networking-load-balancing-03",
     "playbookId": "azure-networking-load-balancing",
     "type": "explain",
     "difficulty": 2,
-    "question": "ExpressRoute khác VPN Gateway thế nào?",
-    "modelAnswer": "ExpressRoute là kết nối riêng không đi qua Internet, ổn định và độ trễ thấp nhưng đắt và lead time dài. VPN Gateway mã hoá traffic qua Internet, rẻ và triển khai nhanh hơn.",
+    "question": "Công ty cần nối trung tâm dữ liệu với Azure cho hệ thống tài chính, cân nhắc ExpressRoute hay VPN Gateway. Hãy giải thích khác biệt và đánh đổi.",
+    "modelAnswer": "ExpressRoute là kết nối riêng không đi qua Internet, ổn định, độ trễ thấp, băng thông cao nhưng đắt và thời gian triển khai dài. VPN Gateway mã hoá traffic qua Internet, rẻ và dựng nhanh nhưng chất lượng phụ thuộc Internet. Hệ thống tài chính cần ổn định thường chọn ExpressRoute kèm VPN dự phòng.",
     "keyPoints": [
       "ExpressRoute: riêng, ổn định, đắt",
-      "VPN: qua Internet, rẻ",
-      "Chọn theo yêu cầu băng thông"
+      "VPN: qua Internet, rẻ, nhanh dựng",
+      "Có thể kết hợp để dự phòng"
     ]
   },
   {
@@ -8667,25 +8667,25 @@
     "playbookId": "azure-core-architecture",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hai điều nào đúng về Azure Resource Group? (chọn 2)",
+    "question": "Một admin xoá nhầm một Resource Group và mất cả database bên trong. Hai nhận định nào đúng về Resource Group? (chọn 2)",
     "options": [
-      "Là container logic của tài nguyên",
-      "Xoá resource group xoá toàn bộ tài nguyên bên trong",
-      "Tài nguyên không thể chuyển nhóm",
-      "Mỗi tài nguyên thuộc nhiều nhóm"
+      "Là container logic của tài nguyên cùng vòng đời",
+      "Xoá Resource Group xoá toàn bộ tài nguyên bên trong",
+      "Mỗi tài nguyên có thể thuộc nhiều Resource Group",
+      "Resource Group là ranh giới mạng"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "RG là ranh giới vòng đời, mỗi tài nguyên thuộc đúng một RG."
+    "explanation": "RG là container logic và xoá RG xoá mọi tài nguyên bên trong. Mỗi resource chỉ thuộc một RG, và RG không phải ranh giới mạng, dễ nhầm với VNet."
   },
   {
     "id": "azure-core-architecture-05",
     "playbookId": "azure-core-architecture",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Bảo vệ khỏi lỗi một datacenter trong Region?",
+    "question": "Ứng dụng cần sống sót khi một datacenter trong Region bị mất điện nhưng chưa cần chịu sự cố cả Region. Phương án đúng?",
     "options": [
       "Availability Zones",
       "Single instance",
@@ -8695,66 +8695,66 @@
     "answer": [
       0
     ],
-    "explanation": "AZ là các datacenter tách biệt trong Region."
+    "explanation": "AZ là các datacenter tách biệt trong cùng Region. Region pair dễ nhầm vì cũng là dự phòng, nhưng dành cho sự cố cả Region."
   },
   {
     "id": "entra-id-rbac-04",
     "playbookId": "entra-id-rbac",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cấp quyền chỉ đọc cho một resource group?",
+    "question": "Cần cấp cho nhóm kiểm toán quyền chỉ đọc đối với một resource group duy nhất. Cách đúng nhất?",
     "options": [
       "Entra role Global Reader",
-      "Azure RBAC Reader tại phạm vi RG",
-      "Owner subscription",
-      "Policy"
+      "Azure RBAC Reader tại phạm vi resource group",
+      "Owner trên subscription",
+      "Azure Policy"
     ],
     "answer": [
       1
     ],
-    "explanation": "RBAC theo phạm vi tài nguyên."
+    "explanation": "RBAC theo scope nhỏ nhất đủ dùng. Global Reader dễ nhầm vì tên có Reader, nhưng là Entra role đọc cấu hình tenant, không phải tài nguyên Azure."
   },
   {
     "id": "entra-id-rbac-05",
     "playbookId": "entra-id-rbac",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai điều nào đúng? (chọn 2)",
+    "question": "Hai nhận định nào đúng về Azure RBAC? (chọn 2)",
     "options": [
-      "RBAC kế thừa xuống phạm vi con",
-      "Entra roles và Azure RBAC là một",
-      "Deny assignment có thể chặn",
-      "Owner không thể gán quyền"
+      "Quyền được kế thừa xuống phạm vi con",
+      "Entra roles và Azure RBAC là một hệ thống",
+      "Deny assignment có thể chặn dù có role assignment",
+      "Owner không thể gán quyền cho người khác"
     ],
     "answer": [
       0,
       2
     ],
-    "explanation": "Phạm vi kế thừa; Entra roles và RBAC là hai hệ khác nhau."
+    "explanation": "Scope kế thừa xuống dưới và deny assignment thắng role assignment. Entra roles và RBAC là hai hệ khác nhau; Owner thì có quyền gán role."
   },
   {
     "id": "azure-virtual-machines-04",
     "playbookId": "azure-virtual-machines",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chịu lỗi VM giữa các datacenter trong Region?",
+    "question": "Cần chịu được lỗi một datacenter trong Region cho tầng web gồm 3 VM. Cấu trúc đúng?",
     "options": [
       "Availability Set",
-      "Availability Zones",
-      "Một VM lớn",
-      "Tag"
+      "Trải VM qua Availability Zones",
+      "Một VM lớn hơn",
+      "Gắn tag"
     ],
     "answer": [
       1
     ],
-    "explanation": "AZ chịu lỗi datacenter."
+    "explanation": "AZ chịu lỗi cấp datacenter. Availability Set dễ nhầm vì chia fault domain, nhưng vẫn trong một datacenter."
   },
   {
     "id": "azure-virtual-machines-05",
     "playbookId": "azure-virtual-machines",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Tải thay đổi, tự thêm bớt VM?",
+    "question": "Lưu lượng web tăng mạnh vào giờ cao điểm rồi giảm, team muốn tự thêm bớt VM theo CPU. Dùng gì?",
     "options": [
       "VM đơn",
       "Virtual Machine Scale Set",
@@ -8764,48 +8764,48 @@
     "answer": [
       1
     ],
-    "explanation": "VMSS autoscale."
+    "explanation": "VMSS có autoscale theo metric hoặc lịch. Image dễ nhầm vì dùng để tạo VM, nhưng không tự scale."
   },
   {
     "id": "azure-storage-04",
     "playbookId": "azure-storage",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dữ liệu lưu trữ lâu dài, hiếm truy cập, chấp nhận độ trễ lấy?",
+    "question": "Dữ liệu log cần giữ nhiều năm, hiếm khi truy cập và chấp nhận độ trễ khi lấy ra. Tier phù hợp?",
     "options": [
       "Hot",
-      "Cool/Archive",
+      "Cool/Cold/Archive",
       "Premium",
       "Local SSD"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cool/Archive rẻ hơn khi lưu."
+    "explanation": "Cool/Cold/Archive rẻ hơn khi lưu. Hot dễ nhầm là an toàn nhưng phí lưu cao nhất."
   },
   {
     "id": "azure-storage-05",
     "playbookId": "azure-storage",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Bảo vệ khỏi lỗi cả Region?",
+    "question": "Yêu cầu bảo vệ dữ liệu khi cả Region chính ngừng hoạt động. Mức redundancy tối thiểu?",
     "options": [
       "LRS",
       "ZRS",
-      "GRS/GZRS",
+      "GRS hoặc GZRS",
       "Không cần"
     ],
     "answer": [
       2
     ],
-    "explanation": "Geo-redundant sao chép sang Region khác."
+    "explanation": "Geo-redundant sao chép sang Region khác. ZRS dễ nhầm vì dùng nhiều AZ, nhưng vẫn trong một Region."
   },
   {
     "id": "azure-networking-load-balancing-04",
     "playbookId": "azure-networking-load-balancing",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cân bằng tải L4 trong Region?",
+    "question": "Cần cân bằng tải TCP giữa các VM trong một Region với độ trễ thấp. Chọn?",
     "options": [
       "Application Gateway",
       "Azure Load Balancer",
@@ -8815,25 +8815,25 @@
     "answer": [
       1
     ],
-    "explanation": "Load Balancer ở L4."
+    "explanation": "Load Balancer hoạt động L4. Application Gateway dễ nhầm vì cũng trong Region, nhưng hoạt động L7 cho HTTP/S."
   },
   {
     "id": "azure-networking-load-balancing-05",
     "playbookId": "azure-networking-load-balancing",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai điều nào đúng về NSG? (chọn 2)",
+    "question": "Hai nhận định nào đúng về NSG? (chọn 2)",
     "options": [
-      "Lọc theo subnet hoặc NIC",
-      "Có rule allow và deny",
-      "Chỉ có allow",
+      "Có thể gắn vào subnet hoặc NIC",
+      "Có cả rule Allow và Deny",
+      "Chỉ có rule Allow",
       "Không có priority"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "NSG có priority, allow và deny."
+    "explanation": "NSG gắn subnet/NIC và có Allow lẫn Deny theo priority. Chỉ-Allow là đặc điểm của AWS Security Group nên dễ nhầm."
   },
   {
     "id": "azure-governance-cost-04",
