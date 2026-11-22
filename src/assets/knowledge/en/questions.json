@@ -4874,5 +4874,148 @@
       "ulimit -n",
       "Raise the limit, close FDs, monitor"
     ]
+  },
+  {
+    "id": "concurrency-fundamentals-01",
+    "question": "Two threads run counter++ on a shared variable and the result sometimes misses an increment. What is the cause?",
+    "options": [
+      "A faulty CPU",
+      "counter++ is a non-atomic read-add-write so the two threads overwrite each other",
+      "Not enough RAM",
+      "GC"
+    ],
+    "explanation": "The read-modify-write gets interleaved. Use an atomic or a lock."
+  },
+  {
+    "id": "concurrency-fundamentals-02",
+    "question": "Thread A holds lock X and waits for lock Y; thread B holds Y and waits for X. What is the most effective prevention?",
+    "options": [
+      "Add more threads",
+      "Always acquire locks in the same global order or use a timeout",
+      "Reduce RAM",
+      "Use more locks"
+    ],
+    "explanation": "It breaks the circular-wait condition. Adding threads only makes it more likely to occur."
+  },
+  {
+    "id": "concurrency-fundamentals-03",
+    "question": "Updating a balance with low contention and high throughput. Which strategy is reasonable?",
+    "options": [
+      "Pessimistic locking for everything",
+      "Optimistic locking with a version and retry",
+      "No locking",
+      "Lock the whole table"
+    ],
+    "explanation": "Optimistic suits low contention. Pessimistic reduces parallelism needlessly."
+  },
+  {
+    "id": "concurrency-fundamentals-04",
+    "question": "State the four deadlock (Coffman) conditions and how to break one in practice.",
+    "modelAnswer": "The four conditions are mutual exclusion, hold and wait, no preemption and circular wait, and they must all hold at once. Breaking one is enough: in practice you usually acquire locks in a fixed global order to eliminate circular wait, or use tryLock with a timeout to avoid waiting forever.",
+    "keyPoints": [
+      "The four Coffman conditions",
+      "A fixed lock order",
+      "Timeout/tryLock"
+    ]
+  },
+  {
+    "id": "concurrency-fundamentals-05",
+    "question": "An AI wrote this inventory-reservation function for an API that runs on many instances. What is the most serious problem?",
+    "code": {
+      "text": "public boolean reserve(String sku) {\n    int stock = repo.getStock(sku);        // SELECT stock FROM inventory WHERE sku = ?\n    if (stock > 0) {\n        repo.setStock(sku, stock - 1);     // UPDATE inventory SET stock = ? WHERE sku = ?\n        return true;\n    }\n    return false;\n}"
+    },
+    "options": [
+      "The synchronized keyword is missing on the function",
+      "Check-then-act is not atomic: concurrent requests all see stock > 0 and overwrite each other, causing oversell",
+      "long should be used instead of int",
+      "There is no bug, the code is correct"
+    ],
+    "explanation": "Two requests both read stock = 1 and both write 0, selling twice. synchronized is not enough either when running many instances. Fix it with UPDATE inventory SET stock = stock - 1 WHERE sku = ? AND stock > 0 and check the number of affected rows."
+  },
+  {
+    "id": "scalability-fundamentals-01",
+    "question": "A team wants nearly unlimited load capacity and fault tolerance. Which direction and under what condition?",
+    "options": [
+      "Scale up forever",
+      "Scale out with a stateless design",
+      "Reduce users",
+      "Only increase CPU"
+    ],
+    "explanation": "Scale up has a ceiling and is a single point of failure. Scale out needs statelessness to add instances safely."
+  },
+  {
+    "id": "scalability-fundamentals-02",
+    "question": "An API receives 100 requests/second and each request takes 0.2 seconds on average. By Little's Law, roughly how many requests are in flight concurrently?",
+    "options": [
+      "2",
+      "20",
+      "200",
+      "0.2"
+    ],
+    "explanation": "L = λ × W = 100 × 0.2 = 20. If W rises to 2 seconds then L = 200, which can easily exhaust the thread pool."
+  },
+  {
+    "id": "scalability-fundamentals-03",
+    "question": "A request calls 100 services, each slow 1% of the time. What is the approximate probability that the request hits at least one slow call?",
+    "options": [
+      "1%",
+      "63%",
+      "99%",
+      "0%"
+    ],
+    "explanation": "0.99^100 ≈ 37% are all fast, so ~63% hit at least one slow call. That is why p99 matters more than the average."
+  },
+  {
+    "id": "scalability-fundamentals-04",
+    "question": "Quick estimate: 1 million daily active users, each making 10 requests. Compute the average and peak load and explain why this estimate matters.",
+    "modelAnswer": "10 million requests/day divided by 86,400 seconds gives about 115 requests/second on average; the peak is usually 3–5 times higher, so about 350–600 rps. The estimate helps choose an architecture of the right size (is one machine enough, do you need shards/cache) before investing, and avoids optimizing the wrong place.",
+    "keyPoints": [
+      "10^7 / 86,400 ≈ 115 rps",
+      "Peak is 3–5 times higher",
+      "Choose an architecture of the right size"
+    ]
+  },
+  {
+    "id": "data-structures-complexity-01",
+    "question": "An API filters 100,000 ids out of another list using `x in list` inside a loop and runs very slowly. What is the average complexity of a lookup in a hash set and what is the fix?",
+    "options": [
+      "O(n), keep it as it is",
+      "O(1) on average, switch to a set",
+      "O(log n)",
+      "O(n log n)"
+    ],
+    "explanation": "Convert the list to a set so each check is O(1) on average, for O(n+m) total. Using `in` on a list is O(n) each time, so O(n·m) overall."
+  },
+  {
+    "id": "data-structures-complexity-02",
+    "question": "You need to fetch records in key order and run range queries (from 10 to 50). Which structure do you choose?",
+    "options": [
+      "Hash map",
+      "Balanced tree or B-Tree",
+      "Linked list",
+      "Stack"
+    ],
+    "explanation": "A balanced tree keeps order and supports range queries in O(log n). A hash map is fast by key but has no order."
+  },
+  {
+    "id": "data-structures-complexity-03",
+    "question": "You need the 10 largest records from a stream of 100 million elements with limited memory. What is the best approach?",
+    "options": [
+      "Sort everything then take the first 10",
+      "A min-heap of size 10, O(n log 10)",
+      "Hash map",
+      "Linked list"
+    ],
+    "explanation": "A heap keeps 10 elements and costs only O(K) memory. A full sort costs O(n log n) and lots of memory."
+  },
+  {
+    "id": "data-structures-complexity-04",
+    "question": "Why is an array usually faster than a linked list in practice even with the same complexity for many operations?",
+    "modelAnswer": "An array is stored contiguously in memory, so it is friendly to the CPU cache and prefetching and offers O(1) index access, whereas a linked list jumps between pointers and keeps causing cache misses. So for small and medium data an array is usually faster even though in theory a linked list is better for middle insertion.",
+    "keyPoints": [
+      "CPU cache locality",
+      "O(1) index access",
+      "Linked-list pointer jumping causes cache misses"
+    ]
   }
 ]

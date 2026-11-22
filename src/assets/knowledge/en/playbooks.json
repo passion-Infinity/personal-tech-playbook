@@ -468,5 +468,20 @@
     "id": "os-processes-threads",
     "title": "OS: Processes, Threads & Memory",
     "summary": "Understand processes, threads, virtual memory and containers to diagnose why a server runs out of threads, RAM or gets OOM-killed."
+  },
+  {
+    "id": "concurrency-fundamentals",
+    "title": "Concurrency Fundamentals",
+    "summary": "Recognize race conditions and deadlocks and choose between locks, CAS or message passing to handle shared state."
+  },
+  {
+    "id": "scalability-fundamentals",
+    "title": "Scalability Fundamentals",
+    "summary": "Measure and remove bottlenecks with horizontal scaling, statelessness, caching, partitioning and queues instead of blindly adding machines."
+  },
+  {
+    "id": "data-structures-complexity",
+    "title": "Data Structures & Complexity (Big-O)",
+    "summary": "Choose the right data structure and read Big-O to know how a system behaves as data grows."
   }
 ]

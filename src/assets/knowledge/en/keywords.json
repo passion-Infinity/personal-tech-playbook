@@ -2323,5 +2323,90 @@
     "id": "ulimit-file-descriptors",
     "meaning": "The limit on a process's open files/sockets",
     "definition": "The Too many open files error is usually caused by leaked connections or a ulimit that is too low."
+  },
+  {
+    "id": "race-condition",
+    "meaning": "A bug where check-then-act is not atomic",
+    "definition": "The result depends on the threads' execution order, for example two threads both see stock equal to 1 and both decrement it."
+  },
+  {
+    "id": "deadlock-coffman",
+    "meaning": "The four conditions that cause deadlock",
+    "definition": "Mutual exclusion, hold-and-wait, no preemption and circular wait; break one condition (usually the lock order) to avoid it."
+  },
+  {
+    "id": "compare-and-swap",
+    "meaning": "An atomic update without a lock",
+    "definition": "Compare the current value and only then write; retry on failure — the basis of lock-free and optimistic concurrency."
+  },
+  {
+    "id": "happens-before",
+    "meaning": "Guarantee that other threads see written data",
+    "definition": "Without synchronization, CPU caches and reordering make other threads see stale values; you need volatile, locks or atomics."
+  },
+  {
+    "id": "optimistic-vs-pessimistic-locking",
+    "meaning": "Two strategies for handling contention",
+    "definition": "Pessimistic locks before modifying; optimistic proceeds, then checks for conflict (version/CAS) and retries."
+  },
+  {
+    "id": "actor-model",
+    "meaning": "Avoid shared state by passing messages",
+    "definition": "Each actor owns its own state and communicates only via messages, so no locks are needed."
+  },
+  {
+    "id": "vertical-vs-horizontal-scaling",
+    "meaning": "Scale up and scale out",
+    "definition": "Vertical is simple but has a ceiling and is a SPOF; horizontal is nearly unlimited but requires stateless services."
+  },
+  {
+    "id": "stateless-service",
+    "meaning": "Push state out to scale horizontally",
+    "definition": "Any request can go to any instance; state lives in a shared DB or cache."
+  },
+  {
+    "id": "back-of-envelope-estimation",
+    "meaning": "Quickly estimate QPS, capacity and bandwidth",
+    "definition": "For example 1 million requests per day is roughly 12 QPS; peak is usually 2–5 times the average."
+  },
+  {
+    "id": "littles-law",
+    "meaning": "The relation between concurrency, arrival rate and processing time",
+    "definition": "L = λ × W; used to compute the threads or connections needed for a given load."
+  },
+  {
+    "id": "tail-latency-p99",
+    "meaning": "Tail latency matters more than the average",
+    "definition": "With fan-out across many services, each service's p99 determines the overall experience."
+  },
+  {
+    "id": "availability-nines",
+    "meaning": "How to read and compute availability",
+    "definition": "99.9% is roughly 8.76 hours of downtime per year; chaining services in series multiplies the probabilities."
+  },
+  {
+    "id": "big-o-notation",
+    "meaning": "How cost grows with input size",
+    "definition": "Describes the order of growth, not absolute time; distinguishes average from worst case."
+  },
+  {
+    "id": "hash-table-collisions",
+    "meaning": "Hash tables and handling collisions",
+    "definition": "Lookup is O(1) on average, O(n) worst case; user-controlled keys can cause hash flooding."
+  },
+  {
+    "id": "heap-priority-queue",
+    "meaning": "Efficiently getting the priority element",
+    "definition": "Get min or max in O(1), insert and delete in O(log n); used for schedulers and top-K."
+  },
+  {
+    "id": "topological-sort",
+    "meaning": "Ordering by dependency",
+    "definition": "Used for build order, task dependencies and prerequisite graphs."
+  },
+  {
+    "id": "amortized-analysis",
+    "meaning": "The average cost of an operation",
+    "definition": "Appending to a dynamic array is O(1) amortized even though it occasionally reallocates."
   }
 ]
