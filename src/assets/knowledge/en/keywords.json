@@ -1798,5 +1798,70 @@
     "id": "cosmos-change-feed",
     "meaning": "Change stream",
     "definition": "Triggers processing after writes."
+  },
+  {
+    "id": "azure-service-bus",
+    "meaning": "Enterprise message broker",
+    "definition": "Queues, topics, dead-letter, sessions."
+  },
+  {
+    "id": "azure-event-grid",
+    "meaning": "Event distribution",
+    "definition": "Push to handlers, retry."
+  },
+  {
+    "id": "azure-event-hubs",
+    "meaning": "Streaming ingestion",
+    "definition": "Partitions, consumer groups, Kafka endpoint."
+  },
+  {
+    "id": "azure-messaging-comparison",
+    "meaning": "Comparing the three services",
+    "definition": "Events vs streams vs commands."
+  },
+  {
+    "id": "bicep-vs-arm",
+    "meaning": "Azure's IaC",
+    "definition": "Bicep is more concise and compiles to ARM."
+  },
+  {
+    "id": "arm-what-if",
+    "meaning": "Preview changes",
+    "definition": "Avoids surprises when deploying."
+  },
+  {
+    "id": "azure-devops-pipelines",
+    "meaning": "CI/CD",
+    "definition": "Stages, jobs, environments, approvals."
+  },
+  {
+    "id": "workload-identity-federation",
+    "meaning": "Authentication without secrets",
+    "definition": "The pipeline uses federated tokens."
+  },
+  {
+    "id": "adls-gen2",
+    "meaning": "Data lake on Blob",
+    "definition": "POSIX-style ACLs and real directories."
+  },
+  {
+    "id": "medallion-architecture",
+    "meaning": "Data cleansing layers",
+    "definition": "Bronze is immutable raw data, Silver is cleaned and deduplicated, Gold is modeled for reporting or ML."
+  },
+  {
+    "id": "synapse-dedicated-serverless",
+    "meaning": "Two SQL modes",
+    "definition": "Dedicated is MPP, serverless pays per scan."
+  },
+  {
+    "id": "delta-lake",
+    "meaning": "ACID on a data lake",
+    "definition": "Transactions and time travel."
+  },
+  {
+    "id": "microsoft-fabric",
+    "meaning": "Unified data platform",
+    "definition": "OneLake, Lakehouse, Power BI."
   }
 ]

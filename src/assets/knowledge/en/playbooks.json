@@ -363,5 +363,20 @@
     "id": "azure-databases-cosmos-sql",
     "title": "Azure SQL & Cosmos DB",
     "summary": "Choose between Azure SQL and Cosmos DB, and understand RUs, partition keys and the five consistency levels."
+  },
+  {
+    "id": "azure-messaging-event-services",
+    "title": "Service Bus, Event Grid & Event Hubs",
+    "summary": "Choose the right Azure messaging service for commands, events and high-volume streaming."
+  },
+  {
+    "id": "azure-devops-bicep-iac",
+    "title": "Azure DevOps & Bicep (IaC)",
+    "summary": "Deploy Azure infrastructure with Bicep using what-if and pipelines with approvals, storing no secrets."
+  },
+  {
+    "id": "azure-data-platform",
+    "title": "Azure Data Platform (ADLS, ADF, Synapse, Databricks, Fabric)",
+    "summary": "Build a lakehouse on ADLS Gen2 with Data Factory, Synapse/Databricks and Fabric."
   }
 ]

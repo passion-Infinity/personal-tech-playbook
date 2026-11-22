@@ -3905,5 +3905,167 @@
       "It does not support multi-Region"
     ],
     "explanation": "RUs and the partition key are core. Cosmos supports multiple APIs and multi-Region, so those two wrong options are distractors."
+  },
+  {
+    "id": "azure-messaging-event-services-01",
+    "question": "An order-processing system needs transactions, a dead-letter queue and per-customer ordering. Which service?",
+    "options": [
+      "Event Grid",
+      "Service Bus",
+      "Event Hubs",
+      "Storage Queue"
+    ],
+    "explanation": "Service Bus has transactions, DLQ and sessions. Storage Queue is tempting because it is also a queue, but it lacks these broker features."
+  },
+  {
+    "id": "azure-messaging-event-services-02",
+    "question": "Millions of devices send telemetry every second and the team needs to re-read old data many times. What do you choose?",
+    "options": [
+      "Service Bus",
+      "Event Hubs",
+      "Event Grid",
+      "Logic Apps"
+    ],
+    "explanation": "Event Hubs keeps retention and supports multiple consumer groups. Event Grid is tempting because it handles events, but it does not retain them for replay."
+  },
+  {
+    "id": "azure-messaging-event-services-03",
+    "question": "A message that keeps failing is reprocessed over and over and slows the queue. What is the right handling?",
+    "options": [
+      "Ignore it",
+      "DLQ with MaxDeliveryCount and an alert",
+      "Increase the timeout indefinitely",
+      "Restart the service"
+    ],
+    "explanation": "After the configured number of attempts the message goes to the DLQ for investigation. Raising the timeout is tempting but does not solve a poison message."
+  },
+  {
+    "id": "azure-messaging-event-services-04",
+    "question": "Why must consumers of these messaging services be idempotent, and how do you achieve it?",
+    "modelAnswer": "The services deliver at-least-once, so a message may be delivered again on retry or when a lock expires. An idempotent consumer ensures reprocessing causes no duplicate side effects, for example by storing processed message ids or upserting by business key.",
+    "keyPoints": [
+      "At-least-once",
+      "Retries cause redelivery",
+      "Store processed ids or upsert"
+    ]
+  },
+  {
+    "id": "azure-messaging-event-services-05",
+    "question": "Which service is the best fit for ingesting high-volume telemetry?",
+    "options": [
+      "Event Hubs",
+      "Service Bus queue",
+      "Storage Queue",
+      "Logic Apps"
+    ],
+    "explanation": "Event Hubs is built for streaming."
+  },
+  {
+    "id": "azure-devops-bicep-iac-01",
+    "question": "Before applying a Bicep change to production, the team wants to know which resources will be modified or deleted. What do they use?",
+    "options": [
+      "Deploy straight away",
+      "what-if",
+      "Delete and recreate",
+      "Edit in the portal"
+    ],
+    "explanation": "what-if shows the changes before applying. Editing in the portal is tempting as fast, but it skips review and causes drift."
+  },
+  {
+    "id": "azure-devops-bicep-iac-02",
+    "question": "A deployment used Complete mode and a storage account that is not in the template was lost. Why?",
+    "options": [
+      "An Azure bug",
+      "Complete mode deletes resources not declared in the template",
+      "Policy blocked it",
+      "A missing role"
+    ],
+    "explanation": "Incremental only adds/modifies; Complete deletes resources that are not in the template."
+  },
+  {
+    "id": "azure-devops-bicep-iac-03",
+    "question": "A pipeline accesses Azure with a client secret and breaks every time the secret expires. What is a better solution?",
+    "options": [
+      "Extend the secret's lifetime",
+      "Workload identity federation",
+      "Store the secret in the repo",
+      "Use root"
+    ],
+    "explanation": "Federation uses tokens without a secret. Extending the lifetime is tempting as a fix, but it is still a secret to manage and can leak."
+  },
+  {
+    "id": "azure-devops-bicep-iac-04",
+    "question": "Why use IaC instead of working in the portal for production infrastructure?",
+    "modelAnswer": "IaC is versioned, reviewed and repeatable and builds consistent environments; combined with what-if and pipelines it allows previewing and controlling changes. Manual work is hard to reproduce, hard to audit and prone to drift.",
+    "keyPoints": [
+      "Versioned and reviewed",
+      "Repeatable",
+      "Consistent, avoids drift"
+    ]
+  },
+  {
+    "id": "azure-devops-bicep-iac-05",
+    "question": "How do you preview a Bicep change?",
+    "options": [
+      "what-if",
+      "Delete and create",
+      "Portal",
+      "Impossible"
+    ],
+    "explanation": "what-if shows the changes."
+  },
+  {
+    "id": "azure-data-platform-01",
+    "question": "An analyst needs to query Parquet files on the data lake quickly with T-SQL without provisioning or managing a cluster. What do they choose?",
+    "options": [
+      "Synapse dedicated SQL pool",
+      "Synapse serverless SQL",
+      "A Databricks job",
+      "A VM running SQL Server"
+    ],
+    "explanation": "Serverless SQL queries files on the lake directly and bills by data processed. A dedicated pool is tempting because it is a warehouse, but it must be provisioned and is billed while running."
+  },
+  {
+    "id": "azure-data-platform-02",
+    "question": "What is the medallion architecture in a lakehouse and what is it used for?",
+    "options": [
+      "Three Regions",
+      "Bronze/Silver/Gold: raw, cleaned and BI-serving data layers",
+      "Three databases",
+      "Three caches"
+    ],
+    "explanation": "Medallion layers progressively refine data to control quality."
+  },
+  {
+    "id": "azure-data-platform-03",
+    "question": "A team does not use a Synapse dedicated pool outside working hours yet the bill is still high. Why?",
+    "options": [
+      "It costs nothing",
+      "The pool still bills compute until it is paused",
+      "It deletes itself",
+      "Data is lost"
+    ],
+    "explanation": "A dedicated pool bills while running; you must pause it. Serverless is tempting but differs in billing only by data processed."
+  },
+  {
+    "id": "azure-data-platform-04",
+    "question": "Data on a lake often suffers corrupted concurrent writes and cannot be updated/deleted row by row. What problem does Delta Lake solve and how?",
+    "modelAnswer": "Delta Lake adds ACID transactions, schema enforcement and time travel on Parquet files through a transaction log, allowing concurrent writes, safe MERGE/UPDATE/DELETE and rolling back to older versions.",
+    "keyPoints": [
+      "ACID via a transaction log",
+      "Schema enforcement",
+      "Time travel and MERGE"
+    ]
+  },
+  {
+    "id": "azure-data-platform-05",
+    "question": "You need to orchestrate ETL pipelines on a schedule and on events, including on-premises sources. What do you use?",
+    "options": [
+      "Data Factory",
+      "Event Grid",
+      "Key Vault",
+      "Bastion"
+    ],
+    "explanation": "Data Factory orchestrates pipelines and has a self-hosted integration runtime for on-premises. Event Grid is tempting because it relates to events, but it is not an ETL tool."
   }
 ]
