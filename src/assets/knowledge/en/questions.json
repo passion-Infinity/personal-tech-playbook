@@ -2196,5 +2196,168 @@
       "Does not support GSIs"
     ],
     "explanation": "On-demand scales automatically and is billed per request, so it suits unpredictable load. The claim \"always cheaper\" is wrong because for steady, high load provisioned with auto scaling is usually cheaper."
+  },
+  {
+    "id": "route53-cloudfront-01",
+    "question": "You need to point example.com (the root domain) at an ALB. Which record do you use and why not a CNAME?",
+    "options": [
+      "CNAME",
+      "Alias record",
+      "MX",
+      "TXT"
+    ],
+    "explanation": "A CNAME cannot be set at the zone apex; an Alias works at the apex and queries to AWS resources are free. MX/TXT are easy to take for domain records but are not used to point to a website."
+  },
+  {
+    "id": "route53-cloudfront-02",
+    "question": "After every deploy, users still see the old JS file because of CloudFront caching and the team does not want to pay for invalidations. What is a better way?",
+    "options": [
+      "Delete the distribution",
+      "Use versioned file names such as app.v2.js",
+      "Turn caching off permanently",
+      "Change the Region"
+    ],
+    "explanation": "Renaming the file creates a new URL so the old cache is bypassed without needing an invalidation. Turning caching off entirely is tempting but loses the CDN's benefit."
+  },
+  {
+    "id": "route53-cloudfront-03",
+    "question": "A game needs to reduce latency for global users over UDP, while a marketing website needs to cache HTTP images. Distinguish CloudFront from Global Accelerator.",
+    "modelAnswer": "CloudFront is a CDN that caches HTTP/HTTPS content at the edge, so it suits static/dynamic websites. Global Accelerator provides static anycast IPs that bring traffic onto the AWS backbone, supports TCP/UDP and fast failover but does not cache. The UDP game uses Global Accelerator and the website uses CloudFront.",
+    "keyPoints": [
+      "CloudFront: HTTP caching",
+      "Global Accelerator: anycast IPs, TCP/UDP, no cache",
+      "Choose by protocol and caching need"
+    ]
+  },
+  {
+    "id": "route53-cloudfront-04",
+    "question": "When the primary Region goes down, you want Route 53 to return an endpoint in the standby Region automatically. Which configuration?",
+    "options": [
+      "Simple routing",
+      "Failover routing with a health check",
+      "Weighted 50/50",
+      "Geolocation"
+    ],
+    "explanation": "Failover uses a health check to switch to the secondary. Weighted 50/50 is tempting because there are two endpoints, but without a health check it still sends 50% of traffic to the failed endpoint."
+  },
+  {
+    "id": "route53-cloudfront-05",
+    "question": "An S3 bucket holding images is delivered through CloudFront but anyone who knows the S3 URL can still download directly. How do you let only CloudFront access it?",
+    "options": [
+      "Open the bucket publicly",
+      "Origin Access Control with a bucket policy that only allows CloudFront",
+      "Versioning",
+      "A presigned URL for everyone"
+    ],
+    "explanation": "OAC restricts S3 to CloudFront only. A presigned URL is tempting as access limiting but grants temporary permissions to anyone with the URL and does not force traffic through the CDN."
+  },
+  {
+    "id": "sqs-sns-eventbridge-01",
+    "question": "When a new order arrives, payment, inventory and email systems must all receive the event, each processing independently and not losing it if temporarily failing. What pattern fits?",
+    "options": [
+      "A single SQS queue for all three",
+      "SNS fan-out to several SQS queues",
+      "Calling each system directly in sequence",
+      "A cron job"
+    ],
+    "explanation": "SNS broadcasts to many subscribers, and each SQS gives its own durability. A single queue is tempting for its simplicity, but each message goes to only one consumer so the systems would compete."
+  },
+  {
+    "id": "sqs-sns-eventbridge-02",
+    "question": "A trading system must process orders in exact order within each account without duplicate processing. What do you choose?",
+    "options": [
+      "SQS Standard",
+      "SQS FIFO with MessageGroupId by account",
+      "SNS Standard",
+      "EventBridge"
+    ],
+    "explanation": "FIFO guarantees ordering per message group and deduplication. Standard is tempting for its high throughput, but it is at-least-once with best-effort ordering."
+  },
+  {
+    "id": "sqs-sns-eventbridge-03",
+    "question": "A consumer takes 60 seconds to process but the visibility timeout is 30 seconds, and one failing message keeps being retried forever. Explain the visibility timeout problem and the role of a DLQ.",
+    "modelAnswer": "A visibility timeout shorter than processing time makes the message reappear before processing finishes, so it is processed twice; setting it far too long slows recovery when a consumer dies. A DLQ holds messages that exceed maxReceiveCount so a poison message does not block the main flow and can be investigated. The consumer must still be idempotent because SQS Standard is at-least-once.",
+    "keyPoints": [
+      "A short timeout causes duplicate processing",
+      "A very long timeout slows recovery",
+      "A DLQ isolates poison messages",
+      "An idempotent consumer"
+    ]
+  },
+  {
+    "id": "sqs-sns-eventbridge-04",
+    "question": "The SQS bill is high even though the queue is nearly empty and consumers call ReceiveMessage constantly. How do you reduce it?",
+    "options": [
+      "Switch to FIFO",
+      "Enable long polling (WaitTimeSeconds up to 20 seconds)",
+      "Reduce the visibility timeout",
+      "Turn off the DLQ"
+    ],
+    "explanation": "Long polling reduces empty requests and therefore cost. FIFO is tempting because it relates to ordering, but it does not reduce empty requests."
+  },
+  {
+    "id": "sqs-sns-eventbridge-05",
+    "question": "Which two statements are true about SQS Standard? (choose 2)",
+    "options": [
+      "Delivers at least once (at-least-once)",
+      "May deliver duplicate messages",
+      "Guarantees strict FIFO ordering",
+      "Exactly-once processing"
+    ],
+    "explanation": "Standard is at-least-once so duplicates are possible. Exactly-once and ordering belong to FIFO, easy to confuse because both are SQS."
+  },
+  {
+    "id": "lambda-serverless-01",
+    "question": "A Lambda is placed in a VPC to access RDS but calls to an external API time out. What is missing?",
+    "options": [
+      "More memory",
+      "A NAT Gateway or VPC endpoint",
+      "Adding a Layer",
+      "Creating an Alias"
+    ],
+    "explanation": "A Lambda in a VPC has no Internet by default and needs NAT or an endpoint. More memory is tempting because it adds power, but it does not create a network path outside."
+  },
+  {
+    "id": "lambda-serverless-02",
+    "question": "A critical payment function's p99 latency spikes whenever traffic suddenly increases. How do you reduce cold starts?",
+    "options": [
+      "Increase the timeout",
+      "Provisioned concurrency",
+      "Reserved concurrency",
+      "Reduce memory"
+    ],
+    "explanation": "Provisioned concurrency keeps execution environments ready. Reserved concurrency is easy to confuse because it has 'concurrency' in the name, but it only guarantees and caps parallelism and does not keep things warm."
+  },
+  {
+    "id": "lambda-serverless-03",
+    "question": "A team plans to run a 40-minute video-processing job and a steadily high-traffic API 24/7 on Lambda. When is Lambda not suitable?",
+    "modelAnswer": "Lambda does not suit tasks longer than 15 minutes, persistent connections, or steadily high load all day, where EC2/Fargate may be cheaper; cold starts and runtime limits also need consideration. The 40-minute job should use Step Functions, ECS/Fargate or Batch.",
+    "keyPoints": [
+      "The 15-minute limit",
+      "Steady high load can be cheaper on Fargate/EC2",
+      "Cold starts and runtime limits"
+    ]
+  },
+  {
+    "id": "lambda-serverless-04",
+    "question": "A function calling an API takes 20 minutes to process. What is the problem and the approach?",
+    "options": [
+      "No problem",
+      "The maximum timeout is 15 minutes so it needs Step Functions or ECS",
+      "Lambda cannot use the network",
+      "It only runs for at most 1 second"
+    ],
+    "explanation": "The hard limit is 15 minutes. Raising memory is tempting as a solution but cannot raise the time limit."
+  },
+  {
+    "id": "lambda-serverless-05",
+    "question": "A Lambda reads from SQS and many messages are processed repeatedly after a batch containing 1 failing message. Why, and how do you reduce it?",
+    "options": [
+      "SQS is broken",
+      "The whole batch is retried, use ReportBatchItemFailures and an idempotent consumer",
+      "Increase the function timeout",
+      "Use Reserved concurrency"
+    ],
+    "explanation": "A failure of the whole batch causes the batch to be retried; per-item failure reporting and idempotency reduce repeated processing. Reserved concurrency is easy to confuse but only limits parallelism."
   }
 ]

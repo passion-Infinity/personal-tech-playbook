@@ -1083,5 +1083,80 @@
     "id": "dynamodb-global-tables",
     "meaning": "Multi-Region, multi-active tables",
     "definition": "Every replica is writable, conflicts are resolved by last-writer-wins; used for DR and access close to users."
+  },
+  {
+    "id": "route53-routing-policies",
+    "meaning": "Route 53's DNS routing policies",
+    "definition": "Simple, Weighted, Latency, Failover, Geolocation, Geoproximity, IP-based and Multivalue answer; combine with health checks to remove failing endpoints."
+  },
+  {
+    "id": "route53-alias-vs-cname",
+    "meaning": "An Alias works at the zone apex and is free",
+    "definition": "A CNAME cannot be set at the root domain; an Alias points to AWS resources such as ELB, CloudFront and S3 websites."
+  },
+  {
+    "id": "cloudfront-oac",
+    "meaning": "Only let CloudFront read a private S3 bucket",
+    "definition": "Keeps the S3 bucket non-public while content is still delivered through the CDN; replaces the old OAI mechanism."
+  },
+  {
+    "id": "lambda-edge-vs-cloudfront-functions",
+    "meaning": "Running code at CloudFront's edge",
+    "definition": "CloudFront Functions are lightweight and cheap for header/URL manipulation; Lambda@Edge is more powerful, supports more runtimes and network access."
+  },
+  {
+    "id": "global-accelerator",
+    "meaning": "A static anycast IP that brings traffic onto the AWS backbone",
+    "definition": "Supports TCP/UDP, fast failover and no content caching — unlike CloudFront, which is an HTTP caching CDN."
+  },
+  {
+    "id": "sqs-standard-vs-fifo",
+    "meaning": "The trade-off between throughput and ordering/exactly-once",
+    "definition": "Standard: near-unlimited throughput, at-least-once, best-effort ordering; FIFO: correct ordering per message group, exactly-once processing, lower throughput."
+  },
+  {
+    "id": "sqs-visibility-timeout",
+    "meaning": "How long a message is hidden while being processed",
+    "definition": "Default 30 seconds; after processing the message must be deleted, and once it expires the message reappears and may be processed twice."
+  },
+  {
+    "id": "sqs-dead-letter-queue",
+    "meaning": "A queue holding messages that failed processing many times",
+    "definition": "A message exceeding maxReceiveCount moves to the DLQ for investigation instead of looping forever."
+  },
+  {
+    "id": "sns-sqs-fanout",
+    "meaning": "One event delivered to many queues",
+    "definition": "An SNS topic sends copies to several SQS queues, each consumer processes independently and has a queue's durability."
+  },
+  {
+    "id": "eventbridge-event-bus",
+    "meaning": "An event bus that routes by rule",
+    "definition": "Receives events from AWS services, SaaS and applications, matches an event pattern and forwards to targets; has a scheduler and a schema registry."
+  },
+  {
+    "id": "lambda-cold-start",
+    "meaning": "Latency of initializing a new execution environment",
+    "definition": "Occurs when Lambda creates a new execution environment; reduce it with provisioned concurrency or SnapStart."
+  },
+  {
+    "id": "lambda-concurrency",
+    "meaning": "Two mechanisms for controlling concurrency",
+    "definition": "Reserved guarantees and limits concurrency for a function; Provisioned keeps environments ready to avoid cold starts (billed)."
+  },
+  {
+    "id": "lambda-invocation-types",
+    "meaning": "The invocation type decides error handling and retries",
+    "definition": "Synchronous: the caller waits and handles errors itself; Asynchronous: Lambda retries twice by itself and supports DLQ/destinations."
+  },
+  {
+    "id": "lambda-event-source-mapping",
+    "meaning": "Lambda automatically polls an event source",
+    "definition": "Used for SQS, Kinesis, DynamoDB Streams — Lambda reads in batches and invokes your function."
+  },
+  {
+    "id": "lambda-snapstart",
+    "meaning": "Snapshot the environment for fast startup",
+    "definition": "Reduces cold starts for supported runtimes by restoring from a snapshot taken after initialization."
   }
 ]

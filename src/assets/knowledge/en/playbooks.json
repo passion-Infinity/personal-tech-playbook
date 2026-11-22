@@ -203,5 +203,20 @@
     "id": "dynamodb",
     "title": "Amazon DynamoDB Design",
     "summary": "Design DynamoDB tables around access patterns with a good partition key, suitable capacity, the right kind of index and DAX when caching is needed."
+  },
+  {
+    "id": "route53-cloudfront",
+    "title": "Route 53 & CloudFront",
+    "summary": "Reduce latency and raise global availability with Route 53 DNS routing policies and CloudFront CDN caching."
+  },
+  {
+    "id": "sqs-sns-eventbridge",
+    "title": "SQS, SNS & EventBridge",
+    "summary": "Decouple producers from consumers with queues, pub/sub and an event bus so each side scales and fails independently."
+  },
+  {
+    "id": "lambda-serverless",
+    "title": "AWS Lambda Serverless",
+    "summary": "Run code on events without managing servers, with a clear understanding of Lambda's concurrency, cold starts and limits."
   }
 ]
