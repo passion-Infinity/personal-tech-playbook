@@ -128,5 +128,20 @@
     "id": "raft-consensus",
     "title": "Raft Consensus",
     "summary": "Get many nodes to agree on one replicated log through a leader, quorum and term-based elections."
+  },
+  {
+    "id": "kubernetes-fundamentals",
+    "title": "Kubernetes Fundamentals",
+    "summary": "Orchestrate containers by declaring the desired state, with probes, resources and Services."
+  },
+  {
+    "id": "service-mesh-api-gateway",
+    "title": "Service Mesh & API Gateway",
+    "summary": "Distinguish a gateway for north-south traffic from a service mesh for east-west traffic, and the price of a mesh."
+  },
+  {
+    "id": "cqrs-event-sourcing",
+    "title": "CQRS & Event Sourcing",
+    "summary": "Separate the write model from the read model and store a sequence of events as the source of truth when it is really needed."
   }
 ]

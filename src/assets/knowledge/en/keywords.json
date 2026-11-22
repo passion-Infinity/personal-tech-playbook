@@ -693,5 +693,95 @@
     "id": "etcd-zookeeper-coordination",
     "meaning": "Coordination systems built on consensus",
     "definition": "Used for configuration, leader election and distributed locks, not for storing large data."
+  },
+  {
+    "id": "k8s-architecture",
+    "meaning": "Control plane and node components",
+    "definition": "API server, etcd, scheduler, controller manager; kubelet and the container runtime on the node."
+  },
+  {
+    "id": "k8s-pod-deployment",
+    "meaning": "The relationship between workload objects",
+    "definition": "A Pod is the smallest unit; a Deployment manages ReplicaSets for rolling updates and rollbacks."
+  },
+  {
+    "id": "k8s-service-ingress",
+    "meaning": "How to expose services inside and outside the cluster",
+    "definition": "A Service gives stable internal L4 load balancing; an Ingress routes external HTTP L7 traffic in."
+  },
+  {
+    "id": "k8s-probes",
+    "meaning": "Kubernetes' three kinds of probes",
+    "definition": "Liveness restarts when hung, readiness decides whether to take traffic, startup protects slow-starting applications."
+  },
+  {
+    "id": "k8s-requests-limits",
+    "meaning": "Resources, scheduling and the consequences of exceeding them",
+    "definition": "Requests are used for scheduling; exceeding the CPU limit is throttled, exceeding the memory limit is OOMKilled."
+  },
+  {
+    "id": "k8s-hpa",
+    "meaning": "Automatically scaling the number of Pods with load",
+    "definition": "Adjusts the replica count based on CPU or a custom metric."
+  },
+  {
+    "id": "api-gateway-vs-service-mesh",
+    "meaning": "North-south and east-west traffic",
+    "definition": "The gateway handles external clients coming into the system; the mesh handles communication between internal services."
+  },
+  {
+    "id": "sidecar-proxy-envoy",
+    "meaning": "A proxy beside each service acting as the data plane",
+    "definition": "Handles mTLS, retries, timeouts and telemetry without changing application code."
+  },
+  {
+    "id": "istio-linkerd",
+    "meaning": "Popular service meshes",
+    "definition": "The control plane configures the proxies and issues certificates for the whole mesh."
+  },
+  {
+    "id": "mtls",
+    "meaning": "Both sides authenticate with certificates",
+    "definition": "Used for zero trust between services: both client and server prove their identity."
+  },
+  {
+    "id": "canary-traffic-shifting",
+    "meaning": "Gradually shift traffic to the new version",
+    "definition": "For example 5%, then 25%, then 100% until the new version is trusted."
+  },
+  {
+    "id": "bff-pattern",
+    "meaning": "A dedicated gateway for each client type",
+    "definition": "Each client type gets its own optimized backend layer instead of one shared API."
+  },
+  {
+    "id": "cqrs-pattern",
+    "meaning": "Separate the write model from the read model",
+    "definition": "A command changes state through an aggregate; a query reads from a denormalized, eventually consistent read model."
+  },
+  {
+    "id": "event-sourcing",
+    "meaning": "Store the sequence of events as the source of truth",
+    "definition": "State is the fold of events; snapshots avoid replaying from the beginning."
+  },
+  {
+    "id": "cqrs-projection-rebuild",
+    "meaning": "Rebuild the read model from events",
+    "definition": "A projection reads events and updates the read model, and can replay everything to rebuild it."
+  },
+  {
+    "id": "event-upcasting",
+    "meaning": "Evolving the schema of immutable events",
+    "definition": "Converts old events to the new form on read instead of editing stored events."
+  },
+  {
+    "id": "optimistic-concurrency-expected-version",
+    "meaning": "Handling concurrent writes to an aggregate",
+    "definition": "Write events with the expected version; on a version mismatch, reject or retry."
+  },
+  {
+    "id": "crypto-shredding",
+    "meaning": "Deleting personal data when events are immutable",
+    "definition": "Encrypt personal data and delete the key to make the data unreadable."
   }
 ]

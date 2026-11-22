@@ -1380,5 +1380,167 @@
       "Unrelated to CAP"
     ],
     "explanation": "It prioritizes consistency, trading away availability when a majority is missing."
+  },
+  {
+    "id": "kubernetes-fundamentals-01",
+    "question": "An application takes 90 seconds to start and is restarted continuously right after beginning. Which configuration is the usual cause and what is the fix?",
+    "options": [
+      "Too few replicas",
+      "A liveness probe that is too strict; use a startup probe or initialDelaySeconds",
+      "A missing Service",
+      "A missing Ingress"
+    ],
+    "explanation": "An early liveness failure kills an app that is still starting. A startup probe protects this phase."
+  },
+  {
+    "id": "kubernetes-fundamentals-02",
+    "question": "An HPA is configured for 60% CPU but does not scale despite high CPU. What is a likely cause?",
+    "options": [
+      "Missing resource requests, so it cannot compute %",
+      "A missing Ingress",
+      "A missing ConfigMap",
+      "etcd"
+    ],
+    "explanation": "HPA computes the percentage relative to requests."
+  },
+  {
+    "id": "kubernetes-fundamentals-03",
+    "question": "A container is OOMKilled although the node has plenty of RAM. What is the cause?",
+    "options": [
+      "A broken node",
+      "It exceeded the container's memory limit",
+      "Not enough CPU",
+      "The network"
+    ],
+    "explanation": "Exceeding the memory limit gets it killed; the CPU limit only causes throttling."
+  },
+  {
+    "id": "kubernetes-fundamentals-04",
+    "question": "Distinguish requests from limits in Kubernetes and the consequences of exceeding the CPU and memory limits.",
+    "modelAnswer": "Requests are the guaranteed amount of resources and are used for scheduling; limits are the ceiling. Exceeding the CPU limit throttles the container (it gets slow), exceeding the memory limit gets it OOMKilled. A Pod whose requests equal its limits has QoS Guaranteed; one with neither is BestEffort and is evicted first when resources are short.",
+    "keyPoints": [
+      "Requests: scheduling/guarantee",
+      "Limits: the ceiling",
+      "CPU throttled, memory OOMKilled"
+    ]
+  },
+  {
+    "id": "kubernetes-fundamentals-05",
+    "question": "What happens when a readiness probe fails?",
+    "options": [
+      "The container is restarted",
+      "The Pod is removed from the Service (no traffic) but not restarted",
+      "The Pod is deleted",
+      "Nothing"
+    ],
+    "explanation": "Readiness decides traffic; only liveness restarts."
+  },
+  {
+    "id": "service-mesh-api-gateway-01",
+    "question": "You need JWT authentication, rate limiting and routing for external clients calling into the system. Which component?",
+    "options": [
+      "A service mesh",
+      "An API Gateway",
+      "A sidecar",
+      "A database"
+    ],
+    "explanation": "The gateway handles north–south traffic. The mesh mainly handles east–west between services."
+  },
+  {
+    "id": "service-mesh-api-gateway-02",
+    "question": "You need encryption and mutual authentication between internal services without changing code. What do you choose?",
+    "options": [
+      "An API Gateway",
+      "A service mesh with automatic mTLS",
+      "More RAM",
+      "Plain HTTP"
+    ],
+    "explanation": "The sidecar proxy does mTLS transparently."
+  },
+  {
+    "id": "service-mesh-api-gateway-03",
+    "question": "A company with only 5 services and a small team is considering deploying a service mesh. What is a reasonable assessment?",
+    "options": [
+      "Always do it",
+      "The cost and complexity may outweigh the benefit; a resilience library + gateway is usually enough",
+      "It is mandatory",
+      "Never"
+    ],
+    "explanation": "A mesh adds hops, resources and operations."
+  },
+  {
+    "id": "service-mesh-api-gateway-04",
+    "question": "State the difference between an API Gateway and a service mesh in traffic direction and responsibility.",
+    "modelAnswer": "An API Gateway handles north–south traffic from external clients into the system: authentication, rate limiting, routing, TLS, aggregation. A service mesh handles east–west traffic between services through sidecar proxies: mTLS, retries, timeouts, circuit breaking, traffic shifting and telemetry without changing code. The two complement each other.",
+    "keyPoints": [
+      "Gateway: north–south",
+      "Mesh: east–west via sidecars",
+      "They complement each other"
+    ]
+  },
+  {
+    "id": "service-mesh-api-gateway-05",
+    "question": "What problem does a BFF (Backend for Frontend) solve?",
+    "options": [
+      "One shared gateway for every client",
+      "A dedicated backend for each client type, returning exactly the data it needs",
+      "Replacing the database",
+      "Replacing the mesh"
+    ],
+    "explanation": "Each kind of frontend has different data needs."
+  },
+  {
+    "id": "cqrs-event-sourcing-01",
+    "question": "A system needs to review every balance change over time and rebuild the state at any point in time. Which technique fits?",
+    "options": [
+      "Ordinary CRUD",
+      "Event sourcing",
+      "A cache",
+      "Sharding"
+    ],
+    "explanation": "Event sourcing stores an immutable sequence of events, so it can be replayed."
+  },
+  {
+    "id": "cqrs-event-sourcing-02",
+    "question": "A user places an order but the order list does not show it immediately. What explains this in CQRS?",
+    "options": [
+      "A bug",
+      "The read model is updated asynchronously, so it is eventually consistent",
+      "The browser cache",
+      "Sharding"
+    ],
+    "explanation": "The query side is updated later from events."
+  },
+  {
+    "id": "cqrs-event-sourcing-03",
+    "question": "Two commands write to the same aggregate and must not overwrite each other. What is the mechanism?",
+    "options": [
+      "A table lock",
+      "An expected version on append (optimistic concurrency)",
+      "Ignore it",
+      "Speed things up"
+    ],
+    "explanation": "An append is rejected if the version has changed."
+  },
+  {
+    "id": "cqrs-event-sourcing-04",
+    "question": "An event-sourced system receives a GDPR request to delete personal data, but the log is immutable. How do you resolve it?",
+    "modelAnswer": "Use crypto-shredding: encrypt the personal data in events with a per-subject key; when deletion is needed, delete the key so the data can no longer be read even though the events still exist. Alternatively keep raw PII out of events and only store references.",
+    "keyPoints": [
+      "A separate key per subject",
+      "Delete the key to delete the data",
+      "Avoid raw PII in events"
+    ]
+  },
+  {
+    "id": "cqrs-event-sourcing-05",
+    "question": "Does CQRS require event sourcing?",
+    "options": [
+      "Yes",
+      "No, they are independent techniques",
+      "Only on the cloud",
+      "Only with NoSQL"
+    ],
+    "explanation": "CQRS separates the read/write models; ES is a way to store state."
   }
 ]
