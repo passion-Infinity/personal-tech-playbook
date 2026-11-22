@@ -11,6 +11,7 @@ const KNOWN: Record<string, TopicStyle> = {
   aws: { from: '#fb923c', to: '#22d3ee', icon: 'cloud' },
   azure: { from: '#0ea5e9', to: '#2563eb', icon: 'globe' },
   'ai-ml': { from: '#ec4899', to: '#8b5cf6', icon: 'brain' },
+  'ai-engineering': { from: '#a78bfa', to: '#f472b6', icon: 'sparkles' },
 };
 
 const PALETTE: Array<[string, string]> = [

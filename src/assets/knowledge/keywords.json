@@ -3547,5 +3547,348 @@
     "meaning": "Phân chia trách nhiệm",
     "definition": "AWS bảo mật của cloud, khách hàng bảo mật trong cloud.",
     "topicId": "aws"
+  },
+  {
+    "id": "open-vs-closed-weight",
+    "term": "Open-weight vs Closed-weight Models",
+    "meaning": "Mô hình mở trọng số và đóng",
+    "definition": "Open-weight tải được trọng số để tự chạy; closed chỉ gọi qua API.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "reasoning-models",
+    "term": "Reasoning Models",
+    "meaning": "Model suy luận nhiều bước",
+    "definition": "Dành thêm token để suy nghĩ, mạnh hơn ở bài khó nhưng chậm và đắt.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "multimodal-llm",
+    "term": "Multimodal LLM",
+    "meaning": "Model đa phương thức",
+    "definition": "Xử lý văn bản, ảnh, âm thanh trong cùng một model.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-model-routing",
+    "term": "LLM Model Routing",
+    "meaning": "Chọn model theo độ khó",
+    "definition": "Việc dễ dùng model nhỏ, việc khó dùng model lớn.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-quantization-gguf",
+    "term": "LLM Quantization and GGUF",
+    "meaning": "Nén trọng số model",
+    "definition": "Giảm số bit mỗi tham số để vừa phần cứng nhỏ, đổi lại chút chất lượng.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "kv-cache",
+    "term": "KV Cache",
+    "meaning": "Bộ nhớ attention",
+    "definition": "Tăng theo độ dài context và số request đồng thời.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "vllm-paged-attention",
+    "term": "vLLM and PagedAttention",
+    "meaning": "Phục vụ LLM throughput cao",
+    "definition": "Quản lý KV cache theo trang và continuous batching.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "ollama-modelfile",
+    "term": "Ollama Modelfile",
+    "meaning": "Cấu hình model local",
+    "definition": "Đặt system prompt và tham số cho model.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "few-shot-prompting",
+    "term": "Few-shot Prompting",
+    "meaning": "Dùng ví dụ để định hướng",
+    "definition": "Vài ví dụ đầu vào/đầu ra thể hiện đúng định dạng.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "structured-outputs",
+    "term": "Structured Outputs (JSON Schema)",
+    "meaning": "Ép đầu ra theo schema",
+    "definition": "Dùng schema và validate để đầu ra đáng tin cậy.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "chain-of-thought",
+    "term": "Chain-of-Thought Prompting",
+    "meaning": "Cho model suy luận từng bước",
+    "definition": "Cải thiện bài nhiều bước.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "prompt-chaining",
+    "term": "Prompt Chaining",
+    "meaning": "Chuỗi nhiều lời gọi",
+    "definition": "Tách tác vụ lớn thành các bước nhỏ.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "system-prompt",
+    "term": "System Prompt",
+    "meaning": "Chỉ dẫn hành vi cố định",
+    "definition": "Đặt vai trò, quy tắc và ràng buộc.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "context-engineering",
+    "term": "Context Engineering",
+    "meaning": "Chọn thông tin đưa vào context",
+    "definition": "Quản lý có hệ thống thứ model nhìn thấy ở mỗi bước.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "lost-in-the-middle",
+    "term": "Lost in the Middle",
+    "meaning": "Thông tin giữa context dễ bị bỏ sót",
+    "definition": "Chất lượng giảm khi context dài.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "prompt-caching",
+    "term": "Prompt Caching",
+    "meaning": "Cache phần đầu prompt",
+    "definition": "Giảm chi phí và độ trễ với prefix lặp lại.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agent-memory-types",
+    "term": "Agent Memory (Episodic, Semantic, Procedural)",
+    "meaning": "Các loại bộ nhớ của agent",
+    "definition": "Sự kiện, sự thật và cách làm.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "context-compaction",
+    "term": "Context Compaction",
+    "meaning": "Nén lịch sử khi đầy",
+    "definition": "Tóm tắt giữ lại quyết định quan trọng.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "function-calling",
+    "term": "LLM Function Calling",
+    "meaning": "Model yêu cầu gọi hàm",
+    "definition": "Model đề xuất tool call, ứng dụng thực thi.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "model-context-protocol",
+    "term": "Model Context Protocol (MCP)",
+    "meaning": "Giao thức chuẩn kết nối AI và tool",
+    "definition": "Client-server với tools, resources, prompts.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "mcp-transports",
+    "term": "MCP Transports (stdio, HTTP)",
+    "meaning": "Hai cách truyền của MCP",
+    "definition": "stdio cho local, HTTP cho remote.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "tool-poisoning",
+    "term": "Tool Poisoning and Indirect Prompt Injection",
+    "meaning": "Rủi ro từ tool bên thứ ba",
+    "definition": "Mô tả hoặc kết quả tool chứa chỉ dẫn độc.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agentic-ai",
+    "term": "Agentic AI",
+    "meaning": "Hệ thống AI có tính tự chủ",
+    "definition": "LLM tự quyết định bước kế tiếp trong vòng lặp.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "react-pattern",
+    "term": "ReAct (Reasoning and Acting)",
+    "meaning": "Mẫu suy luận và hành động",
+    "definition": "Xen kẽ suy nghĩ và gọi tool.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agentic-workflow-patterns",
+    "term": "Agentic Workflow Patterns",
+    "meaning": "Các mẫu workflow dùng LLM",
+    "definition": "Chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "human-in-the-loop",
+    "term": "Human-in-the-Loop",
+    "meaning": "Con người duyệt ở bước rủi ro",
+    "definition": "Dừng chờ xác nhận trước hành động nhạy cảm.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "orchestrator-worker",
+    "term": "Orchestrator-Worker Pattern",
+    "meaning": "Agent chính giao việc cho agent con",
+    "definition": "Orchestrator phân rã, workers làm, tổng hợp kết quả.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "multi-agent-frameworks",
+    "term": "Multi-Agent Frameworks (LangGraph, AutoGen, CrewAI)",
+    "meaning": "Khung dựng multi-agent",
+    "definition": "Đồ thị trạng thái, hội thoại giữa agent, vai trò.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "a2a-protocol",
+    "term": "Agent2Agent (A2A) Protocol",
+    "meaning": "Giao thức agent với agent",
+    "definition": "Chuẩn để các agent khác hệ thống phối hợp.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agent-handoff",
+    "term": "Agent Handoff",
+    "meaning": "Chuyển quyền giữa agent",
+    "definition": "Agent chuyển điều khiển cho agent chuyên môn.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "subagent-context-isolation",
+    "term": "Subagent Context Isolation",
+    "meaning": "Cô lập context bằng agent con",
+    "definition": "Chỉ trả tóm tắt về agent chính.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "agents-md-claude-md",
+    "term": "AGENTS.md and CLAUDE.md",
+    "meaning": "File hướng dẫn cho coding agent",
+    "definition": "Lệnh build, test và quy ước dự án.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "claude-code-extensibility",
+    "term": "Claude Code Skills, Hooks, Subagents",
+    "meaning": "Cơ chế mở rộng agent",
+    "definition": "Skills, hooks, slash commands, subagents, MCP, plugins.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "ai-pair-programming",
+    "term": "AI Pair Programming Workflow",
+    "meaning": "Quy trình làm với trợ lý code",
+    "definition": "Spec rõ, agent tự test, người review diff.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "git-worktree-agents",
+    "term": "Git Worktree for Parallel Agents",
+    "meaning": "Chạy nhiều agent song song",
+    "definition": "Mỗi agent một worktree riêng.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "latent-diffusion",
+    "term": "Latent Diffusion Models",
+    "meaning": "Diffusion trong không gian nén",
+    "definition": "Khử nhiễu trong latent rồi giải mã bằng VAE.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "diffusion-transformer",
+    "term": "Diffusion Transformer (DiT)",
+    "meaning": "Kiến trúc nền nhiều model video",
+    "definition": "Dùng Transformer thay U-Net cho diffusion.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "controlnet",
+    "term": "ControlNet",
+    "meaning": "Điều khiển sinh ảnh theo điều kiện",
+    "definition": "Pose, depth, cạnh làm điều kiện.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "comfyui",
+    "term": "ComfyUI",
+    "meaning": "Pipeline sinh ảnh/video dạng node",
+    "definition": "Dựng quy trình tuỳ biến trên model open.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "temporal-consistency",
+    "term": "Temporal Consistency",
+    "meaning": "Nhất quán giữa các khung hình",
+    "definition": "Thách thức chính của video AI.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-as-judge",
+    "term": "LLM-as-Judge",
+    "meaning": "Dùng model chấm điểm",
+    "definition": "Chấm theo rubric, cần hiệu chuẩn với người.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "indirect-prompt-injection",
+    "term": "Indirect Prompt Injection",
+    "meaning": "Chỉ dẫn độc nằm trong dữ liệu",
+    "definition": "Web, email, tài liệu hoặc kết quả tool.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "owasp-llm-top-10",
+    "term": "OWASP Top 10 for LLM Applications",
+    "meaning": "Rủi ro bảo mật ứng dụng LLM",
+    "definition": "Prompt injection, lộ dữ liệu, agent quá quyền.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "rag-groundedness",
+    "term": "RAG Groundedness",
+    "meaning": "Độ bám căn cứ",
+    "definition": "Câu trả lời có dựa trên tài liệu truy xuất.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-guardrails",
+    "term": "LLM Guardrails",
+    "meaning": "Kiểm soát vào/ra",
+    "definition": "Validate schema, kiểm duyệt, lọc PII.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "time-to-first-token",
+    "term": "Time to First Token (TTFT)",
+    "meaning": "Độ trễ tới token đầu tiên",
+    "definition": "Phụ thuộc độ dài prompt.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-batch-api",
+    "term": "LLM Batch API",
+    "meaning": "Xử lý bất đồng bộ giá rẻ",
+    "definition": "Hợp tác vụ không gấp.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "semantic-caching",
+    "term": "Semantic Caching",
+    "meaning": "Tái dùng câu trả lời tương tự",
+    "definition": "Cẩn thận độ chính xác.",
+    "topicId": "ai-engineering"
+  },
+  {
+    "id": "llm-cost-optimization",
+    "term": "LLM Cost Optimization",
+    "meaning": "Giảm chi phí token",
+    "definition": "Prompt gọn, caching, routing, giới hạn output.",
+    "topicId": "ai-engineering"
   }
 ]

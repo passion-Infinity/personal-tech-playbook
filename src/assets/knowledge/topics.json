@@ -40,6 +40,11 @@
     "description": "OWASP, mật mã học thực dụng, quản lý secret và an toàn chuỗi cung ứng phần mềm."
   },
   {
+    "id": "ai-engineering",
+    "name": "AI Engineering",
+    "description": "Xây và vận hành ứng dụng AI: model, prompt, context, tool/MCP, agent, multi-agent, coding assistant, đánh giá và tối ưu chi phí."
+  },
+  {
     "id": "aws",
     "name": "AWS Cloud",
     "description": "AWS services and architecture for the Solutions Architect – Associate (SAA-C03): IAM, S3, EC2 and beyond."

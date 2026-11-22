@@ -1804,5 +1804,201 @@
       "disaster-recovery-strategies",
       "ec2-pricing-models"
     ]
+  },
+  {
+    "id": "ai-model-landscape",
+    "title": "Bản đồ AI: Model, Runtime, Agent & Sản phẩm",
+    "summary": "Phân biệt model, runtime, agent và sản phẩm (GPT, Claude, Gemini, Llama, Ollama) để biết mỗi thứ thuộc lớp nào.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "open-vs-closed-weight",
+      "reasoning-models",
+      "multimodal-llm",
+      "llm-model-routing"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/ai-model-landscape.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "generative-ai-llm-concepts"
+    ]
+  },
+  {
+    "id": "llm-local-inference-quantization",
+    "title": "Chạy LLM Local: Ollama, vLLM & Quantization",
+    "summary": "Ước lượng bộ nhớ, chọn quantization và runtime để tự chạy LLM trên máy hoặc server.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "llm-quantization-gguf",
+      "kv-cache",
+      "vllm-paged-attention",
+      "ollama-modelfile"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/llm-local-inference-quantization.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ai-model-landscape"
+    ]
+  },
+  {
+    "id": "prompt-engineering-for-engineers",
+    "title": "Prompt Engineering cho Kỹ sư",
+    "summary": "Viết prompt như một đặc tả: ngữ cảnh, ràng buộc, ví dụ, schema đầu ra và đo bằng eval.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "few-shot-prompting",
+      "structured-outputs",
+      "chain-of-thought",
+      "prompt-chaining",
+      "system-prompt"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/prompt-engineering-for-engineers.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "generative-ai-llm-concepts"
+    ]
+  },
+  {
+    "id": "context-engineering-memory",
+    "title": "Context Engineering & Memory cho AI",
+    "summary": "Quản lý context window, bộ nhớ ngắn/dài hạn, compaction và prompt caching để agent không lệch và không đốt token.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "context-engineering",
+      "lost-in-the-middle",
+      "prompt-caching",
+      "agent-memory-types",
+      "context-compaction"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/context-engineering-memory.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "prompt-engineering-for-engineers",
+      "rag-retrieval-augmented-generation"
+    ]
+  },
+  {
+    "id": "tool-use-function-calling-mcp",
+    "title": "Tool Use, Function Calling & MCP",
+    "summary": "Cho LLM gọi công cụ bên ngoài qua function calling và chuẩn hoá kết nối bằng Model Context Protocol.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "function-calling",
+      "model-context-protocol",
+      "mcp-transports",
+      "tool-poisoning"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/tool-use-function-calling-mcp.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "prompt-engineering-for-engineers"
+    ]
+  },
+  {
+    "id": "ai-agents-agentic-loop",
+    "title": "AI Agent & Agentic Loop",
+    "summary": "Phân biệt workflow với agent, hiểu vòng lặp ReAct, planning và các giới hạn để agent đáng tin cậy.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "agentic-ai",
+      "react-pattern",
+      "agentic-workflow-patterns",
+      "human-in-the-loop"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/ai-agents-agentic-loop.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "tool-use-function-calling-mcp",
+      "context-engineering-memory"
+    ]
+  },
+  {
+    "id": "multi-agent-orchestration",
+    "title": "Multi-Agent & Orchestrator",
+    "summary": "Thiết kế hệ nhiều agent với orchestrator, handoff, song song hoá và quản lý context giữa các agent.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "orchestrator-worker",
+      "multi-agent-frameworks",
+      "a2a-protocol",
+      "agent-handoff",
+      "subagent-context-isolation"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/multi-agent-orchestration.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ai-agents-agentic-loop"
+    ]
+  },
+  {
+    "id": "ai-coding-assistants-workflow",
+    "title": "AI Coding Assistant: Quy trình & Công cụ",
+    "summary": "Dùng Claude Code, Codex, Gemini CLI, Copilot hiệu quả với spec rõ, tự kiểm chứng bằng test và review chặt.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "agents-md-claude-md",
+      "claude-code-extensibility",
+      "ai-pair-programming",
+      "git-worktree-agents"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/ai-coding-assistants-workflow.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ai-agents-agentic-loop",
+      "code-review-refactoring"
+    ]
+  },
+  {
+    "id": "ai-video-image-generation",
+    "title": "AI tạo Ảnh & Video (Diffusion)",
+    "summary": "Hiểu diffusion, DiT và quy trình thực tế tạo video bằng AI cùng giới hạn và rủi ro pháp lý.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "latent-diffusion",
+      "diffusion-transformer",
+      "controlnet",
+      "comfyui",
+      "temporal-consistency"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/ai-video-image-generation.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "generative-ai-llm-concepts"
+    ]
+  },
+  {
+    "id": "llm-evaluation-guardrails-security",
+    "title": "Đánh giá LLM, Guardrails & Bảo mật",
+    "summary": "Xây eval cho ứng dụng LLM và phòng thủ nhiều lớp trước prompt injection.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "llm-as-judge",
+      "indirect-prompt-injection",
+      "owasp-llm-top-10",
+      "rag-groundedness",
+      "llm-guardrails"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/llm-evaluation-guardrails-security.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "ai-agents-agentic-loop",
+      "owasp-web-security-essentials"
+    ]
+  },
+  {
+    "id": "llm-cost-latency-optimization",
+    "title": "Tối ưu Chi phí & Độ trễ LLM",
+    "summary": "Giảm token, dùng cache, batch và routing để cắt chi phí và độ trễ mà giữ chất lượng.",
+    "topicId": "ai-engineering",
+    "keywordIds": [
+      "time-to-first-token",
+      "llm-batch-api",
+      "semantic-caching",
+      "llm-cost-optimization"
+    ],
+    "filePath": "assets/knowledge/playbooks/ai-engineering/llm-cost-latency-optimization.md",
+    "updatedAt": "2026-11-22",
+    "prerequisites": [
+      "context-engineering-memory"
+    ]
   }
 ]

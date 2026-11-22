@@ -5681,5 +5681,709 @@
       "Multi-AZ và least privilege",
       "Đọc kỹ ràng buộc"
     ]
+  },
+  {
+    "id": "ai-model-landscape-01",
+    "playbookId": "ai-model-landscape",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Ollama là gì?",
+    "options": [
+      "Một model của Google",
+      "Runtime chạy model open-weight cục bộ",
+      "Một coding agent",
+      "Một dịch vụ tạo video"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ollama đóng gói llama.cpp để chạy và phục vụ model local."
+  },
+  {
+    "id": "ai-model-landscape-02",
+    "playbookId": "ai-model-landscape",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Dữ liệu nhạy cảm không được rời mạng nội bộ. Hướng hợp lý?",
+    "options": [
+      "Gọi API frontier",
+      "Open-weight tự host",
+      "Chỉ dùng chat công khai",
+      "Bỏ AI"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tự host giữ dữ liệu trong hạ tầng của bạn."
+  },
+  {
+    "id": "ai-model-landscape-03",
+    "playbookId": "ai-model-landscape",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "So sánh model nên dựa vào?",
+    "options": [
+      "Benchmark công khai duy nhất",
+      "Bộ eval từ tác vụ thật của bạn",
+      "Tên hãng",
+      "Số tham số"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Benchmark chung không phản ánh tác vụ của bạn."
+  },
+  {
+    "id": "ai-model-landscape-04",
+    "playbookId": "ai-model-landscape",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Phân biệt model, runtime, agent và sản phẩm.",
+    "modelAnswer": "Model là bộ trọng số sinh đầu ra. Runtime (Ollama, vLLM) là phần mềm nạp và chạy model. Agent (Claude Code, Codex CLI) là chương trình dùng model với tool trong vòng lặp để làm việc. Sản phẩm (ứng dụng chat) là giao diện bọc xung quanh. Chúng là các lớp khác nhau nên đổi một lớp không buộc đổi lớp khác.",
+    "keyPoints": [
+      "Model là trọng số",
+      "Runtime chạy model",
+      "Agent dùng tool trong vòng lặp"
+    ]
+  },
+  {
+    "id": "llm-local-inference-quantization-01",
+    "playbookId": "llm-local-inference-quantization",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Model 7B ở FP16 cần khoảng bao nhiêu bộ nhớ chỉ cho trọng số?",
+    "options": [
+      "2 GB",
+      "14 GB",
+      "70 GB",
+      "1 GB"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "7 tỷ tham số nhân 2 byte xấp xỉ 14 GB."
+  },
+  {
+    "id": "llm-local-inference-quantization-02",
+    "playbookId": "llm-local-inference-quantization",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Context dài gây ra tiêu tốn gì thêm?",
+    "options": [
+      "Ít hơn",
+      "KV cache",
+      "Ổ đĩa",
+      "Băng thông mạng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "KV cache tăng theo độ dài context."
+  },
+  {
+    "id": "llm-local-inference-quantization-03",
+    "playbookId": "llm-local-inference-quantization",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Phục vụ nhiều người dùng đồng thời với throughput cao nên dùng?",
+    "options": [
+      "Chỉ Ollama trên laptop",
+      "vLLM với continuous batching",
+      "Chạy từng request",
+      "CPU only"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "vLLM tối ưu batching và KV cache."
+  },
+  {
+    "id": "llm-local-inference-quantization-04",
+    "playbookId": "llm-local-inference-quantization",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao tốc độ sinh token thường bị giới hạn bởi băng thông bộ nhớ?",
+    "modelAnswer": "Mỗi token sinh ra cần đọc gần như toàn bộ trọng số từ bộ nhớ, trong khi phép tính tương đối ít, nên tốc độ bị chặn bởi bộ nhớ chứ không phải FLOPS. Vì vậy quantization giúp nhanh hơn vì phải đọc ít byte hơn.",
+    "keyPoints": [
+      "Mỗi token đọc toàn bộ trọng số",
+      "Bị chặn bởi băng thông",
+      "Quantization giảm dữ liệu cần đọc"
+    ]
+  },
+  {
+    "id": "prompt-engineering-for-engineers-01",
+    "playbookId": "prompt-engineering-for-engineers",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Cách tăng độ cụ thể hiệu quả nhất của prompt?",
+    "options": [
+      "Thêm lời hoa mỹ",
+      "Thêm ngữ cảnh, ràng buộc và tiêu chí thành công",
+      "Viết hoa",
+      "Lặp lại câu"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Prompt là đặc tả, không phải văn phong."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-02",
+    "playbookId": "prompt-engineering-for-engineers",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cần đầu ra JSON đáng tin cậy ở production?",
+    "options": [
+      "Xin lịch sự",
+      "Structured output kèm validate và retry",
+      "Chỉ tăng temperature",
+      "Bỏ qua kiểm tra"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Schema cộng validate chống vỡ định dạng."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-03",
+    "playbookId": "prompt-engineering-for-engineers",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Sau khi nâng cấp model, prompt cũ chạy khác đi. Cần gì?",
+    "options": [
+      "Không làm gì",
+      "Chạy lại bộ eval",
+      "Giảm top_p",
+      "Xoá prompt"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Eval phát hiện hồi quy."
+  },
+  {
+    "id": "prompt-engineering-for-engineers-04",
+    "playbookId": "prompt-engineering-for-engineers",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao nên có eval cho prompt?",
+    "modelAnswer": "Prompt thay đổi nhỏ hoặc model đổi phiên bản có thể làm chất lượng đổi theo cách khó thấy. Bộ eval gồm các ca thật giúp đo trước và sau, giống unit test, nhờ đó phát hiện hồi quy và so sánh phương án có số liệu.",
+    "keyPoints": [
+      "Phát hiện hồi quy",
+      "Giống unit test",
+      "So sánh có số liệu"
+    ]
+  },
+  {
+    "id": "context-engineering-memory-01",
+    "playbookId": "context-engineering-memory",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Để prompt caching hiệu quả, nên đặt phần nào ở đầu prompt?",
+    "options": [
+      "Phần thay đổi mỗi lần",
+      "Phần ổn định như system prompt và tài liệu",
+      "Timestamp",
+      "Câu hỏi người dùng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cache dựa trên prefix không đổi."
+  },
+  {
+    "id": "context-engineering-memory-02",
+    "playbookId": "context-engineering-memory",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hội thoại dài làm agent lệch mục tiêu. Cách giảm?",
+    "options": [
+      "Thêm thật nhiều chữ",
+      "Tóm tắt và ghim chỉ dẫn quan trọng, dùng ghi chú ngoài",
+      "Tắt memory",
+      "Tăng temperature"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Compaction cộng ghi chú bền giữ mục tiêu."
+  },
+  {
+    "id": "context-engineering-memory-03",
+    "playbookId": "context-engineering-memory",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Rủi ro riêng của bộ nhớ dài hạn?",
+    "options": [
+      "Không có",
+      "Bị nhiễm dữ liệu sai hoặc độc (memory poisoning)",
+      "Quá rẻ",
+      "Không lưu được"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Nội dung xấu được lưu sẽ ảnh hưởng các phiên sau."
+  },
+  {
+    "id": "context-engineering-memory-04",
+    "playbookId": "context-engineering-memory",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Context window lớn có thay thế RAG không?",
+    "modelAnswer": "Không hoàn toàn. Nhét nhiều dữ liệu vào context làm tăng chi phí và độ trễ, và độ chính xác có thể giảm khi thông tin bị lẫn trong context dài. RAG chọn đúng đoạn cần thiết và cập nhật dữ liệu mà không đổi prompt.",
+    "keyPoints": [
+      "Chi phí và độ trễ",
+      "Độ chính xác giảm khi context dài",
+      "RAG chọn đúng đoạn"
+    ]
+  },
+  {
+    "id": "tool-use-function-calling-mcp-01",
+    "playbookId": "tool-use-function-calling-mcp",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Function calling có tự chạy hàm không?",
+    "options": [
+      "Có",
+      "Không, model chỉ đề xuất, ứng dụng thực thi",
+      "Chỉ với MCP",
+      "Chỉ trên cloud"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Ứng dụng là bên thực thi."
+  },
+  {
+    "id": "tool-use-function-calling-mcp-02",
+    "playbookId": "tool-use-function-calling-mcp",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lợi ích chính của MCP?",
+    "options": [
+      "Làm model thông minh hơn",
+      "Viết một server, dùng được ở nhiều client",
+      "Miễn phí token",
+      "Thay RAG"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Tránh tích hợp N×M."
+  },
+  {
+    "id": "tool-use-function-calling-mcp-03",
+    "playbookId": "tool-use-function-calling-mcp",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Kết quả tool chứa văn bản kiểu \"bỏ qua chỉ dẫn trước\". Đây là?",
+    "options": [
+      "Lỗi mạng",
+      "Prompt injection gián tiếp",
+      "Cache miss",
+      "Quantization"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Dữ liệu tool là không tin cậy."
+  },
+  {
+    "id": "tool-use-function-calling-mcp-04",
+    "playbookId": "tool-use-function-calling-mcp",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao nên hạn chế số tool và mô tả rõ?",
+    "modelAnswer": "Mô tả tool nằm trong context và là cơ sở để model chọn tool, nên quá nhiều tool tốn token và gây chọn sai. Tool ít, phạm vi hẹp, mô tả và tham số rõ giúp chọn đúng và dễ kiểm soát quyền.",
+    "keyPoints": [
+      "Mô tả tool là prompt",
+      "Nhiều tool gây chọn sai",
+      "Phạm vi hẹp dễ kiểm soát"
+    ]
+  },
+  {
+    "id": "ai-agents-agentic-loop-01",
+    "playbookId": "ai-agents-agentic-loop",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Điểm khác chính giữa agent và workflow?",
+    "options": [
+      "Số model",
+      "Ai quyết định luồng điều khiển: LLM hay code",
+      "Ngôn ngữ lập trình",
+      "Giá"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Agent do LLM quyết định luồng."
+  },
+  {
+    "id": "ai-agents-agentic-loop-02",
+    "playbookId": "ai-agents-agentic-loop",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Mỗi bước đúng 95%, sau 10 bước xác suất đúng khoảng?",
+    "options": [
+      "95%",
+      "Khoảng 60%",
+      "99%",
+      "100%"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "0.95^10 ≈ 0.6."
+  },
+  {
+    "id": "ai-agents-agentic-loop-03",
+    "playbookId": "ai-agents-agentic-loop",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Điều kiện bắt buộc để tránh đốt token vô hạn?",
+    "options": [
+      "Tăng temperature",
+      "Giới hạn bước, thời gian và ngân sách",
+      "Dùng model lớn hơn",
+      "Tắt log"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần điều kiện dừng cứng."
+  },
+  {
+    "id": "ai-agents-agentic-loop-04",
+    "playbookId": "ai-agents-agentic-loop",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào nên chọn workflow thay vì agent?",
+    "modelAnswer": "Khi quy trình ổn định và các bước biết trước, workflow cho độ tin cậy, chi phí và khả năng debug tốt hơn. Agent chỉ đáng dùng khi bước đi không dự đoán được và có cách tự kiểm chứng kết quả.",
+    "keyPoints": [
+      "Quy trình ổn định",
+      "Độ tin cậy và chi phí",
+      "Agent khi khó đoán trước"
+    ]
+  },
+  {
+    "id": "multi-agent-orchestration-01",
+    "playbookId": "multi-agent-orchestration",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Lý do chính nên dùng multi-agent?",
+    "options": [
+      "Trông hiện đại",
+      "Chia context sạch và chạy song song",
+      "Rẻ hơn mọi trường hợp",
+      "Không cần prompt"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mỗi agent có context riêng và làm song song."
+  },
+  {
+    "id": "multi-agent-orchestration-02",
+    "playbookId": "multi-agent-orchestration",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Hai agent cùng sửa một file gây?",
+    "options": [
+      "Nhanh hơn",
+      "Xung đột ghi chồng",
+      "Không ảnh hưởng",
+      "Giảm token"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần phân vùng tài nguyên hoặc tuần tự hoá."
+  },
+  {
+    "id": "multi-agent-orchestration-03",
+    "playbookId": "multi-agent-orchestration",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Chi phí token của multi-agent so với một agent?",
+    "options": [
+      "Luôn thấp hơn",
+      "Thường cao hơn nhiều lần",
+      "Bằng nhau",
+      "Không tính"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Nhiều lời gọi và context lặp."
+  },
+  {
+    "id": "multi-agent-orchestration-04",
+    "playbookId": "multi-agent-orchestration",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Khi nào KHÔNG nên dùng multi-agent?",
+    "modelAnswer": "Khi tác vụ nhỏ, các phần phụ thuộc chặt vào nhau hoặc cần chia sẻ nhiều context chung, thì phối hợp tốn hơn lợi ích. Khi chi phí và độ trễ quan trọng, một agent tốt hơn. Multi-agent hợp tác vụ rộng, song song hoá được.",
+    "keyPoints": [
+      "Tác vụ nhỏ hoặc phụ thuộc chặt",
+      "Chi phí phối hợp",
+      "Hợp việc rộng và song song"
+    ]
+  },
+  {
+    "id": "ai-coding-assistants-workflow-01",
+    "playbookId": "ai-coding-assistants-workflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách nâng chất lượng code AI sinh ra nhiều nhất?",
+    "options": [
+      "Prompt dài hơn",
+      "Cho agent cách tự kiểm chứng như test và build",
+      "Dùng temperature cao",
+      "Bỏ review"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Phản hồi kiểm chứng được tạo vòng sửa lỗi."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-02",
+    "playbookId": "ai-coding-assistants-workflow",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Code AI viết trông hợp lý nhưng gọi API không tồn tại. Đây là?",
+    "options": [
+      "Bình thường, tin luôn",
+      "Hallucination, cần test và review",
+      "Lỗi mạng",
+      "Cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Luôn kiểm chứng."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-03",
+    "playbookId": "ai-coding-assistants-workflow",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Để agent chạy lệnh tuỳ ý trên máy có secret là rủi ro. Giảm bằng?",
+    "options": [
+      "Tắt log",
+      "Sandbox, allowlist lệnh, quyền tối thiểu",
+      "Dùng model lớn hơn",
+      "Không làm gì"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giới hạn bán kính thiệt hại."
+  },
+  {
+    "id": "ai-coding-assistants-workflow-04",
+    "playbookId": "ai-coding-assistants-workflow",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Làm sao tin code do AI viết?",
+    "modelAnswer": "Không tin vì sự tự tin của nó. Dựa vào test tự động, build chạy được, linter, review diff của người và commit nhỏ để dễ quay lại. Cho agent tiêu chí hoàn thành kiểm chứng được và đừng chấp nhận khi chưa chạy.",
+    "keyPoints": [
+      "Test và build",
+      "Review diff",
+      "Commit nhỏ"
+    ]
+  },
+  {
+    "id": "ai-video-image-generation-01",
+    "playbookId": "ai-video-image-generation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Diffusion sinh ảnh bằng cách nào?",
+    "options": [
+      "Sinh từng pixel tuần tự",
+      "Khử nhiễu lặp từ nhiễu ngẫu nhiên",
+      "Tra cứu CSDL",
+      "Ghép ảnh có sẵn"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Mô hình học đảo quá trình thêm nhiễu."
+  },
+  {
+    "id": "ai-video-image-generation-02",
+    "playbookId": "ai-video-image-generation",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Giữ nhân vật nhất quán giữa các cảnh nên dùng?",
+    "options": [
+      "Đổi prompt hoàn toàn",
+      "Ảnh tham chiếu và seed cố định",
+      "Giảm độ phân giải",
+      "Không có cách"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Điều kiện hoá bằng tham chiếu."
+  },
+  {
+    "id": "ai-video-image-generation-03",
+    "playbookId": "ai-video-image-generation",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Rủi ro cần kiểm tra khi dùng video AI thương mại?",
+    "options": [
+      "Không có",
+      "Bản quyền, điều khoản sử dụng, quyền hình ảnh",
+      "Chỉ độ phân giải",
+      "Chỉ dung lượng"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Rủi ro pháp lý là thật."
+  },
+  {
+    "id": "ai-video-image-generation-04",
+    "playbookId": "ai-video-image-generation",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Diffusion khác autoregressive LLM thế nào?",
+    "modelAnswer": "LLM sinh token tuần tự từng bước dựa trên các token trước. Diffusion bắt đầu từ nhiễu rồi tinh chỉnh toàn bộ mẫu qua nhiều bước khử nhiễu, nên phù hợp dữ liệu liên tục như ảnh và video.",
+    "keyPoints": [
+      "Tuần tự vs lặp toàn cục",
+      "Bắt đầu từ nhiễu",
+      "Hợp dữ liệu liên tục"
+    ]
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-01",
+    "playbookId": "llm-evaluation-guardrails-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Thiết kế tốt trước prompt injection là?",
+    "options": [
+      "Tin model sẽ từ chối",
+      "Giả định model có thể bị lừa và giới hạn quyền của tool",
+      "Viết system prompt dài",
+      "Tắt tool"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Giảm thiệt hại khi bị lừa."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-02",
+    "playbookId": "llm-evaluation-guardrails-security",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Cách đo chất lượng RAG?",
+    "options": [
+      "Chỉ đo câu trả lời",
+      "Tách đo truy xuất và sinh câu trả lời",
+      "Không đo được",
+      "Đo số token"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Hai thành phần lỗi khác nhau."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-03",
+    "playbookId": "llm-evaluation-guardrails-security",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Rủi ro của LLM-as-judge?",
+    "options": [
+      "Không có",
+      "Thiên vị câu dài hoặc của chính nó",
+      "Quá rẻ",
+      "Không chấm được"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Cần rubric rõ và hiệu chuẩn."
+  },
+  {
+    "id": "llm-evaluation-guardrails-security-04",
+    "playbookId": "llm-evaluation-guardrails-security",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Vì sao đổi model phải chạy lại eval?",
+    "modelAnswer": "Mỗi model phản ứng khác với cùng prompt nên chất lượng có thể thay đổi âm thầm. Eval phát hiện hồi quy trước khi đưa lên production và cho phép so sánh chất lượng cùng chi phí.",
+    "keyPoints": [
+      "Model phản ứng khác nhau",
+      "Phát hiện hồi quy",
+      "So sánh có số liệu"
+    ]
+  },
+  {
+    "id": "llm-cost-latency-optimization-01",
+    "playbookId": "llm-cost-latency-optimization",
+    "type": "mcq",
+    "difficulty": 1,
+    "question": "Phần nào của độ trễ thường lớn nhất?",
+    "options": [
+      "Input",
+      "Sinh output tuần tự",
+      "Mạng",
+      "Đăng nhập"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Output sinh từng token."
+  },
+  {
+    "id": "llm-cost-latency-optimization-02",
+    "playbookId": "llm-cost-latency-optimization",
+    "type": "mcq",
+    "difficulty": 2,
+    "question": "Xử lý 1 triệu tài liệu không gấp, cách rẻ?",
+    "options": [
+      "Gọi đồng bộ từng cái",
+      "Batch API",
+      "Dùng model lớn nhất",
+      "Tắt cache"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Batch rẻ hơn."
+  },
+  {
+    "id": "llm-cost-latency-optimization-03",
+    "playbookId": "llm-cost-latency-optimization",
+    "type": "mcq",
+    "difficulty": 3,
+    "question": "Prompt caching không hiệu quả vì?",
+    "options": [
+      "Đặt timestamp ở đầu prompt",
+      "Prompt quá ngắn",
+      "Dùng JSON",
+      "Dùng streaming"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Prefix thay đổi làm mất cache."
+  },
+  {
+    "id": "llm-cost-latency-optimization-04",
+    "playbookId": "llm-cost-latency-optimization",
+    "type": "explain",
+    "difficulty": 2,
+    "question": "Các cách giảm độ trễ cho chat AI?",
+    "modelAnswer": "Dùng streaming để hiển thị sớm, giảm độ dài output, prompt caching cho prefix lặp lại, chọn model nhỏ hơn cho tác vụ dễ và song song hoá các lời gọi độc lập.",
+    "keyPoints": [
+      "Streaming",
+      "Giảm output và caching",
+      "Model nhỏ và song song"
+    ]
   }
 ]
