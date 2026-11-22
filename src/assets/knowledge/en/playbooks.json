@@ -333,5 +333,20 @@
     "id": "azure-virtual-machines",
     "title": "Azure Virtual Machines",
     "summary": "Choose size, availability and pricing model for Azure VMs with Availability Zones, scale sets and discount commitments."
+  },
+  {
+    "id": "azure-storage",
+    "title": "Azure Storage",
+    "summary": "Choose redundancy and access tier for Azure Storage, grant temporary access with SAS and protect data from accidental deletion."
+  },
+  {
+    "id": "azure-networking-load-balancing",
+    "title": "Azure Networking & Load Balancing",
+    "summary": "Build a VNet with NSGs, connect it with Peering/VPN/ExpressRoute and choose correctly among the four load-balancing services."
+  },
+  {
+    "id": "azure-governance-cost",
+    "title": "Azure Governance & Cost",
+    "summary": "Set rules with Azure Policy, protect with locks, classify with tags and control cost with Cost Management."
   }
 ]

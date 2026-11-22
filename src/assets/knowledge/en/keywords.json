@@ -1643,5 +1643,85 @@
     "id": "azure-hybrid-benefit",
     "meaning": "Use existing licenses to cut cost",
     "definition": "Applies Windows Server/SQL Server licenses with Software Assurance to Azure resources."
+  },
+  {
+    "id": "azure-storage-redundancy",
+    "meaning": "Storage account redundancy levels",
+    "definition": "LRS: 3 copies in one datacenter; ZRS: 3 AZs; GRS/GZRS add a second Region; the RA- variants allow reads from the secondary Region."
+  },
+  {
+    "id": "azure-blob-access-tiers",
+    "meaning": "Hot, Cool, Cold, Archive by access frequency",
+    "definition": "Colder tiers are cheap to store but expensive to access and have a minimum retention (30/90/180 days); Archive is offline and must be rehydrated."
+  },
+  {
+    "id": "azure-blob-lifecycle",
+    "meaning": "Automatically move tiers or delete blobs",
+    "definition": "Rules by age or last access time to optimize cost."
+  },
+  {
+    "id": "azure-storage-sas",
+    "meaning": "Limited temporary access",
+    "definition": "Shared Access Signature; a user delegation SAS signed with Entra ID is safer than the account key."
+  },
+  {
+    "id": "azure-blob-data-protection",
+    "meaning": "Protect data from accidental deletion/overwrite",
+    "definition": "Soft delete and versioning allow recovery; immutable storage (WORM) blocks modification/deletion during the retention period."
+  },
+  {
+    "id": "azure-vnet-peering",
+    "meaning": "Connect two VNets over the Microsoft backbone",
+    "definition": "Works in the same or different Regions, is not transitive and needs non-overlapping addresses."
+  },
+  {
+    "id": "azure-nsg",
+    "meaning": "Allow/deny firewall rules for a subnet or NIC",
+    "definition": "Rules are processed by priority (lowest number first, 100–4096); default rules allow traffic within the VNet and block inbound Internet."
+  },
+  {
+    "id": "azure-lb-comparison",
+    "meaning": "Choose load balancing by layer and scope",
+    "definition": "Load Balancer: L4, per Region; Application Gateway: L7, per Region with WAF; Front Door: global L7 with CDN and WAF."
+  },
+  {
+    "id": "azure-traffic-manager",
+    "meaning": "Global routing at the DNS layer",
+    "definition": "Only returns the best endpoint without proxying traffic; failover depends on the DNS TTL."
+  },
+  {
+    "id": "azure-expressroute-vs-vpn",
+    "meaning": "Private line versus VPN over the Internet",
+    "definition": "ExpressRoute does not traverse the Internet and is more stable and faster but expensive; VPN Gateway encrypts traffic over the Internet."
+  },
+  {
+    "id": "azure-private-endpoint",
+    "meaning": "Access PaaS services via a private IP in the VNet",
+    "definition": "Attaches a PaaS resource to the VNet through a private IP, avoiding the public Internet."
+  },
+  {
+    "id": "azure-policy",
+    "meaning": "Rules about allowed resource configuration",
+    "definition": "Effects include Deny, Audit, Append, Modify, DeployIfNotExists; grouped into initiatives; distinct from RBAC, which manages user permissions."
+  },
+  {
+    "id": "azure-resource-locks",
+    "meaning": "Block accidental deletion or modification",
+    "definition": "CanNotDelete and ReadOnly, inherited by child resources and applying even to Owners."
+  },
+  {
+    "id": "azure-tags",
+    "meaning": "Key-value pairs to classify resources",
+    "definition": "Not inherited from the resource group; use Azure Policy to enforce tags and support cost reporting."
+  },
+  {
+    "id": "azure-cost-management",
+    "meaning": "Track and alert on cost",
+    "definition": "Analyze cost by scope and tag, set budgets and alerts; Azure Advisor suggests optimizations."
+  },
+  {
+    "id": "azure-pricing-vs-tco",
+    "meaning": "Estimate cost and compare with on-premises",
+    "definition": "The Pricing Calculator estimates Azure service cost; the TCO Calculator compares total cost of ownership with on-premises infrastructure."
   }
 ]

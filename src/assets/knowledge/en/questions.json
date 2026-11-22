@@ -3592,5 +3592,167 @@
       "Image"
     ],
     "explanation": "VMSS has autoscale by metric or schedule. An image is tempting because it is used to create VMs, but it does not scale by itself."
+  },
+  {
+    "id": "azure-storage-01",
+    "question": "An application must still read data from the secondary Region when the primary Region is completely down. Which redundancy?",
+    "options": [
+      "LRS",
+      "ZRS",
+      "GRS",
+      "RA-GRS or RA-GZRS"
+    ],
+    "explanation": "The RA- variants allow reads from the secondary Region. GRS is tempting because it also replicates to another Region, but it is only readable after a failover."
+  },
+  {
+    "id": "azure-storage-02",
+    "question": "A blob in the Archive tier must be read immediately to serve a customer request. What happens?",
+    "options": [
+      "It is read immediately",
+      "It must be rehydrated, taking hours",
+      "It cannot be read",
+      "It moves to Hot automatically"
+    ],
+    "explanation": "Archive is offline so it must be rehydrated. 'Moves to Hot automatically' is tempting because tiers can change, but not automatically."
+  },
+  {
+    "id": "azure-storage-03",
+    "question": "A partner needs to upload files to a container within 1 hour and you do not want to share the account key. Explain when to use SAS and which kind is safer.",
+    "modelAnswer": "A SAS grants limited temporary access (scope, permissions, expiry) to outsiders without sharing the account key. A user delegation SAS is signed with Entra ID credentials, so it is safer than a SAS signed with the account key because it does not depend on the all-powerful key and can be revoked through Entra ID.",
+    "keyPoints": [
+      "SAS grants limited temporary access",
+      "User delegation SAS is signed with Entra ID",
+      "Avoid the account key"
+    ]
+  },
+  {
+    "id": "azure-storage-04",
+    "question": "Log data must be kept for years, is rarely accessed and can tolerate retrieval latency. Which tier fits?",
+    "options": [
+      "Hot",
+      "Cool/Cold/Archive",
+      "Premium",
+      "Local SSD"
+    ],
+    "explanation": "Cool/Cold/Archive are cheaper to store. Hot is tempting as safe, but has the highest storage cost."
+  },
+  {
+    "id": "azure-storage-05",
+    "question": "You must protect data when the entire primary Region goes down. What is the minimum redundancy level?",
+    "options": [
+      "LRS",
+      "ZRS",
+      "GRS or GZRS",
+      "Not needed"
+    ],
+    "explanation": "Geo-redundant replicates to another Region. ZRS is tempting because it uses multiple AZs, but it is still within one Region."
+  },
+  {
+    "id": "azure-networking-load-balancing-01",
+    "question": "A web application serves global users and needs HTTP load balancing, CDN acceleration and WAF. What do you choose?",
+    "options": [
+      "Load Balancer",
+      "Application Gateway",
+      "Azure Front Door",
+      "Traffic Manager"
+    ],
+    "explanation": "Front Door is global L7 with CDN and WAF. Application Gateway is tempting because it has a WAF, but only within one Region."
+  },
+  {
+    "id": "azure-networking-load-balancing-02",
+    "question": "An NSG has a priority 100 Allow 443 rule and a priority 200 Deny 443 rule. What happens, and in what order does an NSG process rules?",
+    "options": [
+      "Higher priority numbers run first",
+      "Lower priority numbers run first, so 443 is allowed",
+      "Random",
+      "By rule name"
+    ],
+    "explanation": "The lowest priority number runs first and processing stops on a match. 'Higher number first' is tempting because some other systems work that way."
+  },
+  {
+    "id": "azure-networking-load-balancing-03",
+    "question": "A company needs to connect its datacenter to Azure for a financial system and is weighing ExpressRoute versus VPN Gateway. Explain the differences and trade-offs.",
+    "modelAnswer": "ExpressRoute is a private connection that does not traverse the Internet: stable, low latency and high bandwidth, but expensive with a long lead time. VPN Gateway encrypts traffic over the Internet: cheap and quick to set up, but quality depends on the Internet. A financial system that needs stability usually picks ExpressRoute with a VPN as backup.",
+    "keyPoints": [
+      "ExpressRoute: private, stable, expensive",
+      "VPN: over the Internet, cheap, quick to set up",
+      "They can be combined for redundancy"
+    ]
+  },
+  {
+    "id": "azure-networking-load-balancing-04",
+    "question": "You need to load balance TCP between VMs within one Region with low latency. What do you choose?",
+    "options": [
+      "Application Gateway",
+      "Azure Load Balancer",
+      "Front Door",
+      "Traffic Manager"
+    ],
+    "explanation": "Load Balancer works at L4. Application Gateway is tempting because it is also in-Region, but it works at L7 for HTTP/S."
+  },
+  {
+    "id": "azure-networking-load-balancing-05",
+    "question": "Which two statements about NSGs are correct? (choose 2)",
+    "options": [
+      "It can be attached to a subnet or a NIC",
+      "It has both Allow and Deny rules",
+      "It only has Allow rules",
+      "It has no priority"
+    ],
+    "explanation": "An NSG attaches to a subnet/NIC and has both Allow and Deny by priority. Allow-only is a characteristic of AWS Security Groups, so it is easy to confuse."
+  },
+  {
+    "id": "azure-governance-cost-01",
+    "question": "The board requires every new resource to carry a CostCenter tag, even when created by an Owner. What do you use?",
+    "options": [
+      "RBAC",
+      "Azure Policy",
+      "Resource lock",
+      "Budget"
+    ],
+    "explanation": "Policy enforces resource configuration regardless of permissions. RBAC is tempting because it concerns permissions, but it only says who can do what, it does not force resources to have tags."
+  },
+  {
+    "id": "azure-governance-cost-02",
+    "question": "A team wants to ensure the production database cannot be accidentally deleted, even by an Owner. What do they use?",
+    "options": [
+      "Policy Audit",
+      "CanNotDelete lock",
+      "Tag",
+      "Budget"
+    ],
+    "explanation": "A lock applies even to Owners. Policy Audit is tempting because it seems protective, but it only flags non-compliance and does not block deletion."
+  },
+  {
+    "id": "azure-governance-cost-03",
+    "question": "An Owner creates a VM in a Region that is not allowed and is rejected despite having full permissions. Explain how Azure Policy differs from RBAC.",
+    "modelAnswer": "RBAC controls what users may do on resources by scope. Policy controls what resources are allowed to look like (Region, SKU, tags) and takes effect even for Owners. So an Owner has permission to create a VM but a Deny policy still blocks it because the Region is wrong; Policy does not grant anyone extra permissions.",
+    "keyPoints": [
+      "RBAC: what users may do",
+      "Policy: what resources may look like",
+      "Policy applies even to Owners"
+    ]
+  },
+  {
+    "id": "azure-governance-cost-04",
+    "question": "The cost report cannot filter by the CostCenter tag even though the resource group has this tag. What is the cause and the fix?",
+    "options": [
+      "The tag was inherited automatically",
+      "Tags are not inherited by resources, use Policy Modify/Append to enforce them",
+      "The budget has not been created",
+      "There is no lock yet"
+    ],
+    "explanation": "Tags are not inherited from the resource group. A budget is tempting because it relates to cost, but it does not classify resources."
+  },
+  {
+    "id": "azure-governance-cost-05",
+    "question": "An admin puts a ReadOnly lock on a resource group containing VMs and cannot stop a VM. Why, and which lock type should be used?",
+    "options": [
+      "Locks have no effect",
+      "ReadOnly blocks write operations such as stop, use CanNotDelete if you only need to prevent deletion",
+      "Policy blocks it",
+      "The Reader role is missing"
+    ],
+    "explanation": "ReadOnly forbids every write operation, including stopping a VM. CanNotDelete is enough for the goal of preventing accidental deletion."
   }
 ]
