@@ -2777,7 +2777,7 @@
     "playbookId": "ec2-security-groups-networking",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần chặn một địa chỉ IP cụ thể truy cập. Dùng gì?",
+    "question": "Log cho thấy một IP độc hại đang quét port của web server. Cần chặn riêng IP đó ngay. Dùng gì?",
     "options": [
       "Security Group",
       "Network ACL",
@@ -2787,14 +2787,14 @@
     "answer": [
       1
     ],
-    "explanation": "Security Group chỉ có Allow; NACL có Deny."
+    "explanation": "NACL có rule Deny nên chặn được IP cụ thể. Security Group dễ nhầm vì là tường lửa quen thuộc, nhưng chỉ có Allow."
   },
   {
     "id": "ec2-security-groups-networking-02",
     "playbookId": "ec2-security-groups-networking",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Security Group là stateful nghĩa là?",
+    "question": "Admin cho phép inbound port 443 vào SG của web server nhưng không thêm rule outbound nào cho phản hồi, và request vẫn nhận được trả lời. Điều này xảy ra vì Security Group là stateful nghĩa là gì?",
     "options": [
       "Lưu log mọi gói tin",
       "Phản hồi cho traffic đã được cho phép tự động được đi qua",
@@ -2804,19 +2804,19 @@
     "answer": [
       1
     ],
-    "explanation": "Không cần rule chiều ngược lại cho traffic phản hồi."
+    "explanation": "Stateful theo dõi kết nối nên phản hồi tự đi qua. 'Phải mở cả hai chiều' dễ nhầm vì đó là hành vi của NACL stateless."
   },
   {
     "id": "ec2-security-groups-networking-03",
     "playbookId": "ec2-security-groups-networking",
     "type": "explain",
     "difficulty": 2,
-    "question": "Khác biệt giữa Security Group và Network ACL?",
-    "modelAnswer": "Security Group gắn vào ENI, stateful, chỉ có rule Allow. NACL gắn vào subnet, stateless, có cả Allow và Deny, đánh giá theo số thứ tự và phải mở cả ephemeral port chiều về.",
+    "question": "Sau khi thêm rule NACL cho subnet, user vào được web nhưng trang không tải, trong khi SG đã mở đúng. Giải thích khác biệt giữa SG và NACL và nguyên nhân.",
+    "modelAnswer": "Security Group gắn vào ENI, stateful, chỉ có Allow nên phản hồi tự được đi qua. NACL gắn vào subnet, stateless, có cả Allow và Deny, đánh giá theo số thứ tự nhỏ đến lớn và phải mở rule cả chiều về, gồm ephemeral port 1024–65535. Trang không tải vì NACL thiếu rule cho chiều về nên phản hồi bị rớt.",
     "keyPoints": [
-      "SG: ENI, stateful, chỉ Allow",
-      "NACL: subnet, stateless, có Deny",
-      "NACL cần mở ephemeral ports"
+      "SG: stateful, chỉ Allow, cấp ENI",
+      "NACL: stateless, Allow và Deny, theo số thứ tự, cấp subnet",
+      "Phải mở ephemeral port chiều về"
     ]
   },
   {
@@ -2824,46 +2824,46 @@
     "playbookId": "ec2-placement-groups",
     "type": "mcq",
     "difficulty": 2,
-    "question": "HPC cần độ trễ thấp và băng thông cao giữa các node. Chọn placement group?",
+    "question": "Cụm HPC mô phỏng thời tiết cần độ trễ liên node thấp nhất và băng thông cao. Chọn placement group nào?",
     "options": [
       "Spread",
       "Cluster",
       "Partition",
-      "Không dùng"
+      "Không cần dùng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cluster gom instance gần nhau trong một AZ."
+    "explanation": "Cluster gom instance sát nhau trong một AZ. Spread dễ nhầm vì 'cách ly' nghe an toàn, nhưng đặt các instance xa nhau nên độ trễ cao hơn."
   },
   {
     "id": "ec2-placement-groups-02",
     "playbookId": "ec2-placement-groups",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Hệ phân tán lớn như Cassandra cần cách ly lỗi theo nhóm rack. Chọn?",
+    "question": "Cụm Cassandra 120 node muốn replica không cùng rack với nhau và biết được topology để đặt replica. Chọn?",
     "options": [
       "Cluster",
       "Partition",
-      "Spread với 100 instance",
+      "Spread với 120 instance",
       "Dedicated Host"
     ],
     "answer": [
       1
     ],
-    "explanation": "Partition chia nhóm rack độc lập; Spread giới hạn 7 instance mỗi AZ."
+    "explanation": "Partition chia nhóm rack độc lập, hỗ trợ hàng trăm instance và lộ metadata. Spread không dùng được vì giới hạn 7 instance mỗi AZ."
   },
   {
     "id": "ec2-placement-groups-03",
     "playbookId": "ec2-placement-groups",
     "type": "explain",
     "difficulty": 2,
-    "question": "So sánh Cluster, Spread và Partition placement group.",
-    "modelAnswer": "Cluster đặt sát nhau trong một AZ cho độ trễ thấp nhưng rủi ro lỗi tập trung. Spread đặt mỗi instance trên rack riêng, tối đa 7 instance mỗi AZ, cách ly tối đa. Partition chia thành các nhóm rack độc lập, phù hợp hệ phân tán lớn biết topology.",
+    "question": "So sánh Cluster, Spread và Partition và cho biết khi nào chọn mỗi loại.",
+    "modelAnswer": "Cluster đặt sát nhau trong một AZ cho độ trễ thấp, băng thông cao (HPC) nhưng rủi ro lỗi phần cứng tập trung. Spread đặt mỗi instance trên rack riêng, tối đa 7 instance đang chạy mỗi AZ, cho ít instance cực kỳ quan trọng. Partition chia tối đa 7 partition mỗi AZ, mỗi partition là nhóm rack độc lập và chứa được hàng trăm instance, hợp hệ phân tán như Cassandra, Kafka, HDFS biết topology.",
     "keyPoints": [
-      "Cluster: độ trễ thấp",
-      "Spread: cách ly tối đa, tối đa 7/AZ",
-      "Partition: nhóm rack cho hệ lớn"
+      "Cluster: độ trễ thấp, rủi ro tập trung",
+      "Spread: tối đa 7 mỗi AZ, cách ly tối đa",
+      "Partition: nhóm rack độc lập cho hệ phân tán lớn"
     ]
   },
   {
@@ -2871,46 +2871,46 @@
     "playbookId": "vpc-networking",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Private subnet cần truy cập S3 mà không qua Internet và chi phí thấp nhất. Dùng?",
+    "question": "EC2 trong private subnet tải dữ liệu lớn từ S3 mỗi ngày và hoá đơn NAT Gateway rất cao. Cách thấp chi phí nhất mà không qua Internet?",
     "options": [
-      "NAT Gateway",
+      "Tăng thêm NAT Gateway",
       "Gateway VPC Endpoint cho S3",
       "Internet Gateway",
-      "VPN"
+      "Site-to-Site VPN"
     ],
     "answer": [
       1
     ],
-    "explanation": "Gateway endpoint miễn phí và chỉ hỗ trợ S3 và DynamoDB."
+    "explanation": "Gateway endpoint miễn phí và đưa traffic S3 qua mạng AWS. Thêm NAT dễ nhầm là tăng hiệu năng nhưng làm tăng phí theo giờ và GB."
   },
   {
     "id": "vpc-networking-02",
     "playbookId": "vpc-networking",
     "type": "mcq",
     "difficulty": 3,
-    "question": "VPC A peering với B, B peering với C. A có truy cập được C không?",
+    "question": "VPC A peering với B, B peering với C. Team báo A không kết nối được C. Vì sao và cách xử lý?",
     "options": [
-      "Có, tự động",
-      "Không, VPC Peering không bắc cầu",
-      "Chỉ với DNS",
-      "Chỉ với NAT"
+      "Tự động có truy cập",
+      "VPC Peering không bắc cầu, cần peering A–C hoặc Transit Gateway",
+      "Chỉ cần thêm DNS",
+      "Chỉ cần thêm NAT"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cần peering trực tiếp hoặc dùng Transit Gateway."
+    "explanation": "Peering là quan hệ 1-1, không transitive. NAT dễ nhầm vì dùng để ra ngoài, nhưng không giải quyết định tuyến giữa các VPC."
   },
   {
     "id": "vpc-networking-03",
     "playbookId": "vpc-networking",
     "type": "explain",
     "difficulty": 2,
-    "question": "Điều gì làm một subnet trở thành public?",
-    "modelAnswer": "Route table của subnet có route 0.0.0.0/0 trỏ tới Internet Gateway và tài nguyên có địa chỉ public hoặc Elastic IP. Subnet không có route đó là private; muốn đi ra Internet cần NAT Gateway đặt trong public subnet.",
+    "question": "Một subnet có instance không ra được Internet dù đã có IP public. Giải thích điều gì làm một subnet trở thành public và cách kiểm tra.",
+    "modelAnswer": "Subnet là public khi route table có route 0.0.0.0/0 trỏ tới Internet Gateway và tài nguyên có IP public hoặc Elastic IP. Nếu thiếu route hoặc instance không có IP public thì không ra được Internet. Subnet không có route đó là private và muốn đi ra Internet phải qua NAT Gateway đặt trong public subnet.",
     "keyPoints": [
       "Route 0.0.0.0/0 tới IGW",
-      "Có public/Elastic IP",
-      "Private dùng NAT để đi ra"
+      "Cần IP public hoặc Elastic IP",
+      "Private subnet đi ra qua NAT Gateway"
     ]
   },
   {
@@ -2918,7 +2918,7 @@
     "playbookId": "elb-auto-scaling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần định tuyến theo path URL tới các microservice khác nhau. Dùng load balancer nào?",
+    "question": "Hệ thống có 3 microservice dùng chung domain: /api/* tới service A, /img/* tới service B, /ws/* tới service C với WebSocket. Dùng load balancer nào?",
     "options": [
       "NLB",
       "ALB",
@@ -2928,14 +2928,14 @@
     "answer": [
       1
     ],
-    "explanation": "ALB là Layer 7 hỗ trợ routing theo host và path."
+    "explanation": "ALB là Layer 7, hỗ trợ routing theo host/path và WebSocket. NLB dễ nhầm vì hiệu năng cao, nhưng chỉ hiểu TCP/UDP nên không định tuyến theo path."
   },
   {
     "id": "elb-auto-scaling-02",
     "playbookId": "elb-auto-scaling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Muốn Auto Scaling giữ CPU quanh 50%. Dùng policy?",
+    "question": "Traffic web dao động liên tục và team muốn ASG tự giữ CPU trung bình quanh 50% mà không phải tự chỉnh ngưỡng. Dùng chính sách nào?",
     "options": [
       "Scheduled",
       "Target tracking",
@@ -2945,19 +2945,19 @@
     "answer": [
       1
     ],
-    "explanation": "Target tracking tự điều chỉnh số instance để giữ metric ở mục tiêu."
+    "explanation": "Target tracking tự điều chỉnh số instance để giữ metric ở mục tiêu. Scheduled dễ nhầm vì cũng là tự động, nhưng chỉ chạy theo lịch cố định, không theo tải thực."
   },
   {
     "id": "elb-auto-scaling-03",
     "playbookId": "elb-auto-scaling",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao instance trong Auto Scaling Group nên stateless?",
-    "modelAnswer": "ASG có thể thêm hoặc xoá instance bất cứ lúc nào nên state lưu trên instance sẽ mất và request không thể tuỳ ý đến instance nào. State nên nằm ở DB hoặc cache dùng chung để scale ngang và thay thế instance an toàn.",
+    "question": "Sau khi chuyển web app sang ASG, người dùng liên tục bị đăng xuất mỗi khi hệ thống scale. Vì sao instance trong ASG nên stateless và nên sửa thế nào?",
+    "modelAnswer": "ASG có thể thêm hoặc xoá instance bất cứ lúc nào nên state lưu cục bộ trên instance sẽ mất và request không thể mặc định về cùng một instance. Cần chuyển state sang DB hoặc cache dùng chung như ElastiCache/DynamoDB để mọi instance đều xử lý được và thay thế an toàn khi scale-in.",
     "keyPoints": [
-      "Instance có thể bị thay thế",
-      "Request đến instance bất kỳ",
-      "State ở DB/cache dùng chung"
+      "Instance có thể bị thêm/xoá bất kỳ lúc nào",
+      "State cục bộ sẽ mất",
+      "State đặt ở DB/cache dùng chung"
     ]
   },
   {
@@ -2965,7 +2965,7 @@
     "playbookId": "rds-aurora",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần chịu lỗi AZ cho RDS mà chưa cần scale đọc. Chọn?",
+    "question": "Ứng dụng cần chịu lỗi AZ cho database và tự failover, nhưng chưa có nhu cầu scale đọc. Chọn gì?",
     "options": [
       "Read Replica",
       "Multi-AZ",
@@ -2975,36 +2975,36 @@
     "answer": [
       1
     ],
-    "explanation": "Multi-AZ dùng standby đồng bộ với failover tự động."
+    "explanation": "Multi-AZ dùng standby đồng bộ và failover tự động. Read Replica dễ nhầm vì cũng là bản sao, nhưng bất đồng bộ và không tự failover như Multi-AZ."
   },
   {
     "id": "rds-aurora-02",
     "playbookId": "rds-aurora",
     "type": "mcq",
     "difficulty": 3,
-    "question": "RDS instance chưa mã hoá, muốn bật mã hoá. Cách làm?",
+    "question": "Một RDS instance production đã chạy 2 năm chưa mã hoá và yêu cầu compliance bắt buộc mã hoá. Cách làm đúng?",
     "options": [
-      "Bật trực tiếp trong console",
+      "Bật mã hoá trực tiếp trong console",
       "Tạo snapshot, copy snapshot với mã hoá, rồi restore",
       "Không thể",
-      "Đổi engine"
+      "Đổi engine sang Aurora"
     ],
     "answer": [
       1
     ],
-    "explanation": "Mã hoá phải chọn lúc tạo; DB hiện có cần đi qua snapshot mã hoá."
+    "explanation": "Mã hoá phải chọn lúc tạo, DB hiện có cần đi qua snapshot mã hoá. Đổi engine dễ nhầm là giải pháp nhưng không bật được mã hoá cho dữ liệu hiện có."
   },
   {
     "id": "rds-aurora-03",
     "playbookId": "rds-aurora",
     "type": "explain",
     "difficulty": 2,
-    "question": "Multi-AZ và Read Replica khác nhau thế nào?",
-    "modelAnswer": "Multi-AZ dùng standby đồng bộ ở AZ khác để chịu lỗi với failover tự động và không phục vụ đọc. Read Replica sao chép bất đồng bộ để scale đọc, có thể cross-Region, có replica lag và có thể được promote.",
+    "question": "Một app đọc nhiều bị chậm và team đang cân nhắc Multi-AZ hay Read Replica. Hai cơ chế khác nhau thế nào và chọn cái nào?",
+    "modelAnswer": "Multi-AZ dùng standby đồng bộ ở AZ khác để chịu lỗi với failover tự động và standby không phục vụ đọc. Read Replica sao chép bất đồng bộ để scale đọc, có thể cross-Region, có replica lag và có thể được promote. Vì vấn đề là đọc nhiều nên chọn Read Replica; nếu còn cần chịu lỗi thì thêm Multi-AZ.",
     "keyPoints": [
-      "Multi-AZ: HA, đồng bộ, failover",
-      "Replica: scale đọc, bất đồng bộ",
-      "Replica có lag"
+      "Multi-AZ: đồng bộ, HA, không phục vụ đọc",
+      "Read Replica: bất đồng bộ, scale đọc, có lag",
+      "Hai mục tiêu khác nhau, có thể dùng cả hai"
     ]
   },
   {
@@ -3059,7 +3059,7 @@
     "playbookId": "route53-cloudfront",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Trỏ domain gốc example.com vào ALB. Dùng bản ghi nào?",
+    "question": "Cần trỏ example.com (domain gốc) tới một ALB. Dùng bản ghi nào và vì sao không dùng CNAME?",
     "options": [
       "CNAME",
       "Alias record",
@@ -3069,36 +3069,36 @@
     "answer": [
       1
     ],
-    "explanation": "CNAME không đặt được ở zone apex; Alias dùng được và miễn phí."
+    "explanation": "CNAME không đặt được ở zone apex; Alias dùng được ở apex và miễn phí truy vấn tới tài nguyên AWS. MX/TXT dễ nhầm là bản ghi tên miền nhưng không dùng để trỏ web."
   },
   {
     "id": "route53-cloudfront-02",
     "playbookId": "route53-cloudfront",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cập nhật nội dung đã cache trên CloudFront mà tránh trả phí invalidation?",
+    "question": "Sau mỗi lần deploy, người dùng vẫn thấy file JS cũ do cache CloudFront và team không muốn trả phí invalidation. Cách tốt hơn?",
     "options": [
       "Xoá distribution",
-      "Đặt tên file có version (app.v2.js)",
-      "Tắt cache",
-      "Đổi region"
+      "Đặt tên file có version như app.v2.js",
+      "Tắt cache vĩnh viễn",
+      "Đổi Region"
     ],
     "answer": [
       1
     ],
-    "explanation": "Versioning tên file là cách tốt hơn invalidation."
+    "explanation": "Đổi tên file tạo URL mới nên bỏ qua cache cũ mà không cần invalidation. Tắt cache hoàn toàn dễ nhầm là giải quyết, nhưng làm mất lợi ích CDN."
   },
   {
     "id": "route53-cloudfront-03",
     "playbookId": "route53-cloudfront",
     "type": "explain",
     "difficulty": 2,
-    "question": "CloudFront và Global Accelerator khác nhau thế nào?",
-    "modelAnswer": "CloudFront là CDN cache nội dung HTTP tại edge. Global Accelerator cung cấp IP anycast tĩnh đưa traffic vào backbone AWS, hỗ trợ TCP/UDP và failover nhanh nhưng không cache.",
+    "question": "Một game cần giảm độ trễ cho user toàn cầu qua UDP, còn website marketing cần cache ảnh HTTP. Hãy phân biệt CloudFront và Global Accelerator.",
+    "modelAnswer": "CloudFront là CDN cache nội dung HTTP/HTTPS tại edge nên hợp website tĩnh/động. Global Accelerator cấp IP anycast tĩnh đưa traffic vào backbone AWS, hỗ trợ TCP/UDP và failover nhanh nhưng không cache. Game UDP dùng Global Accelerator, website dùng CloudFront.",
     "keyPoints": [
       "CloudFront: cache HTTP",
-      "Global Accelerator: IP anycast, không cache",
-      "GA hợp TCP/UDP và failover"
+      "Global Accelerator: IP anycast, TCP/UDP, không cache",
+      "Chọn theo giao thức và nhu cầu cache"
     ]
   },
   {
@@ -8014,168 +8014,168 @@
     "question": "Hai điều nào đúng về Security Group? (chọn 2)",
     "options": [
       "Stateful",
-      "Có thể có rule deny",
-      "Chỉ có rule allow",
+      "Có thể có rule Deny",
+      "Chỉ có rule Allow",
       "Áp dụng ở cấp subnet"
     ],
     "answer": [
       0,
       2
     ],
-    "explanation": "SG stateful, chỉ allow, gắn với ENI."
+    "explanation": "SG stateful và chỉ có Allow, gắn với ENI. 'Cấp subnet' là đặc điểm của NACL, dễ nhầm giữa hai lớp lọc."
   },
   {
     "id": "ec2-security-groups-networking-05",
     "playbookId": "ec2-security-groups-networking",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Web tier cần nhận traffic từ ALB, DB tier chỉ nhận từ web tier. Cách tham chiếu gọn?",
+    "question": "Web tier cần nhận traffic từ ALB và scale từ 4 lên 40 instance, DB tier chỉ được nhận từ web tier. Cách cấu hình gọn và an toàn nhất?",
     "options": [
-      "Dùng IP cố định",
-      "Rule nguồn là security group của tầng trước",
-      "Mở 0.0.0.0/0",
+      "Liệt kê IP từng web instance",
+      "Rule DB cho phép nguồn là Security Group của web tier",
+      "Mở 0.0.0.0/0 cho cổng DB",
       "Dùng NACL deny"
     ],
     "answer": [
       1
     ],
-    "explanation": "Tham chiếu SG tự cập nhật khi instance đổi."
+    "explanation": "Tham chiếu SG tự áp dụng cho instance mới. Liệt kê IP dễ nhầm là chặt chẽ nhưng phải sửa mỗi lần scale."
   },
   {
     "id": "ec2-placement-groups-04",
     "playbookId": "ec2-placement-groups",
     "type": "mcq",
     "difficulty": 2,
-    "question": "HPC cần độ trễ mạng thấp nhất giữa các node?",
+    "question": "Team muốn chuyển một instance đang chạy vào Cluster placement group bằng console nhưng không thấy tuỳ chọn. Nguyên nhân và cách làm?",
     "options": [
-      "Spread",
-      "Cluster",
-      "Partition",
-      "Không cần"
+      "Không thể chuyển bao giờ",
+      "Phải stop instance rồi dùng CLI/SDK modify-instance-placement",
+      "Phải xoá instance",
+      "Chỉ cần reboot"
     ],
     "answer": [
       1
     ],
-    "explanation": "Cluster đặt gần nhau trong một AZ."
+    "explanation": "Instance phải ở trạng thái stopped và chỉ đổi được qua CLI/SDK. 'Không thể chuyển' sai dù console không hỗ trợ."
   },
   {
     "id": "ec2-placement-groups-05",
     "playbookId": "ec2-placement-groups",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Ít instance cực kỳ quan trọng cần tránh lỗi phần cứng chung?",
+    "question": "Ba instance chứa master node và DB primary không được chết chung vì lỗi phần cứng. Chọn placement nào?",
     "options": [
       "Cluster",
       "Spread",
-      "Partition",
-      "Dedicated"
+      "Partition với 1 partition",
+      "Dedicated Host"
     ],
     "answer": [
       1
     ],
-    "explanation": "Spread đặt trên phần cứng riêng biệt (giới hạn mỗi AZ)."
+    "explanation": "Spread đặt trên phần cứng riêng biệt, hợp ít instance quan trọng. Cluster là điều ngược lại, dồn tập trung nên rủi ro cao hơn."
   },
   {
     "id": "vpc-networking-04",
     "playbookId": "vpc-networking",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Instance ở private subnet cần cập nhật gói từ Internet nhưng không nhận kết nối vào?",
+    "question": "Instance ở private subnet cần tải bản vá từ Internet nhưng không được nhận kết nối từ ngoài. Dùng gì và đặt ở đâu?",
     "options": [
       "Internet Gateway trực tiếp",
-      "NAT Gateway ở public subnet",
+      "NAT Gateway trong public subnet",
       "VPC peering",
       "Direct Connect"
     ],
     "answer": [
       1
     ],
-    "explanation": "NAT cho outbound only."
+    "explanation": "NAT Gateway chỉ cho outbound. Gắn Internet Gateway trực tiếp dễ nhầm là đơn giản nhưng khiến subnet thành public và cho kết nối từ ngoài đi vào."
   },
   {
     "id": "vpc-networking-05",
     "playbookId": "vpc-networking",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Hai VPC chồng lấn CIDR có peering được không?",
+    "question": "Công ty muốn peering VPC production 10.0.0.0/16 với VPC mới của đối tác cũng dùng 10.0.0.0/16. Điều gì xảy ra?",
     "options": [
-      "Có",
-      "Không",
-      "Chỉ cùng Region",
-      "Chỉ cùng account"
+      "Peering được bình thường",
+      "Không peering được vì CIDR chồng lấn",
+      "Chỉ cùng Region mới được",
+      "Chỉ cùng account mới được"
     ],
     "answer": [
       1
     ],
-    "explanation": "Peering yêu cầu CIDR không chồng lấn."
+    "explanation": "Peering yêu cầu CIDR không chồng lấn. 'Cùng Region/account' dễ nhầm vì peering thực ra hoạt động cross-Region và cross-account."
   },
   {
     "id": "elb-auto-scaling-04",
     "playbookId": "elb-auto-scaling",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Định tuyến theo đường dẫn URL tới các service khác nhau?",
+    "question": "Khi scale-in, một số user báo request đang tải file lớn bị đứt. Cấu hình nào giúp kết nối đang chạy hoàn tất và mặc định bao lâu?",
     "options": [
-      "NLB",
-      "ALB",
-      "Classic LB",
-      "Gateway LB"
+      "Tắt health check",
+      "Deregistration delay, mặc định 300 giây",
+      "Tăng cooldown về 0",
+      "Dùng Classic LB"
     ],
     "answer": [
       1
     ],
-    "explanation": "ALB hỗ trợ path/host-based routing ở L7."
+    "explanation": "Deregistration delay cho kết nối hiện có hoàn tất trước khi gỡ target. Cooldown dễ nhầm vì liên quan scale, nhưng chỉ chặn thao tác scale liên tiếp, không bảo vệ kết nối."
   },
   {
     "id": "elb-auto-scaling-05",
     "playbookId": "elb-auto-scaling",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Cần scale theo CPU trung bình giữ quanh 50%?",
+    "question": "Team bật cross-zone cho NLB và thấy hoá đơn data transfer tăng. Điều gì đúng?",
     "options": [
-      "Simple scaling",
-      "Target tracking scaling",
-      "Scheduled",
-      "Manual"
+      "Cross-zone ở NLB miễn phí",
+      "Ở NLB cross-zone tắt mặc định và bật sẽ phát sinh phí traffic liên AZ, còn ALB bật mặc định không phí",
+      "Chỉ ALB có cross-zone",
+      "Cross-zone chỉ dùng cho GWLB"
     ],
     "answer": [
       1
     ],
-    "explanation": "Target tracking tự điều chỉnh về giá trị mục tiêu."
+    "explanation": "ALB bật cross-zone mặc định không phí liên AZ; NLB/GWLB tắt mặc định và bật thì tính phí liên AZ."
   },
   {
     "id": "rds-aurora-04",
     "playbookId": "rds-aurora",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chịu lỗi AZ cho RDS với failover tự động?",
+    "question": "Lambda mở hàng nghìn kết nối đồng thời làm cạn kết nối của DB lúc cao điểm. Giải pháp phù hợp?",
     "options": [
-      "Read replica",
-      "Multi-AZ",
-      "Snapshot",
-      "Parameter group"
+      "Tăng backup retention",
+      "RDS Proxy để pool và tái dùng kết nối",
+      "Tắt Multi-AZ",
+      "Chuyển sang Read Replica"
     ],
     "answer": [
       1
     ],
-    "explanation": "Multi-AZ có standby đồng bộ và failover tự động."
+    "explanation": "RDS Proxy gom pool kết nối bảo vệ DB khỏi bão kết nối. Read Replica dễ nhầm vì chia tải đọc, nhưng không giải quyết việc quá nhiều kết nối mở."
   },
   {
     "id": "rds-aurora-05",
     "playbookId": "rds-aurora",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Tăng thông lượng đọc cho ứng dụng nhiều đọc, chấp nhận trễ nhỏ?",
+    "question": "Sau khi ghi một đơn hàng, ứng dụng đọc ngay từ Read Replica và đôi khi không thấy đơn. Vì sao và xử lý ra sao?",
     "options": [
-      "Multi-AZ",
-      "Read replica (Aurora Replica)",
-      "Tăng backup",
-      "Giảm storage"
+      "Multi-AZ lỗi",
+      "Replica sao chép bất đồng bộ có replica lag, nên đọc-sau-ghi cần dùng writer",
+      "Snapshot cũ",
+      "Thiếu RDS Proxy"
     ],
     "answer": [
       1
     ],
-    "explanation": "Replica phục vụ đọc, bất đồng bộ."
+    "explanation": "Replication bất đồng bộ nên có độ trễ. Multi-AZ dễ nhầm, nhưng standby đồng bộ và không liên quan tới truy vấn đọc ở replica."
   },
   {
     "id": "dynamodb-04",
@@ -8217,7 +8217,7 @@
     "playbookId": "route53-cloudfront",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Chuyển traffic sang Region dự phòng khi Region chính lỗi?",
+    "question": "Khi Region chính ngừng hoạt động, muốn Route 53 tự trả về endpoint ở Region dự phòng. Cấu hình nào?",
     "options": [
       "Simple routing",
       "Failover routing với health check",
@@ -8227,24 +8227,24 @@
     "answer": [
       1
     ],
-    "explanation": "Failover dùng health check."
+    "explanation": "Failover dùng health check để chuyển sang secondary. Weighted 50/50 dễ nhầm vì có hai endpoint, nhưng vẫn gửi 50% traffic vào endpoint lỗi nếu không có health check."
   },
   {
     "id": "route53-cloudfront-05",
     "playbookId": "route53-cloudfront",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Ngăn người dùng truy cập trực tiếp S3, chỉ qua CloudFront?",
+    "question": "Bucket S3 chứa ảnh được phân phối qua CloudFront nhưng ai biết URL S3 vẫn tải trực tiếp được. Làm sao chỉ cho CloudFront truy cập?",
     "options": [
       "Mở bucket public",
-      "Origin Access Control",
+      "Origin Access Control cùng bucket policy chỉ cho CloudFront",
       "Versioning",
-      "Presigned"
+      "Presigned URL cho mọi người"
     ],
     "answer": [
       1
     ],
-    "explanation": "OAC giới hạn S3 chỉ cho CloudFront."
+    "explanation": "OAC giới hạn S3 chỉ cho CloudFront. Presigned URL dễ nhầm là giới hạn truy cập nhưng cấp quyền tạm thời cho bất kỳ ai có URL, không ép đi qua CDN."
   },
   {
     "id": "sqs-sns-eventbridge-04",

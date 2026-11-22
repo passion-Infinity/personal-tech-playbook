@@ -1,50 +1,73 @@
 ## 1. Core Concept
 
-**Amazon VPC (Virtual Private Cloud)** là mạng ảo cô lập về mặt logic trong một Region, nơi bạn tự định nghĩa dải IP (**CIDR**), **subnet**, route và cổng ra Internet. VPC giải quyết bài toán kiểm soát chặt "ai nói chuyện với ai" cho workload trên AWS. Mental model: *VPC là data center riêng của bạn; subnet chỉ "public" khi route table trỏ ra Internet Gateway.*
+**Amazon VPC** là mạng ảo riêng của bạn trong AWS: bạn tự chọn dải IP (CIDR), chia subnet theo AZ, quyết định đường đi bằng route table và cổng ra/vào Internet. Nó giải quyết bài toán **cô lập và kiểm soát mạng** cho mọi dịch vụ chạy trong account.
+
+**Mental model:** VPC là **một khu phức hợp có tường bao**; subnet là các tòa nhà (mỗi tòa nằm trong đúng một AZ); route table là **biển chỉ đường**; Internet Gateway là **cổng chính**, NAT Gateway là **cổng ra một chiều**.
 
 ## 2. How It Works
 
-- **CIDR**: VPC từ `/16` đến `/28`; mỗi **subnet** nằm trong đúng **một AZ**. AWS giữ **5 IP** mỗi subnet (4 đầu + 1 cuối).
-- **Public subnet**: route table có `0.0.0.0/0 → Internet Gateway (IGW)` và instance có public/Elastic IP. **Private subnet**: không có route trực tiếp ra IGW.
-- **NAT Gateway**: đặt trong **public subnet**, cho private subnet đi ra Internet (chỉ chiều ra); cần **một NAT Gateway mỗi AZ** để chịu lỗi AZ. IPv6 dùng **Egress-only Internet Gateway**.
-- **Firewall hai lớp**: **Security Group** (stateful, cấp ENI) và **NACL** (stateless, cấp subnet, có Deny, đánh số rule).
-- **VPC Endpoint** giữ traffic trong mạng AWS:
-  - **Gateway endpoint**: chỉ **S3** và **DynamoDB**, miễn phí, thêm route vào route table.
-  - **Interface endpoint** (**PrivateLink**): ENI có private IP, tính phí, dùng cho hầu hết dịch vụ khác.
-- **Kết nối nhiều mạng**: **VPC Peering** (1-1, **không bắc cầu**, CIDR không được chồng lấn); **Transit Gateway** (hub-and-spoke, transitive); **Site-to-Site VPN** (qua Internet) và **Direct Connect** (đường riêng).
-- **VPC Flow Logs** ghi metadata traffic để troubleshoot/audit.
+**Subnet và Route Table → Public hay private**
+- Một subnet là **public** khi route table có `0.0.0.0/0` trỏ tới **Internet Gateway (IGW)** và tài nguyên có IP public/Elastic IP. Không có route đó thì là **private**.
+- Mỗi subnet nằm trong **đúng một AZ**, và AWS giữ **5 IP** trong mỗi subnet (địa chỉ mạng, router, DNS, dự phòng, broadcast). Ví dụ: subnet `/24` có 256 địa chỉ, dùng được **251**.
+
+**NAT Gateway → Ra Internet một chiều**
+- Đặt trong **public subnet**, cho instance ở private subnet **đi ra** (cập nhật gói) mà không cho kết nối từ ngoài đi vào. Nó **gắn với một AZ**: cần **một NAT Gateway mỗi AZ** để chịu lỗi. IPv6 dùng **Egress-only Internet Gateway**.
+
+**VPC Endpoint → Không đi qua Internet**
+- **Gateway endpoint** chỉ cho **S3 và DynamoDB**, **miễn phí**, thêm route vào route table. **Interface endpoint (PrivateLink)** dùng ENI trong subnet, tính phí theo giờ và GB, hỗ trợ hầu hết dịch vụ khác.
+- Tác động: traffic S3 qua NAT tốn phí xử lý theo GB, còn qua Gateway endpoint thì miễn phí.
+
+**Kết nối nhiều VPC → Peering hay Transit Gateway**
+- **VPC Peering** là quan hệ 1-1, **không bắc cầu** (non-transitive), hai VPC **không được chồng lấn CIDR**, hoạt động cross-Region và cross-account.
+- **Transit Gateway** là hub-and-spoke có **định tuyến transitive**, thay cho mạng lưới peering chằng chịt khi có nhiều VPC.
+
+**Lọc lưu lượng**
+- **Security Group** (stateful, chỉ Allow, cấp instance) và **NACL** (stateless, có Deny, cấp subnet).
+
+```bash
+aws ec2 create-route --route-table-id rtb-public \
+  --destination-cidr-block 0.0.0.0/0 --gateway-id igw-123
+```
 
 ## 3. Visual Diagram
 
 ```mermaid
-flowchart TD
+flowchart LR
     I[Internet] --> IGW[Internet Gateway]
-    IGW --> PUB["Public subnet: ALB + NAT GW"]
-    PUB --> PRI["Private subnet: App EC2"]
-    PRI -->|outbound via NAT| PUB
-    PRI -->|Gateway endpoint| S3[(S3)]
+    IGW --> PUB["Public subnet: route 0.0.0.0/0 tới IGW"]
+    PUB --> NAT[NAT Gateway]
+    NAT --> PRV["Private subnet: route 0.0.0.0/0 tới NAT"]
+    PRV -.->|"Gateway endpoint"| S3[(S3)]
+    PRV -.->|Peering / TGW| V2[VPC khác]
 ```
 
 ## 4. Rules of Thumb & Trade-offs
 
-- Tầng web/ALB ở public subnet; app và database ở **private subnet**; chia **≥ 2 AZ**.
-- Truy cập S3/DynamoDB từ private subnet: ưu tiên **Gateway endpoint** (rẻ hơn NAT, không đi Internet).
-- Nhiều VPC/account cần định tuyến phức tạp → **Transit Gateway**; chỉ vài VPC → Peering.
-- Trade-off: NAT Gateway đổi **chi phí theo giờ + theo GB** lấy sự tiện lợi và độ sẵn sàng; NAT instance rẻ hơn nhưng phải tự vận hành.
+| Tình huống / Nhu cầu | Chọn gì |
+| --- | --- |
+| Private subnet truy cập S3/DynamoDB, rẻ nhất | Gateway endpoint |
+| Private subnet cần cập nhật gói từ Internet | NAT Gateway ở public subnet |
+| Truy cập dịch vụ AWS khác riêng tư | Interface endpoint |
+| 2–3 VPC kết nối trực tiếp | VPC Peering |
+| Nhiều VPC cần bắc cầu | Transit Gateway |
+| Chặn một IP | NACL |
+
+- **Được gì:** cô lập, kiểm soát đường đi, giảm chi phí NAT bằng endpoint. **Mất gì:** NAT Gateway tính phí theo giờ và GB; Transit Gateway tốn phí hơn Peering.
 
 ## 5. Must Remember / Production Pitfalls
 
-- **Peering không transitive**: A↔B và B↔C không có nghĩa A↔C.
-- Một NAT Gateway cho nhiều AZ → AZ đó chết là mất egress, và traffic cross-AZ bị tính phí.
-- Quên route đến NAT/IGW là nguyên nhân phổ biến của "instance không ra được Internet".
-- Chặn một IP cụ thể → **NACL**; NACL stateless nên phải mở cả **ephemeral ports** chiều về.
-- Exam trap: "truy cập S3 không qua Internet, chi phí thấp nhất" → **Gateway endpoint**; "hàng trăm VPC nối với on-premises" → **Transit Gateway**.
+- **A peering B, B peering C mà A không tới C → Peering không bắc cầu → peering trực tiếp A–C hoặc dùng Transit Gateway**.
+- **Hai VPC chồng lấn CIDR không peering được → thiết kế CIDR không trùng ngay từ đầu** (đặc biệt khi nối on-prem).
+- **Mất đường ra Internet khi một AZ lỗi → chỉ có một NAT Gateway → mỗi AZ một NAT, route theo AZ**.
+- **Hoá đơn NAT cao → traffic S3 đi qua NAT → dùng Gateway endpoint**.
+- **Instance trong public subnet vẫn không ra Internet → thiếu IP public hoặc thiếu route 0.0.0.0/0 tới IGW → kiểm tra cả hai**.
+- Exam trap: "private subnet truy cập S3 không qua Internet, rẻ nhất" → **Gateway endpoint**; "A–B, B–C có tới được C không" → **không**; "hai VPC chồng lấn CIDR có peering được không" → **không**.
 
 ## 6. Search Hooks
 
-- `VPC subnet route table Internet Gateway` — điều kiện để subnet là public.
-- `NAT Gateway vs NAT instance` — so sánh tính sẵn sàng, băng thông, chi phí.
-- `VPC Gateway endpoint vs Interface endpoint` — hai kiểu endpoint và khi nào dùng.
-- `VPC Peering transitive routing` — giới hạn không bắc cầu của Peering.
-- `AWS Transit Gateway hub and spoke` — kết nối hàng loạt VPC và on-premises.
-- `VPC Flow Logs` — ghi log traffic để audit và gỡ lỗi.
+- `VPC subnet route table public private` — điều gì làm subnet thành public.
+- `NAT Gateway high availability per AZ` — một NAT mỗi AZ để chịu lỗi.
+- `VPC gateway endpoint vs interface endpoint` — hai loại endpoint.
+- `VPC peering transitive routing` — vì sao Peering không bắc cầu.
+- `AWS Transit Gateway` — hub nối nhiều VPC và on-prem.
+- `security group vs network ACL` — hai lớp lọc lưu lượng.
