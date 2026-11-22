@@ -6994,5 +6994,91 @@
       "Use the largest model"
     ],
     "explanation": "Overlap and quick turn closing. Waiting for a complete sentence increases latency."
+  },
+  {
+    "id": "advanced-rag-patterns-01",
+    "question": "The top-K from vector search contains many passages near in meaning but not what was meant. Which step helps re-pick more accurately?",
+    "options": [
+      "A reranker (cross-encoder)",
+      "Raise the temperature",
+      "Reduce the chunk size",
+      "Drop the filter"
+    ],
+    "explanation": "A reranker rescoring each question–passage pair more carefully. Raising the temperature does not affect retrieval."
+  },
+  {
+    "id": "advanced-rag-patterns-02",
+    "question": "What problem does a parent-document retriever solve?",
+    "options": [
+      "Search with small passages then put the larger parent passage in the context for full context",
+      "Deleting duplicate chunks",
+      "Compressing vectors",
+      "Translating text"
+    ],
+    "explanation": "It balances precision when searching with enough context when answering."
+  },
+  {
+    "id": "advanced-rag-patterns-03",
+    "question": "A RAG system answers confidently although the store has no information. What is the solution?",
+    "options": [
+      "Raise the temperature",
+      "An 'insufficient information' policy with citations and a faithfulness check",
+      "Set top-K to 0",
+      "Drop RAG"
+    ],
+    "explanation": "It forces grounding. Raising the temperature increases fabrication."
+  },
+  {
+    "id": "advanced-rag-patterns-04",
+    "question": "The question 'compare the refund policies of three vendors in the contracts' needs links across many documents. When do you add Graph RAG or agentic RAG instead of basic RAG?",
+    "modelAnswer": "When the question needs links across many entities or several steps and measurement shows basic RAG is usually not enough. Each layer adds latency and cost so it must be justified by evals; if the error lies in chunking or ranking, fix that first.",
+    "keyPoints": [
+      "Multi-entity/multi-step questions",
+      "Add only after measuring errors",
+      "A latency and cost trade-off"
+    ]
+  },
+  {
+    "id": "llm-app-architecture-gateway-01",
+    "question": "A web application calls the LLM provider's API directly from the browser with an embedded key. Where should the API key live?",
+    "options": [
+      "In the client",
+      "On the server/gateway, not exposed to the client",
+      "In the prompt",
+      "In a public repo"
+    ],
+    "explanation": "A client-side key can be extracted. Putting it in the prompt is tempting as hidden, but it is still exposed."
+  },
+  {
+    "id": "llm-app-architecture-gateway-02",
+    "question": "One user runs a script that calls continuously and exhausts the whole company's token budget. What is the right measure?",
+    "options": [
+      "Do nothing",
+      "Per-user quota and rate limits at the gateway",
+      "Increase tokens",
+      "Turn off logs"
+    ],
+    "explanation": "The gateway applies per-user limits."
+  },
+  {
+    "id": "llm-app-architecture-gateway-03",
+    "question": "The primary LLM provider has a widespread outage. What is the best design?",
+    "options": [
+      "Wait forever",
+      "Timeouts, fallback to another model/provider, degrade functionality",
+      "Retry indefinitely",
+      "Shut down the application"
+    ],
+    "explanation": "Tolerate failure with redundancy. Infinite retries multiply cost and may add congestion."
+  },
+  {
+    "id": "llm-app-architecture-gateway-04",
+    "question": "Many services in a company call the LLM directly and each writes its own retry, logging and quota. Why use a gateway instead of calling the LLM directly from each service?",
+    "modelAnswer": "A gateway centralizes authentication, quotas, routing, fallback, logging and guardrails, making it easy to swap models, control cost and observe uniformly. Calling directly duplicates logic in every service, makes switching providers hard and observability hard.",
+    "keyPoints": [
+      "Centralized control",
+      "Easy model swaps",
+      "Observability and cost"
+    ]
   }
 ]

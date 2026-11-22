@@ -3348,5 +3348,50 @@
     "id": "speech-to-speech",
     "meaning": "Models that process audio directly",
     "definition": "Low latency, preserving intonation."
+  },
+  {
+    "id": "hyde",
+    "meaning": "Generate a hypothetical document to search",
+    "definition": "Embed a hypothetical answer instead of the question."
+  },
+  {
+    "id": "parent-document-retriever",
+    "meaning": "Search small, give large",
+    "definition": "Search small passages, put the parent passage into the context."
+  },
+  {
+    "id": "graph-rag",
+    "meaning": "Graph-based retrieval",
+    "definition": "Answers multi-step questions through relationships."
+  },
+  {
+    "id": "agentic-rag",
+    "meaning": "An agent controls retrieval",
+    "definition": "Decides what to retrieve and loops."
+  },
+  {
+    "id": "rag-eval-faithfulness",
+    "meaning": "Measuring RAG",
+    "definition": "Measure retrieval and generation separately."
+  },
+  {
+    "id": "llm-gateway",
+    "meaning": "An intermediary layer for LLM calls",
+    "definition": "Auth, quota, routing, fallback, logging."
+  },
+  {
+    "id": "llm-observability",
+    "meaning": "Track prompts, tokens, cost",
+    "definition": "Trace each request."
+  },
+  {
+    "id": "llm-fallback-resilience",
+    "meaning": "Tolerate provider failures",
+    "definition": "Timeouts, controlled retries, fallback."
+  },
+  {
+    "id": "prompt-versioning",
+    "meaning": "Manage prompt versions",
+    "definition": "Tied to evals."
   }
 ]

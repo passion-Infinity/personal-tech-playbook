@@ -673,5 +673,15 @@
     "id": "speech-voice-ai",
     "title": "Speech & Voice AI (STT, TTS, Voice Agents)",
     "summary": "The STT-LLM-TTS pipeline, real-time latency, WebRTC and the pitfalls of voice agents."
+  },
+  {
+    "id": "advanced-rag-patterns",
+    "title": "Advanced RAG: Rewrite, Rerank, Graph & Agentic",
+    "summary": "Improve RAG with query transformation, hybrid search, reranking, parent-document retrieval, Graph RAG and separate retrieval/generation evaluation."
+  },
+  {
+    "id": "llm-app-architecture-gateway",
+    "title": "LLM Application Architecture: Gateway, Routing, Guardrails",
+    "summary": "Wrap the LLM as an untrusted dependency with a gateway, quotas, fallback, cache, guardrails and observability."
   }
 ]
