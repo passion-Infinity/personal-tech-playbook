@@ -4067,5 +4067,210 @@
       "Bastion"
     ],
     "explanation": "Data Factory orchestrates pipelines and has a self-hosted integration runtime for on-premises. Event Grid is tempting because it relates to events, but it is not an ETL tool."
+  },
+  {
+    "id": "azure-security-keyvault-defender-01",
+    "question": "An application on Azure must read a secret from Key Vault and the team does not want to store any credentials. What do they use?",
+    "options": [
+      "A connection string",
+      "Managed Identity",
+      "A password",
+      "A key in code"
+    ],
+    "explanation": "A managed identity issues tokens automatically. A connection string is tempting as common configuration, but it is a secret that must be stored and protected."
+  },
+  {
+    "id": "azure-security-keyvault-defender-02",
+    "question": "An admin accidentally deletes a Key Vault holding production secrets. What should be enabled to avoid permanent loss?",
+    "options": [
+      "Nothing needed",
+      "Soft delete and purge protection",
+      "RBAC",
+      "Tags"
+    ],
+    "explanation": "Soft delete allows recovery and purge protection blocks permanent deletion during the retention period. RBAC is tempting because it relates to safety, but it does not block deletion by someone with permission."
+  },
+  {
+    "id": "azure-security-keyvault-defender-03",
+    "question": "A team believes Defender for Cloud will automatically fix every misconfiguration. Which statement is correct?",
+    "options": [
+      "Yes, it fixes everything",
+      "It mainly assesses and recommends, remediation needs automation/Policy",
+      "Only Sentinel gives recommendations",
+      "It cannot be used"
+    ],
+    "explanation": "Defender mainly assesses and recommends. Sentinel is tempting because it has response playbooks, but it is for incident detection and response."
+  },
+  {
+    "id": "azure-security-keyvault-defender-04",
+    "question": "Compare system-assigned and user-assigned managed identities and say when to use each.",
+    "modelAnswer": "System-assigned is tied to one resource's lifecycle and is deleted with it, which suits a resource that needs its own identity. User-assigned is a standalone resource shared across many resources and more durable, which suits several services needing the same permissions or needing permissions granted before the resource is created.",
+    "keyPoints": [
+      "System-assigned is tied to the resource lifecycle",
+      "User-assigned is shared",
+      "Choose by sharing needs"
+    ]
+  },
+  {
+    "id": "azure-security-keyvault-defender-05",
+    "question": "Which two measures protect Key Vault? (choose 2)",
+    "options": [
+      "Soft delete and purge protection",
+      "Private Endpoint",
+      "Exposing it publicly to the Internet",
+      "Sharing the admin key"
+    ],
+    "explanation": "Prevent accidental deletion and restrict the network. Exposing it publicly and sharing the admin key increase risk."
+  },
+  {
+    "id": "azure-hybrid-connectivity-01",
+    "question": "A company needs to connect on-premises to Azure this very week at low cost. What do they choose?",
+    "options": [
+      "ExpressRoute",
+      "VPN Gateway",
+      "Data Box",
+      "Arc"
+    ],
+    "explanation": "A VPN is quick to set up over the Internet. ExpressRoute is tempting because it is better, but it takes weeks to install."
+  },
+  {
+    "id": "azure-hybrid-connectivity-02",
+    "question": "VNet A is peered with the hub and VNet B is peered with the hub, but A cannot reach B. Why and how do you fix it?",
+    "options": [
+      "Peering is automatically transitive",
+      "Peering is not transitive, so route through a Firewall/NVA in the hub or Virtual WAN",
+      "Only within the same Region",
+      "Only within the same subscription"
+    ],
+    "explanation": "Peering is not transitive."
+  },
+  {
+    "id": "azure-hybrid-connectivity-03",
+    "question": "A company wants to apply Azure Policy and Defender to servers in its own datacenter. What do they use?",
+    "options": [
+      "Not possible",
+      "Azure Arc",
+      "VPN",
+      "Front Door"
+    ],
+    "explanation": "Arc attaches servers to the Azure management plane. A VPN is tempting because it is network connectivity, but it does not bring servers into Azure management."
+  },
+  {
+    "id": "azure-hybrid-connectivity-04",
+    "question": "On-premises uses 10.0.0.0/16 and the Azure VNet is also 10.0.0.0/16. Why avoid overlapping addresses?",
+    "modelAnswer": "Routing needs distinct networks; identical CIDRs make routing between on-premises and the VNet impossible, forcing readdressing or complicated NAT. Plan non-overlapping addresses from the start.",
+    "keyPoints": [
+      "Distinct networks are needed to route",
+      "Cannot route when they overlap",
+      "NAT is complicated"
+    ]
+  },
+  {
+    "id": "azure-hybrid-connectivity-05",
+    "question": "You need a private, stable connection not traversing the Internet for a financial system. What do you choose?",
+    "options": [
+      "VPN Gateway",
+      "ExpressRoute",
+      "Bastion",
+      "Front Door"
+    ],
+    "explanation": "ExpressRoute is a private line. VPN Gateway is tempting because it is also private (encrypted), but it still goes over the Internet."
+  },
+  {
+    "id": "azure-app-service-api-management-01",
+    "question": "A team wants to put a new version on App Service, test it in staging and move it to production with no downtime. What do they use?",
+    "options": [
+      "Restart",
+      "Slot swap",
+      "Delete the app and recreate it",
+      "Scale in"
+    ],
+    "explanation": "A deployment slot provides staging and a no-downtime swap. A restart is tempting as a quick update, but it causes interruption."
+  },
+  {
+    "id": "azure-app-service-api-management-02",
+    "question": "A global website needs L7 load balancing, CDN, WAF and failover between multiple Regions. What do you choose?",
+    "options": [
+      "Load Balancer",
+      "Front Door",
+      "NSG",
+      "Traffic Manager"
+    ],
+    "explanation": "Front Door is global L7 with CDN and WAF. Traffic Manager is tempting because it is also global, but it only returns DNS answers and has no WAF/CDN."
+  },
+  {
+    "id": "azure-app-service-api-management-03",
+    "question": "After a slot swap, production starts calling the staging environment's database. What is the cause?",
+    "options": [
+      "An Azure bug",
+      "The connection string was not marked as a slot setting",
+      "The plan is too small",
+      "Always On is missing"
+    ],
+    "explanation": "Settings not marked as slot settings travel with the app during a swap."
+  },
+  {
+    "id": "azure-app-service-api-management-04",
+    "question": "As traffic grows, a team is torn between scale up and scale out for App Service. Explain the difference and the condition for scaling out safely.",
+    "modelAnswer": "Scale up moves to a larger size (CPU/RAM) for the same instance, while scale out adds more instances running in parallel and can autoscale. Scaling out is safe when the application is stateless or keeps state externally such as in Redis/a DB, because any request may land on any instance.",
+    "keyPoints": [
+      "Scale up: size",
+      "Scale out: instance count",
+      "Needs stateless or external state"
+    ]
+  },
+  {
+    "id": "azure-app-service-api-management-05",
+    "question": "You need to limit 100 requests per minute per subscription and validate JWTs for several backend APIs. What do you use?",
+    "options": [
+      "App Service Plan",
+      "API Management policies",
+      "Blob",
+      "NSG"
+    ],
+    "explanation": "APIM policies include rate-limit and validate-jwt. An NSG is tempting because it is a protection layer, but it only filters L3/L4 and does not understand JWTs."
+  },
+  {
+    "id": "azure-certification-roadmap-01",
+    "question": "A person completely new to Azure wants a starter certification. What do they choose?",
+    "options": [
+      "AZ-900",
+      "AZ-400",
+      "AZ-305",
+      "SC-100"
+    ],
+    "explanation": "AZ-900 is Fundamentals. AZ-400/AZ-305 are tempting for their prestige, but they are Expert level."
+  },
+  {
+    "id": "azure-certification-roadmap-02",
+    "question": "A company wants to stop everyone, even Owners, from creating resources outside allowed Regions. What do they use?",
+    "options": [
+      "RBAC",
+      "Azure Policy",
+      "NSG",
+      "Key Vault"
+    ],
+    "explanation": "Policy enforces resource rules. RBAC is tempting because it concerns permissions, but it does not force resources into the right Region."
+  },
+  {
+    "id": "azure-certification-roadmap-03",
+    "question": "Which common confusion about permissions appears in Azure exams?",
+    "options": [
+      "Confusing Entra ID roles with Azure RBAC roles",
+      "Confusing the two letters AZ",
+      "Confusing two VNets",
+      "There is no confusion"
+    ],
+    "explanation": "Entra roles manage the directory/identity, RBAC manages Azure resources."
+  },
+  {
+    "id": "azure-certification-roadmap-04",
+    "question": "A system has App Service (99.95%) in series with Azure SQL (99.99%). Explain how to compute the composite SLA and the conclusion.",
+    "modelAnswer": "For services in series, multiply each component's SLA: 0.9995 × 0.9999 ≈ 99.94%, so the composite SLA is lower than each component. Only parallel redundancy raises the SLA.",
+    "keyPoints": [
+      "Multiply SLAs in series",
+      "The total is lower than each",
+      "Parallel raises the SLA"
+    ]
   }
 ]

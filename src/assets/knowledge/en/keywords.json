@@ -1863,5 +1863,75 @@
     "id": "microsoft-fabric",
     "meaning": "Unified data platform",
     "definition": "OneLake, Lakehouse, Power BI."
+  },
+  {
+    "id": "key-vault-soft-delete",
+    "meaning": "Protection against accidental deletion",
+    "definition": "Mandatory for production."
+  },
+  {
+    "id": "microsoft-sentinel",
+    "meaning": "SIEM and SOAR",
+    "definition": "KQL, rules, playbooks."
+  },
+  {
+    "id": "hub-and-spoke",
+    "meaning": "Standard network model",
+    "definition": "Shared services live in the hub."
+  },
+  {
+    "id": "azure-virtual-wan",
+    "meaning": "Global hub",
+    "definition": "Connects many sites and VNets."
+  },
+  {
+    "id": "azure-arc",
+    "meaning": "Manage resources outside Azure",
+    "definition": "Policy and Defender for other servers."
+  },
+  {
+    "id": "private-vs-service-endpoint",
+    "meaning": "Two ways to access PaaS",
+    "definition": "A private IP vs an optimized path."
+  },
+  {
+    "id": "app-service-slots",
+    "meaning": "Zero-downtime deployment",
+    "definition": "Slot swap between staging and production."
+  },
+  {
+    "id": "app-service-scale",
+    "meaning": "Two scaling styles",
+    "definition": "A bigger instance vs more instances."
+  },
+  {
+    "id": "azure-apim",
+    "meaning": "API gateway",
+    "definition": "Rate-limit and validate-jwt policies."
+  },
+  {
+    "id": "front-door-vs-appgw",
+    "meaning": "Global L7 vs per-Region",
+    "definition": "Both have WAF."
+  },
+  {
+    "id": "azure-certification-paths",
+    "meaning": "Path by role",
+    "definition": "Fundamentals, Associate, Expert."
+  },
+  {
+    "id": "az-104-skills",
+    "meaning": "AZ-104 domains",
+    "definition": "Managing identity, networking, compute, storage, monitoring."
+  },
+  {
+    "id": "azure-composite-sla",
+    "meaning": "Composite SLA",
+    "definition": "Multiply SLAs in series, parallel raises SLA."
+  },
+  {
+    "id": "microsoft-learn-assessment",
+    "meaning": "Practice assessment",
+    "definition": "The official practice test."
   }
 ]
