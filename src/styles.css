@@ -35,22 +35,22 @@
 
 @layer base {
   .dark {
-    --color-bg: #070b18;
-    --color-sidebar: rgb(9 12 28 / 0.55);
-    --color-surface: rgb(255 255 255 / 0.045);
-    --color-surface-strong: rgb(255 255 255 / 0.08);
-    --color-line: rgb(255 255 255 / 0.09);
-    --color-ink: #e8eaf6;
-    --color-muted: #9aa3c0;
+    --color-bg: #0b0f1d;
+    --color-sidebar: rgb(13 17 33 / 0.94);
+    --color-surface: #131a2e;
+    --color-surface-strong: #19213a;
+    --color-line: rgb(255 255 255 / 0.14);
+    --color-ink: #f1f3fc;
+    --color-muted: #b3bad3;
     --color-accent: #a78bfa;
     --color-accent-ink: #c4b5fd;
     --color-accent-soft: rgb(139 92 246 / 0.16);
     --color-cyan: #22d3ee;
     --color-pink: #f472b6;
-    --color-code-bg: rgb(3 6 18 / 0.72);
-    --color-aurora-1: rgb(124 58 237 / 0.42);
-    --color-aurora-2: rgb(6 182 212 / 0.26);
-    --color-aurora-3: rgb(236 72 153 / 0.2);
+    --color-code-bg: #0a0e1b;
+    --color-aurora-1: rgb(124 58 237 / 0.2);
+    --color-aurora-2: rgb(6 182 212 / 0.12);
+    --color-aurora-3: rgb(236 72 153 / 0.09);
     color-scheme: dark;
   }
 
@@ -652,7 +652,7 @@
 
 /* Light mode on phones: a clean, near-white reading surface (no tinted aurora behind the text) */
 @media (max-width: 1023px) {
-  html:not(.dark) .aurora {
+  .aurora {
     display: none;
   }
 }
