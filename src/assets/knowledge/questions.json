@@ -5696,7 +5696,7 @@
     "playbookId": "ai-model-landscape",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Ollama là gì?",
+    "question": "Đồng nghiệp bảo 'cài Ollama để dùng model Ollama miễn phí'. Ollama thực chất là gì?",
     "options": [
       "Một model của Google",
       "Runtime chạy model open-weight cục bộ",
@@ -5706,14 +5706,14 @@
     "answer": [
       1
     ],
-    "explanation": "Ollama đóng gói llama.cpp để chạy và phục vụ model local."
+    "explanation": "Ollama đóng gói llama.cpp để chạy và phục vụ model local. Nhầm nó là model là lỗi phổ biến vì lệnh `ollama run` trông như gọi một model."
   },
   {
     "id": "ai-model-landscape-02",
     "playbookId": "ai-model-landscape",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Dữ liệu nhạy cảm không được rời mạng nội bộ. Hướng hợp lý?",
+    "question": "Dữ liệu bệnh nhân không được rời khỏi mạng nội bộ nhưng đội muốn dùng LLM. Hướng hợp lý?",
     "options": [
       "Gọi API frontier",
       "Open-weight tự host",
@@ -5723,16 +5723,16 @@
     "answer": [
       1
     ],
-    "explanation": "Tự host giữ dữ liệu trong hạ tầng của bạn."
+    "explanation": "Tự host giữ dữ liệu trong hạ tầng của bạn. API frontier dễ nhầm vì chất lượng cao, nhưng dữ liệu rời khỏi mạng."
   },
   {
     "id": "ai-model-landscape-03",
     "playbookId": "ai-model-landscape",
     "type": "mcq",
     "difficulty": 3,
-    "question": "So sánh model nên dựa vào?",
+    "question": "Team chọn model theo bảng xếp hạng công khai nhưng kết quả trên tác vụ trích xuất hợp đồng nội bộ rất kém. Nên so sánh model dựa vào gì?",
     "options": [
-      "Benchmark công khai duy nhất",
+      "Chỉ benchmark công khai",
       "Bộ eval từ tác vụ thật của bạn",
       "Tên hãng",
       "Số tham số"
@@ -5740,19 +5740,20 @@
     "answer": [
       1
     ],
-    "explanation": "Benchmark chung không phản ánh tác vụ của bạn."
+    "explanation": "Benchmark chung không phản ánh dữ liệu và tiêu chí của bạn. Số tham số dễ nhầm là chỉ báo chất lượng, nhưng model lớn hơn không chắc tốt hơn trên tác vụ cụ thể."
   },
   {
     "id": "ai-model-landscape-04",
     "playbookId": "ai-model-landscape",
     "type": "explain",
     "difficulty": 2,
-    "question": "Phân biệt model, runtime, agent và sản phẩm.",
-    "modelAnswer": "Model là bộ trọng số sinh đầu ra. Runtime (Ollama, vLLM) là phần mềm nạp và chạy model. Agent (Claude Code, Codex CLI) là chương trình dùng model với tool trong vòng lặp để làm việc. Sản phẩm (ứng dụng chat) là giao diện bọc xung quanh. Chúng là các lớp khác nhau nên đổi một lớp không buộc đổi lớp khác.",
+    "question": "Một đồng nghiệp dùng chung các từ GPT, Ollama, Claude Code và ChatGPT. Hãy phân biệt model, runtime, agent và sản phẩm và nêu vì sao việc này quan trọng khi thiết kế.",
+    "modelAnswer": "Model là bộ trọng số sinh đầu ra. Runtime (Ollama, vLLM) là phần mềm nạp và chạy model. Agent (Claude Code, Codex CLI) là chương trình dùng model cùng tool trong vòng lặp để làm việc. Sản phẩm (ứng dụng chat) là giao diện bọc xung quanh. Chúng là các lớp khác nhau nên có thể đổi một lớp mà không đổi lớp khác, giúp tránh phụ thuộc một nhà cung cấp.",
     "keyPoints": [
       "Model là trọng số",
       "Runtime chạy model",
-      "Agent dùng tool trong vòng lặp"
+      "Agent dùng tool trong vòng lặp",
+      "Đổi lớp độc lập"
     ]
   },
   {
@@ -5760,26 +5761,26 @@
     "playbookId": "llm-local-inference-quantization",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Model 7B ở FP16 cần khoảng bao nhiêu bộ nhớ chỉ cho trọng số?",
+    "question": "Team muốn chạy model 7B ở FP16 trên GPU 12 GB. Chỉ riêng trọng số cần khoảng bao nhiêu bộ nhớ và kết luận gì?",
     "options": [
-      "2 GB",
-      "14 GB",
+      "2 GB, vừa thoải mái",
+      "Khoảng 14 GB nên không vừa, cần quantization",
       "70 GB",
       "1 GB"
     ],
     "answer": [
       1
     ],
-    "explanation": "7 tỷ tham số nhân 2 byte xấp xỉ 14 GB."
+    "explanation": "7 tỷ tham số × 2 byte ≈ 14 GB, chưa tính KV cache. Nhầm 7B với 7 GB là lỗi vì quên byte mỗi tham số."
   },
   {
     "id": "llm-local-inference-quantization-02",
     "playbookId": "llm-local-inference-quantization",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Context dài gây ra tiêu tốn gì thêm?",
+    "question": "Model 7B Q4 chạy tốt ở context 2K nhưng OOM khi người dùng dán tài liệu 32K. Thứ nào tiêu tốn thêm bộ nhớ?",
     "options": [
-      "Ít hơn",
+      "Trọng số",
       "KV cache",
       "Ổ đĩa",
       "Băng thông mạng"
@@ -5787,32 +5788,32 @@
     "answer": [
       1
     ],
-    "explanation": "KV cache tăng theo độ dài context."
+    "explanation": "KV cache tăng theo độ dài context. Trọng số cố định theo model nên dễ nhầm là nguyên nhân."
   },
   {
     "id": "llm-local-inference-quantization-03",
     "playbookId": "llm-local-inference-quantization",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Phục vụ nhiều người dùng đồng thời với throughput cao nên dùng?",
+    "question": "Công ty muốn phục vụ 50 kỹ sư dùng chung một model nội bộ với throughput cao. Nên chọn gì?",
     "options": [
-      "Chỉ Ollama trên laptop",
+      "Chỉ Ollama trên một laptop",
       "vLLM với continuous batching",
-      "Chạy từng request",
+      "Chạy từng request tuần tự",
       "CPU only"
     ],
     "answer": [
       1
     ],
-    "explanation": "vLLM tối ưu batching và KV cache."
+    "explanation": "vLLM tối ưu batching và quản lý KV cache cho nhiều người dùng. Ollama dễ nhầm vì tiện, nhưng hướng tới dùng cá nhân/đơn giản."
   },
   {
     "id": "llm-local-inference-quantization-04",
     "playbookId": "llm-local-inference-quantization",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao tốc độ sinh token thường bị giới hạn bởi băng thông bộ nhớ?",
-    "modelAnswer": "Mỗi token sinh ra cần đọc gần như toàn bộ trọng số từ bộ nhớ, trong khi phép tính tương đối ít, nên tốc độ bị chặn bởi bộ nhớ chứ không phải FLOPS. Vì vậy quantization giúp nhanh hơn vì phải đọc ít byte hơn.",
+    "question": "Sau khi nâng cấp GPU mạnh gấp đôi về FLOPS, tốc độ sinh token chỉ tăng chút ít. Giải thích vì sao tốc độ này thường bị giới hạn bởi băng thông bộ nhớ.",
+    "modelAnswer": "Mỗi token sinh ra cần đọc gần như toàn bộ trọng số từ bộ nhớ trong khi phép tính tương đối ít, nên tốc độ bị chặn bởi băng thông bộ nhớ chứ không phải FLOPS. Vì vậy quantization giúp nhanh hơn vì phải đọc ít byte hơn, và trần tốc độ xấp xỉ băng thông chia kích thước model.",
     "keyPoints": [
       "Mỗi token đọc toàn bộ trọng số",
       "Bị chặn bởi băng thông",
@@ -5824,26 +5825,26 @@
     "playbookId": "prompt-engineering-for-engineers",
     "type": "mcq",
     "difficulty": 1,
-    "question": "Cách tăng độ cụ thể hiệu quả nhất của prompt?",
+    "question": "Một prompt cho model viết commit message cho kết quả khác nhau mỗi lần. Cách tăng độ cụ thể hiệu quả nhất?",
     "options": [
       "Thêm lời hoa mỹ",
       "Thêm ngữ cảnh, ràng buộc và tiêu chí thành công",
-      "Viết hoa",
-      "Lặp lại câu"
+      "Viết hoa toàn bộ",
+      "Lặp lại câu lệnh"
     ],
     "answer": [
       1
     ],
-    "explanation": "Prompt là đặc tả, không phải văn phong."
+    "explanation": "Prompt là đặc tả. Viết hoa/lặp lại dễ nhầm là nhấn mạnh, nhưng không thêm thông tin cho model."
   },
   {
     "id": "prompt-engineering-for-engineers-02",
     "playbookId": "prompt-engineering-for-engineers",
     "type": "mcq",
     "difficulty": 2,
-    "question": "Cần đầu ra JSON đáng tin cậy ở production?",
+    "question": "Service dùng LLM để trích xuất đơn hàng thành JSON và thỉnh thoảng trả văn bản thừa làm parser vỡ. Cách đáng tin cậy ở production?",
     "options": [
-      "Xin lịch sự",
+      "Xin lịch sự trả JSON",
       "Structured output kèm validate và retry",
       "Chỉ tăng temperature",
       "Bỏ qua kiểm tra"
@@ -5851,32 +5852,32 @@
     "answer": [
       1
     ],
-    "explanation": "Schema cộng validate chống vỡ định dạng."
+    "explanation": "Schema ép định dạng, validate bắt lỗi, retry xử lý ngoại lệ. Tăng temperature làm đầu ra kém ổn định hơn."
   },
   {
     "id": "prompt-engineering-for-engineers-03",
     "playbookId": "prompt-engineering-for-engineers",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Sau khi nâng cấp model, prompt cũ chạy khác đi. Cần gì?",
+    "question": "Sau khi chuyển sang phiên bản model mới, một prompt hoạt động tốt trước đây cho kết quả khác. Cần làm gì?",
     "options": [
       "Không làm gì",
-      "Chạy lại bộ eval",
+      "Chạy lại bộ eval và điều chỉnh prompt",
       "Giảm top_p",
       "Xoá prompt"
     ],
     "answer": [
       1
     ],
-    "explanation": "Eval phát hiện hồi quy."
+    "explanation": "Eval phát hiện hồi quy khi đổi model. Giảm top_p dễ nhầm là cách ổn định, nhưng không xử lý sự thay đổi hành vi."
   },
   {
     "id": "prompt-engineering-for-engineers-04",
     "playbookId": "prompt-engineering-for-engineers",
     "type": "explain",
     "difficulty": 2,
-    "question": "Vì sao nên có eval cho prompt?",
-    "modelAnswer": "Prompt thay đổi nhỏ hoặc model đổi phiên bản có thể làm chất lượng đổi theo cách khó thấy. Bộ eval gồm các ca thật giúp đo trước và sau, giống unit test, nhờ đó phát hiện hồi quy và so sánh phương án có số liệu.",
+    "question": "Nhóm thường sửa prompt theo cảm giác và không biết bản nào tốt hơn. Vì sao nên có eval cho prompt?",
+    "modelAnswer": "Thay đổi nhỏ trong prompt hoặc nâng cấp model có thể làm chất lượng đổi theo cách khó thấy. Bộ eval gồm các ca thật giúp đo trước và sau như unit test, nhờ đó phát hiện hồi quy, so sánh phương án có số liệu và tự tin triển khai.",
     "keyPoints": [
       "Phát hiện hồi quy",
       "Giống unit test",
@@ -9057,14 +9058,14 @@
       0,
       1
     ],
-    "explanation": "Open-weight cho tải trọng số nhưng giấy phép khác nhau."
+    "explanation": "Open-weight cho tải trọng số nhưng giấy phép khác nhau. 'Luôn là open source' dễ nhầm vì tên gần giống, nhưng nhiều giấy phép có hạn chế."
   },
   {
     "id": "llm-local-inference-quantization-05",
     "playbookId": "llm-local-inference-quantization",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Model chạy được ở context ngắn nhưng OOM khi context dài. Nguyên nhân chính?",
+    "question": "Cùng một model, chạy ở context ngắn thì ổn nhưng OOM khi context dài. Nguyên nhân chính?",
     "options": [
       "Trọng số tăng theo context",
       "KV cache tăng theo độ dài context",
@@ -9074,7 +9075,7 @@
     "answer": [
       1
     ],
-    "explanation": "KV cache tỉ lệ với context và số request."
+    "explanation": "KV cache tỉ lệ với độ dài context và số request. Quantization dễ nhầm vì liên quan bộ nhớ, nhưng chỉ nén trọng số."
   },
   {
     "id": "prompt-engineering-for-engineers-05",
@@ -9085,31 +9086,31 @@
     "options": [
       "Structured output/schema",
       "Validate rồi retry",
-      "Chỉ viết \"hãy trả JSON\"",
+      "Chỉ viết 'hãy trả JSON'",
       "Tăng temperature"
     ],
     "answer": [
       0,
       1
     ],
-    "explanation": "Ép schema và kiểm tra lại."
+    "explanation": "Ép schema rồi kiểm tra lại. Chỉ viết yêu cầu trong văn bản dễ nhầm là đủ, nhưng không có cơ chế bảo đảm."
   },
   {
     "id": "prompt-engineering-for-engineers-06",
     "playbookId": "prompt-engineering-for-engineers",
     "type": "mcq",
     "difficulty": 3,
-    "question": "Few-shot với các ví dụ gần giống nhau có thể gây?",
+    "question": "Prompt có 3 ví dụ few-shot gần giống hệt nhau và model liên tục lặp lại cấu trúc ví dụ cho mọi đầu vào. Nguyên nhân?",
     "options": [
       "Model luôn đúng",
-      "Model bắt chước quá sát ví dụ",
+      "Ví dụ thiếu đa dạng làm model bắt chước quá sát",
       "Giảm token",
       "Không ảnh hưởng"
     ],
     "answer": [
       1
     ],
-    "explanation": "Ví dụ thiếu đa dạng làm lệch đầu ra."
+    "explanation": "Few-shot định hướng mạnh nên ví dụ giống nhau làm lệch đầu ra. Đa dạng hoá ví dụ và thêm ca biên."
   },
   {
     "id": "context-engineering-memory-05",
