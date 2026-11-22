@@ -938,5 +938,177 @@
       "Keyset uses an index",
       "Stable results"
     ]
+  },
+  {
+    "id": "orm-data-access-pitfalls-01",
+    "question": "A list page shows 100 orders and each order accesses its items through lazy loading. How many SQL queries run?",
+    "options": [
+      "1",
+      "2",
+      "101",
+      "100"
+    ],
+    "explanation": "1 list query + 100 item queries = N+1. Choosing 100 is tempting because it forgets the initial list query."
+  },
+  {
+    "id": "orm-data-access-pitfalls-02",
+    "question": "What is the common deliberate fix for N+1?",
+    "options": [
+      "Add a global cache",
+      "JOIN FETCH / prefetch or projection",
+      "Disable lazy loading for every relation",
+      "Increase the connection pool"
+    ],
+    "explanation": "Load relations deliberately with a few queries. Disabling lazy for every relation is tempting but causes over-fetching."
+  },
+  {
+    "id": "orm-data-access-pitfalls-03",
+    "question": "Why should you not wrap an external HTTP call inside a DB transaction?",
+    "options": [
+      "No problem",
+      "It holds the DB connection and locks for a long time and can exhaust the connection pool",
+      "It makes HTTP slower",
+      "It rolls back automatically"
+    ],
+    "explanation": "A transaction should be short and contain only DB work."
+  },
+  {
+    "id": "orm-data-access-pitfalls-04",
+    "question": "Someone says 'ORMs are slow so drop the ORM'. Assess this and state the common real causes of slow ORM queries.",
+    "modelAnswer": "An ORM is not slow by nature; it is slow because of how it is used: N+1, over-fetching, overly wide transactions or row-by-row bulk processing. You need to look at the generated SQL, use fetch joins and projections, batch writes, and use plain SQL for reports or large bulk jobs.",
+    "keyPoints": [
+      "Slow because of usage",
+      "Watch the generated SQL",
+      "Plain SQL for reports/bulk"
+    ]
+  },
+  {
+    "id": "realtime-websocket-sse-01",
+    "question": "You need to push one-way notifications from the server to the browser, simply and with auto-reconnect. What do you choose?",
+    "options": [
+      "WebSocket",
+      "Server-Sent Events",
+      "Short polling every second",
+      "There is no way"
+    ],
+    "explanation": "SSE suits one-way push over HTTP with automatic reconnect. WebSocket is tempting because it is more powerful, but you must handle many things yourself."
+  },
+  {
+    "id": "realtime-websocket-sse-02",
+    "question": "An idle WebSocket connection drops after about 60 seconds through a load balancer. What is the cause and the fix?",
+    "options": [
+      "The server is broken",
+      "The proxy/LB cuts idle connections; send periodic heartbeat ping/pong",
+      "The client is wrong",
+      "DNS"
+    ],
+    "explanation": "Heartbeats keep the connection alive through proxies."
+  },
+  {
+    "id": "realtime-websocket-sse-03",
+    "question": "Two users are connected to two different WebSocket nodes and need to message each other. How?",
+    "options": [
+      "Impossible",
+      "A pub/sub backplane (Redis, Kafka) between nodes",
+      "Use cookies",
+      "Use DNS"
+    ],
+    "explanation": "The node that receives the message publishes to the backplane so the node holding the recipient's connection pushes it down."
+  },
+  {
+    "id": "realtime-websocket-sse-04",
+    "question": "After a deploy, millions of clients reconnect at once and overload the server. Explain a reconnect storm and how to reduce it.",
+    "modelAnswer": "When servers restart or fail, millions of clients lose their connections and reconnect simultaneously, overloading the server even after it has recovered. Reduce it with exponential backoff with jitter on the client, rate-limiting accepted connections on the server and draining gradually during deploys.",
+    "keyPoints": [
+      "Many clients connecting at once",
+      "Client backoff and jitter",
+      "Limit accepted connections, drain on deploy"
+    ]
+  },
+  {
+    "id": "nosql-data-models-01",
+    "question": "Where should NoSQL data design start?",
+    "options": [
+      "Normalizing the data",
+      "The list of queries (access patterns)",
+      "The number of tables",
+      "Indexes"
+    ],
+    "explanation": "Queries decide the keys and the denormalization. Normalization is a SQL habit and easy to confuse."
+  },
+  {
+    "id": "nosql-data-models-02",
+    "question": "A NoSQL table is constantly throttled although total capacity remains, with most of the load on one key. What is the cause?",
+    "options": [
+      "A hot partition",
+      "A missing index",
+      "It cannot scale",
+      "A lost schema"
+    ],
+    "explanation": "The load piles onto one partition because of a skewed key."
+  },
+  {
+    "id": "nosql-data-models-03",
+    "question": "You need multi-hop 'friends of friends' queries on a social network. What do you choose?",
+    "options": [
+      "Key-value",
+      "A graph database",
+      "Wide-column",
+      "Embedded documents"
+    ],
+    "explanation": "A graph traverses multi-hop relationships efficiently."
+  },
+  {
+    "id": "nosql-data-models-04",
+    "question": "A team plans to move a join-heavy reporting system to NoSQL. When should NoSQL NOT be chosen?",
+    "modelAnswer": "When you need complex joins, ad-hoc reports, integrity constraints and multi-entity transactions, or when the access patterns are unclear. SQL is then more flexible and safe; NoSQL fits when access patterns are clear and you need horizontal scale with predictable latency.",
+    "keyPoints": [
+      "Joins and ad-hoc",
+      "Constrained transactions",
+      "Unclear access patterns"
+    ]
+  },
+  {
+    "id": "search-elasticsearch-01",
+    "question": "A team uses Elasticsearch as the primary data source for orders. What is the correct assessment?",
+    "options": [
+      "Good",
+      "No, keep the DB as the source of truth and make ES a derived index",
+      "Only if it is small",
+      "Always right"
+    ],
+    "explanation": "ES is a derived index, eventually consistent, without transactions."
+  },
+  {
+    "id": "search-elasticsearch-02",
+    "question": "You just wrote a document but cannot find it immediately. What is the cause?",
+    "options": [
+      "An error",
+      "It has not refreshed yet (near real-time)",
+      "A wrong query",
+      "The disk is full"
+    ],
+    "explanation": "A document is searchable only after a refresh (about 1 second)."
+  },
+  {
+    "id": "search-elasticsearch-03",
+    "question": "Which field type is used for exact sorting and aggregating by verbatim value?",
+    "options": [
+      "text",
+      "keyword",
+      "analyzed",
+      "stemmed"
+    ],
+    "explanation": "Keyword preserves the verbatim value; text is analyzed so it does not fit."
+  },
+  {
+    "id": "search-elasticsearch-04",
+    "question": "A cluster has thousands of very small shards and is slow. Why do too many small shards hurt, and how should you design it?",
+    "modelAnswer": "Each shard costs resources (memory, file handles, coordination overhead), so many small shards make the cluster slow and hard to manage, and the primary shard count is hard to change after creation. Size the shard count by a target size (tens of GB per shard), merge small indexes and use time-based indexes with ILM for logs.",
+    "keyPoints": [
+      "Per-shard overhead",
+      "A slow cluster",
+      "Hard to change the primary shard count"
+    ]
   }
 ]

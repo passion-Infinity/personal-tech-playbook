@@ -453,5 +453,105 @@
     "id": "window-functions",
     "meaning": "Per-group computation without a self-join",
     "definition": "ROW_NUMBER, LAG, SUM OVER for top-N per group and running totals."
+  },
+  {
+    "id": "n-plus-one-lazy-loading",
+    "meaning": "A common ORM performance trap",
+    "definition": "One query for the list and then one query per element when a lazy relation is accessed."
+  },
+  {
+    "id": "jpa-fetch-join",
+    "meaning": "Loading relations deliberately",
+    "definition": "JOIN FETCH or selectinload collapses many queries into a few."
+  },
+  {
+    "id": "dto-projection",
+    "meaning": "Fetch only the needed columns for read queries",
+    "definition": "Avoid loading a whole entity graph when only a few columns are needed."
+  },
+  {
+    "id": "unit-of-work-identity-map",
+    "meaning": "How an ORM tracks changes",
+    "definition": "The ORM detects modified entities and flushes on commit; the same entity within a context is the same object."
+  },
+  {
+    "id": "orm-schema-migrations",
+    "meaning": "Versioned schema change management",
+    "definition": "Do not let the ORM update the schema on production by itself."
+  },
+  {
+    "id": "websocket-vs-sse",
+    "meaning": "A two-way channel and one-way push",
+    "definition": "SSE is simple over HTTP with auto-reconnect; WebSocket is full-duplex for chat and collaboration."
+  },
+  {
+    "id": "long-vs-short-polling",
+    "meaning": "Two ways to fake real time over HTTP",
+    "definition": "Long polling holds the request open until data arrives, reducing latency compared with repeated asking."
+  },
+  {
+    "id": "websocket-scaling-backplane",
+    "meaning": "Scaling persistent connections across nodes",
+    "definition": "A connection is tied to one node, so pub/sub or a registry is needed to deliver messages to users on other nodes."
+  },
+  {
+    "id": "websocket-heartbeat-reconnect",
+    "meaning": "Keeping and restoring persistent connections",
+    "definition": "Periodic ping/pong against timeouts and reconnecting with jitter."
+  },
+  {
+    "id": "reconnect-storm",
+    "meaning": "Mass reconnection causing overload",
+    "definition": "After an incident many clients reconnect at once; jitter and a rate limit on accepted connections are needed."
+  },
+  {
+    "id": "nosql-four-models",
+    "meaning": "The four NoSQL models",
+    "definition": "Each model optimizes one access pattern."
+  },
+  {
+    "id": "single-table-design",
+    "meaning": "Design by access pattern",
+    "definition": "Several entities in one table."
+  },
+  {
+    "id": "cassandra-partition-clustering",
+    "meaning": "The wide-column keys",
+    "definition": "The partition decides the node; clustering sorts within the partition."
+  },
+  {
+    "id": "mongodb-embed-reference",
+    "meaning": "The document model",
+    "definition": "Embed data that is read together."
+  },
+  {
+    "id": "eventual-consistency-quorum",
+    "meaning": "Eventual consistency",
+    "definition": "R + W > N for the latest read."
+  },
+  {
+    "id": "inverted-index",
+    "meaning": "The inverted index",
+    "definition": "A term points to the list of documents."
+  },
+  {
+    "id": "bm25-relevance",
+    "meaning": "Ranking by relevance",
+    "definition": "An improved TF-IDF."
+  },
+  {
+    "id": "es-shards-replicas",
+    "meaning": "Sharding and replicas",
+    "definition": "The number of primary shards is hard to change."
+  },
+  {
+    "id": "es-search-after",
+    "meaning": "Deep pagination",
+    "definition": "Replaces a large from+size."
+  },
+  {
+    "id": "es-text-vs-keyword",
+    "meaning": "Two field types",
+    "definition": "Text is analyzed, keyword is verbatim."
   }
 ]

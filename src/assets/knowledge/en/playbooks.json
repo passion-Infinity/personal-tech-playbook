@@ -83,5 +83,25 @@
     "id": "sql-query-optimization-advanced",
     "title": "SQL Query Optimization (Advanced)",
     "summary": "Read execution plans, understand join algorithms and write queries that let the planner choose good plans."
+  },
+  {
+    "id": "orm-data-access-pitfalls",
+    "title": "ORM & Data Access Pitfalls",
+    "summary": "Use an ORM while keeping control of the SQL: avoid N+1, choose sensible transaction boundaries and projections."
+  },
+  {
+    "id": "realtime-websocket-sse",
+    "title": "Realtime: WebSocket, SSE & Polling",
+    "summary": "Choose between polling, SSE and WebSocket and understand the cost of persistent connections at scale."
+  },
+  {
+    "id": "nosql-data-models",
+    "title": "NoSQL Data Models & Access-Pattern Design",
+    "summary": "Choose key-value, document, wide-column or graph and design data around queries instead of normalization."
+  },
+  {
+    "id": "search-elasticsearch",
+    "title": "Search Engine: Elasticsearch/OpenSearch",
+    "summary": "Understand the inverted index, analyzers, BM25 and shards to build text search correctly."
   }
 ]
