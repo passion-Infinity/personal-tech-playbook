@@ -1707,5 +1707,170 @@
       "The bucket must be public"
     ],
     "explanation": "You need versioning on both sides and an IAM role. The destination can be in a different Region (CRR) or the same Region (SRR), so 'same Region' is wrong although it is easy to assume it is a condition."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-01",
+    "question": "A bucket holds data whose access pattern changes seasonally and nobody can predict it; the team wants to optimize cost without being charged retrieval fees when cold data is suddenly read again. Which class?",
+    "options": [
+      "Glacier Deep Archive",
+      "S3 Intelligent-Tiering",
+      "One Zone-IA",
+      "Standard-IA"
+    ],
+    "explanation": "Intelligent-Tiering moves tiers automatically with no retrieval fee, only a per-object monitoring fee. Standard-IA is easy to confuse but charges a retrieval fee every time data is read again."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-02",
+    "question": "A team moves 3 million 10 KB log files to Standard-IA to save money but the bill rises. What is the cause?",
+    "options": [
+      "It surely reduces cost",
+      "IA bills a 128 KB minimum per object so small files cost more",
+      "Data is lost",
+      "Security improves"
+    ],
+    "explanation": "IA classes bill a minimum object size of 128 KB. 'It surely reduces cost' is wrong because the lower per-GB price cannot offset the minimum charge on small files."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-03",
+    "question": "Design a lifecycle for audit logs retained for 7 years. What does a lifecycle rule do and what must you watch?",
+    "modelAnswer": "A lifecycle rule automatically transitions objects to cheaper classes by age (for example Standard-IA after 30 days, Deep Archive after 180 days) and expires objects, noncurrent versions or incomplete multipart uploads. Watch that each class's minimum storage duration (IA 30, Glacier 90, Deep Archive 180 days) is still billed when you transition early, that transitions only go down to colder tiers, that Standard to IA needs at least 30 days, and add an AbortIncompleteMultipartUpload rule.",
+    "keyPoints": [
+      "Transition by age and Expiration",
+      "The minimum storage duration of each class",
+      "Only transition down to colder tiers",
+      "Clean up incomplete multipart uploads"
+    ]
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-04",
+    "question": "Original product images are accessed heavily in the first 2 weeks and then almost never viewed, but when needed they must load within milliseconds. What is a suitable saving?",
+    "options": [
+      "A lifecycle transition to Glacier Deep Archive after 14 days",
+      "A lifecycle transition to Standard-IA or Glacier Instant Retrieval after 30 days",
+      "Keep Standard forever",
+      "Move to One Zone-IA because high durability is needed"
+    ],
+    "explanation": "IA or Glacier Instant keeps millisecond latency at a lower storage price. Deep Archive is easy to mistake as cheapest but requires a wait of hours; One Zone-IA is in a single AZ so it does not suit data needing high durability."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle-05",
+    "question": "Audit logs must be kept 7 years, are rarely read and a wait of many hours to retrieve is acceptable. Which is the cheapest class?",
+    "options": [
+      "Standard",
+      "Glacier Instant Retrieval",
+      "Glacier Deep Archive",
+      "One Zone-IA"
+    ],
+    "explanation": "Deep Archive is the cheapest, with retrieval measured in hours (Standard ≤ 12 hours, Bulk ≤ 48 hours). Glacier Instant is easy to confuse but costs more because it offers millisecond retrieval that is not needed here."
+  },
+  {
+    "id": "s3-performance-01",
+    "question": "A nightly job uploads a 10 GB backup file to S3 with a single PUT and it often breaks midway, forcing a restart. What is the solution?",
+    "options": [
+      "Increase the timeout",
+      "Multipart Upload (required for files > 5 GB)",
+      "Split the data across several buckets",
+      "Compress it with zip"
+    ],
+    "explanation": "Multipart uploads in parallel and retries part by part. Raising the timeout is tempting but a single PUT cannot exceed the 5 GB limit."
+  },
+  {
+    "id": "s3-performance-02",
+    "question": "A service needs 20,000 GETs/second against a single prefix and receives 503 SlowDown. How many GETs/second does each prefix support at minimum, and how do you handle it?",
+    "options": [
+      "500, it cannot scale",
+      "5,500, spread objects across more prefixes",
+      "55,000, raise the timeout",
+      "Unlimited"
+    ],
+    "explanation": "At least 5,500 GET/HEAD per prefix, scaled by adding prefixes. 'Unlimited' is wrong because the limit is per prefix, not per bucket."
+  },
+  {
+    "id": "s3-performance-03",
+    "question": "Your application spans several Regions and needs higher S3 upload/download throughput while using SSE-KMS. How do you do it and what should you watch?",
+    "modelAnswer": "Parallelize: spread objects across more prefixes (each prefix handles 3,500 writes and 5,500 reads per second), use multipart upload and byte-range fetch, and add Transfer Acceleration when clients are far from the Region. With SSE-KMS watch the KMS request quota because every request calls KMS; reduce it with an S3 Bucket Key.",
+    "keyPoints": [
+      "Multiple prefixes",
+      "Multipart and byte-range fetch",
+      "Transfer Acceleration for distant clients",
+      "KMS quota and Bucket Key"
+    ]
+  },
+  {
+    "id": "s3-performance-04",
+    "question": "You need to read only the 1 MB footer of a 50 GB Parquet file in S3 without downloading everything. What do you use?",
+    "options": [
+      "Download everything and cut it",
+      "Byte-Range Fetch with the Range header",
+      "Multipart Upload",
+      "Transfer Acceleration"
+    ],
+    "explanation": "A GET with Range fetches only the needed chunk. Transfer Acceleration is tempting because it speeds things up, but it still transfers the whole file and cannot select a part."
+  },
+  {
+    "id": "s3-performance-05",
+    "question": "A client in Europe uploads a large file to a bucket in Singapore very slowly and wants to travel over the AWS backbone. What do you use?",
+    "options": [
+      "Transfer Acceleration",
+      "Versioning",
+      "Lifecycle",
+      "Requester Pays"
+    ],
+    "explanation": "Transfer Acceleration uploads to the nearest edge location and then travels over the AWS backbone. Requester Pays only changes who pays for requests/data and has no effect on speed."
+  },
+  {
+    "id": "ec2-pricing-models-01",
+    "question": "A nightly batch image-processing pipeline has independent tasks that tolerate interruption and re-running. Which is the cheapest pricing model?",
+    "options": [
+      "On-Demand",
+      "Spot Instances",
+      "Dedicated Host",
+      "3-year Reserved"
+    ],
+    "explanation": "Spot gives up to ~90% off but can be reclaimed with a 2-minute warning. A 3-year Reserved is tempting as cheap, but you pay the commitment even if you only run at night."
+  },
+  {
+    "id": "ec2-pricing-models-02",
+    "question": "A company wants to bring a per-core database license to EC2 and must prove dedicated infrastructure for compliance. What do you choose?",
+    "options": [
+      "Spot",
+      "Dedicated Host",
+      "On-Demand",
+      "Savings Plans"
+    ],
+    "explanation": "A Dedicated Host exposes the physical sockets/cores for BYOL. A Dedicated Instance is easy to confuse, but you do not control the host so it does not satisfy per-core BYOL."
+  },
+  {
+    "id": "ec2-pricing-models-03",
+    "question": "A web app has a stable 24/7 baseline load, spikes at month end and interruption-tolerant background jobs. Combine the EC2 pricing models and explain.",
+    "modelAnswer": "The stable 24/7 baseline uses Savings Plans (or Reserved) for up to 72% off in exchange for a commitment. The month-end spikes use On-Demand for flexibility with no commitment. Interruption-tolerant background jobs use Spot for up to ~90% off. They are usually combined in one Auto Scaling Group with a mixed instances policy.",
+    "keyPoints": [
+      "Savings Plans/Reserved for the baseline",
+      "On-Demand for spikes",
+      "Spot for interruption-tolerant jobs",
+      "ASG mixed instances policy"
+    ]
+  },
+  {
+    "id": "ec2-pricing-models-04",
+    "question": "A team commits to a 3-year EC2 Instance Savings Plan for the m5 family; six months later they move the workload to Fargate and Graviton. What happens and what should they have chosen?",
+    "options": [
+      "The commitment automatically moves to Fargate",
+      "They still pay the m5 commitment, they should have chosen Compute Savings Plans",
+      "They get a refund",
+      "Spot offsets it"
+    ],
+    "explanation": "Compute Savings Plans apply to EC2 in any family, Fargate and Lambda, so they are flexible when you change architecture. An EC2 Instance Savings Plan is tied to one family in one Region so it does not apply to Fargate."
+  },
+  {
+    "id": "ec2-pricing-models-05",
+    "question": "A sale needs a guarantee of 50 instances in one AZ at peak time, but the team worries capacity may not be available. What fits and what should you note?",
+    "options": [
+      "Spot",
+      "A Capacity Reservation, combined with Savings Plans if you want a discount",
+      "Dedicated Host",
+      "A Reserved Instance without capacity reservation"
+    ],
+    "explanation": "A Capacity Reservation holds capacity in the AZ but gives no discount by itself, so combine it with Savings Plans. A Dedicated Host is tempting as 'surely has machines', but its purpose is hardware isolation and BYOL, not reserving capacity."
   }
 ]

@@ -158,5 +158,20 @@
     "id": "s3-versioning-replication",
     "title": "S3 Versioning & Replication",
     "summary": "Recover overwritten or accidentally deleted objects with Versioning and copy to another bucket/Region with Replication."
+  },
+  {
+    "id": "s3-storage-classes-lifecycle",
+    "title": "S3 Storage Classes & Lifecycle",
+    "summary": "Choose the right storage class and automatically transition/delete objects with Lifecycle to optimize storage cost."
+  },
+  {
+    "id": "s3-performance",
+    "title": "S3 Performance Optimization",
+    "summary": "Increase S3 throughput by spreading prefixes, multipart upload, byte-range fetch and Transfer Acceleration."
+  },
+  {
+    "id": "ec2-pricing-models",
+    "title": "EC2 Pricing Models",
+    "summary": "Cut 50–90% of compute cost by combining On-Demand, Savings Plans/Reserved, Spot and Dedicated Host according to workload characteristics."
   }
 ]
